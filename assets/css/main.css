@@ -157,10 +157,10 @@ input, select, textarea {
 	}
 
 	body, input, select, textarea {
-		font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-		font-size: 0.8rem;
+		font-family: Myriad Pro, 'Helvetica Neue', Helvetica, sans-serif;
+		font-size: 10pt;
 		font-weight: 100;
-		line-height: 1.65;
+		line-height: 1.55;
 	}
 
 	a {
