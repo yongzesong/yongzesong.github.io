@@ -157,8 +157,8 @@ input, select, textarea {
 	}
 
 	body, input, select, textarea {
-		font-family: Myriad Pro, 'Helvetica Neue', Helvetica, sans-serif;
-		font-size: 10pt;
+		font-family: Sans-serif, 'Helvetica Neue', Helvetica, sans-serif;
+		font-size: 10.5pt;
 		font-weight: 100;
 		line-height: 1.55;
 	}
