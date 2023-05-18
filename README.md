@@ -12,10 +12,11 @@ Personal Website: [https://yongzesong.com/](https://yongzesong.com/)
 Yongze leads a Geospatial Analysis and AI team, developing innovative models and open-source software for geospatial analysis and sustainable development. He has chaired or served conferences and given research seminars worldwide. 
 
 
+---
 
 ### Open-Source Software
 
----
+
 
 #### Online Software
 
@@ -28,16 +29,16 @@ Yongze leads a Geospatial Analysis and AI team, developing innovative models and
 #### R packages
 
 | | | |
-|-|---|--|
-| [GD](http://cran.r-project.org/web/packages/GD/vignettes/GD.html) | Optimal Parameters-based Geographical Detectors (OPGD) Model for Spatial Heterogeneity Analysis and Factor Exploration | ![](https://badgen.net/cran/dt/GD/?color=blue)  ![Downloads](https://cranlogs.r-pkg.org/badges/GD) |
-| [geosimilarity](http://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html) | Geographically Optimal Similarity (GOS) and the Third Law of Geography | ![](https://badgen.net/cran/dt/geosimilarity/?color=blue) ![Downloads](https://cranlogs.r-pkg.org/badges/geosimilarity) |
-| [SecDim](http://cran.r-project.org/web/packages/SecDim/vignettes/SecDim.html) | The Second Dimension of Spatial Association for Spatial Prediction | ![](https://badgen.net/cran/dt/SecDim/?color=blue) ![Downloads](https://cranlogs.r-pkg.org/badges/SecDim) |
-| [IDSA](https://cran.r-project.org/web/packages/IDSA/IDSA.pdf) | An Interactive Detector for Spatial Associations | ![](https://badgen.net/cran/dt/IDSA/?color=blue) ![Downloads](https://cranlogs.r-pkg.org/badges/IDSA) |
-| [HS](https://cran.rstudio.com/web/packages/HS/index.html) | Homogenous Segmentation for Spatial Lines Data | ![](https://badgen.net/cran/dt/HS/?color=blue) ![Downloads](https://cranlogs.r-pkg.org/badges/HS) |
-| [SK](https://cran.r-project.org/src/contrib/Archive/SK/) | Segment-based Kriging for Spatial Prediction. | ![](https://badgen.net/cran/dt/SK/?color=blue) ![Downloads](https://cranlogs.r-pkg.org/badges/SK) |
-| [EDA](http://cran.r-project.org/web/packages/EDA/vignettes/EDA.html) | Energy Decomposition Analysis for Assessing Carbon Emission Factors. | ![](https://badgen.net/cran/dt/EDA/?color=blue) ![Downloads](https://cranlogs.r-pkg.org/badges/EDA) |
-| [SDGdetector](https://github.com/Yingjie4Science/SDGdetector) | Detecting Sustainable Development Goals (SDGs) in Text. | ![](https://badgen.net/cran/dt/SDGdetector/?color=blue) ![Downloads](https://cranlogs.r-pkg.org/badges/SDGdetector) |
-|  |   |  |
+|-|--|--|
+| [GD](http://cran.r-project.org/web/packages/GD/vignettes/GD.html) | Optimal Parameters-based Geographical Detectors (OPGD) Model for Spatial Factor Exploration | ![](https://badgen.net/cran/dt/GD/?color=blue)   |
+| [geosimilarity](http://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html) | Geographically Optimal Similarity (GOS) and the Third Law of Geography | ![](https://badgen.net/cran/dt/geosimilarity/?color=blue) |
+| [SecDim](http://cran.r-project.org/web/packages/SecDim/vignettes/SecDim.html) | The Second Dimension of Spatial Association for Spatial Prediction | ![](https://badgen.net/cran/dt/SecDim/?color=blue) |
+| [IDSA](https://cran.r-project.org/web/packages/IDSA/IDSA.pdf) | An Interactive Detector for Spatial Associations | ![](https://badgen.net/cran/dt/IDSA/?color=blue)  |
+| [HS](https://cran.rstudio.com/web/packages/HS/index.html) | Homogenous Segmentation for Spatial Lines Data | ![](https://badgen.net/cran/dt/HS/?color=blue) |
+| [SK](https://cran.r-project.org/src/contrib/Archive/SK/) | Segment-based Kriging for Spatial Prediction. | ![](https://badgen.net/cran/dt/SK/?color=blue)  |
+| [EDA](http://cran.r-project.org/web/packages/EDA/vignettes/EDA.html) | Energy Decomposition Analysis for Assessing Carbon Emission Factors. | ![](https://badgen.net/cran/dt/EDA/?color=blue)  |
+| [SDGdetector](https://github.com/Yingjie4Science/SDGdetector) | Detecting Sustainable Development Goals (SDGs) in Text. | ![](https://badgen.net/cran/dt/SDGdetector/?color=blue)  |
+| | | |
 
 
 
