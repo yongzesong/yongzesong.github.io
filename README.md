@@ -7,7 +7,7 @@ Personal Website: [https://yongzesong.com/](https://yongzesong.com/)
 [![ResearchGate](https://img.shields.io/badge/ResearchGate-%2300CCBB)](https://www.researchgate.net/profile/Yongze-Song)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-blue)](https://www.linkedin.com/in/yongzesong)
 [![Donate](https://img.shields.io/badge/Donate-Buy%20me%20a%20coffee-orange.svg)](https://www.buymeacoffee.com/ysong)
-![Visitor](https://visitor-badge.laobi.icu/badge?page_id=yongzesong.yongzesong)
+
 
 Yongze leads a Geospatial Analysis and AI team, developing innovative models and open-source software for geospatial analysis and sustainable development. He has chaired or served conferences and given research seminars worldwide. 
 
