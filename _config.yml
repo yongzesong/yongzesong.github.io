@@ -7,3 +7,14 @@ docs:
   sidebar:
     - title: "Main Table of Contents"
       url: /
+
+
+just_the_docs:
+  aux_nav:
+    Main Sidebar:
+      - Folder 1:
+          - Title of Subpage 1: /folder1/page1
+          - Title of Subpage 2: /folder1/page2
+      - Folder 2:
+          - Title of Subpage 3: /folder2/page1
+          - Title of Subpage 4: /folder2/page2
