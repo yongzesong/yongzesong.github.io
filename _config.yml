@@ -1,1 +1,9 @@
 remote_theme: pmarsceill/just-the-docs
+
+# _config.yml
+title: "Tutorials"
+theme: just-the-docs
+docs:
+  sidebar:
+    - title: "Main Table of Contents"
+      url: /
