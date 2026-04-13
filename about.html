@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Yongze Song</title>
+    <meta name="description" content="Dr. Yongze Song - Associate Professor at Curtin University. Geospatial Analysis, Sustainable Infrastructure, and Spatial Methods.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* === Page-specific overrides for about.html === */
+        h1, h2 {
+            font-size: 1.3rem;
+            margin-top: 1em;
+            margin-bottom: 0.4em;
+        }
+
+        p {
+            font-size: 0.82rem;
+            margin-bottom: 0.5em;
+        }
+
+        /* === MAIN LAYOUT: Sidebar + Content === */
+        .main-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 40px;
+        }
+
+        /* --- Left Sidebar (20%) --- */
+        .sidebar {
+            width: 20%;
+            min-width: 180px;
+            flex-shrink: 0;
+        }
+        .sidebar-nav {
+            position: sticky;
+            top: 20px;
+            padding-top: 10px;
+        }
+        .sidebar-nav a {
+            display: block;
+            font-family: var(--font-sans);
+            font-size: 0.78rem;
+            font-weight: 400;
+            color: var(--color-muted);
+            text-decoration: none;
+            padding: 5px 12px;
+            border-left: 2px solid transparent;
+            transition: all 0.2s ease;
+            line-height: 1.5;
+        }
+        .sidebar-nav a:hover {
+            color: var(--color-accent);
+            border-left-color: var(--color-accent);
+        }
+        .sidebar-nav a.active {
+            color: var(--color-accent);
+            font-weight: 600;
+            border-left-color: var(--color-accent);
+        }
+
+        /* --- Right Content (80%) --- */
+        .content-column {
+            flex: 1;
+            min-width: 0;
+        }
+        .content-column h2 {
+            font-size: 1.1rem;
+        }
+
+
+        .bio-section {
+            margin: 10px 0 20px 0;
+        }
+
+        /* Section headings */
+        .section-heading {
+            color: var(--color-accent);
+            border-bottom: 2px solid var(--color-accent);
+            padding-bottom: 8px;
+        }
+
+        /* List styles */
+        .section-list {
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin: 6px 0;
+        }
+        .section-list li {
+            margin: 1px 0;
+            list-style-position: inside;
+            line-height: 1.65;
+        }
+        .section-list ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        .section-list li ul {
+            margin-top: 6px;
+            margin-bottom: 6px;
+        }
+
+        /* Reviewer 3-column list (CSS columns for even flow) */
+        .reviewer-grid {
+            column-count: 3;
+            column-gap: 30px;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin: 6px 0;
+            list-style-position: inside;
+        }
+        .reviewer-grid li {
+            list-style-type: disc;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            break-inside: avoid;
+        }
+
+        /* Year headers for timelines */
+        .year-header {
+            font-family: var(--font-serif);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--color-heading);
+            margin-top: 16px;
+            margin-bottom: 8px;
+            border-bottom: 2px solid var(--color-accent);
+            padding-bottom: 4px;
+        }
+
+        .year-item {
+            font-size: 0.82rem;
+            margin: 1px 0;
+            padding-left: 20px;
+            line-height: 1.65;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+                gap: 0;
+            }
+            .sidebar {
+                width: 100%;
+                min-width: unset;
+            }
+            .sidebar-nav {
+                position: static;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px 0;
+                border-bottom: 1px solid #e0e0e0;
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+            }
+            .sidebar-nav a {
+                border-left: none;
+                padding: 4px 10px;
+                font-size: 0.75rem;
+            }
+            .sidebar-nav a.active,
+            .sidebar-nav a:hover {
+                border-left: none;
+                background: #f5f0f0;
+                border-radius: 4px;
+            }
+            .reviewer-grid { column-count: 1; }
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.3rem; }
+            h2 { font-size: 1.1rem; }
+            
+            p { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="site-title">
+            Yongze Song
+            <span>Geography &amp; Sustainability</span>
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="methods.html">Methods</a>
+            <a href="latest.html">Latest</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="main-content">
+
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+        <nav class="sidebar-nav" id="sidebarNav">
+            <a href="#about" class="active">About</a>
+            <a href="#research-interests">Research Interests</a>
+            <a href="#journal-special-issues">Journal Special Issues</a>
+            <a href="#international-conferences">International Conferences</a>
+            <a href="#reviewer">Reviewer</a>
+        </nav>
+    </aside>
+
+    <!-- Right Content -->
+    <div class="content-column">
+
+        <h1 id="about">About</h1>
+
+        <!-- Bio Section -->
+        <div class="bio-section">
+            <p><strong>Yongze Song</strong> is an Associate Professor at Curtin University. He is an Australian Young Tall Poppy Science Award (YTP) Winner, Royal Geographical Society (RGS) Fellow, UK, Harvard SDL Fellow, US, DAAD AInet Fellow, Germany, and a Committee Member of the International Association for Mathematical Geosciences (IAMG).</p>
+
+            <p>Yongze leads the Geospatial Intelligence Lab, maintaining strong industry networks and delivering industry-driven research projects about sustainable infrastructure management using emerging technologies. He developed more than 30 new geospatial methods and 12 R software packages with over 200,000 downloads for understanding geographical and spatial data. He published over 140 peer-reviewed journal articles, including 9 highly-cited papers. He is a recipient of more than ten awards at international and national levels, such as the Geospatial World 50 Rising Stars, the Global Top 10 Young Scientist Award, World's Top 2% Scientists by Stanford University, and the Australian National Location Data First Prize.</p>
+
+            <p>He is an Associate Editor of five international peer-reviewed journals, including Q1 journals of International Journal of Applied Earth Observation and Geoinformation, GIScience &amp; Remote Sensing, and Geoscientific Model Development. He serves as an Editorial Board Member of 17 journals, a Guest Editor for 20 journal special issues, a Chair or Program Committee Member for over 30 international conferences, and a peer reviewer for over 80 journals. He was invited to present over 100 research seminars at universities (e.g., Harvard University, MIT, Yale, ANU, NUS, etc.) and industries globally.</p>
+        </div>
+
+        <!-- Research Interests -->
+        <h2 class="section-heading" id="research-interests">Research Interests</h2>
+        <p>Sustainable development, spatial statistics, geospatial theories, sustainable infrastructure, remote sensing, geospatial artificial intelligence, megaproject management</p>
+
+        <!-- Journal Special Issues -->
+        <h2 class="section-heading" id="journal-special-issues">Journal Special Issues</h2>
+        <p>Serving as Guest Editor for 20 journal special issues</p>
+
+        <div class="year-header">2025</div>
+        <ul class="section-list">
+            <li><strong>Managing Guest Editor:</strong> GIScience &amp; Remote Sensing: Special Issue "Remote Sensing of Greenhouse Gases Emission and Absorption"</li>
+            <li><strong>Guest Editor:</strong> Spatial Statistics: Special Issue "Dynamic Spatial Statistics for Transport Modelling and Human Mobility"</li>
+            <li><strong>Guest Editor:</strong> International Journal of Digital Earth: Special Issue "Integrating Multi-Source Remote Sensing and Artificial Intelligence to Monitor Changes in Surface Water Resources"</li>
+            <li><strong>Guest Editor:</strong> Geo-Spatial Information Science: Special Issue "Quality of Smart Multidimensional Spatial Modeling"</li>
+        </ul>
+
+        <div class="year-header">2024</div>
+        <ul class="section-list">
+            <li><strong>Managing Guest Editor:</strong> International Journal of Applied Earth Observation and Geoinformation: Special Issue "Foundation Models for Earth Observations"</li>
+            <li><strong>Managing Guest Editor:</strong> Land: Special Issue "Climate Mitigation Potential of Urban Ecological Restoration"</li>
+            <li><strong>Guest Editor:</strong> Big Earth Data: Special Issue "Earth Observation and GeoAI for Social Science"</li>
+            <li><strong>Guest Editor:</strong> ISPRS International Journal of Geo-Information: Special Issue "Spatial Information for Improved Living Spaces"</li>
+            <li><strong>Guest Editor:</strong> Remote Sensing: Special Issue "Problem-Driven Geospatial Data Acquisition, Tools and Applications in Earth Observation"</li>
+            <li><strong>Guest Editor:</strong> Remote Sensing: Special Issue "GIS and Remote Sensing in Ocean and Coastal Ecology"</li>
+        </ul>
+
+        <div class="year-header">2023</div>
+        <ul class="section-list">
+            <li><strong>Managing Guest Editor:</strong> Resources, Conservation and Recycling: Special Issue "Advancing geospatial methods for sustainable resource management"</li>
+            <li><strong>Guest Editor:</strong> Urban Climate: Special Issue "Unlocking Insights into Urban Climate with the Application of Spatio-Temporal Big Data"</li>
+            <li><strong>Guest Editor:</strong> Resources, Environment and Sustainability: Special Issue "Geocomputation for resources and environmental sciences"</li>
+        </ul>
+
+        <div class="year-header">2022</div>
+        <ul class="section-list">
+            <li><strong>Managing Guest Editor:</strong> iScience: Special Issue "GeoAI Shaping Earth and Cities: Advances, Opportunities, and Challenges"</li>
+            <li><strong>Managing Guest Editor:</strong> Remote Sensing: Special Issue "Remote Sensing for Mapping Global Land Surface Parameters"</li>
+            <li><strong>Guest Editor:</strong> Annals of GIS: Special Issue "Geospatial Big Data: Theory, Methods, and Applications"</li>
+            <li><strong>Guest Editor:</strong> Science of Remote Sensing: Special Issue "Wildfire Remote Sensing"</li>
+        </ul>
+
+        <div class="year-header">2021</div>
+        <ul class="section-list">
+            <li><strong>Managing Guest Editor:</strong> International Journal of Applied Earth Observation and Geoinformation: Special Issue "Recent Advances in Geocomputation and GeoAI for Mapping"</li>
+            <li><strong>Managing Guest Editor:</strong> Remote Sensing: Special Issue "Remote Sensing on Land Surface Albedo"</li>
+            <li><strong>Managing Guest Editor:</strong> Sustainable Earth: Article Collection "Earth Observation for Mapping Sustainability"</li>
+        </ul>
+
+        <!-- International Conferences -->
+        <h2 class="section-heading" id="international-conferences">International Conferences</h2>
+        <p>Serving as Chair or Committee Member for 36 international conferences</p>
+
+        <div class="year-header">2026</div>
+        <ul class="section-list">
+            <li><strong>Program Committee Member</strong> – The 2nd International Conference of Environmental Remote Sensing and GIS (ICERS 2026), 1-3 July 2026, Zagreb, Croatia</li>
+            <li><strong>Program Committee Member</strong> – The Association of Geographic Information Laboratories in Europe (AGILE) 2026 Conference, 16-19 June 2026, Tartu, Estonia</li>
+        </ul>
+
+        <div class="year-header">2025</div>
+        <ul class="section-list">
+            <li><strong>Tutorial and Education Chair</strong> – IEEE International Geoscience and Remote Sensing Symposium (IGARSS), 3–8 August 2025, Brisbane, Australia. (4000 attendees from 69 countries/regions)</li>
+            <li><strong>Chair</strong> – Session "Spatial Association", The 23rd International Association for Mathematical Geosciences (IAMG) Annual Conference, 8–14 October 2025, Zhuhai, China</li>
+            <li><strong>Program Committee Member</strong> – The 8th ISPRS Geospatial Conference 2025, 15–17 December 2025, University of Tehran, Iran</li>
+            <li><strong>Program Committee Member</strong> – City+2025@Oxford: The 8th International Conference on Interdisciplinary Urban Studies, 29-30 September 2025, University of Oxford, UK</li>
+            <li><strong>Program Committee Member</strong> – The 20th 3D GeoInfo Conference and the 9th Smart Data and Smart Cities Conference (3D GeoInfo &amp; SDSC 2025), 2–5 September 2025, Kashiwa Campus, University of Tokyo, Japan</li>
+            <li><strong>Program Committee Member</strong> – The Thirteenth International Conference on Geographic Information Science (GIScience 2025), 26–29 August 2025, Christchurch, New Zealand</li>
+            <li><strong>Program Committee Member</strong> – The 12th International Conference on Industrial Ecology (ISIE2025), 30 June – 4 July 2025, Singapore</li>
+            <li><strong>Program Committee Member</strong> – The Association of Geographic Information Laboratories in Europe (AGILE) 2025 Conference, 10-13 June 2025, Dresden, Germany</li>
+        </ul>
+
+        <div class="year-header">2024</div>
+        <ul class="section-list">
+            <li><strong>General Chair</strong> – ISPRS Technical Commission IV Symposium 2024, 22–25 October 2024, Fremantle, Perth, Australia. (over 490 attendees from 29 countries/regions)</li>
+            <li><strong>Program Committee Member</strong> – City+2024@Kitakyushu International Conference, 25–28 October 2024, Kitakyushu, Japan</li>
+            <li><strong>Program Committee Member</strong> – The 10th International Conference on Innovative Production and Construction (IPC2024), 11–12 July 2024, Perth, Australia</li>
+            <li><strong>Program Committee Member</strong> – International Conference of Environmental Remote Sensing and GIS (ICERS), 11–12 July 2024, Zagreb, Croatia</li>
+            <li><strong>Program Committee Member</strong> – IEEE International Geoscience and Remote Sensing Symposium (IGARSS) 2024, 7–12 July 2024, Athens, Greece</li>
+            <li><strong>Program Committee Member</strong> – The Association of Geographic Information Laboratories in Europe (AGILE) 2024 Conference, 4–7 June 2024, Glasgow, UK</li>
+            <li><strong>Program Committee Member</strong> – The 8th Smart Data and Smart Cities (SDSC) Conference, 4–8 June 2024, Athens, Greece</li>
+        </ul>
+
+        <div class="year-header">2023</div>
+        <ul class="section-list">
+            <li><strong>General Chair</strong> – City+2023@Perth International Conference, 15 October 2023, Perth, Australia. (over 300 attendees from 29 countries/regions)</li>
+            <li><strong>Chair</strong> – Session "Spatial Association", The 22nd International Association for Mathematical Geosciences (IAMG) Annual Conference, 5–12 August 2023, Trondheim, Norway</li>
+            <li><strong>Chair</strong> – Topics Webinar EO&amp;GEO Series: GIS in the Management of Sustainable and Smart Cities, journals of Remote Sensing, Drones, ISPRS IJGI, and Land, 9 March 2023</li>
+            <li><strong>Program Committee Member</strong> – GIScience 2023: The 12th International Conference on Geographic Information Science, 12–15 September 2023, Leeds, UK</li>
+            <li><strong>Program Committee Member</strong> – The ISPRS 2023 Geospatial Week, 2–7 September 2023, Cairo, Egypt</li>
+            <li><strong>Program Committee Member</strong> – The 22nd International Association for Mathematical Geosciences (IAMG) Annual Conference, 5–12 August 2023, Trondheim, Norway</li>
+            <li><strong>Program Committee Member</strong> – The 26th Conference of the Association of Geographic Information Laboratories in Europe (AGILE), 13–16 June 2023, Delft, Netherlands</li>
+        </ul>
+
+        <div class="year-header">2022</div>
+        <ul class="section-list">
+            <li><strong>Logistics Chair</strong> – The 35th Australasian Joint Conference on Artificial Intelligence, 5–8 December 2022, Perth, Australia. (Received the Special Thanks Award)</li>
+            <li><strong>Chair</strong> – Session "Ethical Artificial Intelligence", The 35th Australasian Joint Conference on Artificial Intelligence, 5–8 December 2022, Perth, Australia</li>
+            <li><strong>Chair</strong> – Session "Spatial Associations", The 21st International Association for Mathematical Geosciences (IAMG) Annual Conference, 29 August – 3 September 2022, Nancy, France</li>
+            <li><strong>Chair</strong> – Session "Symposium on Scale in Spatial Analytics and Modeling: Scale and Spatial Associations", 2022 AAG Annual Meeting, American Association of Geographers, 25 February – 1 March 2022, New York City, United States</li>
+            <li><strong>Program Committee Member</strong> – 7th Smart Data and Smart Cities Conference &amp; 17th 3DGeoInfo Conference, 19–21 October 2022, Sydney, Australia</li>
+            <li><strong>Program Committee Member</strong> – Geospatial Conference 2022, ISPRS International Joint Conferences, 15–18 October 2022, University of Tehran, Tehran, Iran</li>
+            <li><strong>Special Issue Coordinator</strong> – World Building Congress (WBC2022) and The 9th International Conference on Innovative Production and Construction (IPC2022), Joint Conference, 27–30 June 2022, RMIT University, Melbourne, Australia</li>
+            <li><strong>Keynote Speaker</strong> – The Fifth International Workshop on Environment and Geoscience (IWEG2022), 16–18 July 2022, China</li>
+            <li><strong>Program Committee Member</strong> – The 7th International Conference on Civil, Structural and Transportation Engineering (ICCSTE'22), 5–7 June 2022, Niagara Falls, Canada</li>
+            <li><strong>Program Committee Member</strong> – Symposium on Scale in Spatial Analytics and Modelling, 2022 AAG Annual Meeting, American Association of Geographers, 25 February – 1 March 2022, New York City, United States</li>
+        </ul>
+
+        <div class="year-header">2021</div>
+        <ul class="section-list">
+            <li><strong>Special Issue Coordinator</strong> – Pacific Islands GIS &amp; RS Conference 2021 (PGRSC-2021), The Pacific GIS &amp; Remote Sensing Council, 22–23 November 2021, Port Vila, Vanuatu</li>
+            <li><strong>Program Committee Member</strong> – The 24th Conference of the Association of Geographic Information Laboratories in Europe (AGILE), 8–11 June 2021, Crete, Greece</li>
+        </ul>
+
+        <!-- Reviewer Section -->
+        <h2 class="section-heading" id="reviewer">Reviewer</h2>
+        <p>Providing peer review for over 80 international academic journals</p>
+
+        <ul class="reviewer-grid">
+            <li>Annals of GIS</li>
+            <li>Annals of the American Association of Geographers</li>
+            <li>AIMS Mathematics</li>
+            <li>Applied Intelligence</li>
+            <li>Applied Sciences</li>
+            <li>Asian Geographer</li>
+            <li>Austrian Journal of Statistics</li>
+            <li>Automation in Construction</li>
+            <li>Big Earth Data</li>
+            <li>BMC Ecology and Evolution</li>
+            <li>Buildings</li>
+            <li>Built Environment Project and Asset Management</li>
+            <li>Canadian Journal of Remote Sensing</li>
+            <li>Cities</li>
+            <li>Complexity</li>
+            <li>Computers and Geosciences</li>
+            <li>Discover Cities</li>
+            <li>Energies</li>
+            <li>Engineering</li>
+            <li>Engineering, Construction and Architectural Management</li>
+            <li>Environmental and Sustainability Indicators</li>
+            <li>Environmental Earth Sciences</li>
+            <li>Environmental Impact Assessment Review</li>
+            <li>Environmental Research</li>
+            <li>Environmental Research Communications</li>
+            <li>Environmental Research: Infrastructure and Sustainability</li>
+            <li>Environmental Science &amp; Technology</li>
+            <li>Environmental Science and Ecotechnology</li>
+            <li>Environmental Science and Pollution Research</li>
+            <li>EPJ Data Science</li>
+            <li>Geo-spatial Information Science</li>
+            <li>Geography and Sustainability</li>
+            <li>Geomatica</li>
+            <li>GIScience &amp; Remote Sensing</li>
+            <li>Health and Place</li>
+            <li>Heliyon</li>
+            <li>Humanities and Social Sciences Communications</li>
+            <li>IEEE Access</li>
+            <li>IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing</li>
+            <li>IEEE Transactions on Industrial Informatics</li>
+            <li>IEEE Transactions on Intelligent Transportation Systems</li>
+            <li>Information Geography</li>
+            <li>Information Sciences</li>
+            <li>International Journal of Applied Earth Observation and Geoinformation</li>
+            <li>International Journal of Construction Management</li>
+            <li>International Journal of Digital Earth</li>
+            <li>International Journal of Environmental Research and Public Health</li>
+            <li>International Journal of Environmental Science and Technology</li>
+            <li>International Journal of Geographical Information Science</li>
+            <li>International Journal of Green Energy</li>
+            <li>International Journal of Pavement Research and Technology</li>
+            <li>International Journal of Sustainable Transportation</li>
+            <li>iScience</li>
+            <li>ISPRS International Journal of Geo-Information</li>
+            <li>Journal of Biogeography</li>
+            <li>Journal of Cleaner Production</li>
+            <li>Journal of Environmental Management</li>
+            <li>Journal of Hydrology</li>
+            <li>Journal of Industrial and Management Optimization</li>
+            <li>Journal of Marine Science and Engineering</li>
+            <li>Journal of Safety Science and Resilience</li>
+            <li>Mathematical Geosciences</li>
+            <li>Nature Cities</li>
+            <li>Nature Communications</li>
+            <li>npj Heritage Science</li>
+            <li>PLOS One</li>
+            <li>R Journal</li>
+            <li>Remote Sensing</li>
+            <li>Remote Sensing of Environment</li>
+            <li>Renewable and Sustainable Energy Reviews</li>
+            <li>Resources, Conservation &amp; Recycling</li>
+            <li>Science of Remote Sensing</li>
+            <li>Science of The Total Environment</li>
+            <li>Science Advances</li>
+            <li>Sensors</li>
+            <li>Sustainability</li>
+            <li>Sustainable and Resilient Infrastructure</li>
+            <li>Sustainable Cities and Society</li>
+            <li>Sustainable Earth Reviews</li>
+            <li>Transactions in GIS</li>
+            <li>Urban Climate</li>
+        </ul>
+
+    </div>
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods & Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab & Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+
+<!-- Scroll spy: highlight active sidebar link -->
+<script>
+(function() {
+    const sections = document.querySelectorAll('[id]');
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
+    const sectionIds = Array.from(navLinks).map(a => a.getAttribute('href').slice(1));
+
+    function onScroll() {
+        let current = sectionIds[0];
+        for (const id of sectionIds) {
+            const el = document.getElementById(id);
+            if (el && el.getBoundingClientRect().top <= 80) {
+                current = id;
+            }
+        }
+        navLinks.forEach(a => {
+            a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+        });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+})();
+</script>
+
+</body>
+</html>

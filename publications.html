@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publications - Yongze Song</title>
+    <meta name="description" content="Publications - Yongze Song. Complete list of peer-reviewed journal articles.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* === Page-specific styles for publications.html === */
+        h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-top: 0.5em;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-accent);
+            margin-top: 0.6em;
+            margin-bottom: 0.3em;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1em;
+        }
+
+        /* Publication items */
+        .publication {
+            font-size: 0.85rem;
+            line-height: 1.7;
+            margin-bottom: 0.8em;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Page title */
+        .page-title {
+            margin-top: 0.6em;
+            margin-bottom: 0.4em;
+        }
+
+        /* Icons + High-impact link row */
+        .icons-impact-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8em;
+        }
+
+        /* Social icons row */
+        .social-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .social-row a {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .social-row img {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .social-row a:hover img { opacity: 1; }
+        .social-row .text-icon {
+            font-family: var(--font-sans);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #555;
+            text-decoration: none;
+            padding: 1px 4px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            line-height: 1.2;
+        }
+
+        /* High-impact link */
+        .high-impact-link {
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+        .high-impact-link a {
+            text-decoration: none;
+            color: var(--color-text);
+        }
+        .high-impact-link a:hover {
+            color: var(--color-accent);
+        }
+
+        /* Featured articles section background */
+        .featured-section {
+            background-color: rgba(252, 185, 0, 0.06);
+            padding: 1.5em;
+            margin-bottom: 2em;
+            border-radius: 4px;
+        }
+
+        /* Year heading */
+        .year-heading {
+            font-weight: 600;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            font-size: 1rem;
+        }
+
+
+        .site-footer {
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        .footer-inner {
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .footer-social {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .footer-social a {
+            display: inline-flex;
+            align-items: center;
+        }
+        .footer-social img {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .footer-social a:hover img { opacity: 1; }
+
+        .footer-logos {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        .footer-logos a {
+            display: inline-flex;
+        }
+        .footer-logos img { height: 30px; width: auto; }
+
+        @media (max-width: 768px) {
+            .header-inner {
+                flex-direction: column;
+                gap: 15px;
+            }
+            nav {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            nav a {
+                margin-left: 12px;
+                margin-right: 12px;
+            }
+            .main-content {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER & NAV -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="site-title">
+                Yongze Song
+                <span>Geography & Sustainability</span>
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="publications.html">Publications</a>
+                <a href="methods.html">Methods</a>
+                <a href="latest.html">Latest</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- Page Title -->
+        <h1 class="page-title">Publications</h1>
+
+        <!-- Social Icons + High-Impact Link Row -->
+        <div class="icons-impact-row">
+            <div class="social-row">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://www.google.com/search?kgmid=/g/11h2jvvq0r&hl=en&q=Yongze+Song"><img src="assets/images/google.png" alt="Google"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                <a href="cn.html" style="font-size:0.7rem; margin-left:4px; text-decoration:none; color:#888;">中文</a>
+            </div>
+            <div class="high-impact-link">
+                <a href="high-impact-articles.html">🔥 Recent High Impact Articles</a>
+            </div>
+        </div>
+
+        <!-- Selected Featured Articles Section -->
+        <h2>Selected Featured Articles</h2>
+        <div class="featured-section">
+            <p class="publication">[1] <strong>Song, Y.*</strong>, 2022. The second dimension of spatial association. International Journal of Applied Earth Observation and Geoinformation. 111, 102834. <a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X"><strong>pdf</strong></a></p>
+
+            <p class="publication">[2] <strong>Song Y.*</strong>, 2023. Geographically Optimal Similarity. Mathematical Geosciences. 8:1-26. <a href="https://link.springer.com/article/10.1007/s11004-022-10036-8"><strong>pdf</strong></a></p>
+
+            <p class="publication">[3] <strong>Song, Y.*</strong>, Biljecki, F., Camps-Valls, G. and Atkinson, P.M., 2026. GeoAI: Beyond mapping earth and cities through explainability, adaptability, and sustainability. iScience, 29(1), p.114407. <a href="https://doi.org/10.1016/j.isci.2025.114407"><strong>pdf</strong></a></p>
+
+            <p class="publication">[4] <strong>Song, Y.*</strong>, Helmholz, P., Su, F., Zhou, C., Lotfata, A., Zohar, M., González Leonardo, M., &amp; Sila-Nowicka, K. 2025. Advancing geospatial methods for addressing global resource and sustainability challenges. Resources, Conservation and Recycling. <a href="https://www.researchgate.net/publication/393722487_Advancing_geospatial_methods_for_addressing_global_resource_and_sustainability_challenges"><strong>pdf</strong></a></p>
+
+            <p class="publication">[5] <strong>Song, Y.*</strong>, Kalacska, M., Gašparović, M., Yao, J. &amp; Najibi, N., 2023. Advances in geocomputation and geospatial artificial intelligence (GeoAI) for mapping. International Journal of Applied Earth Observation and Geoinformation. p.103300. <a href="https://www.sciencedirect.com/science/article/pii/S156984322300122X"><strong>pdf</strong></a></p>
+
+            <p class="publication">[6] <strong>Song, Y.*</strong>, Wang, J.F., Ge, Y., et al., 2020. An optimal parameters-based geographical detector model enhances geographic characteristics of explanatory variables for spatial heterogeneity analysis: cases with different types of spatial data. GIScience &amp; Remote Sensing. 57(5): 593-610. <strong style="color: #8C1515;">Highly Cited Paper;</strong> <strong style="color: #8C1515;">No. 1 Most Cited Article in the history of the journal <em>GIScience &amp; Remote Sensing</em> (over 40 years).</strong> <a href="https://www.tandfonline.com/doi/10.1080/15481603.2020.1760434"><strong>pdf</strong></a></p>
+
+            <p class="publication">[7] <strong>Song, Y.</strong>, Wu, P., Li, Q., Liu, Y., and Karunaratne, L., 2021. Hybrid Nonlinear and Machine Learning Methods for Analyzing Factors Influencing the Performance of Large-Scale Transport Infrastructure. IEEE Transactions on Intelligent Transportation Systems. <strong style="color: #8C1515;">Highly Cited Paper</strong></p>
+
+            <p class="publication">[8] <strong>Song, Y.*</strong>, Wang, X.Y., Wright, G., Thatcher, D., et al., 2019. Traffic Volume Prediction with Segment-Based Regression Kriging and its Implementation in Assessing the Impact of Heavy Vehicles. IEEE Transactions on Intelligent Transportation Systems. (20)1: 232 – 243. <strong style="color: #8C1515;">Highly Cited Paper</strong></p>
+
+            <p class="publication">[9] <strong>Song, Y.,</strong> Tan, Y., Song, Y.M., et al., 2018. Spatial and temporal variations of spatial population accessibility to public hospitals: A case study of rural-urban comparison. GIScience &amp; Remote Sensing. <strong style="color: #8C1515;">Highly Cited Paper</strong></p>
+
+            <p class="publication">[10] <strong>Song, Y.*</strong>, Wu, P., Hampson, K., and Anumba, C., 2021. Assessing Block-level Sustainable Transport Infrastructure Development Using a Spatial Trade-Off Relation Model. International Journal of Applied Earth Observation and Geoinformation. 105, 102585. <a href="https://www.sciencedirect.com/science/article/pii/S0303243421002920"><strong>pdf</strong></a></p>
+
+            <p class="publication">[11] <strong>Song, Y.</strong>, Thatcher, D., Li, Q., McHugh, T., &amp; Wu, P., 2021. Developing sustainable road infrastructure performance indicators using a model-driven fuzzy spatial multi-criteria decision making method. Renewable and Sustainable Energy Reviews. 138. 110538. <a href="https://yongzesong.com/wp-content/uploads/2026/01/1-s2.0-s1364032120308224-main-1.pdf"><strong>pdf</strong></a></p>
+
+            <p class="publication">[12] <strong>Song, Y.*</strong>, Wu, P., 2021. An interactive detector for spatial associations. International Journal of Geographical Information Science. <a href="https://yongzesong.com/wp-content/uploads/2021/11/an-interactive-detector-for-spatial-associations.pdf"><strong>pdf</strong></a></p>
+        </div>
+
+        <!-- Full List of Journal Articles Section -->
+        <h2>Full list of Journal Articles</h2>
+        <p class="publication"><u>Note: Underlined names are my supervised students as first authors.</u> <strong>Supervised 34 PhD students in publishing 65 their first-author articles in Q1 journals</strong>.</p>
+
+        <p class="year-heading">2026</p>
+        <p class="publication">[147] <strong>Song, Y.*</strong>, Biljecki, F., Camps-Valls, G. and Atkinson, P.M., 2026. GeoAI: Beyond mapping earth and cities through explainability, adaptability, and sustainability. iScience, 29(1), p.114407.</p>
+
+        <p class="publication">[146] <u>Liu, H.</u>, <strong>Song, Y.*</strong> and Yi, W., 2026. Degree of spatial interpretability. <em>International Journal of Geographical Information Science</em>, pp.1-21.</p>
+
+        <p class="publication">[145] <u>Liu, H.</u>, <strong>Song, Y.*</strong>, Yi, W. and Zhang, P., 2026. Degree of geocomplexity for diagnosing spatial pattern loss beyond prediction accuracy. <em>GIScience &amp; Remote Sensing</em>, 63(1), p.2657087.</p>
+
+        <p class="publication">[144] <u>Luo, P.</u>, Wu, Y. and <strong>Song, Y.*</strong>, 2026. Focal-Feature Regression Kriging. <em>Geographical Analysis</em>, <em>58</em>(2), p.e70035.</p>
+
+        <p class="publication">[143] <u>Chen, L.</u>, Chen, Z., <strong>Song, Y.*</strong>, Yang, C., He, S., Li, Z., Guo, W. and Chen, N., 2026. Spatiotemporal adaptive multiscale transformer for prediction. <em>International Journal of Geographical Information Science</em>, pp.1-25.</p>
+
+        <p class="publication">[142] <u>Luo, P., Li, Y.</u>, <strong>Song, Y.*</strong>, Li, Z. and Meng, L., 2026. Measuring univariate effects in the interaction of geographical patterns. <em>International Journal of Geographical Information Science</em>, pp.1-32.</p>
+
+        <p class="publication">[141] <u>Sun, Y.</u>, Wu, G., <strong>Song, Y.*</strong>, Liu, H., Wang, L., Zhang, Z. &amp; Hu, J., 2026. Local effects of pattern interactions in driving urbanization. <em>International Journal of Applied Earth Observation and Geoinformation</em>, 146, 105072.</p>
+
+        <p class="publication">[140] <u>Zhang, P.</u>, Yi, W., <strong>Song, Y.*</strong>, Wu, P., Chan, A.P. and Gao, Y., 2026. Spatiotemporal Particle Swarm Optimization for Future Cost Allocation in Large-Scale Transportation Infrastructure Maintenance. <em>ISPRS International Journal of Geo-Information</em>.</p>
+
+        <p class="publication">[139] <u>Lyu, W.</u>, Lei, Y., Yi, W., <strong>Song, Y.</strong>, Li, X., Dai, S., Qin, Y. and Zhao, W., 2026. Causal discovery in urban data with temporal empirical dynamic modeling: The R package tEDM. <em>Computers, Environment and Urban Systems</em>, <em>127</em>, p.102435.</p>
+
+        <p class="publication">[138] Li, X., Qian, S., Lyu, X., <strong>Song, Y.</strong>, Liu, F., Fang, Y., Xu, Z. and Kaup, A., 2026. Frequency–spatial decoupled co-modeling transformer for fine-grained remote sensing image segmentation. <em>Information Sciences</em>, p.123489.</p>
+
+        <p class="publication">[137] Wu, J., Liu, X., Yang, L., <strong>Song, Y.</strong>, Cai, H. and Yu, B., 2026. An improved optimization deep nonnegative matrix factorization for hyperspectral unmixing. <em>Science of Remote Sensing</em>, p.100356.</p>
+
+        <p class="publication">[136] Xie, H., Li, S., Zaman, A., <strong>Song, Y.</strong> and Wu, P., 2026. Integrating life cycle assessment with GIS and AI for the building sector: a comprehensive review. <em>Energy and Buildings</em>, p.117095.</p>
+
+        <p class="publication">[135] Yi, W., Wang, H., Zhen, L., <strong>Song, Y.</strong> &amp; Xiao, B., 2026. Strategic planning of modular construction hubs: A bi-level framework integrating governmental and industrial perspectives. <em>Journal of Construction Engineering and Management</em>.</p>
+
+        <p class="publication">[134] Ding, Y., Chen, D., Zlatanova, S., Wu, M., Cao, K., <strong>Song, Y.</strong> and Yang, Y., 2026. Simplifying complex landmark models with holes for 3D maps: a topological perception-based approach. <em>International Journal of Geographical Information Science</em>, pp.1-34.</p>
+
+        <p class="publication">[133] <u>Cao, X.</u>, Ju, J., Wu, C., Yeh, P.J.F., Shi, M., Dewan, A., <strong>Song, Y.</strong>, Zhang, X., Yao, T., Jiao, Y. and Li, Q., 2026. Assessing the response of terrestrial water storage to climate warming in China by coupling CMIP6 multi-model ensembles, hydrological model, and machine learning algorithms. <em>Climatic Change</em>, <em>179</em>(2), p.27.</p>
+
+        <p class="publication">[132] <u>Andriambololonaharisoamalala, R.</u>, Helmholz, P., Ivánová, I., Jones, E., Soon, S., Bulatov, D. and <strong>Song, Y.</strong>, 2026. Enhanced downscaling of urban land surface temperatures using a land cover–enhanced nonlinear model with Landsat-8/9 and Sentinel-2 imagery. <em>Annals of the American Association of Geographers</em></p>
+
+        <p class="year-heading">2025</p>
+        <p class="publication">[131] <strong>Song, Y.*</strong>, Helmholz, P., Su, F., Zhou, C., Lotfata, A., Zohar, M., González Leonardo, M., &amp; Sila-Nowicka, K. 2025. Advancing geospatial methods for addressing global resource and sustainability challenges. <em>Resources, Conservation and Recycling</em>.</p>
+
+        <p class="publication">[130] <u>Ren, K.</u>, <strong>Song, Y.*</strong> and Yu, Q., 2025. Second-dimension outliers for spatial prediction. <em>International Journal of Geographical Information Science</em>.</p>
+
+        <p class="publication">[129] <u>Hu, J.</u>, <strong>Song, Y.*</strong> and Zhang, T., 2025. A local indicator of stratified power. <em>International Journal of Geographical Information Science</em>.</p>
+
+        <p class="publication">[128] <u>Yang, X.</u>, <strong>Song, Y.*</strong>, Yoo, C., Ren, K. and Wu, P., 2025. Irregular anisotropy in surface urban heat island footprint. <em>Sustainable Cities and Society</em>, p.106779.</p>
+
+        <p class="publication">[127] <u>Ren, K.</u>, <strong>Song, Y.*</strong>, Li, L., Mancini, F., Xiao, Z., Zhang, X., Qu, R., &amp; Yu, Q. 2025. Identifying climate and environmental determinants of spatial disparities in wheat production using a geospatial machine learning model. <em>GIScience &amp; Remote Sensing</em>, 62(1).</p>
+
+        <p class="publication">[126] <u>Hu, J., Qu, R.</u>, <strong>Song, Y.*</strong> and Wu, P., 2025. Local pathways of association. <em>International Journal of Applied Earth Observation and Geoinformation</em>, <em>139</em>, p.104531.</p>
+
+        <p class="publication">[125] <u>Zhang, P.</u>, Yi, W., <strong>Song, Y.*</strong>, Yan, P., Wu, P., &amp; Chan, A. P.-C. 2025. Dynamic spatiotemporal graph network for traffic accident risk prediction. <em>GIScience &amp; Remote Sensing</em>.</p>
+
+        <p class="publication">[124] <u>Zhang, P.</u>, Yi, W., <strong>Song, Y.*</strong>, Wu, P., Hampson, K. and Shemery, A., 2025. Gaussian Mixture Segmentation for Managing Deterioration of Large-Scale Road Networks. <em>IEEE Transactions on Intelligent Transportation Systems</em>.</p>
+
+        <p class="publication">[123] Liu, Z., <u>Zheng, K.</u>, <strong>Song, Y.*</strong> and Zhang, J., 2025. Daily high-resolution PM2.5 mapping using spatiotemporal CNN-transformer-KAN model. <em>International Journal of Applied Earth Observation and Geoinformation</em>, <em>144</em>, p.104900.</p>
+
+        <p class="publication">[122] Meng, J., Dong, Z., <strong>Song, Y.*</strong>, 2025. Unsupervised feature correlation-based spatial stratification for local context-aware modelling. <em>GIScience &amp; Remote Sensing</em>, 62(1).</p>
+
+        <p class="publication">[121] <u>Xu, D.</u>, Peng, X., Tang, Q. and <strong>Song, Y.*</strong>, 2025. Urbanization's role in shaping ornamental tree diversity: a remote sensing and future scenario-based perspective. <em>GIScience &amp; Remote Sensing</em>, <em>62</em>(1), p.2557050.</p>
+
+        <p class="publication">[120] <u>Qu, R.</u>, He, Z., He, L., Awange, J., <strong>Song, Y.*</strong>, Wang, B., Wen, B. and Hu, J., 2025. Impact of Climate, Phenology, and Soil Factors on Net Ecosystem Productivity in Zoigê Alpine Grassland. <em>Agronomy</em>, <em>15</em>(3), p.685.</p>
+
+        <p class="publication">[119] Bai, T., <strong>Song, Y.</strong>, Li, T., Zheng, J. and Zhu, K., 2025. Elevation correction of forest biogeophysical cooling effect in China. Chinese Geographical Science, 35(6), pp.1283–1299.</p>
+
+        <p class="publication">[118] <u>Liu, Y.</u>, <strong>Song, Y.</strong>, Liu, P., Lai, L., &amp; Zhang, Y. 2025. Concerns about the temporal matching windows in satellite–ground synchronization for lacustrine environment mapping. <em>Water Research, 286</em>, 124208.</p>
+
+        <p class="publication">[117] <u>Chen, C.</u>, <strong>Song, Y.</strong>, Lv, W., Shemery, A., Hampson, K., Yi, W., Zhong, Y. and Wu, P., 2025. Predicting pavement cracking performance using laser scanning and geocomplexity-enhanced machine learning. <em>Computer-Aided Civil and Infrastructure Engineering</em>.</p>
+
+        <p class="publication">[116] <u>Kaleem, A.</u>, Zaman, A. &amp;<strong>Song, Y.</strong>, 2025. Exploring green hydrogen production potential in Western Australia: A decision framework for site suitability and scenario evaluation. <em>Sustainable Energy Technologies &amp; Assessments</em>, 83, 104652.</p>
+
+        <p class="publication">[115] <u>Wang, X.</u>, Zhou, L., <strong>Song, Y.</strong>, López-Carr, D., Wang, S., Chen, H., Gao, H., Lyu, R., Sun, Q., Guo, Z. and Wei, W., 2025. Beyond flat cities: dramatic 2D/3D differences in urban gray–green space configurations and the nonlinear thermal regulation mechanisms. <em>GIScience &amp; Remote Sensing</em>, <em>62</em>(1), p.2572174.</p>
+
+        <p class="publication">[114] Ma, X., <u>Zhang, Z.#</u>, &amp; <strong>Song, Y.</strong> 2025. Geographically informed graph neural networks. Spatial Statistics, 69, 100920.</p>
+
+        <p class="publication">[113] <u>Liu, X.</u>, Taylor, M.P., <strong>Song, Y.</strong> and Aelion, C.M., 2025. Identifying factors influencing trace metal concentrations in urban residential soil using an optimal parameter-based geographical detector model. <em>Environmental Research</em>, p.122045.</p>
+
+        <p class="publication">[112] Wei, W., Lu, D., <strong>Song, Y.</strong>, Sherif, M., Dewan, A., Liu, T., Zhou, L., Zhou, J. and Wang, X., 2025. Spatiotemporal characteristics of drought events in Asia from a three-dimensional perspective. <em>Climate Dynamics</em>, <em>63</em>(3), pp.1-18.</p>
+
+        <p class="publication">[111] Chen, J., Sun, G., <strong>Song, Y.</strong>, Cao, Y., Yoo, C., Guo, Y., Zhao, C., Lu, L. and Weng, Q., 2025. Global Variations of Urban Form: Characterization and Quantification through Intelligent Remote Sensing Image Analysis. <em>Sustainable Cities and Society</em>, p.106424.</p>
+
+        <p class="publication">[110] Meng, J., Dong, Z. and <strong>Song, Y.</strong>, 2025. A spatial context-aware model for climate model data fusion. <em>International Journal of Digital Earth</em>, <em>18</em>(1), p.2509099.</p>
+
+        <p class="publication">[109] <u>Xu, D.</u>, Bai, T., Chen, W.-Q., <strong>Song, Y.</strong>, Zhou, Y., Geng, J. and Zhao, L., 2025. Toward an intelligent and near-real-time framework for global ecological monitoring: Advances, challenges, and the GIEHP initiative. Chinese Geographical Science, 35(6), pp.1217–1239.</p>
+
+        <p class="publication">[108] Wang, H., Yi, W., Zhen, L., <strong>Song, Y.</strong> and Wu, P., 2025. Designing Optimal Government–Contractor Subsidy Policy for Promoting Modular Construction: Bilevel Stochastic Program. <em>Journal of Construction Engineering and Management</em>, <em>151</em>(10), p.04025136.</p>
+
+        <p class="publication">[107] <u>Ashikuzzaman, M.</u>, Swapan, M.S.H., Zaman, A.U. and <strong>Song, Y.</strong>, 2025. From social innovation to institutional governance: Unveiling urban rooftop farming in Dhaka city using YouTube video analysis. <em>Landscape and Urban Planning</em>, <em>259</em>, p.105366.</p>
+
+        <p class="publication">[106] <u>Wang, X.</u>, Zhou, L., López-Carr, D., <strong>Song, Y.</strong>, Gao, H., Che, T., Liu, Z. and Wei, W., 2025. Urban grey-green scales: A new perspective for assessing dynamic spatial trade-offs. <em>International Journal of Applied Earth Observation and Geoinformation</em>, <em>142</em>, p.104708.</p>
+
+        <p class="publication">[105] <u>Wang, J.</u>, Shen, Y., Awange, J., <strong>Song, Y.</strong>, Yang, L., Chen, Q., and Kasedde, A., 2025. Reconstructing total water storage anomalies over the Lake Victoria Basin (1971–2022) using an enhanced RecNet model. Geophysical Research Letters, 52(9)</p>
+
+        <p class="publication">[104] <u>Wang, B.</u>, He, L., He, Z., <strong>Song, Y.</strong>, Qu, R., Hu, J., Wang, Z. and Zhang, Z., 2025. Spatiotemporal Landslide Monitoring in Complex Environments Using Radiative Transfer Model and SBAS-InSAR Technology. Land, <em>14</em>(5), 956</p>
+
+        <p class="publication">[103] <u>Ashikuzzaman, M.</u>, Swapan, M.S.H., Zaman, A.U. and <strong>Song, Y.</strong>, 2025. Transitioning from Social Innovation to Public Policy: Can Bangladesh Integrate Urban Rooftop Farming Policies into Governance by Examining Global Practices?. <em>Sustainability</em>, <em>17</em>(19), p.8768.</p>
+
+        <p class="publication">[102] Xu, N., Xu, H., Li, W., Lu, H., <strong>Song, Y.</strong>, Yao, J., Ma, Y., Ren, H., He, T., Mo, F., &amp; Gong, P. 2025. A large-scale estimation method for beach slopes using ICESat-2 altimeter: A case study of New Zealand. <em>International Journal of Applied Earth Observation and Geoinformation</em>, 142, Article 104768.</p>
+
+        <p class="publication">[101] <u>Wang, J.,</u> Awange, J., Shen, Y., Tabatabaeiasl, M., &amp; <strong>Song, Y.</strong> 2025. Closing Africa's water balance budget: Assessing the suitability of eight latest precipitation products. <em>International Journal of Applied Earth Observation and Geoinformation, 142</em>, 104711.</p>
+
+        <p class="publication">[100] Ghaffar, F., Deng, X., Khan, B., Zhou, T., <strong>Song, Y.</strong>, &amp; Lim, C. P. 2025. Flood-Eye: Intelligent Segmentation and Area Estimation of Flooded Regions. <em>IEEE Transactions on Geoscience and Remote Sensing</em>.</p>
+
+        <p class="publication">[99] <u>Andriambololonaharisoamalala, R.R.</u>, Helmholz, P., Bulatov, D., Ivanova, I., <strong>Song, Y.</strong>, Soon, S. and Jones, E., 2025. Downscaling of Urban Land Surface Temperatures Using Geospatial Machine Learning with Landsat 8/9 and Sentinel-2 Imagery. <em>Remote Sensing</em>, <em>17</em>(14), p.2392.</p>
+
+        <p class="publication">[98] Chaturvedi, S., Thakur, P.S., Khanna, P., Ojha, A., <strong>Song, Y.</strong> and Awange, J.L., 2025. Satellite Image-Based Surveillance and Early Wildfire Smoke Detection Using a Multiattention Interlaced Network. <em>IEEE Transactions on Industrial Informatics</em>.</p>
+
+        <p class="publication">[97] <u>Lv, W.</u>, Lei, Y., Liu, F., Yan, J., <strong>Song, Y.</strong> and Zhao, W., 2025. gdverse: An R Package for Spatial Stratified Heterogeneity Family. Transactions in GIS, 29(2), p.e70032.</p>
+
+        <p class="publication">[96] <u>Wei, J.</u>, Yue, W., Li, M., Liu, Y. and <strong>Song, Y.</strong>, 2025. Multi-scenario urban growth boundaries and trade-offs among land use functions. <em>Cities</em>, <em>159</em>, p.105752.</p>
+
+        <p class="publication">[95] <u>Wang, J.</u>, Shen, Y., Awange, J., Tabatabaeiasl, M., <strong>Song, Y.</strong> and Liu, C., 2025. A novel generative adversarial network and downscaling scheme for GRACE/GRACE-FO products: Exemplified by the Yangtze and Nile River Basins. <em>Science of The Total Environment</em>, <em>969</em>, p.178874.</p>
+
+        <p class="publication">[94] <u>Jia, N.</u>, Yang, H., Lan, X., Li, Y., <strong>Song, Y.</strong>, Zhang, Z., Song, W., Zhao, R., Ma, T. and Chen, R., 2025. Global soybean trade intensifies the impacts of dietary transition on human mobility. <em>iScience</em>.</p>
+
+        <p class="publication">[93] <u>Zheng, K.</u>, Yu, M., Liu, Z., Bao, S., Pan, Z., <strong>Song, Y.</strong>, Zhu, L. and Xie, Z., 2025. Frequency and prompt learning cooperation enhanced mamba for remote sensing semantic segmentation. <em>IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing</em>.</p>
+
+        <p class="publication">[92] <u>Wang, J.</u>, Shen, Y., Awange, J., Tangdamrongsub, N., Feng, T., Hu, K., <strong>Song, Y.</strong>, Yang, L., Sherif, M. and Wang, X., 2025. Exploring potential drivers of terrestrial water storage anomaly trends in the Yangtze River Basin (2002–2019). <em>Journal of Hydrology: Regional Studies</em>, <em>58</em>, p.102264.</p>
+
+        <p class="publication">[91] <u>Andriambololonaharisoamalala, R.</u>, Helmholz, P., Ivánová, I., Jones, E., Soon, S., Bulatov, D. and <strong>Song, Y.</strong>, 2025. Enhancing the spatial and temporal resolution of satellite-derived land surface temperature in urban environments: A systematic literature review. <em>Urban Climate</em>, <em>60</em>, p.102345.</p>
+
+        <p class="publication">[90] Wang, S., Huang, X., Zhang, M., Bao, S., Liu, L., Fu, X., Zhang, T.,<strong> Song, Y.</strong>, Kedron, P., Wilson, J. and Ye, X., 2025. Open science 2.0: revolutionizing spatiotemporal data sharing and collaboration. <em>Computational Urban Science</em>, <em>5</em>(1), p.4.</p>
+
+        <p class="publication">[89] Xu, N., Xin, H., Wu, J., Yao, J., Ren, H., Zhang, H.S., Xu, H., Luan, H., Xu, D. and <strong>Song, Y</strong>., 2025. ResWLI: a new method to retrieve water levels in coastal zones by integrating optical remote sensing and deep learning. <em>GIScience &amp; Remote Sensing</em>, <em>62</em>(1), p.2524891.</p>
+
+        <p class="publication">[88] <u>Jia, N.</u>, Li, Y., Jiang, Z., Su, R., Lan, X., Zhang, K., Song, W., Zhao, R., Xia, Z., <strong>Song, Y.</strong> and Zhang, Z., 2025. Climate Change, Social Environment, Health, and Urban Inequality: Developing a Novel Adaptive Evaluation Framework. <em>Sustainable Cities and Society</em>, p.106443.</p>
+
+        <p class="year-heading">2024</p>
+        <p class="publication">[87] <u>Zhang, Z.</u>, <strong>Song, Y.</strong>*, Karunaratne, L. and Wu, P., 2024. Robust interaction detector: A case of road life expectancy analysis. <em>Spatial Statistics</em>, p.100814. <strong style="color: #8C1515;">Highly Cited Paper (9)</strong></p>
+
+        <p class="publication">[86] <u>Zhang, Z.</u>, Li, Z. and <strong>Song, Y.*,</strong> 2024. On ignoring the heterogeneity in spatial autocorrelation: consequences and solutions. <em>International Journal of Geographical Information Science</em>, pp.1-27.</p>
+
+        <p class="publication">[85] <u>Luna, L.</u>, Awange, J., <strong>Song, Y.*</strong>, Bui, L.K., Zerihun, A. and Kuhn, M., 2024. Surface water and geomorphological changes of the Blue Nile dynamics associated with the Grand Ethiopian Renaissance Dam (GERD): a multi-temporal analysis. <em>GIScience &amp; Remote Sensing</em>, <em>61</em>(1), p.2346383.</p>
+
+        <p class="publication">[84] <u>Lin, G.</u>, <strong>Song, Y.*</strong>, Xu, D., Swapan, M.S.H., Wu, P., Hou, W. and Xiao, Z., 2024. Interpreting differences in access and accessibility to urban greenspace through geospatial analysis. <em>International Journal of Applied Earth Observation and Geoinformation</em>, <em>129</em>, p.103823.</p>
+
+        <p class="publication">[83] <u>Zhang, P.</u>, Yi, W., <strong>Song, Y.*</strong>, Thomson, G., Wu, P. and Aghamohammadi, N., 2024. Geospatial learning for large-scale transport infrastructure depth prediction. <em>International Journal of Applied Earth Observation and Geoinformation</em>, <em>132</em>, p.103986.</p>
+
+        <p class="publication">[82] Yang, L., <u>Luo, P</u><u>.#</u>, Zhang, Z., <strong>Song, Y.*</strong>, Ren, K., Zhang, C., Awange, J., Atkinson, P.M. and Meng, L., 2024. A spatio-temporal unmixing with heterogeneity model for the identification of remotely sensed MODIS aerosols: Exemplified by the case of Africa. <em>International Journal of Applied Earth Observation and Geoinformation</em>, <em>132</em>, p.104068.</p>
+
+        <p class="publication">[81] Wang, Z., <strong>Song, Y.*</strong>, Zhang, Z., Lin, G., Luo, P., Zhang, X. and Chai, Z., 2024. Identifying Determinants of Spatiotemporal Disparities in Ecological Quality of Mongolian Plateau. <em>Remote Sensing</em>, <em>16</em>(18), p.3385.</p>
+
+        <p class="publication">[80] <u>Xu, D.</u>, Bai, T., Yang, L., Zhou, Y., Chen, B., Xu, H., <strong>Song, Y.*</strong>, Yuan, Y., Cui, Y., Lin, M. and Xia, Z., 2024. Quantifying the Cooling Effect of Urban Greening Driven by Ecological Restoration Projects in China. <em>Environmental Science &amp; Technology</em>.</p>
+
+        <p class="publication">[79] <u>Zhang, X.</u>, <strong>Song, Y.</strong>, Dewan, A., Guo, Z., Cao, X., Bie, Q., Xie, Y., Ma, X., Ren, K., Zhang, H. and Xi, G., 2024. Ecological influence of oasisation on peripheral regions. <em>International Journal of Applied Earth Observation and Geoinformation</em>, <em>132</em>, p.104004.</p>
+
+        <p class="publication">[78] <u>Chen, C.</u>, <strong>Song, Y.</strong>, Shemery, A., Hampson, K., Dewan, A., Zhong, Y. and Wu, P., 2024. Large Scale Pavement Crack Evaluation Through a Novel Spatial Machine Learning Approach Considering Geocomplexity. <em>IEEE Transactions on Intelligent Transportation Systems</em>.</p>
+
+        <p class="publication">[77] Zou, L., <strong>Song, Y.</strong> and Cervone, G., 2024. Geospatial big data: theory, methods, and applications. <em>Annals of GIS</em>, pp.1-5.</p>
+
+        <p class="publication">[76] Shi, G., Luo, L., <strong>Song, Y.</strong>, Li, J. and Pan, S., 2024. Deep transformer-based heterogeneous spatiotemporal graph learning for geographical traffic forecasting. <em>iScience</em>. p.110175.</p>
+
+        <p class="publication">[75] <u>Xu, D.</u>, Bai, T., <strong>Song, Y.</strong>, Xia, Z., Duan, X., Santamouris, M. and Cui, Y., 2024. Reassessing the climate mitigation potential of Chinese ecological restoration: The undiscovered potential of urban. <em>The Innovation Geoscience</em>, <em>2</em>(2), p.100068.</p>
+
+        <p class="publication">[74] <u>Wang, X.</u>, Chen, G., Awange, J., <strong>Song, Y.</strong>, Wu, Q., Li, X., February, E., Saiz, G., Kiese, R., Li, X. and Xiao, J., 2024. Establishing the global isoscape of leaf carbon in C3 plants through the integrations of remote sensing, carbon, geographic, and physiological information. <em>Remote Sensing of Environment</em>, 302, p.113987.</p>
+
+        <p class="publication">[73] <u>Ming, Y.</u>, Liu, Y., Li, Y. and <strong>Song, Y.</strong>, 2024. Unraveling nonlinear and spatial non-stationary effects of urban form on surface urban heat islands using explainable spatial machine learning. <em>Computers, Environment and Urban Systems</em>, <em>114</em>, p.102200.</p>
+
+        <p class="publication">[72] Wei, W., Wang, J., Wang, X., <strong>Song, Y.</strong>, Sherif, M., Wang, X., Dewan, A., Ram, O.Y., Yan, P., Liu, T. and Lu, D., 2024. Assessing the stability of terrestrial water storage to drought based on CMIP6 forcing scenarios. <em>Journal of Hydrology</em>, p.132232.</p>
+
+        <p class="publication">[71] Chen, C., Zou, Z., Sun, W., Yang, G., <strong>Song, Y.</strong> and Liu, Z., 2024. Mapping the distribution and dynamics of coastal aquaculture ponds using Landsat time series data based on U2-Net deep learning model. <em>International Journal of Digital Earth</em>, <em>17</em>(1), p.2346258.</p>
+
+        <p class="publication">[70] <u>Wang, J.</u>, Awange, J., Shen, Y., Yang, L., Feng, T. and <strong>Song, Y.</strong>, 2024. Reconstructed centennial precipitation-driven water storage anomalies in the Nile River Basin using RecNet and their suitability for studying ENSO and IOD impacts. <em>Journal of Hydrology</em>, p.132272.</p>
+
+        <p class="year-heading">2023</p>
+        <p class="publication">[69] <strong>Song Y.*</strong>, 2023. Geographically Optimal Similarity. Mathematical Geosciences. 8:1-26.</p>
+
+        <p class="publication">[68] <strong>Song, Y.*</strong>, Kalacska, M., Gašparović, M., Yao, J. &amp; Najibi, N., 2023. Advances in geocomputation and geospatial artificial intelligence (GeoAI) for mapping. International Journal of Applied Earth Observation and Geoinformation. p.103300.</p>
+
+        <p class="publication">[67] Ge, Y., Hu, S., <strong>Song, Y.#</strong>, Zheng, H., Liu, Y., Ye, X., Ma, T., Liu, M. &amp; Zhou, C., 2023. Sustainable poverty reduction models for the coordinated development of the social economy and environment in China. Science Bulletin.</p>
+
+        <p class="publication">[66] <u>Zhang. Z.</u>, <strong>Song, Y.*</strong>, Luo, P., &amp; Wu, P., 2023. Geocomplexity explains spatial errors. International Journal of Geographical Information Science.</p>
+
+        <p class="publication">[65] <u>Luo., P.</u>, <strong>Song, Y.*</strong>, Zhu, D., Cheng, J., &amp; Meng, L., 2023. A generalized heterogeneity model for spatial interpolation. International Journal of Geographical Information Science. 37(3): 634-659.</p>
+
+        <p class="publication">[64] <u>Zhang, Z.</u>, <strong>Song, Y.*</strong>, Luo, P., Wu, P., Liu, X., and Wang, M., 2023. Elucidation of spatial disparities of factors that affect air pollutant concentrations in industrial regions at a continental level. International Journal of Applied Earth Observation and Geoinformation. 117, 103221</p>
+
+        <p class="publication">[63] Tang, Y., <strong>Song, Y.*</strong>, Wang, Y., Lai, S., Alegana, V. A., Liu, X., 2023. National variation in patterns of bone disease treatment-seeking behaviors: A study of more than 50,000 hospital admissions between 2008 and 2021. International Journal of Applied Earth Observation and Geoinformation. 117, 103219</p>
+
+        <p class="publication">[62] <u>Zhang, Z.</u>, <strong>Song, Y.*</strong>, Archer, N. and Wu, P., 2023. Spatial disparity of urban performance from a scaling perspective: a study of industrial features associated with economy, infrastructure, and innovation. GIScience &amp; Remote Sensing. 60(1), p.2167567.</p>
+
+        <p class="publication">[61] Cheng, T., Zhao, Y., <strong>Song, Y.*</strong>, Ma, L., Zhang, Z., Luo, P., Gao, P., Zhang, M. and Zhao, C., 2023. Towards resilience effectiveness: Assessing its patterns and determinants to identify optimal geographic zones. Journal of Cleaner Production, p.139596.</p>
+
+        <p class="publication">[60] <u>Li, Y., Luo, P.</u>, <strong>Song, Y.</strong>, Zhang, L., Qu, Y. and Hou, Z., 2023. A locally explained heterogeneity model for examining wetland disparity. International Journal of Digital Earth, 16(2), pp.4533-4552.</p>
+
+        <p class="publication">[59] <u>Ondari, O.</u>, Awange, J., <strong>Song, Y.</strong>, &amp; Kasedde, A., 2023. Understanding the Spatial–Temporal Patterns of Floating Islands Impacting the Major Dams of the White Nile. Remote Sensing. 15(9), 2304.</p>
+
+        <p class="publication">[58] Wang, P., Wu, P., <strong>Song, Y.</strong>, Hampson, K. and Zhong, Y., 2023. A novel spatio-temporally stratified heterogeneity model for identifying factors influencing carbon emissions. Energy and Buildings. 112714.</p>
+
+        <p class="publication">[57] Liang, J., Chen, C., <strong>Song, Y.</strong>, Sun, W. and Yang, G., 2023. Long-term mapping of land use and cover changes using Landsat images on the Google Earth Engine Cloud Platform in bay area-A case study of Hangzhou Bay, China. <em>Sustainable horizons</em>, <em>7</em>, p.100061.</p>
+
+        <p class="publication">[56] <u>Wang, X.</u>, Chen, G., Wu, Q., Cao, L., Awange, J., <strong>Song, Y.</strong> and Wu, M., 2023. Spatio-temporal patterns and drivers of carbon-water coupling in frozen soil zones across the gradients of freezing over the Qinghai-Tibet Plateau. Journal of Hydrology, p.129674.</p>
+
+        <p class="publication">[55] Chen, C., Wang, L., Yang, G., Sun, W. and <strong>Song, Y.</strong>, 2023. Mapping of Ecological Environment Based on Google Earth Engine Cloud Computing Platform and Landsat Long-Term Data: A Case Study of the Zhoushan Archipelago. Remote Sensing, 15(16), p.4072.</p>
+
+        <p class="year-heading">2022</p>
+        <p class="publication">[54] <strong>Song, Y.*</strong>, 2022. The second dimension of spatial association. International Journal of Applied Earth Observation and Geoinformation. 111, 102834.</p>
+
+        <p class="publication">[53] Ge, Y., Zhang, W., Wu, X., Ruktanonchai, C., Liu, H., Wang, J, <strong>Song, Y.</strong>, Liu, M., Yan, W., Yang, J., Cleary, E., Qader, S., Atuhaire, F., Ruktanonchai, N., Tatem, A., &amp; Lai S., 2022. Untangling the changing impact of non-pharmaceutical interventions and vaccination on European COVID-19 trajectories. <strong style="color: #8C1515;">Nature Communications</strong>. 13, 3106. <strong style="color: #8C1515;">Highly Cited Paper (8)</strong></p>
+
+        <p class="publication">[52] <u>Luo, P.</u>, <strong>Song, Y.*</strong>, Huang, X., Ma, H., et al., 2022. Identifying determinants of spatio-temporal disparities in soil moisture of the Northern Hemisphere using a geographically optimal zones-based heterogeneity model. ISPRS Journal of Photogrammetry and Remote Sensing. 185, 111-128.</p>
+
+        <p class="publication">[51] <u>Zhang, Z.</u>, <strong>Song, Y.*</strong>, &amp; Wu, P., 2022. Robust geographical detector. International Journal of Applied Earth Observation and Geoinformation. 109, 102782.</p>
+
+        <p class="publication">[50] Wu, P., &amp; <strong>Song, Y*.</strong>, 2022. Land use quantile regression modeling of fine particulate matter in Australia. Remote Sensing. 14(6), 1370</p>
+
+        <p class="publication">[49] Guo, J., Wang, J., Xu, C. &amp; <strong>Song, Y.</strong>, 2022. Modeling of spatial stratified heterogeneity. GIScience &amp; Remote Sensing, 59(1), 1660-1677.</p>
+
+        <p class="publication">[48] <u>Jiang, R.</u>, Wu, P., <strong>Song, Y.</strong>, Wu, C., Wang, P., &amp; Zhong, Y., 2022. Factors influencing the adoption of renewable energy in the US residential sector: An optimal parameters-based geographical detector approach. Renewable Energy</p>
+
+        <p class="publication">[47] Zhang, Q., Miao, C., Gou, J., Wu, J., Jiao, W., <strong>Song, Y.</strong>, &amp; Xu, D., 2022. Spatiotemporal characteristics of meteorological to hydrological drought propagation under natural conditions in China. Weather and Climate Extremes, 100505.</p>
+
+        <p class="publication">[46] Wu, P., Wang, P., Chi, H. L., Zhong, Y., &amp; <strong>Song, Y.</strong>, 2022. Exploring Factors Affecting Transport Infrastructure Performance: Data-Driven Versus Knowledge-Driven Approaches. IEEE Transactions on Intelligent Transportation Systems.</p>
+
+        <p class="publication">[45] Shen, Z., Ramirez-Lopez, …, <strong>Song, Y.</strong>, Catambay, K., &amp; Rossel, R. A. V., 2022. Deep transfer learning of global spectra for local soil carbon monitoring. ISPRS Journal of Photogrammetry and Remote Sensing. 188, 190-200.</p>
+
+        <p class="publication">[44] Ge, Y., Zhang, W. B., …,<strong> Song. Y.</strong>, Ruktanonchai, N. W., Yang, W., Cleary, E., Feng, L., Li, Z., Yang., M., Liu., M., Tatem., A. J., Wang., J., &amp; Lai, S., 2022. Impacts of worldwide individual non-pharmaceutical interventions on COVID-19 transmission across waves and space. International Journal of Applied Earth Observation and Geoinformation. 106, 102649. <strong style="color: #8C1515;">Highly Cited Paper (7)</strong></p>
+
+        <p class="year-heading">2021</p>
+        <p class="publication">[43] <strong>Song, Y.</strong>, Wu, P., Hampson, K., and Anumba, C., 2021. Assessing Block-level Sustainable Transport Infrastructure Development Using a Spatial Trade-Off Relation Model. International Journal of Applied Earth Observation and Geoinformation. 105, 102585.</p>
+
+        <p class="publication">[42] <strong>Song, Y.</strong>, Shen, Z., Wu, P. &amp; R. A. V. Rossel., 2021. Wavelet geographically weighted regression for spectroscopic modelling of soil properties. Scientific Reports. 11, 17503.</p>
+
+        <p class="publication">[41] <strong>Song, Y.</strong>, &amp; Wu, P., 2021. Earth Observation for Sustainable Infrastructure: A Review. Remote Sensing. 13(8), 1528.</p>
+
+        <p class="publication">[40] <strong>Song, Y.</strong>, Wu, P., 2021. An interactive detector for spatial associations. International Journal of Geographical Information Science.</p>
+
+        <p class="publication">[39] <strong>Song, Y.</strong>, Thatcher, D., Li, Q., McHugh, T., &amp; Wu, P., 2021. Developing sustainable road infrastructure performance indicators using a model-driven fuzzy spatial multi-criteria decision making method. Renewable and Sustainable Energy Reviews. 138. 110538.</p>
+
+        <p class="publication">[38]<strong> Song, Y.</strong>, Wu, P., Li, Q., Liu, Y., and Karunaratne, L., 2021. Hybrid Nonlinear and Machine Learning Methods for Analyzing Factors Influencing the Performance of Large-Scale Transport Infrastructure. IEEE Transactions on Intelligent Transportation Systems. <strong style="color: #8C1515;">Highly Cited Paper (6)</strong></p>
+
+        <p class="publication">[37] <u>Luo, P.</u>, <strong>Song, Y.*</strong> Wu, P., 2021. Spatial disparities in trade-offs: economic and environmental impacts of road infrastructure on continental level. GIScience &amp; Remote Sensing.</p>
+
+        <p class="publication">[36] Song, Y., Chen, B., Ho, H. C., Kwan, M. P., Liu, D., Wang, F., … &amp; <strong>Song, Y.*</strong>, 2021. Observed inequality in urban greenspace exposure in China. Environment International. 156, 106778. <strong style="color: #8C1515;">Highly Cited Paper (5)</strong></p>
+
+        <p class="publication">[35] Liu, J., Chai, L., Dong, J., Zheng, D., Wigneron, J.P., Liu, S., Zhou, J., Xu, T., Yang, S., <strong>Song, Y.</strong>, Qu, Y., and Lu, Z., 2021. Uncertainty Analysis of Eleven Multisource Soil 1 Moisture Products in the Third Pole Environment Based on the Three-Corned Hat Method. Remote Sensing of Environment. 255. 112225.</p>
+
+        <p class="publication">[34] Fan, X., <strong>Song, Y.</strong>, Zhu, C., Balzter, H., and Bai Z., 2021. Estimating Ecological Responses to Climatic Variability on Reclaimed and Unmined Lands Using Enhanced Vegetation Index. Remote Sensing. 13(6), 1100.</p>
+
+        <p class="publication">[33] Wang, M., Zhou, T., <strong>Song, Y.</strong>, Li, X., Ma, H., Hu, Y., Heianza, Y., and Qi, L., 2021. Joint exposure to various ambient air pollutants and incident heart failure: a prospective analysis in UK Biobank. European Heart Journal. <strong style="color: #8C1515;">Highly Cited Paper (4)</strong></p>
+
+        <p class="publication">[32] Li X, Wang M, <strong>Song Y,</strong> Ma H, Zhou T, et al., 2021. Obesity and the relation between joint exposure to ambient air pollutants and incident type 2 diabetes: A cohort study in UK Biobank. PLOS Medicine. 18(8): e1003767.</p>
+
+        <p class="publication">[31] Tan, Y., Li, H.X., Cheng, J., Wang, J., Jiang, B., <strong>Song, Y.</strong>, and Wang, X., 2021. Cost and Environmental Impact Estimation Methodology and Potential Impact Factors in Offshore Oil and Gas Platform Decommissioning: A Review. Environmental Impact Assessment Review. 87. 106536.</p>
+
+        <p class="year-heading">2020</p>
+        <p class="publication">[30] <strong>Song, Y.</strong>, Wang, J.F., Ge, Y., et al., 2020. An optimal parameters-based geographical detector model enhances geographic characteristics of explanatory variables for spatial heterogeneity analysis: cases with different types of spatial data. GIScience &amp; Remote Sensing. 57(5): 593-610. <strong style="color: #8C1515;">Highly Cited Paper (3)</strong></p>
+
+        <p class="publication">[29] <strong>Song, Y.</strong>, Wu, P., Gilmore, D., et al., 2020. A Spatial Heterogeneity-Based Segmentation Model for Analyzing Road Deterioration Network Data in Multi-Scale Infrastructure Systems. IEEE Transactions on Intelligent Transportation Systems</p>
+
+        <p class="publication">[28] <u>Jiang, R.</u>, Wu, C., <strong>Song, Y.</strong> and Wu, P., 2020. Estimating carbon emissions from road use, maintenance and rehabilitation through a hybrid life cycle assessment approach–a case study. Journal of Cleaner Production. p.123276.</p>
+
+        <p class="publication">[27] Yang, L., Xu, L., Peng, J., <strong>Song, Y.</strong>, et al., 2020. Nonlocal Band-Weighted Iterative Spectral Mixture Model for Hyperspectral Imagery Denoising. IEEE Transactions on Geoscience and Remote Sensing.</p>
+
+        <p class="publication">[26] Ma, X., Hong, Y., and <strong>Song, Y.,</strong> 2020. Super resolution land cover mapping of hyperspectral images using the deep image prior-based approach. International Journal of Remote Sensing. 41 (7)</p>
+
+        <p class="year-heading">2019</p>
+        <p class="publication">[25] <strong>Song, Y.</strong>, Wang, X.Y., Wright, G., Thatcher, D., et al., 2019. Traffic Volume Prediction with Segment-Based Regression Kriging and its Implementation in Assessing the Impact of Heavy Vehicles. IEEE Transactions on Intelligent Transportation Systems. (20)1: 232 – 243. <strong style="color: #8C1515;">Highly Cited Paper (2)</strong></p>
+
+        <p class="publication">[24] Wu, P., <strong>Song, Y.,</strong> Zhu, J. and Chang, R., 2019. Analysing the influence factors of the carbon emissions from China's building and construction industry from 2000 to 2015. Journal of Cleaner Production.</p>
+
+        <p class="publication">[23] Ma, X., Hong, Y.,<strong> Song, Y.</strong> and Chen, Y., 2019. A Super-Resolution Convolutional-Neural-Network-Based Approach for Subpixel Mapping of Hyperspectral Images. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing.</p>
+
+        <p class="publication">[22] Liu, J., Chai, L., Lu, Z., Liu, S., Qu, Y., Geng, D., <strong>Song, Y.,</strong> Guan, Y., Guo, Z., Wang, J. and Zhu, Z., 2019. Evaluation of SMAP, SMOS-IC, FY3B, JAXA, and LPRM Soil Moisture Products over the Qinghai-Tibet Plateau and Its Surrounding Areas. Remote Sensing, 11(7), p.792.</p>
+
+        <p class="year-heading">2018</p>
+        <p class="publication">[21] <strong>Song, Y.,</strong> Tan, Y., Song, Y.M., et al., 2018. Spatial and temporal variations of spatial population accessibility to public hospitals: A case study of rural-urban comparison. GIScience &amp; Remote Sensing <strong style="color: #8C1515;">Highly Cited Paper (1)</strong></p>
+
+        <p class="publication">[20] <strong>Song, Y.</strong>, Wright, G., Wu, P., Thatcher, D., et al., 2018. Segment-Based Spatial Analysis for Assessing Road Infrastructure Performance Using Monitoring Observations and Remote Sensing Data. Remote Sensing. 10(11): 1696.</p>
+
+        <p class="publication">[19] <strong>Song, Y</strong>., Long, Y., Wu, P., et al., 2018. Are all cities with similar urban form or not? Redefining cities with ubiquitous points of interest and evaluating them with indicators at city and block levels in China. International Journal of Geographical Information Science. 32(12): 2447-2476.</p>
+
+        <p class="publication">[18] <strong>Song, Y</strong>. and Fu, L.Y., 2018. Do Charitable Foundations Spend Money Where People Need It Most? A Spatial Analysis of China. ISPRS International Journal of Geo-Information. 7(3): 100.</p>
+
+        <p class="publication">[17] Tan, Y., <strong>Song, Y.</strong>, Zhu, J., et al., 2018. Optimizing lift operations and vessel transport schedules for disassembly of multiple offshore platforms using BIM and GIS. Automation in Construction. 94, 328-339.</p>
+
+        <p class="publication">[16] Liu, X., <strong>Song, Y.</strong>, Yi. W., et al., 2018. Comparing the random forest with the generalized additive model to evaluate the impacts of outdoor ambient environ-mental factors on scaffolding construction productivity. Journal of Construction Engineering and Management, 144(6),04018037.</p>
+
+        <p class="publication">[15] Wu, P., <strong>Song, Y</strong>., Hu, X. et al., 2018. A Preliminary Investigation of the Transition from Green Building to Green Community: Insights from LEED ND. Sustainability, 10(6), 1802.</p>
+
+        <p class="publication">[14] Cheng, J.C.P., Tan, Y., <strong>Song, Y.</strong>, et al., 2018. Developing an evacuation evaluation model for offshore oil and gas platforms using BIM and agent-based model. Automation in Construction. (89): 214-224.</p>
+
+        <p class="publication">[13] Mirarchi, C., Pavan, A., De Marco, F., Wang, X. and <strong>Song, Y.</strong>, 2018. Supporting Facility Management Processes through End-Users' Integration and Coordinated BIM-GIS Technologies. ISPRS International Journal of Geo-Information.7(5),191.</p>
+
+        <p class="year-heading">2017</p>
+        <p class="publication">[12] <strong>Song, Y.</strong>, Wang, X.Y., Tan, Y., et al., 2017. Trends and Opportunities of BIM-GIS Integration in the Architecture, Engineering and Construction Industry: A Review from a Spatio-Temporal Statistical Perspective. ISPRS International Journal of Geo-Information. 6(12): p.397.</p>
+
+        <p class="publication">[11] Wu, P., <strong>Song, Y</strong>., Shou W.C, et al., 2017. A comprehensive analysis of the credits obtained by LEED 2009 certified green buildings. Renewable and Sustainable Energy Reviews. 68, 370-379.</p>
+
+        <p class="publication">[10] Tan, Y., <strong>Song, Y.</strong>, Liu, X., et al., 2017. A BIM-based framework for lift planning in topsides disassembly of offshore oil and gas platforms. Automation in Construction. 79, 19-30.</p>
+
+        <p class="publication">[9] Ge, Y., <strong>Song, Y.,</strong> Wang, J.F., et al., 2017. Geographically Weighted Regression-based determinants of malaria incidences in northern China, Transactions in GIS. 21(5): 934-953.</p>
+
+        <p class="publication">[8] Wu, P.,<strong> Song, Y</strong>., Wang, J., et al., 2017. Regional Variations of Credits Obtained by LEED 2009 Certified Green Buildings—A Country Level Analysis. Sustainability. 10(1): 20.</p>
+
+        <p class="publication">[7] Ge, Y., Wei, Y., <strong>Song, Y.,</strong> et al., 2017. A WTLS-based rational function model for orthorectification of remote-sensing imagery. International Journal of Remote Sensing. 38(23): 7281-7301.</p>
+
+        <p class="year-heading">2016</p>
+        <p class="publication">[6] <strong>Song, Y.</strong>, Ge, Y., Wang, J.F., et al., 2016. Spatial distribution estimation of malaria in northern China and its scenarios in 2020, 2030, 2040 and 2050, Malaria Journal, 15(1), 1.</p>
+
+        <p class="publication">[5] Wu, P., Mao, C., Wang, J., <strong>Song, Y.</strong>, et al., 2017. A decade review of the credits obtained by LEED v2. 2 certified green building projects. Building and Environment. 102, 167-178.</p>
+
+        <p class="publication">[4] Yang, H. L., Peng, J. H., Wang, B. C., <strong>Song, Y.</strong>, et al., 2016. Ground deformation monitoring of Zhengzhou city from 2012 to 2013 using an improved IPTA. Natural Hazards. 80(1), 1-17.</p>
+
+        <p class="year-heading">2015</p>
+        <p class="publication">[3] <strong>Song, Y.</strong>, Yang H.L., Peng J.H., et al., 2015. Estimating PM2.5 Concentrations in Xi'an City Using a Generalized Additive Model with Multi-Source Monitoring Data. PLoS ONE. 10(11): e0142149.</p>
+
+        <p class="publication">[2] Wu, T.J., Ge, Y., Wang, J.H., Stein, A., <strong>Song, Y.</strong>, et al., 2015. A WTLS-Based Method for Remote Sensing Imagery Registration. IEEE Transactions on Geoscience and Remote Sensing. 53(1): 102-116.</p>
+
+        <p class="year-heading">2014</p>
+        <p class="publication">[1] Wang, J.H., Ge, Y., <strong>Song, Y.</strong>, et al., 2014. A Geostatistical Approach to Upscale Soil Moisture with Unequal Precision Observations. IEEE Geoscience and Remote Sensing Letters. 11(12): 2125-2129.</p>
+    </main>
+
+    <!-- FOOTER -->
+    <!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods & Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab & Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

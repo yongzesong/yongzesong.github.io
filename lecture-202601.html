@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lecture series on Geospatial Data Analysis, Prediction, and GeoAI by Dr. Yongze Song. Course materials, lecture slides, code, and assignments.">
+    <title>Lecture Series - Yongze Song</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* === PAGE-SPECIFIC STYLES for lecture-202601.html === */
+
+        /* Main content area */
+        main {
+            max-width: 1300px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .page-title h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Lecturer card */
+        .lecturer-card {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fafaf9;
+            border-radius: 6px;
+        }
+        .lecturer-photo { width: 100px; min-width: 100px; border-radius: 4px; }
+        .lecturer-details { flex: 1; }
+        .lecturer-details .name { font-size: 0.92rem; font-weight: 600; margin-bottom: 2px; }
+        .lecturer-details .fellow { font-size: 0.78rem; font-style: italic; font-weight: 600; color: #444; margin-bottom: 6px; }
+        .lecturer-details p { font-size: 0.82rem; line-height: 1.8; margin-bottom: 2px; }
+        .lecturer-details a { font-size: 0.82rem; }
+        .lecturer-logos {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+            min-width: 140px;
+        }
+        .lecturer-logos .logo-row { display: flex; gap: 10px; align-items: center; }
+        .lecturer-logos img { height: 30px; width: auto; }
+
+        /* Description */
+        .description { text-align: justify; margin-bottom: 1.5em; }
+
+        /* Section headings */
+        .section-heading {
+            font-family: var(--font-sans);
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--color-heading);
+            margin-top: 2.5em;
+            margin-bottom: 0.8em;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        /* Course overview items */
+        .sub-item { margin-bottom: 1em; }
+        .sub-label { font-size: 0.85rem; font-weight: 600; color: var(--color-heading); margin-bottom: 0.3em; }
+
+        ul, ol { margin-left: 25px; margin-bottom: 12px; }
+        li { margin-bottom: 6px; line-height: 1.8; font-size: 0.85rem; }
+        li ul { margin-top: 4px; }
+
+        /* === TOPIC CARDS === */
+        .topic-card {
+            background: #f8f9fa;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+        }
+        .topic-card h3 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--color-heading);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        .topic-card h3 .topic-num {
+            color: var(--color-accent);
+            font-weight: 700;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 20px;
+        }
+
+        .material-item {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 3px 0;
+        }
+        .material-item .mat-label {
+            color: var(--color-muted);
+            font-size: 0.76rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            min-width: 56px;
+        }
+        .material-item a {
+            font-size: 0.85rem;
+        }
+
+        .topic-desc {
+            font-size: 0.82rem;
+            color: var(--color-muted);
+            margin-bottom: 10px;
+            line-height: 1.7;
+        }
+
+        /* Key methods tags */
+        .methods-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+        .method-tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--color-accent);
+            background: rgba(140, 21, 21, 0.08);
+            padding: 2px 8px;
+            border-radius: 3px;
+            letter-spacing: 0.02em;
+        }
+
+        /* Q&A section */
+        .qa-section ol { margin-left: 20px; }
+        .qa-section li { margin-bottom: 4px; }
+        .qa-section ul { list-style: circle; }
+
+        /* Feedback form */
+        .feedback-section { margin-top: 2.5em; }
+        .feedback-form { max-width: 600px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--color-heading);
+        }
+        .form-group label .req { font-weight: 400; color: var(--color-muted); font-size: 0.8rem; }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            line-height: 1.8;
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .star-rating { display: flex; gap: 4px; font-size: 1.3rem; color: #ccc; cursor: pointer; }
+        .star-rating .star { transition: color 0.2s; }
+        .star-rating .star:hover,
+        .star-rating .star.active { color: #f5a623; }
+        .submit-btn {
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .submit-btn:hover { color: var(--color-heading); }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .lecturer-card { flex-direction: column; }
+            .lecturer-logos { flex-direction: row; align-items: center; min-width: auto; }
+            .materials-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="site-title">
+                Yongze Song
+                <span>Geography &amp; Sustainability</span>
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="publications.html">Publications</a>
+                <a href="methods.html">Methods</a>
+                <a href="latest.html">Latest</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-title">
+            <h1>Geospatial Data Analysis, Prediction, and GeoAI:<br>New Theories, Methods, and Software</h1>
+        </div>
+
+
+
+        <p class="description">This lecture series provides a comprehensive overview of the latest theories, analytical methods, and software tools for spatial research and applications. Students will learn how to design and conduct spatial analysis, handle diverse geospatial and remote sensing data, and apply advanced modeling and GeoAI techniques to address complex problems in sustainability, urban development, natural, built and social environments, and decision-making.</p>
+
+        <!-- ===== COURSE OVERVIEW ===== -->
+        <div class="section-heading">Course Overview</div>
+
+        <div class="sub-item">
+            <div class="sub-label">&#x1F3AF; Learning Objectives</div>
+            <p style="font-size:0.85rem;">By completing this eight-topic course, students will develop the skills required to conduct end-to-end spatial analysis using advanced models and software, and will be equipped to apply these methods to practical problems and high-level research publications.</p>
+        </div>
+
+        <div class="sub-item">
+            <div class="sub-label">&#x1F4DA; Reading List</div>
+            <p style="font-size:0.85rem;">Download the <a href="materials/Lecture-outline-and-reading-list.pdf">Lecture Outline and Reading List</a> (PDF) for foundational references and topic-by-topic readings.</p>
+        </div>
+
+        <div class="sub-item">
+            <div class="sub-label">&#x1F4CB; Assignment Requirements</div>
+            <ul>
+                <li>Each day, write a 200-word essay on that day's topic.</li>
+                <li>Submit a combined Word document with essays for <strong>at least four days</strong> out of the eight.</li>
+                <li><strong>Submission:</strong> PDF file (named with student's name), emailed to <a href="mailto:yongze.song@outlook.com">yongze.song@outlook.com</a></li>
+            </ul>
+        </div>
+
+        <div class="sub-item">
+            <div class="sub-label">&#x1F4E6; Additional Resources</div>
+            <ul>
+                <li>IEEE IGARSS Summer School Training Materials: <a href="https://ausgis.github.io/igarss25ss/" target="_blank">https://ausgis.github.io/igarss25ss/</a></li>
+            </ul>
+        </div>
+
+        <!-- ===== TOPICS & MATERIALS ===== -->
+        <div class="section-heading">Topics &amp; Materials</div>
+
+        <!-- Topic 1 -->
+        <div class="topic-card">
+            <h3><span class="topic-num">Topic 1.</span> Introduction to Spatial Modelling and Prediction</h3>
+            <div class="methods-tags">
+                <span class="method-tag">GeoAI</span>
+                <span class="method-tag">OPGD</span>
+                <span class="method-tag">GD R Package</span>
+                <span class="method-tag">Spatial Heterogeneity</span>
+            </div>
+            <p class="topic-desc">Why spatial methods are needed for prediction; GeoAI concepts, history, and emerging trends; sustainable infrastructure case study; OPGD model and the GD R package for determinant analysis.</p>
+            <div class="materials-grid">
+                <div class="material-item">
+                    <span class="mat-label">Lecture</span>
+                    <a href="materials/topic1/Topic-1-Lecture.pdf">Topic 1 Lecture.pdf</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Guide</span>
+                    <a href="materials/Lecture-outline-and-reading-list.pdf">Reading List.pdf</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="topic-card">
+            <h3><span class="topic-num">Topic 2.</span> Spatial Modelling for Heterogeneity and Determinant Analysis</h3>
+            <div class="methods-tags">
+                <span class="method-tag">GOZH</span>
+                <span class="method-tag">LISP</span>
+                <span class="method-tag">Spatial Stratified Heterogeneity</span>
+            </div>
+            <p class="topic-desc">Concepts of local and spatial stratified heterogeneity; the GOZH model for optimal zone-based analysis; LISP for local driver analysis.</p>
+            <div class="materials-grid">
+                <div class="material-item">
+                    <span class="mat-label">Lecture</span>
+                    <a href="materials/topic2/Topic-2-Lecture.pdf">Topic 2 Lecture.pdf</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Notes</span>
+                    <a href="materials/topic2/T2-Teaching-note.docx">T2 Teaching Note.docx</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Example</span>
+                    <a href="materials/topic2/A2-Example.docx">Assignment 2 Example.docx</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="topic-card">
+            <h3><span class="topic-num">Topic 3.</span> Spatial Modelling for Prediction</h3>
+            <div class="methods-tags">
+                <span class="method-tag">Kriging</span>
+                <span class="method-tag">SDA</span>
+                <span class="method-tag">GOS</span>
+                <span class="method-tag">SecDim R Package</span>
+            </div>
+            <p class="topic-desc">General process of spatial prediction; Kriging fundamentals and geostatistics; Second-Dimension Spatial Association (SDA); Geographically Optimal Similarity (GOS) model.</p>
+            <div class="materials-grid">
+                <div class="material-item">
+                    <span class="mat-label">Lecture</span>
+                    <a href="materials/topic3/Topic-3-Lecture.pdf">Topic 3 Lecture.pdf</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Notes</span>
+                    <a href="materials/topic3/T3-Teaching-note.docx">T3 Teaching Note.docx</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Example</span>
+                    <a href="materials/topic3/A3-Example.docx">Assignment 3 Example.docx</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Code</span>
+                    <a href="materials/topic3/SDA-guide.docx">SDA R Code Guide.docx</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="topic-card">
+            <h3><span class="topic-num">Topic 4.</span> Spatial Patterns for Prediction</h3>
+            <div class="methods-tags">
+                <span class="method-tag">Geocomplexity</span>
+                <span class="method-tag">SDO</span>
+                <span class="method-tag">Spatial Patterns</span>
+            </div>
+            <p class="topic-desc">Spatial pattern identification and quantification (clusters, gradients, hotspots); Geocomplexity theory and measurement; Second-Dimension Outliers (SDO) for prediction.</p>
+            <div class="materials-grid">
+                <div class="material-item">
+                    <span class="mat-label">Lecture</span>
+                    <a href="materials/topic4/Topic-4-Lecture.pdf">Topic 4 Lecture.pdf</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Notes</span>
+                    <a href="materials/topic4/T4-Teaching-note.docx">T4 Teaching Note.docx</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Example</span>
+                    <a href="materials/topic4/A4-Example.docx">Assignment 4 Example.docx</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Code</span>
+                    <a href="materials/topic4/geocomplexity-analysis.zip">Geocomplexity Analysis.zip</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="topic-card">
+            <h3><span class="topic-num">Topic 5.</span> Research Design, Spatial &amp; Remote Sensing Data Collection, and Pre-processing</h3>
+            <div class="methods-tags">
+                <span class="method-tag">Research Design</span>
+                <span class="method-tag">Spatial Sampling</span>
+                <span class="method-tag">Google Earth Engine</span>
+                <span class="method-tag">Pre-processing</span>
+            </div>
+            <p class="topic-desc">Experiment design for spatial prediction; data collection strategies; spatial stratified random sampling; pre-processing workflow (missing values, multicollinearity, outliers, normalization).</p>
+            <div class="materials-grid">
+                <div class="material-item">
+                    <span class="mat-label">Lecture</span>
+                    <a href="materials/topic5/Topic-5-Lecture.pdf">Topic 5 Lecture.pdf</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Example</span>
+                    <a href="materials/topic5/A5-Example.docx">Assignment 5 Example.docx</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Code</span>
+                    <a href="materials/topic5/Topic-5-code.zip">Sampling R Code.zip</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="topic-card">
+            <h3><span class="topic-num">Topic 6.</span> Spatial Validation Methods</h3>
+            <div class="methods-tags">
+                <span class="method-tag">Cross-Validation</span>
+                <span class="method-tag">Block CV</span>
+                <span class="method-tag">NNDM</span>
+                <span class="method-tag">RMSE</span>
+            </div>
+            <p class="topic-desc">Why spatial validation is critical; k-fold cross-validation; spatial block cross-validation; comparison of random CV vs. block CV vs. NNDM approaches.</p>
+            <div class="materials-grid">
+                <div class="material-item">
+                    <span class="mat-label">Lecture</span>
+                    <a href="materials/topic6/Topic-6-Lecture.pdf">Topic 6 Lecture.pdf</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Notes</span>
+                    <a href="materials/topic6/T6-Teaching-note.docx">T6 Teaching Note.docx</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="topic-card">
+            <h3><span class="topic-num">Topic 7.</span> Spatial Decision-Making and Applications</h3>
+            <div class="methods-tags">
+                <span class="method-tag">Entropy Weighting</span>
+                <span class="method-tag">Composite Index</span>
+                <span class="method-tag">Urban Sustainability</span>
+            </div>
+            <p class="topic-desc">Model-based spatial decision-making; entropy-weighting for multi-criteria aggregation; constructing composite urbanization indices; spatial mapping and visualization.</p>
+            <div class="materials-grid">
+                <div class="material-item">
+                    <span class="mat-label">Lecture</span>
+                    <a href="materials/topic7/Topic-7-Lecture.pdf">Topic 7 Lecture.pdf</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Example</span>
+                    <a href="materials/topic7/A7-Example.docx">Assignment 7 Example.docx</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Code</span>
+                    <a href="materials/topic7/generate-urban-index.zip">Urban Index R Code.zip</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 8 -->
+        <div class="topic-card">
+            <h3><span class="topic-num">Topic 8.</span> Geospatial Intelligence (GeoAI) and Spatial Big Data for Urban Sustainability</h3>
+            <div class="methods-tags">
+                <span class="method-tag">GeoAI</span>
+                <span class="method-tag">Machine Learning</span>
+                <span class="method-tag">GAM</span>
+                <span class="method-tag">caret R Package</span>
+            </div>
+            <p class="topic-desc">GeoAI definition, scope, and history; emerging trends (heterogeneity-aware GeoAI, geo-foundation models, spatial representation learning); machine learning with GAM using the caret package.</p>
+            <div class="materials-grid">
+                <div class="material-item">
+                    <span class="mat-label">Lecture</span>
+                    <a href="materials/topic8/Topic-8-Lecture.pdf">Topic 8 Lecture.pdf</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Notes</span>
+                    <a href="materials/topic8/T8-Teaching-note.docx">T8 Teaching Note.docx</a>
+                </div>
+                <div class="material-item">
+                    <span class="mat-label">Code</span>
+                    <a href="materials/topic8/caret-gam-R.zip">GAM R Code.zip</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Q&A ===== -->
+        <div class="section-heading">Q&amp;A</div>
+
+        <p style="font-size:0.85rem; margin-bottom:12px;">Answers to students' questions are continuously updated here.</p>
+
+        <div class="qa-section">
+            <ol>
+                <li>Topic 4
+                    <ul>
+                        <li>analysis code.R, line 27: change <strong>sf_data</strong> to <strong>sf.data</strong></li>
+                    </ul>
+                </li>
+                <li>Topic 5
+                    <ul>
+                        <li>Australia extent: <code>ext_aus &lt;- ext(112, 154, -44, -10)</code></li>
+                        <li>China extent: <code>ext_china &lt;- ext(73, 135, 18, 54)</code></li>
+                        <li>Canada: <code>ext_canada &lt;- ext(-141, -52, 41, 83)</code></li>
+                        <li>Europe: <code>ext_europe &lt;- ext(-25, 45, 34, 72)</code></li>
+                        <li>Africa: <code>ext_africa &lt;- ext(-20, 55, -35, 38)</code></li>
+                        <li>South America: <code>ext_south_america &lt;- ext(-82, -34, -56, 13)</code></li>
+                        <li>US: <code>ext_us &lt;- ext(-125, -66.5, 24, 49.5)</code></li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <!-- ===== FEEDBACK ===== -->
+        <div class="feedback-section">
+            <div class="section-heading">Student Feedback</div>
+
+            <form class="feedback-form" onsubmit="return false;">
+                <div class="form-group">
+                    <label>Name <span class="req">(required)</span></label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email <span class="req">(required)</span></label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Rate your experience <span class="req">(required)</span></label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-value="1">&#9734;</span>
+                        <span class="star" data-value="2">&#9734;</span>
+                        <span class="star" data-value="3">&#9734;</span>
+                        <span class="star" data-value="4">&#9734;</span>
+                        <span class="star" data-value="5">&#9734;</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>What knowledge and skills did you learn? How about your experience in the lecture?</label>
+                    <textarea name="experience"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>How could we improve?</label>
+                    <textarea name="improve"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send feedback</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h3>Research</h3>
+                <a href="about.html">About</a>
+                <a href="publications.html">Publications</a>
+                <a href="high-impact-articles.html">High Impact Articles</a>
+                <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+            </div>
+            <div class="footer-col">
+                <h3>Methods &amp; Software</h3>
+                <a href="methods.html">Innovative Methods</a>
+                <a href="methods.html#software">R Packages</a>
+                <a href="gd.html">GD Package (Geodetector)</a>
+            </div>
+            <div class="footer-col">
+                <h3>Lab &amp; Team</h3>
+                <a href="lab.html">Geospatial Intelligence Lab</a>
+                <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+                <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+            </div>
+            <div class="footer-col">
+                <h3>News</h3>
+                <a href="latest.html">Latest News</a>
+                <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-left">
+                <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+                <div class="footer-social">
+                    <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                    <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                    <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                    <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                    <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                </div>
+                <a href="cn.html" class="footer-lang">中文</a>
+            </div>
+            <div class="footer-right">
+                <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+                <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Star rating interaction
+        document.querySelectorAll('#starRating .star').forEach(function(star) {
+            star.addEventListener('click', function() {
+                var val = parseInt(this.getAttribute('data-value'));
+                document.querySelectorAll('#starRating .star').forEach(function(s, i) {
+                    if (i < val) {
+                        s.classList.add('active');
+                        s.innerHTML = '&#9733;';
+                    } else {
+                        s.classList.remove('active');
+                        s.innerHTML = '&#9734;';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中文 - 宋泳泽</title>
+    <meta name="description" content="宋泳泽 - 科廷大学副教授。地理空间分析、可持续基础设施、空间统计学方法。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Noto+Sans+SC:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* === FONT OVERRIDE FOR CHINESE (Noto Sans SC) === */
+        :root {
+            --font-cn: "Noto Sans SC", "Source Sans 3", -apple-system, BlinkMacSystemFont,
+                       "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        html, body {
+            line-height: 1.8;
+        }
+
+        p {
+            line-height: 1.8;
+            font-size: 0.78rem;
+        }
+
+        /* Chinese font only for page body content, keep nav in Source Sans 3 */
+        .content-column,
+        .sidebar-nav {
+            font-family: var(--font-cn);
+        }
+        header nav a,
+        .site-title,
+        .site-title span,
+        .footer-col h3,
+        .footer-col a,
+        .footer-bottom {
+            font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont,
+                         "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* === MAIN LAYOUT: Sidebar + Content === */
+        .main-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 40px;
+        }
+
+        /* --- Left Sidebar (20%) --- */
+        .sidebar {
+            width: 20%;
+            min-width: 180px;
+            flex-shrink: 0;
+        }
+        .sidebar-nav {
+            position: sticky;
+            top: 20px;
+            padding-top: 10px;
+        }
+        .sidebar-nav a {
+            display: block;
+            font-family: var(--font-sans);
+            font-size: 0.78rem;
+            font-weight: 400;
+            color: var(--color-muted);
+            text-decoration: none;
+            padding: 5px 12px;
+            border-left: 2px solid transparent;
+            transition: all 0.2s ease;
+            line-height: 1.5;
+        }
+        .sidebar-nav a:hover {
+            color: var(--color-accent);
+            border-left-color: var(--color-accent);
+        }
+        .sidebar-nav a.active {
+            color: var(--color-accent);
+            font-weight: 600;
+            border-left-color: var(--color-accent);
+        }
+
+        /* --- Right Content (80%) --- */
+        .content-column {
+            flex: 1;
+            min-width: 0;
+        }
+        .content-column h1 {
+            font-size: 1.1rem;
+        }
+        .content-column h2 {
+            font-size: 1.1rem;
+        }        
+
+        .bio-section {
+            margin: 10px 0 20px 0;
+        }
+
+        /* Profile header with photo + info */
+        .profile-header {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .profile-photo {
+            flex-shrink: 0;
+        }
+
+        .profile-photo img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.2rem;
+        }
+
+        .profile-info .position {
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--color-heading);
+            margin-bottom: 4px;
+        }
+
+        .profile-info .affiliation {
+            font-size: 0.78rem;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .profile-info .location {
+            font-size: 0.78rem;
+            color: var(--color-muted);
+            margin-bottom: 8px;
+        }
+
+        .profile-info .email {
+            font-size: 0.78rem;
+            margin-bottom: 12px;
+        }
+
+        .profile-info .email a {
+            color: var(--color-text);
+        }
+
+        .welcome-box {
+            background: #f9f7f5;
+            padding: 12px 15px;
+            border-left: 3px solid var(--color-accent);
+            font-size: 0.78rem;
+            line-height: 1.8;
+            margin-top: 12px;
+        }
+
+        /* Section headings */
+        .section-heading {
+            color: var(--color-accent);
+            border-bottom: 2px solid var(--color-accent);
+            padding-bottom: 8px;
+            margin-top: 24px;
+        }
+
+        /* List styles */
+        .section-list {
+            font-size: 0.78rem;
+            line-height: 1.8;
+            margin: 6px 0;
+        }
+        .section-list li {
+            margin: 1px 0;
+            list-style-position: inside;
+            line-height: 1.8;
+        }
+        .section-list ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        .section-list li ul {
+            margin-top: 6px;
+            margin-bottom: 6px;
+        }
+
+        /* Conference cards row */
+        .conference-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .conference-card {
+            border: 1px solid var(--color-border, #e0e0e0);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--color-card-bg, #fff);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .conference-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .conference-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .conference-card .card-caption {
+            padding: 10px 12px;
+            font-size: 0.78rem;
+            color: var(--color-muted);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .conference-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Note box */
+        .note-box {
+            background: #fffbf0;
+            border-left: 3px solid var(--color-accent);
+            padding: 12px 15px;
+            margin: 16px 0;
+            font-size: 0.78rem;
+            line-height: 1.8;
+        }
+
+        /* Sub-heading */
+        h4.section-subheading {
+            font-size: 0.82rem;
+            margin-top: 16px;
+            margin-bottom: 10px;
+        }
+
+        /* Icons row */
+        .icons-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .icons-row a {
+            text-decoration: none;
+        }
+
+        .icons-row img {
+            width: 24px;
+            height: 24px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .icons-row a:hover img {
+            opacity: 1;
+        }
+
+        /* Year headers for timelines */
+        .year-header {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-heading);
+            margin-top: 16px;
+            margin-bottom: 8px;
+            border-bottom: 2px solid var(--color-accent);
+            padding-bottom: 4px;
+        }
+
+        .year-item {
+            font-size: 0.78rem;
+            margin: 1px 0;
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+                gap: 0;
+            }
+            .sidebar {
+                width: 100%;
+                min-width: unset;
+            }
+            .sidebar-nav {
+                position: static;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px 0;
+                border-bottom: 1px solid #e0e0e0;
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+            }
+            .sidebar-nav a {
+                border-left: none;
+                padding: 4px 10px;
+                font-size: 0.75rem;
+            }
+            .sidebar-nav a.active,
+            .sidebar-nav a:hover {
+                border-left: none;
+                background: #f5f0f0;
+                border-radius: 4px;
+            }
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .footer-inner { grid-template-columns: 1fr; gap: 16px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+        }
+        @media (max-width: 768px) {
+            html, body { font-size: 15px; }
+            h1 { font-size: 1.0rem; }
+            h2 { font-size: 1.0rem; }
+            p { font-size: 0.75rem; }
+            .profile-photo img { width: 120px; height: 120px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="site-title">
+            Yongze Song
+            <span>Geography &amp; Sustainability</span>
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="methods.html">Methods</a>
+            <a href="latest.html">Latest</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="main-content">
+
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+        <nav class="sidebar-nav" id="sidebarNav">
+            <a href="#about" class="active">简介</a>
+            <a href="#research">研究方向</a>
+            <a href="#awards">荣誉奖项</a>
+            <a href="#contributions">学术贡献</a>
+            <a href="#lectures">学术报告</a>
+            <a href="#phd">招收博士生</a>
+            <a href="#scholarships">奖学金</a>
+            <a href="#application">申请方式</a>
+        </nav>
+    </aside>
+
+    <!-- Right Content -->
+    <div class="content-column">
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-photo">
+                <img src="assets/images/yongze-song-202511-03.png" alt="宋泳泽">
+            </div>
+            <div class="profile-info">
+                <h1>宋泳泽</h1>
+                <div class="position">Associate Professor</div>
+                <div class="affiliation">School of Design and the Built Environment, Curtin University</div>
+                <div class="location">Perth, 6102, WA, Australia</div>
+                <div class="email"><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a></div>
+                <div class="welcome-box">
+                    欢迎对地理空间、地球观测及城市科学理论和方法感兴趣的学生和青年学者加入我们。
+                </div>
+            </div>
+        </div>
+
+        <!-- 简介 Section -->
+        <h2 class="section-heading" id="about">简介</h2>
+        <div class="bio-section">
+            <p>宋泳泽，澳大利亚科廷大学副教授、博士生导师，地理空间智能实验室负责人。澳大利亚优秀青年科学奖获得者，美国哈佛大学SDL Fellow研究员，英国皇家地理学会会士，德国学术交流中心人工智能网络研究员，国际数学地球科学协会IAMG委员。西澳大学、麦考瑞大学、香港理工大学博士生导师。担任《International Journal of Applied Earth Observation and Geoinformation》、《GIScience & Remote Sensing》、《Geoscientific Model Development》等多个国际一区期刊副主编，担任Cell子刊综合性期刊《iScience》等15个国际期刊编委，20个期刊特刊客座编辑，30余个国际会议主席或组委会委员，《Nature Communications》、《Nature Cities》、《Science Advances》等80余个国际期刊审稿人，受邀在哈佛、麻省理工、耶鲁、澳大利亚国立、新加坡国立等国际知名大学发表学术报告100余次。发表140余篇国际一区SCI 期刊论文，9篇论文入选ESI高被引论文，指导了来自全球五大洲20余个国家的青年学者，包括40多位博士生。提出30余个地理空间数据分析理论和新方法，例如第二维度空间关系、最优参数地理探测器、地理最优相似性、地理复杂性、广义异质性等。以第一作者发表的最优参数地理探测器OPGD模型论文是国际一区顶刊《GIScience & Remote Sensing》创刊40多年以来历史最高引用论文。开发地理空间分析R语言包"GD"等12个广泛应用的R语言开源包，全球下载使用量超过20万次。博士毕业于澳大利亚科廷大学 (优秀毕业生校长奖、优秀毕业生全球前0.1%)，本科 (优秀毕业生前1%) 和硕士 (优秀毕业生前1%) 毕业于中国地质大学 (北京)。</p>
+        </div>
+
+        <!-- 研究方向 Section -->
+        <h2 class="section-heading" id="research">研究方向</h2>
+        <p>研究方向：地理空间分析理论和方法，空间统计学，可持续基础设施，可持续发展，地球空间大数据和人工智能，遥感方法（城市和林火），巨型工程管理。</p>
+        <p>担任国际期刊《GIScience & Remote Sensing》副主编、《International Journal of Applied Earth Observation and Geoinformation》副主编、《Geoscientific Model Development》副主编、《Journal of Spatial Science》副主编、《All Earth》副主编。担任Cell子刊国际综合性期刊《iScience》以及国际期刊《International Journal of Digital Earth》、《Annals of GIS》、《Geo-spatial Information Science》、《Geomatica》、《Remote Sensing》、《Frontiers in Environmental Science》、《Resources, Environment and Sustainability》等编委。担任《Resources, Conservation and Recycling》等国际期刊客座编辑，及《Nature Communications》、《Nature Cities》、《Science Advances》等70余个国际学术期刊审稿人。</p>
+
+        <!-- 荣誉奖项 Section -->
+        <h2 class="section-heading" id="awards">荣誉奖项</h2>
+        <p>获得十余项国际或澳大利亚、中国等国家级奖项，包括澳大利亚优秀青年科学奖 TYP，全球50新星奖 (Geospatial World 50 Rising Stars)，全球十位前沿科技青年科学家之一，入学斯坦福大学全球前2%顶尖科学家榜单，地球科学和交叉学科领域全球前1%审稿人，澳大利亚位置数据分析国家级一等奖，澳大利亚海洋探索国家级二等奖和STEM国家级二等奖，科廷大学杰出科研奖，科廷大学全球影响力奖等。</p>
+
+        <!-- 学术贡献 Section -->
+        <h2 class="section-heading" id="contributions">学术贡献</h2>
+        <p>提出一系列地理空间数据分析新模型、新方法，例如第二维度空间关系、地理最优相似性、地理复杂性、广义异质性模型、最优参数地理探测器、异质自相关性、局域分层异质性、空间关系交互探测模型、空间制衡模型等。在IJGIS、Nature子刊等发表130余篇国际一区SCI期刊论文，包括9篇高被引论文。开发最优参数地理探测器R语言包"GD"等12 个广泛应用的R语言开源包，全球下载使用量超过20万次。作为PI 主持十余项澳大利亚相关科研项目。</p>
+        <p>担任国际摄影测量与遥感学会ISPRS TC IV国际会议主席、City+城市研究青年学者国际会议主席、国际地球科学与遥感大会IEEE IGARSS教育委员会主席、澳大利亚人工智能联合大会AJCAI统筹主席，以及国际数学地球科学学会IAMG年会论坛主席，美国地理学会AAG年会论坛主席，欧洲地理信息科学年会AGILE科学委员会委员，大洋洲国家GIS和遥感理事会年会期刊协调员等，受邀为30余个国际会议做主题报告、担任论坛主席或科学委员会委员。</p>
+
+        <!-- 学术报告 Section -->
+        <h2 class="section-heading" id="lectures">学术报告</h2>
+        <p>受邀在美国<a href="https://gis.harvard.edu/event/innovative-geospatial-methods-sustainable-infrastructure-development">哈佛大学</a>、麻省理工学院、耶鲁大学、澳大利亚国立大学、新加坡国立大学、北京大学等国际知名大学、研究所和业界发表演讲或学术报告100余次。</p>
+
+        <p>指导了来自（大洋洲）澳大利亚、（欧洲）德国、斯洛伐克、爱尔兰、意大利、（亚洲）中国、以色列、新加坡、日本、印度、马来西亚、沙特阿拉伯、孟加拉国、越南、伊朗、巴基斯坦、不丹、（美洲）美国、哥伦比亚、（非洲）肯尼亚、马达加斯加等20余个国家的博士生和博士后。</p>
+
+        <!-- Conference cards -->
+        <div class="conference-cards">
+            <div class="conference-card">
+                <img src="assets/images/harvard-lectures.jpg" alt="哈佛大学讲座">
+                <div class="card-caption">哈佛大学 Spatiotemporal Innovation Summer School 授课 · 2024 波士顿</div>
+            </div>
+            <div class="conference-card">
+                <img src="assets/images/isprs-perth-2024.jpg" alt="ISPRS 2024">
+                <div class="card-caption">组织ISPRS TC IV国际会议 · 2024 珀斯</div>
+            </div>
+            <div class="conference-card">
+                <img src="assets/images/cityplus-2023-conference.png" alt="City+ 2023">
+                <div class="card-caption">组织City+城市研究国际青年学者会议 · 2024 珀斯</div>
+            </div>
+        </div>
+
+        <!-- 招收博士生 Section -->
+        <h2 class="section-heading" id="phd">招收博士生</h2>
+        <p>欢迎博士生、青年研究员、访问学者、联合培养博士生加入我们。</p>
+
+        <h4 class="section-subheading">澳大利亚科廷大学简介</h4>
+        <p>科廷大学 (Curtin University) 位于西澳大利亚州首府、<a href="https://www.eit.edu.au/perth-named-the-sixth-most-livable-city-in-the-world/">全球第6宜居城市珀斯</a> (Perth)。科廷大学在各类世界大学排名中均位于全球前200名，包括在U.S. News世界大学排名第156位。地球科学专业突出，采矿和矿业工程专业常年位居全球第2名，地球和海洋科学位于全球前40名。在澳大利亚40余所大学中，<a href="https://about.curtin.edu.au/reputation-rankings/">科廷大学的数学专业位于第1名，地球科学专业位于第2名</a>。</p>
+
+        <h4 class="section-subheading">招生研究方向和课题</h4>
+        <ul class="section-list">
+            <li>地理空间分析基础理论和空间统计学基本方法</li>
+            <li>时空大数据和地球观测数据与可持续可再生能源</li>
+        </ul>
+
+        <h4 class="section-subheading">招生要求</h4>
+        <ul class="section-list">
+            <li>对地理空间分析基础理论研究有浓厚兴趣，具有较强的数学和统计学基础，熟悉掌握R语言。</li>
+            <li>地理信息系统，测绘，遥感，计算机，数学等专业学士或硕士，有发表SCI期刊论文经验者优先。</li>
+            <li>满足科廷大学入学英语要求，即雅思6.5及以上，或等同于该要求的托福、PTE等科廷大学认可的英语成绩。尤其需要有较强的英语口语表达交流能力和写作能力。</li>
+            <li>本科和硕士成绩不低于3.0/4.0（80/100）。</li>
+        </ul>
+
+        <h4 class="section-subheading">优势</h4>
+        <ul class="section-list">
+            <li>学制3年，完成毕业论文后，正常情况下不延期。入学后6个月内和学生共同制定合理、清晰、详细的研究计划。</li>
+            <li>满足要求且对研究方向感兴趣的优秀本科毕业生（学士）可申请直接攻读博士。</li>
+            <li>推荐在著名研究机构和顶尖跨国企业实习和参访机会。</li>
+            <li>与澳大利亚、欧洲、北美、亚洲等国际著名大学研究团队学术合作。</li>
+        </ul>
+
+        <!-- 奖学金 Section -->
+        <h2 class="section-heading" id="scholarships">奖学金</h2>
+        <ul class="section-list">
+            <li>– Curtin University Scholarships for PhD/HDR students: <a href="https://scholarships.curtin.edu.au/hdr-scholarships-funding/">HDR scholarships and funding website</a> / <a href="https://scholarships.curtin.edu.au/search/#!/">Search scholarship opportunities</a></li>
+            <li>– <a href="https://scholarships.curtin.edu.au/hdr-scholarships-funding/rtp-policy/">Research Training Program (RTP) Scholarships</a>. Application period: July to August</li>
+            <li>– <a href="https://scholarships.curtin.edu.au/hdr-scholarships-funding/curtin-strategic-scholarships/">Curtin HDR Scholarships</a>. Application period: July to August</li>
+            <li>– <a href="https://scholarships.curtin.edu.au/apply/dates/">Important dates for future student scholarships</a></li>
+            <li>– China Scholarship Council (CSC): <a href="https://scholarships.curtin.edu.au/Scholarship/?id=987">Link at Curtin University</a> / <a href="https://yongzesong.com/wp-content/uploads/2023/04/987.pdf">PDF instruction</a> / <a href="https://www.csc.edu.cn/chuguo">Link at CSC</a>. Application period: January to March</li>
+        </ul>
+
+        <div class="note-box">
+            <strong>注意</strong>：申请期是指奖学金开放申请的时间，需要在这之前至少3个月准备申请奖学金，之前至少5个月开始申请博士项目，预留充足的博士项目和奖学金材料处理时间。
+        </div>
+
+        <!-- 申请方式 Section -->
+        <h2 class="section-heading" id="application">申请方式</h2>
+        <p>请将以下材料发邮件至 <a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a></p>
+
+        <ul class="section-list">
+            <li>英文个人简历(CV)：包括联系方式、教育背景、发表文章、项目、奖项等。</li>
+            <li>一份2页的研究计划书(proposal)：应涵盖课题、数据、方法、研究进度以及参考文献列表（在第3页）。课题与我学院和团队的研究相关（例如建筑环境、可持续发展、可持续基础设施和城市、地理空间分析、遥感、建筑和基础设施管理等）。</li>
+            <li>英语成绩证明（如 IELTS、TOEFL 或 PTE）。具体英语要求见以下链接。</li>
+            <li>本科和硕士成绩单（英文；如果原件为中文，需要提供中文成绩单），包含平均分。</li>
+        </ul>
+
+        <p>申请链接：<a href="https://study.curtin.edu.au/offering/course-research-doctor-of-philosophy---construction-management--dr-conmv1/">Instructions and apply for PhD study</a>. Degree: Doctor of Philosophy.</p>
+
+        <h4 class="section-subheading">英语要求</h4>
+        <ul class="section-list">
+            <li>（1）国际学生英语要求: <a href="https://www.curtin.edu.au/study/applying/english-language-requirements/accepted-english-qualifications/">link</a></li>
+            <li>（2）英语语言过桥项目: <a href="https://www.curtin.edu.au/study/applying/english-language-requirements/accepted-english-qualifications/">link</a></li>
+            <li>（3）在英语国家完成本科或硕士课程，可免除语言成绩，包括澳大利亚、新西兰、爱尔兰、英国、加拿大、新加坡、南非、美国。</li>
+        </ul>
+
+        <!-- Institutional Section -->
+        <div style="margin-top: 40px;">
+           <div class="icons-row" style="margin-top: 20px;">
+                <a href="https://staffportal.curtin.edu.au/staff/profile/view/yongze-song-35491f7e/"><img src="assets/images/curtin_university.png" alt="Curtin University"></a>
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en"><img src="assets/images/googlescholar.png" alt="Google Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://www.google.com/search?kgmid=/g/11h2jvvq0r&hl=en&q=Yongze+Song"><img src="assets/images/google.png" alt="Google"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods & Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab & Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+
+<!-- Scroll spy: highlight active sidebar link -->
+<script>
+(function() {
+    const sections = document.querySelectorAll('[id]');
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
+    const sectionIds = Array.from(navLinks).map(a => a.getAttribute('href').slice(1));
+
+    function onScroll() {
+        let current = sectionIds[0];
+        for (const id of sectionIds) {
+            const el = document.getElementById(id);
+            if (el && el.getBoundingClientRect().top <= 80) {
+                current = id;
+            }
+        }
+        navLinks.forEach(a => {
+            a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+        });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+})();
+</script>
+
+</body>
+</html>

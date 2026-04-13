@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sustainable infrastructure research by Dr. Yongze Song - factors, performance, and environmental impacts of infrastructure systems.">
+    <title>Sustainable Infrastructure - Yongze Song</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* === PAGE-SPECIFIC STYLES for sustainable-infrastructure.html === */
+
+        /* === PAGE LAYOUT === */
+        main {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 30px 20px 40px;
+        }
+
+        /* === INTRO SECTION: two-column layout === */
+        .intro-section {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 30px;
+            align-items: start;
+            margin-bottom: 1.5rem;
+        }
+        .intro-text h2 {
+            font-size: 1.15rem;
+            margin-top: 0;
+            margin-bottom: 0.4em;
+            color: var(--color-accent);
+        }
+        .intro-text p {
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin-bottom: 0.8em;
+        }
+        .intro-figure img {
+            width: 100%;
+            border-radius: 2px;
+        }
+        .intro-figure img {
+            border: 1px solid #e0e0e0;
+        }
+
+        /* === QUOTE BLOCK === */
+        .quote-block {
+            background-color: #fafafa;
+            padding: 1.2rem 1.5rem;
+            margin: 0.5rem 0 2rem;
+            border-left: 3px solid var(--color-accent);
+            font-style: italic;
+            font-size: 0.92rem;
+            line-height: 1.7;
+            color: #555;
+        }
+        .quote-block .citation {
+            font-size: 0.82rem;
+            color: var(--color-muted);
+            margin-top: 0.8rem;
+            font-style: normal;
+            line-height: 1.5;
+        }
+
+        /* === RESEARCH SECTIONS (Factors, Performance, Impacts) === */
+        .research-section {
+            margin-bottom: 2.5rem;
+        }
+        .research-section h2 {
+            font-size: 1.15rem;
+            margin-top: 1em;
+            margin-bottom: 0.4em;
+            color: var(--color-accent);
+        }
+
+        /* 4-column card grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .card-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .card-item .card-img {
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .card-item .card-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .card-item .card-title {
+            font-family: var(--font-sans);
+            font-size: 0.82rem;
+            font-weight: 600;
+            line-height: 1.45;
+            color: var(--color-heading);
+        }
+        .card-item .card-title a {
+            color: var(--color-heading);
+            text-decoration: underline;
+        }
+        .card-item .card-title a:hover {
+            color: var(--color-accent);
+        }
+
+        /* === ARTICLE COLLECTION === */
+        .article-collection {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e0e0e0;
+        }
+        .article-collection h2 {
+            font-size: 1.15rem;
+            margin-top: 0;
+            margin-bottom: 0.4em;
+            color: var(--color-accent);
+        }
+        .article-list {
+            list-style: none;
+            counter-reset: article-counter;
+            padding: 0;
+        }
+        .article-list li {
+            counter-increment: article-counter;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 0.6rem;
+            padding-left: 2em;
+            position: relative;
+        }
+        .article-list li::before {
+            content: counter(article-counter) ".";
+            position: absolute;
+            left: 0;
+            font-weight: 600;
+            color: var(--color-heading);
+        }
+        .article-list li em {
+            font-style: italic;
+        }
+        .article-list .highly-cited {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #d4760a;
+            margin-left: 4px;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 900px) {
+            .intro-section { grid-template-columns: 1fr; }
+            .card-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            html, body { font-size: 15px; }
+            .card-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .footer-inner { grid-template-columns: 1fr; gap: 16px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+        }
+        @media (max-width: 480px) {
+            .card-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="site-title">
+                Yongze Song
+                <span>Geography &amp; Sustainability</span>
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="publications.html">Publications</a>
+                <a href="methods.html">Methods</a>
+                <a href="latest.html">Latest</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Intro: two-column layout -->
+        <div class="intro-section">
+            <div class="intro-text">
+                <h2>What is Sustainable Infrastructure?</h2>
+                <p>Sustainable infrastructure is the infrastructure that is designed, constructed, and maintained with socio-economic and environmental considerations and that can perpetuate and enhance the environment. The objective of sustainable infrastructure development is to develop methods and solutions for resilient and sustainable infrastructure and facilities.</p>
+                <p>"Earth observation has great potential for sustainable infrastructure development. EOSI benefits about 85% of infrastructure influenced SDGs and 61% of all 169 SDG targets, but Earth observation is only implemented in 15% of infrastructure influenced SDG targets, and 70% of infrastructure influenced targets that can be directly or indirectly derived from Earth observation data have not been included in current SDG indicators."</p>
+            </div>
+            <div class="intro-figure">
+                <img src="assets/images/eosi-sdg.png" alt="Earth Observation for Sustainable Infrastructure - SDG mapping">
+            </div>
+        </div>
+
+        <div class="quote-block">
+            <div class="citation">Song Y., et al. "Earth Observation for Sustainable Infrastructure: A Review". <em>Remote Sensing</em>. 2021; 13(8):1528.<br>https://doi.org/10.3390/rs13081528</div>
+        </div>
+
+        <!-- Factors -->
+        <div class="research-section">
+            <h2>Factors</h2>
+            <div class="card-grid">
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/rs.png" alt="Geographical, traffic, and pavement factors"></div>
+                    <div class="card-title"><a href="#">Exploring geographical, traffic, and pavement factors of deterioration using remote sensing data</a></div>
+                </div>
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/opgd.png" alt="OPGD model"></div>
+                    <div class="card-title"><a href="#">Exploring factors affecting road deterioration using an optimal parameters-based geographical detectors (OPGD) model</a></div>
+                </div>
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/idsa.png" alt="IDSA interactive detector"></div>
+                    <div class="card-title"><a href="#">Identifying interactions of multiple factors using an interactive detector for spatial associations (IDSA)</a></div>
+                </div>
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/srk.png" alt="SRK traffic burden"></div>
+                    <div class="card-title"><a href="#">Estimating traffic burden on road infrastructure and maintenance using a segment-based regression kriging (SRK)</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance -->
+        <div class="research-section">
+            <h2>Performance</h2>
+            <div class="card-grid">
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/jag.png" alt="STOR model"></div>
+                    <div class="card-title"><a href="#">Assessing block-level sustainable transport infrastructure development using a spatial trade-off relation (STOR) model</a></div>
+                </div>
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/mfsd.png" alt="MFSD method"></div>
+                    <div class="card-title"><a href="#">Developing sustainable road infrastructure performance indicators using a model-driven fuzzy spatial multi-criteria decision making (MFSD) method</a></div>
+                </div>
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/shs.png" alt="SHS model"></div>
+                    <div class="card-title"><a href="#">Identifying multi-scale road infrastructure performance using a spatial heterogeneity-based segmentation (SHS) model</a></div>
+                </div>
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/age.png" alt="Hybrid nonlinear and ML methods"></div>
+                    <div class="card-title"><a href="#">Analyzing temporally varied factors influencing transport infrastructure performance using hybrid nonlinear and machine learning methods</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impacts -->
+        <div class="research-section">
+            <h2>Impacts</h2>
+            <div class="card-grid">
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/grs1.png" alt="Spatial disparities trade-offs"></div>
+                    <div class="card-title"><a href="#">Identifying spatial disparities in trade-offs between economic and environmental impacts of road infrastructure on continental level</a></div>
+                </div>
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/grs2.png" alt="MKD2SFCA accessibility model"></div>
+                    <div class="card-title"><a href="#">Assessing spatial population accessibility to public facilities using a nationwide travel time-based modified kernel density two-step floating catchment area (MKD2SFCA) model</a></div>
+                </div>
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/eosi.png" alt="Earth observation contributions"></div>
+                    <div class="card-title"><a href="#">Assessing contributions of Earth observation for sustainable infrastructure development</a></div>
+                </div>
+                <div class="card-item">
+                    <div class="card-img"><img src="assets/images/ijgis.png" alt="Natural cities boundaries"></div>
+                    <div class="card-title"><a href="#">Redefining boundaries of natural cities using spatial big data of infrastructure facilities</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article Collection -->
+        <div class="article-collection">
+            <h2>Article Collection</h2>
+            <ol class="article-list">
+                <li>Song, Y., Wu, P., Hampson, K., and Anumba, C., 2021. Assessing Block-level Sustainable Transport Infrastructure Development Using a Spatial Trade-Off Relation Model. <em>International Journal of Applied Earth Observation and Geoinformation</em>. 105, 102585.</li>
+                <li>Wu, P., Wang, P., Chi, H. L., Zhong, Y., &amp; Song, Y., 2022. Exploring Factors Affecting Transport Infrastructure Performance: Data-Driven Versus Knowledge-Driven Approaches. <em>IEEE Transactions on Intelligent Transportation Systems</em>.</li>
+                <li>Song, Y., &amp; Wu, P., 2021. Earth Observation for Sustainable Infrastructure: A Review. <em>Remote Sensing</em>. 13(8), 1528.</li>
+                <li>Song, Y., Wu, P., 2021. An interactive detector for spatial associations. <em>International Journal of Geographical Information Science</em>.</li>
+                <li>Song, Y., Thatcher, D., Li, Q., McHugh, T., &amp; Wu, P., 2021. Developing sustainable road infrastructure performance indicators using a model-driven fuzzy spatial multi-criteria decision making method. <em>Renewable and Sustainable Energy Reviews</em>. 138. 110538.</li>
+                <li>Song, Y., Wu, P., Li, Q., Liu, Y., and Karunaratne, L., 2021. Hybrid Nonlinear and Machine Learning Methods for Analyzing Factors Influencing the Performance of Large-Scale Transport Infrastructure. <em>IEEE Transactions on Intelligent Transportation Systems</em>. <span class="highly-cited">&#127942; Highly Cited Paper</span></li>
+                <li>Luo, P., Song, Y.* Wu, P., 2021. Spatial disparities in trade-offs: economic and environmental impacts of road infrastructure on continental level. <em>GIScience &amp; Remote Sensing</em>.</li>
+                <li>Song, Y., Wu, P., Gilmore, D., et al., 2020. A Spatial Heterogeneity-Based Segmentation Model for Analyzing Road Deterioration Network Data in Multi-Scale Infrastructure Systems. <em>IEEE Transactions on Intelligent Transportation Systems</em>.</li>
+                <li>Jiang, R., Wu, C., Song, Y. and Wu, P., 2020. Estimating carbon emissions from road use, maintenance and rehabilitation through a hybrid life cycle assessment approach&ndash;a case study. <em>Journal of Cleaner Production</em>. p.123276.</li>
+                <li>Song, Y., Wang, X.Y., Wright, G., Thatcher, D., et al., 2019. Traffic Volume Prediction with Segment-Based Regression Kriging and its Implementation in Assessing the Impact of Heavy Vehicles. <em>IEEE Transactions on Intelligent Transportation Systems</em>. (20)1: 232 &ndash; 243. <span class="highly-cited">&#127942; Highly Cited Paper</span></li>
+                <li>Song, Y., Tan, Y., Song, Y.M., et al., 2018. Spatial and temporal variations of spatial population accessibility to public hospitals: A case study of rural-urban comparison. <em>GIScience &amp; Remote Sensing</em>. <span class="highly-cited">&#127942; Highly Cited Paper</span></li>
+                <li>Song, Y., Wright, G., Wu, P., Thatcher, D., et al., 2018. Segment-Based Spatial Analysis for Assessing Road Infrastructure Performance Using Monitoring Observations and Remote Sensing Data. <em>Remote Sensing</em>. 10(11): 1696.</li>
+            </ol>
+        </div>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods & Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab & Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
