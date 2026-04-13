@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Yongze Song</title>
+    <meta name="description" content="Yongze Song - Associate Professor, Curtin University. Geospatial Analysis, Methods, and Sustainable Infrastructure.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* === MAIN LAYOUT === */
+        .main-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 30px;
+        }
+
+        /* === LEFT COLUMN === */
+        .left-col { min-width: 0; }
+
+        /* Page-level heading overrides for compact layout */
+        .left-col h2 {
+            font-size: 1.25rem;
+            margin-top: 1.2em;
+            margin-bottom: 0.4em;
+            color: var(--color-accent);
+        }
+        .right-col h2 {
+            font-size: 1.15rem;
+            margin-top: 1em;
+            margin-bottom: 0.4em;
+            color: var(--color-accent);
+        }
+
+        /* Profile Card */
+        .profile-card {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 12px;
+            align-items: stretch;
+        }
+        .profile-photo {
+            width: auto;
+            min-width: 120px;
+            max-width: 200px;
+            height: auto;
+            object-fit: cover;
+            border-radius: 4px;
+            align-self: stretch;
+        }
+        .profile-info h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-variation-settings: "opsz" 72;
+            margin: 0 0 4px 0;
+        }
+        .profile-info p {
+            font-family: var(--font-sans);
+            font-size: 0.82rem;
+            line-height: 1.5;
+            margin: 1px 0;
+            color: #444;
+        }
+        .social-icons {
+            margin-top: 6px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+        }
+        .social-icons img {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .social-icons a:hover img { opacity: 1; }
+        .social-icons .text-icon {
+            font-family: var(--font-sans);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #555;
+            text-decoration: none;
+            padding: 1px 4px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            line-height: 1.2;
+        }
+
+        /* Top logos */
+        .top-logos {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .top-logos img { height: 36px; width: auto; }
+
+        /* Quote - uses body font (sans-serif) */
+        .quote {
+            font-family: var(--font-sans);
+            font-style: italic;
+            font-size: 0.88rem;
+            font-weight: 400;
+            color: #555;
+            margin: 10px 0 16px 0;
+            padding: 0;
+            line-height: 1.55;
+        }
+        .quote strong {
+            font-weight: 600;
+        }
+        .quote a {
+            color: var(--color-accent);
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        /* Header right area: logo + icons stacked, flush right */
+        .header-right {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 14px;
+        }
+        .header-right .harvard-logo img {
+            height: 32px;
+            width: auto;
+        }
+        .header-right .curtin-logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        /* Methods section */
+        .methods-list {
+            font-size: 0.82rem;
+            margin: 6px 0;
+        }
+        .methods-list .method-item {
+            margin: 3px 0;
+            padding-left: 14px;
+            position: relative;
+        }
+        .methods-list .method-item::before {
+            content: "\2013";
+            position: absolute;
+            left: 0;
+        }
+
+        /* GitHub group */
+        .github-group {
+            font-size: 0.82rem;
+            margin: 8px 0;
+        }
+        .github-group a { font-weight: 500; }
+        .r-badges {
+            margin-top: 6px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .r-badges img { height: 20px; width: auto; }
+
+        /* Awards */
+        .awards-section {
+            font-size: 0.82rem;
+            line-height: 1.65;
+        }
+        .awards-section strong { font-weight: 600; }
+        .award-item { margin: 1px 0; }
+
+        /* Trainings */
+        .trainings-section {
+            font-size: 0.82rem;
+            margin-top: 6px;
+        }
+        .trainings-section p {
+            font-size: 0.82rem;
+            margin: 4px 0;
+        }
+
+        /* === RIGHT COLUMN === */
+        .right-col { min-width: 0; }
+
+        .teams-list {
+            font-size: 0.82rem;
+            margin: 6px 0;
+        }
+        .teams-list a {
+            display: block;
+            margin: 2px 0;
+        }
+
+        .sustainable-section img {
+            border-radius: 4px;
+            margin: 8px 0;
+        }
+        .sustainable-section .caption {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+            margin: 4px 0;
+        }
+        .dr-label {
+            font-family: var(--font-serif);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            margin: 6px 0;
+        }
+        .dr-sublabel {
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            color: var(--color-muted);
+            text-align: center;
+        }
+
+        .institution-logos {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .institution-logos img { height: 32px; width: auto; }
+
+        .banner-box {
+            font-family: var(--font-serif);
+            background: linear-gradient(135deg, #1a3a5c, #2d5a8e);
+            color: #fff;
+            padding: 14px;
+            border-radius: 4px;
+            margin: 12px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+        .banner-box .subtitle {
+            font-family: var(--font-sans);
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: #ccc;
+            margin-top: 4px;
+            text-transform: none;
+        }
+
+        /* Visitor Map Widget */
+        .visitor-widget {
+            margin-top: 10px;
+        }
+        .visitor-widget script + a img,
+        .visitor-widget img {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        /* === FEATURED CARDS SECTION (4-column) === */
+        .featured-cards {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .feat-card {
+            text-decoration: none;
+            color: var(--color-text);
+            display: block;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .feat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            color: var(--color-text);
+        }
+
+        .feat-card .card-img {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            background: #eee;
+        }
+        .feat-card .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+        .feat-card:hover .card-img img {
+            transform: scale(1.05);
+        }
+
+        /* Play button overlay for video cards */
+        .feat-card .play-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.2);
+            transition: background 0.25s ease;
+        }
+        .feat-card:hover .play-overlay {
+            background: rgba(0,0,0,0.35);
+        }
+        .play-overlay .play-btn {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+        .feat-card:hover .play-btn {
+            transform: scale(1.1);
+        }
+        .play-btn::after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 9px 0 9px 16px;
+            border-color: transparent transparent transparent var(--color-accent);
+            margin-left: 3px;
+        }
+
+        .feat-card .card-body {
+            padding: 8px 10px 10px;
+        }
+        .feat-card .card-desc {
+            font-family: var(--font-sans);
+            font-size: 0.72rem;
+            line-height: 1.45;
+            color: var(--color-muted);
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Column 4: stacked banners - match card image area height (16:9) */
+        .feat-banners {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            aspect-ratio: 16 / 9;
+            align-self: start;
+        }
+        .banner-link {
+            text-decoration: none;
+            color: var(--color-text);
+            display: block;
+            flex: 1;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .banner-link img {
+            height: 100%;
+            object-fit: cover;
+        }
+        .banner-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.14);
+            color: var(--color-text);
+        }
+        .banner-link:hover img {
+            transform: scale(1.03);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1024px) {
+            .featured-cards {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .featured-cards {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .profile-card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .profile-photo { width: 120px; min-width: 120px; align-self: auto; object-fit: cover; }
+            .social-icons { justify-content: center; }
+            .top-logos { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="site-title">
+            Yongze Song
+            <span>Geography &amp; Sustainability</span>
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="methods.html">Methods</a>
+            <a href="latest.html">Latest</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="main-content">
+
+    <!-- ===== LEFT COLUMN ===== -->
+    <div class="left-col">
+
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <img src="assets/images/yongze-song-202511-03.png" alt="Yongze Song" class="profile-photo">
+            <div class="profile-info">
+                <h1>Yongze Song</h1>
+                <p>Associate Professor</p>
+                <p>School of Design and the Built Environment</p>
+                <p>Curtin University</p>
+                <p>Perth, 6102, WA, Australia</p>
+                <p>Email: <a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a></p>
+                <div class="social-icons">
+                    <a href="https://staffportal.curtin.edu.au/staff/profile/view/yongze-song-35491f7e/"><img src="assets/images/curtin_university.png" alt="Curtin University"></a>
+                    <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Google Scholar"></a>
+                    <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                    <a href="https://www.google.com/search?kgmid=/g/11h2jvvq0r&hl=en&q=Yongze+Song" title="Google"><img src="assets/images/google.png" alt="Google"></a>
+                    <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                    <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                    <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                    <a href="cn.html" class="text-icon">中文</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quote -->
+        <p class="quote">
+            "I am seeking highly motivated students with a keen interest in <strong>geospatial theories and methods</strong>." &ndash; <a href="lab.html">Join us</a>
+        </p>
+
+    </div><!-- /.left-col (temporary close for full-width cards) -->
+    <div class="right-col" style="display:flex; justify-content:flex-end;">
+        <div class="header-right">
+            <a href="https://staffportal.curtin.edu.au/staff/profile/view/yongze-song-35491f7e/" class="curtin-logo"><img src="assets/images/logo_02.png" alt="Curtin University"></a>
+            <a href="https://spatialmethods.org/" class="harvard-logo"><img src="assets/images/logo_issm.png" alt="International Society for Spatial Methods"></a>
+            <a href="https://sdl.gis.harvard.edu/fellows" class="harvard-logo"><img src="assets/images/harvard-sdl.png" alt="Harvard Spatial Data Lab"></a>
+        </div>
+    </div>
+</main><!-- /.main-content (temporary close) -->
+
+<!-- ========== FEATURED CARDS (full-width 4-column) ========== -->
+<section class="featured-cards">
+
+    <!-- Card 1: Research Excellence -->
+    <a href="https://www.youtube.com/watch?v=Z_JNJb9KJb0" class="feat-card" target="_blank" rel="noopener">
+        <div class="card-img">
+            <img src="assets/images/research-excellence-v2.jpg" alt="Research Excellence">
+            <div class="play-overlay"><div class="play-btn"></div></div>
+        </div>
+        <div class="card-body">
+            <div class="card-desc">Research excellence in sustainable infrastructure</div>
+        </div>
+    </a>
+
+    <!-- Card 2: Spatial Methods -->
+    <a href="methods.html" class="feat-card">
+        <div class="card-img">
+            <img src="assets/images/spatial-methods-card.svg" alt="Spatial Methods">
+        </div>
+        <div class="card-body">
+            <div class="card-desc">30+ new spatial methods and 12 R packages</div>
+        </div>
+    </a>
+
+    <!-- Card 3: Geospatial Intelligence Lab -->
+    <a href="lab.html" class="feat-card">
+        <div class="card-img">
+            <img src="assets/images/card-lab.jpg" alt="Geospatial Intelligence Lab">
+        </div>
+        <div class="card-body">
+            <div class="card-desc">Geospatial Intelligence Lab</div>
+        </div>
+    </a>
+    
+    <!-- Card 4: Recent High Impact Articles -->
+    <a href="high-impact-articles.html" class="feat-card">
+        <div class="card-img">
+            <img src="assets/images/high-impact-card.svg" alt="Recent High Impact Articles">
+        </div>
+        <div class="card-body">
+            <div class="card-desc">Recent High Impact Articles</div>
+        </div>
+    </a>
+
+
+
+</section>
+
+<!-- ========== MAIN CONTENT (resumed) ========== -->
+<main class="main-content">
+    <div class="left-col">
+
+        <!-- Awards and Professional Services -->
+        <h2>Awards and Professional Services</h2>
+        <div class="awards-section">
+            <div class="award-item"><a href="https://aips.org.au/tall-poppies/2025-western-australia-award-winner/dr-yongze-song"><strong>Australian Young Tall Poppy Science Award</strong></a>, Australian Institute of Policy &amp; Science, 2025. <a href="https://www.curtin.edu.au/news/media-release/curtin-scientists-share-top-honours-as-was-young-tall-poppy-winners/">Curtin News</a>, <a href="https://aips.org.au/2025ytpwinners">AIPS News</a>, <a href="https://www.curtin.edu.au/news/media-release/quintet-of-curtin-researchers-honoured-in-young-tall-poppy-science-awards/">Curtin News</a></div>
+            <div class="award-item"><strong>Fellow</strong> of Royal Geographical Society, United Kingdom, 2020</div>
+            <div class="award-item"><strong>Fellow</strong> of DAAD AInet, Germany, 2023</div>
+            <div class="award-item"><strong>Fellow</strong> of SDL, Harvard University, United States, 2024</div>
+            <div class="award-item"><strong>Committee Member</strong> of the International Association for Mathematical Geosciences (IAMG), 2022</div>
+            <div class="award-item"><strong>IEEE Senior Member</strong>, 2024</div>
+            <div class="award-item"><strong>Member</strong> of the International Society for Photogrammetry and Remote Sensing (ISPRS), WG IV/2, 2022</div>
+            <div class="award-item"><a href="https://geospatialworld.net/rising-stars/2023/"><strong>Geospatial World 50 Rising Stars</strong></a>, 2023</div>
+            <div class="award-item"><strong>Global Top 10 Young Scientist Award</strong>, 2021</div>
+            <div class="award-item"><a href="https://elsevier.digitalcommonsdata.com/datasets/btchxktzyw/"><strong>World's Top 2% Scientists</strong></a> by Stanford University, 2023, 2024</div>
+            <div class="award-item"><strong>Global Impact Award</strong>, Curtin University, 2024</div>
+            <div class="award-item"><a href="https://www.curtin.edu.au/news/media-release/curtin-research-and-engagement-stars-recognised/"><strong>Research Excellence Award</strong></a> &ndash; Early Career Researcher, Curtin University, 2023</div>
+            <div class="award-item"><strong>Research Excellence and Impact Award</strong> (Finalist), Curtin University, 2025</div>
+            <div class="award-item"><strong>Chair.</strong> <a href="https://www.isprs.org/tc4-symposium2024/index.html">ISPRS Technical Commission IV Symposium</a>, 22-25 Oct 2024, Perth, Australia</div>
+            <div class="award-item"><strong>Chair.</strong> <a href="https://yongzesong.com/cityplus-2023/">City+2023@Perth International Conference</a>, 8-10 Sept 2023, Perth, Australia</div>
+            <div class="award-item"><strong>Tutorial and Education Chair.</strong> <a href="https://2025.ieeeigarss.org/">2025 IEEE International Geoscience and Remote Sensing Symposium (IGARSS)</a>, 3-8 August 2025, Brisbane, Australia</div>
+            <div class="award-item"><strong>Logistics Chair.</strong> Australasian Joint Conference on Artificial Intelligence (AJCAI) 2022, 5-8 Dec 2022, Perth, Australia</div>
+            <div class="award-item"><strong>Special Issue Editor (SIE), Associate Editor</strong> &ndash; <a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">International Journal of Applied Earth Observation and Geoinformation</a>. IF 8.6. Q1</div>
+            <div class="award-item"><strong>Associate Editor</strong> &ndash; <a href="https://www.tandfonline.com/journals/tgrs20">GIScience &amp; Remote Sensing</a>. IF 6.9. Q1</div>
+            <div class="award-item"><strong>Topic Editor</strong> &ndash; <a href="https://www.geoscientific-model-development.net/">Geoscientific Model Development</a>. IF 4.9. Q1</div>
+            <div class="award-item"><strong>Special Issue Editor (SIE)</strong> &ndash; <a href="https://www.sciencedirect.com/journal/geomatica">Geomatica</a></div>
+            <div class="award-item"><strong>Associate Editor</strong> &ndash; <a href="https://www.tandfonline.com/journals/tgda21">All Earth</a>. IF 2.6. Q2</div>
+            <div class="award-item"><strong>Editor</strong> &ndash; <a href="https://www.tandfonline.com/journals/tjss20">Journal of Spatial Science</a>. IF 1.7. Q2</div>
+            <div class="award-item"><strong>Editorial Board Member</strong> &ndash; <a href="https://www.tandfonline.com/journals/tgsi20">Geo-spatial Information Science</a>. IF 5.5. Q1</div>
+            <div class="award-item"><strong>Editorial Board Member</strong> &ndash; <a href="https://www.cell.com/iscience/home">iScience</a> (Cell Press). IF 4.1. Q1</div>
+            <div class="award-item"><strong>Editorial Board Member</strong> &ndash; <a href="https://www.tandfonline.com/journals/tjde20">International Journal of Digital Earth</a>. IF 4.9. Q1</div>
+            <div class="award-item"><strong>Editorial Board Member</strong> &ndash; <a href="https://www.tandfonline.com/journals/tagi20">Annals of GIS</a>. IF 3.3. Q1</div>
+            <div class="award-item"><strong>Editorial Board Member</strong> &ndash; <a href="https://www.nature.com/palcomms/">Humanities and Social Sciences Communications</a> (Nature). IF 3.6. Q1</div>
+            <div class="award-item"><strong>Editorial Board Member</strong> &ndash; <a href="https://www.mdpi.com/journal/remotesensing">Remote Sensing</a>. IF 4.1. Q1</div>
+            <div class="award-item"><strong>Editorial Board Member</strong> &ndash; <a href="https://www.mdpi.com/journal/ijgi">ISPRS International Journal of Geo-Information</a>. IF 2.8. Q2</div>
+            <div class="award-item"><strong>Editorial Board Member</strong> &ndash; <a href="https://www.frontiersin.org/journals/environmental-science">Frontiers in Environmental Science</a>. IF 3.7. Q2</div>
+            <div class="award-item"><strong>Editorial Board Member</strong> &ndash; <a href="https://www.sciencedirect.com/journal/resources-environment-and-sustainability">Resources, Environment and Sustainability</a>. IF 7.8. Q1</div>
+            <div class="award-item"><strong>Editorial Board Member</strong> &ndash; <a href="https://www.the-innovation.org/informatics">The Innovation Informatics</a></div>
+            <div class="award-item">Special Thanks Award: The 35th Australasian Joint Conference on Artificial Intelligence, 2022</div>
+            <div class="award-item">Chinese Government Award for Outstanding Self-Financed Students Abroad (top 0.1% globally), 2019</div>
+            <div class="award-item">Chancellor Commendation Award for exceptionally high standard in the PhD thesis, 2019</div>
+            <div class="award-item">Global Peer Review Award: Top reviewers in Geosciences (top 1%) and Cross-field (top 1%), 2019</div>
+            <div class="award-item">Australian National First Prize: Location Data First Prize, 2016</div>
+        </div>
+
+    </div>
+
+    <!-- ===== RIGHT COLUMN ===== -->
+    <div class="right-col">
+
+        <!-- Teams -->
+        <h2>Teams</h2>
+        <div class="teams-list">
+            <a href="lab.html">Geospatial Intelligence Lab, Curtin University</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Spatial Data Lab, Harvard University</a>
+            <a href="https://research.curtin.edu.au/remotesensing/">Curtin's Remote Sensing &amp; Satellite Research Group (RSSRG)</a>
+            <a href="https://spatialmethods.org/">International Society for Spatial Methods</a>
+            <a href="https://netzeroprecincts.au/">Pathways to Net Zero Precincts, RACE for 2030</a>
+            <a href="https://s30991.pcdn.co/wp-content/uploads/sites/8/2025/06/Academic-Calendar-2025-2028-17062025.pdf">Curtin Calendar 2025-2028</a>
+        </div>
+
+        <!-- Trainings and Presentations -->
+        <h2>Trainings and Presentations</h2>
+        <div class="trainings-section">
+            <p>Lecture series: Geospatial Data Analysis, Prediction, and GeoAI: New Theories, Methods, and Software. 4 Jan 2026. <a href="lecture-202601.html">Lecture materials</a></p>
+            <p>Harvard Spatial Data Lab (SDL) 2025 Monthly Webinars on Spatiotemporal Innovation. <a href="https://yongzesong.com/harvard-sdl-workshop-2025/">Summary and video recordings</a></p>
+            <p>IEEE IGARSS Summer School Training Materials, 31 July &ndash; 8 August 2025, Brisbane, Australia: <a href="https://ausgis.github.io/igarss25ss/">https://ausgis.github.io/igarss25ss/</a></p>
+            <p>Spatiotemporal Innovation Summer School, Harvard University, 16-19 July 2024, Boston, US. <a href="https://yongzesong.com/wp-content/uploads/2024/07/2024_07_prediction_ys.pdf">Spatial Prediction: New Methods and R Packages</a></p>
+        </div>
+
+    </div>
+
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods & Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab & Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

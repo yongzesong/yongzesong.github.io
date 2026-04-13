@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geospatial Intelligence Lab - Yongze Song</title>
+    <meta name="description" content="Geospatial Intelligence Lab - Advancing geospatial analysis and AI for sustainable development in infrastructure and industry.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+
+        /* === HERO === */
+        .hero {
+            max-width: 1300px; margin: 0 auto; padding: 30px 20px 20px;
+            display: grid; grid-template-columns: 1fr 420px; gap: 30px; align-items: center;
+        }
+        .hero-text h1 { margin: 0 0 6px 0; font-size: 2.2rem; }
+        .hero-text .subtitle {
+            font-family: var(--font-sans); font-size: 0.95rem; color: var(--color-accent);
+            font-weight: 500; margin-bottom: 14px; letter-spacing: 0.01em;
+        }
+        .hero-text p { font-size: 0.92rem; color: #444; line-height: 1.65; margin-bottom: 12px; }
+        .hero-image { border-radius: 6px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        .hero-image img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+
+        /* === TEAM === */
+        .team-section { max-width: 1300px; margin: 0 auto; padding: 10px 20px 30px; }
+        .team-section h2 { font-size: 1.25rem; color: var(--color-accent); margin-bottom: 16px; }
+        .team-group-title {
+            font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600;
+            color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.06em;
+            margin: 20px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #e8e8e8;
+        }
+        .team-group-title:first-of-type { margin-top: 0; }
+
+        /* Director */
+        .director-card {
+            display: flex; gap: 18px; align-items: flex-start; margin-bottom: 20px;
+            padding: 16px; background: #fafafa; border-radius: 8px; border: 1px solid #eee;
+        }
+        .director-card img { width: 110px; min-width: 110px; border-radius: 50%; aspect-ratio: 1; object-fit: cover; }
+        .director-info h3 { font-size: 1.2rem; margin: 0 0 4px 0; }
+        .director-info p { font-size: 0.82rem; line-height: 1.5; margin: 2px 0; color: #444; }
+        .director-info a { font-size: 0.82rem; }
+
+        /* Team grid */
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; }
+        .member-item { text-align: center; cursor: pointer; position: relative; }
+        .member-avatar {
+            width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
+            margin: 0 auto 6px; transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 2px solid transparent;
+        }
+        .member-item:hover .member-avatar,
+        .member-item.active .member-avatar {
+            transform: scale(1.08); box-shadow: 0 4px 12px rgba(140,21,21,0.2);
+            border-color: var(--color-accent);
+        }
+        .member-name { font-family: var(--font-sans); font-size: 0.68rem; font-weight: 500; color: var(--color-heading); line-height: 1.3; display: block; }
+        .member-affil { font-size: 0.58rem; color: var(--color-muted); display: block; line-height: 1.2; margin-top: 1px; }
+
+        /* Expandable detail popup */
+        .member-detail {
+            display: none; position: absolute; top: calc(100% + 8px); left: 50%;
+            transform: translateX(-50%); width: 260px; background: #fff;
+            border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 100;
+            text-align: left; animation: fadeIn 0.2s ease;
+        }
+        .member-item.active .member-detail { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .member-detail .detail-name { font-family: var(--font-serif); font-size: 0.9rem; font-weight: 600; color: var(--color-heading); margin-bottom: 4px; }
+        .member-detail .detail-role { font-size: 0.72rem; color: var(--color-accent); font-weight: 500; margin-bottom: 6px; }
+        .member-detail .detail-research { font-size: 0.72rem; color: #555; line-height: 1.45; margin-bottom: 6px; }
+        .member-detail .detail-email { font-size: 0.68rem; color: var(--color-muted); word-break: break-all; }
+        .member-detail .detail-link { display: inline-block; margin-top: 6px; font-size: 0.7rem; font-weight: 600; color: var(--color-accent); text-decoration: none; }
+        .member-detail .detail-link:hover { text-decoration: underline; }
+
+        /* === EVENTS === */
+        .events-section { max-width: 1300px; margin: 0 auto; padding: 10px 20px 30px; }
+        .events-section h2 { font-size: 1.25rem; color: var(--color-accent); margin-bottom: 14px; }
+        .events-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .event-card {
+            text-decoration: none; color: var(--color-text); display: block;
+            border-radius: 8px; overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .event-card:hover { transform: translateY(-5px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); color: var(--color-text); }
+        .event-card .card-img { position: relative; overflow: hidden; aspect-ratio: 16 / 9; background: #eee; }
+        .event-card .card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; }
+        .event-card:hover .card-img img { transform: scale(1.05); }
+        .event-card .card-body { padding: 8px 10px 10px; }
+        .event-card .card-title { font-family: var(--font-serif); font-size: 0.78rem; font-weight: 600; line-height: 1.3; margin-bottom: 3px; color: var(--color-heading); }
+        .event-card .card-desc { font-family: var(--font-sans); font-size: 0.7rem; line-height: 1.4; color: var(--color-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* Play overlay */
+        .event-card .play-overlay {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.2); transition: background 0.25s ease;
+        }
+        .event-card:hover .play-overlay { background: rgba(0,0,0,0.35); }
+        .play-overlay .play-btn {
+            width: 44px; height: 44px; background: rgba(255,255,255,0.9); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease;
+        }
+        .event-card:hover .play-btn { transform: scale(1.1); }
+        .play-btn::after {
+            content: ""; display: block; width: 0; height: 0; border-style: solid;
+            border-width: 8px 0 8px 14px; border-color: transparent transparent transparent var(--color-accent); margin-left: 3px;
+        }
+
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1024px) {
+            .hero { grid-template-columns: 1fr; }
+            .hero-image { max-width: 480px; }
+            .events-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+            .team-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+        }
+        @media (max-width: 768px) {
+            html, body { font-size: 15px; }
+            h1 { font-size: 2rem; }
+            .hero { padding: 20px 20px 10px; }
+            .hero-text h1 { font-size: 1.8rem; }
+            .events-grid { grid-template-columns: 1fr; gap: 14px; }
+            .footer-inner { grid-template-columns: 1fr; gap: 16px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+            .director-card { flex-direction: column; align-items: center; text-align: center; }
+            .director-card img { width: 90px; min-width: 90px; }
+            .member-detail {
+                position: fixed; top: auto; bottom: 0; left: 0; right: 0;
+                transform: none; width: 100%; border-radius: 16px 16px 0 0;
+                max-height: 50vh; overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="site-title">
+            Yongze Song
+            <span>Geography &amp; Sustainability</span>
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="methods.html">Methods</a>
+            <a href="latest.html">Latest</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ========== HERO ========== -->
+<section class="hero">
+    <div class="hero-text">
+        <h1>Geospatial Intelligence Lab</h1>
+        <div class="subtitle">Geospatial Intelligence for Sustainable Infrastructure and Industry</div>
+        <p>The Geospatial Intelligence Lab pioneers advanced geospatial analysis and AI to drive sustainable development in infrastructure and industry. With members from over 20 countries and strong collaborations with world-leading institutions, including Harvard and MIT, we create cutting-edge tools and solutions for global impact.</p>
+        <p style="font-size:0.82rem; color:var(--color-muted);">
+            GitHub: <a href="https://github.com/ausgis" style="font-weight:600;">github.com/ausgis</a>
+        </p>
+    </div>
+    <div class="hero-image">
+        <img src="assets/images/isprs-perth-2024.jpg" alt="ISPRS TC IV Symposium 2024">
+    </div>
+</section>
+
+<!-- ========== TEAM ========== -->
+<section class="team-section">
+    <h2>Team</h2>
+
+    <!-- Director -->
+    <div class="team-group-title">Lab Director</div>
+    <div class="director-card">
+        <img src="assets/images/yongze-song.png" alt="Yongze Song">
+        <div class="director-info">
+            <h3>Yongze Song</h3>
+            <p>Associate Professor, Curtin University</p>
+            <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.6) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.9)</p>
+            <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
+        </div>
+    </div>
+
+    <!-- Members (all non-alumni, in original order from lab people.html) -->
+    <div class="team-group-title">Members</div>
+    <div class="team-grid" id="members-grid">
+
+        <!-- 1. Zehua Zhang - PostDoc -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy">
+            <span class="member-name">Zehua Zhang</span>
+            <div class="member-detail">
+                <div class="detail-name">Dr Zehua Zhang</div>
+                <div class="detail-role">PostDoc, Curtin University</div>
+                <div class="detail-research">GIScience, spatial statistics, population geography, optimisation</div>
+                <div class="detail-email">Zehua.Zhang@curtin.edu.au</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Zehua-Zhang-25" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 2. Luyen Khac Bui - PostDoc -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/luyen-bui.jpg" alt="Luyen Khac Bui" loading="lazy">
+            <span class="member-name">Luyen Khac Bui</span>
+            <div class="member-detail">
+                <div class="detail-name">Dr Luyen Khac Bui</div>
+                <div class="detail-role">PostDoc</div>
+                <div class="detail-research">InSAR, LiDAR, Machine Learning, Deep Learning</div>
+                <div class="detail-email">buikhacluyen@humg.edu.vn</div>
+                <a class="detail-link" href="https://scholar.google.com/citations?user=y8YGr1kAAAAJ&hl=en" target="_blank">Google Scholar &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 3. Omri Yechezkel Ram - Student -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/omri-ram.png" alt="Omri Ram" loading="lazy">
+            <span class="member-name">Omri Ram</span>
+            <span class="member-affil">UWA</span>
+            <div class="member-detail">
+                <div class="detail-name">Omri Yechezkel Ram</div>
+                <div class="detail-role">Student, University of Western Australia</div>
+                <div class="detail-research">Machine Learning, Anomaly Detection, Semi-supervised Learning, Geospatial analysis</div>
+                <div class="detail-email">omriyram@gmail.com</div>
+                <a class="detail-link" href="https://www.linkedin.com/in/omri-y-ram/" target="_blank">LinkedIn &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 4. Kai Ren - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/kai-ren.jpg" alt="Kai Ren" loading="lazy">
+            <span class="member-name">Kai Ren</span>
+            <div class="member-detail">
+                <div class="detail-name">Kai Ren</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Geo-spatial analysis, GIS, Remote sensing, Crop yield, Agriculture, Climate change</div>
+                <div class="detail-email">kai.ren@curtin.edu.au</div>
+                <a class="detail-link" href="https://renkaigis.cn/" target="_blank">Homepage &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 5. Jiao Hu - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/jiao-hu.png" alt="Jiao Hu" loading="lazy">
+            <span class="member-name">Jiao Hu</span>
+            <div class="member-detail">
+                <div class="detail-name">Jiao Hu</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Remote sensing, Climate change, Glaciers, Deep Learning</div>
+                <div class="detail-email">jiao.hu@curtin.edu.au</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Jiao-Hu-8" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 6. Maryam Tabatabaeiasl - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/maryam-tabatabaeiasl.png" alt="Maryam Tabatabaeiasl" loading="lazy">
+            <span class="member-name">Maryam T.</span>
+            <div class="member-detail">
+                <div class="detail-name">Maryam Tabatabaeiasl</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Water resource, GRACE data, Agriculture, Climate change</div>
+                <div class="detail-email">maryam.tabatabaeiasl@postgrad.curtin.edu.au</div>
+            </div>
+        </div>
+
+        <!-- 7. Peng Luo - PostDoc -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy">
+            <span class="member-name">Peng Luo</span>
+            <span class="member-affil">MIT</span>
+            <div class="member-detail">
+                <div class="detail-name">Peng Luo</div>
+                <div class="detail-role">Postdoc, MIT</div>
+                <div class="detail-research">Spatial association, GeoAI, Computational urban science</div>
+                <div class="detail-email">pengluo@mit.edu</div>
+                <a class="detail-link" href="https://sites.google.com/view/pengluo/about" target="_blank">Homepage &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 8. Tomáš Ič - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/tomas-ic.png" alt="Tomáš Ič" loading="lazy">
+            <span class="member-name">Tomáš Ič</span>
+            <span class="member-affil">Slovakia</span>
+            <div class="member-detail">
+                <div class="detail-name">Tomáš Ič</div>
+                <div class="detail-role">PhD, Slovak University of Technology</div>
+                <div class="detail-research">GIS, fractal dimension, fractal interpolation, digital elevation model</div>
+                <div class="detail-email">tomas.ic@stuba.sk</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Tomas_Ic" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 9. Zhengyuan Chai - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/zhengyuan-chai.png" alt="Zhengyuan Chai" loading="lazy">
+            <span class="member-name">Zhengyuan Chai</span>
+            <div class="member-detail">
+                <div class="detail-name">Zhengyuan Chai</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Spatial Analysis, Remote Sensing, Machine Learning</div>
+                <div class="detail-email">zhengyuan.chai@postgrad.curtin.edu.au</div>
+                <a class="detail-link" href="https://smartsatcrc.com/students/zhengyuan-chai/" target="_blank">SmartSat CRC &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 10. Dong Xu - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/dong-xu.png" alt="Dong Xu" loading="lazy">
+            <span class="member-name">Dong Xu</span>
+            <span class="member-affil">NUS</span>
+            <div class="member-detail">
+                <div class="detail-name">Dong Xu</div>
+                <div class="detail-role">PhD, National University of Singapore</div>
+                <div class="detail-research">Urban environment, Climate mitigation, Ecosystem service, Remote sensing</div>
+                <div class="detail-email">Xu.dong@u.nus.edu</div>
+            </div>
+        </div>
+
+        <!-- 11. Xincheng Zheng - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/xincheng-zheng.png" alt="Xincheng Zheng" loading="lazy">
+            <span class="member-name">Xincheng Zheng</span>
+            <span class="member-affil">BNU</span>
+            <div class="member-detail">
+                <div class="detail-name">Xincheng Zheng</div>
+                <div class="detail-role">PhD, Beijing Normal University</div>
+                <div class="detail-research">Urban ecology, spatial analysis, vehicle emission, urban planning, land use</div>
+                <div class="detail-email">emilzheng@mail.bnu.edu.cn</div>
+            </div>
+        </div>
+
+        <!-- 12. Pengcheng Zhang - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang" loading="lazy">
+            <span class="member-name">Pengcheng Zhang</span>
+            <span class="member-affil">PolyU</span>
+            <div class="member-detail">
+                <div class="detail-name">Pengcheng Zhang</div>
+                <div class="detail-role">PhD, HK Polytechnic University</div>
+                <div class="detail-research">Spatial analysis, GeoAI, construction management, intelligent transportation</div>
+                <div class="detail-email">zpcscholar@gmail.com</div>
+            </div>
+        </div>
+
+        <!-- 13. Weitao Hou - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/weitao-hou.png" alt="Weitao Hou" loading="lazy">
+            <span class="member-name">Weitao Hou</span>
+            <div class="member-detail">
+                <div class="detail-name">Weitao Hou</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Geospatial theories, Spatial statistics, Spatial modelling, Spatial epidemiology</div>
+                <div class="detail-email">weitao.hou@postgrad.curtin.edu.au</div>
+                <a class="detail-link" href="https://github.com/RossiHou" target="_blank">GitHub &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 14. Md Shariful Alam Malik - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/shariful-malik.png" alt="Shariful Malik" loading="lazy">
+            <span class="member-name">Shariful Malik</span>
+            <div class="member-detail">
+                <div class="detail-name">Md Shariful Alam Malik</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Built-Environment, Transportation, Road-Safety, Sustainable mobility</div>
+                <div class="detail-email">Shariful.malik@postgrad.curtin.edu.au</div>
+                <a class="detail-link" href="https://www.linkedin.com/in/m-shariful-malik-fieb-peng-mtas-pmp%C2%AE-fieaust-prince2p%C2%AE-cpeng-ner-rpeq-942a2823/" target="_blank">LinkedIn &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 15. Rui Qu - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/rui-qu.png" alt="Rui Qu" loading="lazy">
+            <span class="member-name">Rui Qu</span>
+            <div class="member-detail">
+                <div class="detail-name">Rui Qu</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Carbon cycle, Carbon source/sink, Carbon storage, Remote Sensing, Alpine grassland</div>
+                <div class="detail-email">rui.qu@curtin.edu.au</div>
+            </div>
+        </div>
+
+        <!-- 16. Chunjiang Chen - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/chunjiang-chen.png" alt="Chunjiang Chen" loading="lazy">
+            <span class="member-name">Chunjiang Chen</span>
+            <div class="member-detail">
+                <div class="detail-name">Chunjiang Chen</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Road infrastructure, machine learning, road deterioration</div>
+                <div class="detail-email">Chunjiang.chen@postgrad.curtin.edu.au</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Chunjiang-Chen-2" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 17. Robert A. - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/robert-a.png" alt="Robert A." loading="lazy">
+            <span class="member-name">Robert A.</span>
+            <div class="member-detail">
+                <div class="detail-name">Robert Andriambololonaharisoamalala</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Remote sensing, GIS, Geospatial, Artificial intelligence, Mapping</div>
+                <div class="detail-email">r.andriamb@postgrad.curtin.edu.au</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Robert-Andriambololona" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 18. Zhuoyao Xiao - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/zhuoyao-xiao.png" alt="Zhuoyao Xiao" loading="lazy">
+            <span class="member-name">Zhuoyao Xiao</span>
+            <div class="member-detail">
+                <div class="detail-name">Zhuoyao Xiao</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Spatial-temporal data analysis, GIS, sustainable development, urban green space</div>
+                <div class="detail-email">zhuoyao.xiao@postgrad.curtin.edu.au</div>
+                <a class="detail-link" href="https://storymaps.arcgis.com/stories/864cb13c61234b0886b0103a48d42f9a" target="_blank">ArcGIS StoryMap &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 19. Jingxian Wei - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/jingxian-wei.png" alt="Jingxian Wei" loading="lazy">
+            <span class="member-name">Jingxian Wei</span>
+            <div class="member-detail">
+                <div class="detail-name">Jingxian Wei</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Land use, Spatial planning, Spatial analysis</div>
+                <div class="detail-email">jingxian.wei@curtin.edu.au</div>
+            </div>
+        </div>
+
+        <!-- 20. Fawziah Almutairi - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/fawziah-almutairi.png" alt="Fawziah Almutairi" loading="lazy">
+            <span class="member-name">Fawziah Almutairi</span>
+            <div class="member-detail">
+                <div class="detail-name">Fawziah Almutairi</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-email">fawziah.almutairi@postgrad.curtin.edu.au</div>
+            </div>
+        </div>
+
+        <!-- 21. Bing Wang - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/bing-wang.png" alt="Bing Wang" loading="lazy">
+            <span class="member-name">Bing Wang</span>
+            <div class="member-detail">
+                <div class="detail-name">Bing Wang</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">InSAR techniques, Landslide hazard, vegetation anomalies, Remote Sensing</div>
+                <div class="detail-email">bing.wang@curtin.edu.au</div>
+            </div>
+        </div>
+
+        <!-- 22. Yujia Ming - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/yujia-ming.png" alt="Yujia Ming" loading="lazy">
+            <span class="member-name">Yujia Ming</span>
+            <div class="member-detail">
+                <div class="detail-name">Yujia Ming</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Urban heat island, Urban land use, Environment management, Urban vitality</div>
+                <div class="detail-email">yujia.ming@curtin.edu.au</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Yujia_Ming/research" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 23. Xueyuan Zhang - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/xueyuan-zhang.png" alt="Xueyuan Zhang" loading="lazy">
+            <span class="member-name">Xueyuan Zhang</span>
+            <div class="member-detail">
+                <div class="detail-name">Xueyuan Zhang</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Ecological effect, Nighttime light data, CO2 emission, POI</div>
+                <div class="detail-email">xueyuan.zhang@curtin.edu.au</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Xueyuan-Zhang-7" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 24. Jielong Wang - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/jielong-wang.jpg" alt="Jielong Wang" loading="lazy">
+            <span class="member-name">Jielong Wang</span>
+            <div class="member-detail">
+                <div class="detail-name">Jielong Wang</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Remote sensing, hydrology, deep learning</div>
+                <div class="detail-email">jielong.wang@curtin.edu.au</div>
+            </div>
+        </div>
+
+        <!-- 25. MD. Ashikuzzaman - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/ashikuzzaman.jpeg" alt="MD. Ashikuzzaman" loading="lazy">
+            <span class="member-name">MD. Ashikuzzaman</span>
+            <div class="member-detail">
+                <div class="detail-name">MD. Ashikuzzaman</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">GIS, sustainable development, urban planning</div>
+                <div class="detail-email">md.ashikuzzaman@curtin.edu.au</div>
+                <a class="detail-link" href="https://www.linkedin.com/in/md-ashikuzzaman-50233b96/" target="_blank">LinkedIn &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 26. Jiajie Shang - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/jiajie-shang.jpg" alt="Jiajie Shang" loading="lazy">
+            <span class="member-name">Jiajie Shang</span>
+            <div class="member-detail">
+                <div class="detail-name">Jiajie Shang</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Energy economy, health inequity, coal supply chain, GIS</div>
+                <div class="detail-email">jiajie.shang@postgrad.curtin.edu.au</div>
+            </div>
+        </div>
+
+        <!-- 27. Qionghuan Liu - PostDoc -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/qionghuan-liu.png" alt="Qionghuan Liu" loading="lazy">
+            <span class="member-name">Qionghuan Liu</span>
+            <span class="member-affil">Shenzhen Univ.</span>
+            <div class="member-detail">
+                <div class="detail-name">Qionghuan Liu</div>
+                <div class="detail-role">PostDoc, Shenzhen University</div>
+                <div class="detail-research">Geography, Remote Sensing, Land Use, GIScience, Urban Science</div>
+                <div class="detail-email">liuqh@szu.edu.cn</div>
+            </div>
+        </div>
+
+        <!-- 28. Yufei Wang - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/yufei-wang.png" alt="Yufei Wang" loading="lazy">
+            <span class="member-name">Yufei Wang</span>
+            <div class="member-detail">
+                <div class="detail-name">Yufei Wang</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Construction materials, 3D printed concrete, Machine learning, Sustainability</div>
+                <div class="detail-email">yufei.wang1@postgrad.curtin.edu.au</div>
+                <a class="detail-link" href="https://scholar.google.com/citations?user=HK_PalMAAAAJ" target="_blank">Google Scholar &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 29. Xinyue Yang - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/xinyue-yang.jpg" alt="Xinyue Yang" loading="lazy">
+            <span class="member-name">Xinyue Yang</span>
+            <div class="member-detail">
+                <div class="detail-name">Xinyue Yang</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Geospatial new theory</div>
+                <div class="detail-email">xinyue.yang2@postgrad.curtin.edu.au</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Xinyue-Yang-28" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 30. Yun Liu - Graduate -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/yun-liu.jpg" alt="Yun Liu" loading="lazy">
+            <span class="member-name">Yun Liu</span>
+            <span class="member-affil">U Chicago</span>
+            <div class="member-detail">
+                <div class="detail-name">Yun Liu</div>
+                <div class="detail-role">Graduate, University of Chicago</div>
+                <div class="detail-research">Environmental Sustainability, Spatial Research, Climate Change, ML, LLM</div>
+                <div class="detail-email">Summer.Yun.Liu@outlook.com</div>
+            </div>
+        </div>
+
+        <!-- 31. Nan Jia - PostDoc -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/nan-jia.png" alt="Nan Jia" loading="lazy">
+            <span class="member-name">Nan Jia</span>
+            <span class="member-affil">SJTU</span>
+            <div class="member-detail">
+                <div class="detail-name">Nan Jia</div>
+                <div class="detail-role">PostDoc, Shanghai Jiao Tong University</div>
+                <div class="detail-research">Multiple shocks, Inequality, Urban-rural system resilience, Food System resilience</div>
+                <div class="detail-email">cannonjia17@gmail.com</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Nan-Jia-12/publications" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 32. Liu Zhao - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/liu-zhao.png" alt="Liu Zhao" loading="lazy">
+            <span class="member-name">Liu Zhao</span>
+            <span class="member-affil">UTas</span>
+            <div class="member-detail">
+                <div class="detail-name">Liu Zhao</div>
+                <div class="detail-role">PhD, University of Tasmania</div>
+                <div class="detail-research">Natural Disaster and Machine Learning</div>
+                <div class="detail-email">liu.zhao@utas.edu.au</div>
+                <a class="detail-link" href="https://github.com/sadassimov" target="_blank">GitHub &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 33. Yang Li - PostDoc -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/yang-li.png" alt="Yang Li" loading="lazy">
+            <span class="member-name">Yang Li</span>
+            <span class="member-affil">Beihang</span>
+            <div class="member-detail">
+                <div class="detail-name">Yang Li</div>
+                <div class="detail-role">PostDoc, Beihang University</div>
+                <div class="detail-research">Remote sensing, Spatial association, GeoAI</div>
+                <div class="detail-email">isliyang@buaa.edu.cn</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Yang-Li-373" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 34. Haiyang Liu - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/haiyang-liu.png" alt="Haiyang Liu" loading="lazy">
+            <span class="member-name">Haiyang Liu</span>
+            <span class="member-affil">Hokkaido</span>
+            <div class="member-detail">
+                <div class="detail-name">Haiyang Liu</div>
+                <div class="detail-role">PhD, Hokkaido University, Japan</div>
+                <div class="detail-research">Landscape Ecology, Ecosystem Assessment, Spatial Theory and Methods</div>
+                <div class="detail-email">haiyang.liu.q6@elms.hokudai.ac.jp</div>
+                <a class="detail-link" href="http://liuhaiyang.notion.site/" target="_blank">Homepage &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 35. Daniel Lin - Undergraduate -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/daniel-lin.jpg" alt="Daniel Lin" loading="lazy">
+            <span class="member-name">Daniel Lin</span>
+            <span class="member-affil">UC Riverside</span>
+            <div class="member-detail">
+                <div class="detail-name">Daniel Lin</div>
+                <div class="detail-role">Undergraduate, UC Riverside</div>
+                <div class="detail-research">GIS, remote sensing, foundation model, machine learning</div>
+                <div class="detail-email">dlin092@ucr.edu</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Daniel-Lin-30" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 36. Ayesha Kaleem - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/ayesha-kaleem.jpeg" alt="Ayesha Kaleem" loading="lazy">
+            <span class="member-name">Ayesha Kaleem</span>
+            <div class="member-detail">
+                <div class="detail-name">Ayesha Kaleem</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Green hydrogen solutions, climate change mitigation, hydrogen infrastructure</div>
+                <div class="detail-email">ayesha.kaleem@postgrad.curtin.edu.au</div>
+                <a class="detail-link" href="https://www.linkedin.com/in/ayesha-k-19a55a203/" target="_blank">LinkedIn &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 37. Yogender Yadav - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/yogender-yadav.png" alt="Yogender Yadav" loading="lazy">
+            <span class="member-name">Yogender Yadav</span>
+            <span class="member-affil">PoliTo</span>
+            <div class="member-detail">
+                <div class="detail-name">Yogender Yadav</div>
+                <div class="detail-role">PhD, Polytechnic Univ. of Turin, Italy</div>
+                <div class="detail-research">Landscape management, digital twin, 3D modelling</div>
+                <div class="detail-email">yogender105@gmail.com</div>
+                <a class="detail-link" href="https://yogiiverse.com/" target="_blank">Homepage &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 38. Xiaoyan Cao - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/xiaoyan-cao.jpg" alt="Xiaoyan Cao" loading="lazy">
+            <span class="member-name">Xiaoyan Cao</span>
+            <div class="member-detail">
+                <div class="detail-name">Xiaoyan Cao</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Hydrology, Remote sensing, Spatial analysis, Machine learning</div>
+                <div class="detail-email">xiaoyan.cao@curtin.edu.au</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Xiaoyan-Cao-7" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 39. Lai Chen - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/lai-chen.png" alt="Lai Chen" loading="lazy">
+            <span class="member-name">Lai Chen</span>
+            <span class="member-affil">CUG</span>
+            <div class="member-detail">
+                <div class="detail-name">Lai Chen</div>
+                <div class="detail-role">PhD, China University of Geosciences</div>
+                <div class="detail-research">GIS, Spatiotemporal Big Data Analysis and Mining</div>
+                <div class="detail-email">chenlai@cug.edu.cn</div>
+            </div>
+        </div>
+
+        <!-- 40. Yilong Wu - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/yilong-wu.png" alt="Yilong Wu" loading="lazy">
+            <span class="member-name">Yilong Wu</span>
+            <div class="member-detail">
+                <div class="detail-name">Yilong Wu</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Spatial Statistics, Social Media, GeoAI, LLM, Computational Urban science, Flooding</div>
+                <div class="detail-email">yilong.wu@student.curtin.edu.au</div>
+                <a class="detail-link" href="http://yilongwu.top/" target="_blank">Homepage &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 41. Yuyu Yang - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/yuyu-yang.png" alt="Yuyu Yang" loading="lazy">
+            <span class="member-name">Yuyu Yang</span>
+            <div class="member-detail">
+                <div class="detail-name">Yuyu Yang</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Remote sensing, air pollution, environmental impacts, industrial activities</div>
+                <div class="detail-email">yuyu.yang@curtin.edu.au</div>
+            </div>
+        </div>
+
+        <!-- 42. Phub Gyeltshen - Graduate -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/phub-gyeltshen.jpg" alt="Phub Gyeltshen" loading="lazy">
+            <span class="member-name">Phub Gyeltshen</span>
+            <div class="member-detail">
+                <div class="detail-name">Phub Gyeltshen</div>
+                <div class="detail-role">Graduate, Curtin University</div>
+                <div class="detail-research">Green mobility, carbon neutrality, electric vehicles, sustainable transport</div>
+                <div class="detail-email">phub.gyeltshen@postgrad.curtin.edu.au</div>
+            </div>
+        </div>
+
+        <!-- 43. Olivia Chan - Graduate -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/olivia-chan.jpg" alt="Olivia Chan" loading="lazy">
+            <span class="member-name">Olivia Chan</span>
+            <span class="member-affil">UW-Madison</span>
+            <div class="member-detail">
+                <div class="detail-name">Olivia Chan</div>
+                <div class="detail-role">Graduate, UW-Madison, US</div>
+                <div class="detail-research">Sustainability, Energy, GIS</div>
+                <div class="detail-email">ochan3@wisc.edu</div>
+                <a class="detail-link" href="http://www.linkedin.com/in/olivia-chan-63870329a" target="_blank">LinkedIn &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 44. Abdulwaheed Tella - Research Associate -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/abdulwaheed-tella.png" alt="Abdulwaheed Tella" loading="lazy">
+            <span class="member-name">Abdulwaheed Tella</span>
+            <span class="member-affil">Monash</span>
+            <div class="member-detail">
+                <div class="detail-name">Abdulwaheed Adelekan Tella</div>
+                <div class="detail-role">Research Associate, Monash University</div>
+                <div class="detail-research">GeoAI, Environmental hazards &amp; disaster risk reduction, Climate change adaptation, Remote sensing &amp; GIS</div>
+                <div class="detail-email">abdulwaheed.tella@monash.edu</div>
+                <a class="detail-link" href="http://abdulwaheedtella.com/" target="_blank">Homepage &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 45. Wenbo Lv - Research Associate -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/wenbo-lv.png" alt="Wenbo Lv" loading="lazy">
+            <span class="member-name">Wenbo Lv</span>
+            <span class="member-affil">PolyU</span>
+            <div class="member-detail">
+                <div class="detail-name">Wenbo Lv</div>
+                <div class="detail-role">Research Associate, HK PolyU</div>
+                <div class="detail-research">Spatial Causal Inference, Open Source Software Development</div>
+                <div class="detail-email">lyu.geosocial@gmail.com</div>
+                <a class="detail-link" href="https://github.com/spatlyu" target="_blank">GitHub &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 46. Yeming Lao - Research Associate -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/yeming-lao.png" alt="Yeming Lao" loading="lazy">
+            <span class="member-name">Yeming Lao</span>
+            <span class="member-affil">PolyU</span>
+            <div class="member-detail">
+                <div class="detail-name">Yeming Lao</div>
+                <div class="detail-role">Research Associate, HK PolyU</div>
+                <div class="detail-research">GeoAI, XAI, spatial analysis, GIS, ecological sustainability</div>
+                <div class="detail-email">yipminglo129@gmail.com</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Alumni -->
+    <div class="team-group-title">Alumni</div>
+    <div class="team-grid" id="alumni-grid">
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/xiang-wang.png" alt="Xiang Wang" loading="lazy">
+            <span class="member-name">Xiang Wang</span>
+            <div class="member-detail">
+                <div class="detail-name">Xiang Wang</div>
+                <div class="detail-role">Alumni</div>
+                <div class="detail-research">Remote Sensing, Stable isotope ecology, Global Climate Change, Carbon-water cycle</div>
+                <div class="detail-email">xiangwang.geoscience@gmail.com</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Xiang-Wang-173" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/gang-lin.png" alt="Gang Lin" loading="lazy">
+            <span class="member-name">Gang (Adam) Lin</span>
+            <div class="member-detail">
+                <div class="detail-name">Gang (Adam) Lin</div>
+                <div class="detail-role">Lecturer (Alumni)</div>
+                <div class="detail-research">Urban planning, optimal transport, decision making</div>
+                <div class="detail-email">Adamganglin@outlook.com</div>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Gang-Lin-3" target="_blank">ResearchGate &rarr;</a>
+            </div>
+        </div>
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/xiaochi-liu.png" alt="Xiaochi Liu" loading="lazy">
+            <span class="member-name">Xiaochi Liu</span>
+            <div class="member-detail">
+                <div class="detail-name">Xiaochi Liu</div>
+                <div class="detail-role">Senior Geospatial Analyst, EPA Victoria (Alumni)</div>
+                <div class="detail-research">Spatial Data Science, GeoAI, ML, Environmental Public Health</div>
+                <div class="detail-email">xiaochi.liu@epa.vic.gov.au</div>
+                <a class="detail-link" href="http://www.linkedin.com/in/xiaochi-liu/" target="_blank">LinkedIn &rarr;</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== EVENTS ========== -->
+<section class="events-section">
+    <h2>Events</h2>
+    <div class="events-grid">
+        <!-- Event 1: ISPRS 2024 -->
+        <a href="https://www.isprs.org/tc4-symposium2024/index.html" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/isprs-perth-2024.jpg" alt="ISPRS 2024" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">ISPRS TC IV Symposium 2024</div>
+                <div class="card-desc">490+ attendees from 29 countries. Oct 22-25, 2024, Perth, Australia</div>
+            </div>
+        </a>
+        <!-- Event 2: IPC 2024 -->
+        <a href="http://www.icipc2024.com/" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/ipc-2024.jpg" alt="IPC 2024" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">IPC 2024</div>
+                <div class="card-desc">The 10th International Conference on Innovative Production and Construction. Jul 11-12, 2024, Curtin University</div>
+            </div>
+        </a>
+        <!-- Event 3: City+2023 -->
+        <a href="https://yongzesong.com/cityplus-2023/" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/cityplus-2023.png" alt="City+2023" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">City+2023@Perth</div>
+                <div class="card-desc">300+ attendees from 29 countries. Sept 8-10, 2023, Perth, Australia</div>
+            </div>
+        </a>
+        <!-- News 1: Harvard Lectures -->
+        <a href="https://www.youtube.com/watch?v=ze00xTmUCAo" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/harvard-lectures.jpg" alt="Harvard Lectures" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Lectures at Harvard University</div>
+                <div class="card-desc">Dr Yongze Song gave lectures at Harvard, talks at MIT Senseable City Lab and Yale. July 2024</div>
+            </div>
+        </a>
+        <!-- News 2: Aurora Australis -->
+        <a href="https://www.youtube.com/watch?v=nxZLtSUOvMU" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/aurora-australis.jpg" alt="Aurora Australis" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Aurora Australis in Perth</div>
+                <div class="card-desc">Team watched Aurora Australis after an extreme geomagnetic solar storm. May 2024</div>
+            </div>
+        </a>
+        <!-- News 3: Rottnest Island -->
+        <div class="event-card">
+            <div class="card-img">
+                <img src="assets/images/rottnest-island.jpg" alt="Rottnest Island" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Team Tour to Rottnest Island</div>
+                <div class="card-desc">The home of Quokkas. Mar 2024</div>
+            </div>
+        </div>
+        <!-- News 4: Slovakia Researcher -->
+        <div class="event-card">
+            <div class="card-img">
+                <img src="assets/images/slovakia-researcher.png" alt="Researcher from Slovakia" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Researcher from Slovakia Joined Us</div>
+                <div class="card-desc">Tomas Ic joined as a visiting PhD student and gave a presentation. Mar 2024</div>
+            </div>
+        </div>
+        <!-- News 5: Team BBQ -->
+        <div class="event-card">
+            <div class="card-img">
+                <img src="assets/images/team-bbq.jpg" alt="Team BBQ" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Team BBQ</div>
+                <div class="card-desc">Our team had a BBQ in Curtin campus. Mar 2024</div>
+            </div>
+        </div>
+        <!-- News 6: Rio Tinto -->
+        <a href="https://www.riotinto.com/en/operations/australia" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/rio-tinto.jpg" alt="Rio Tinto" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Visited Rio Tinto</div>
+                <div class="card-desc">Team visited Rio Tinto, world&rsquo;s Top 2 metals and mining corporation. Feb 2024</div>
+            </div>
+        </a>
+        <!-- News 7: Hong Kong HKU/HKUST/PolyU -->
+        <div class="event-card">
+            <div class="card-img">
+                <img src="assets/images/visit-hk-universities.jpg" alt="Hong Kong Visit" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Visited HKU, HKUST &amp; PolyU</div>
+                <div class="card-desc">Visited Professors Xiao Li (HKU), Yiwei Weng &amp; Hung Lin Chi (PolyU), Jack CP Cheng (HKUST). Feb 2024</div>
+            </div>
+        </div>
+        <!-- News 8: Professor from Indonesia -->
+        <div class="event-card">
+            <div class="card-img">
+                <img src="assets/images/indonesia-professor.jpg" alt="Professor from Indonesia" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Professor from Indonesia Visited Curtin</div>
+                <div class="card-desc">Prof Ira Mutiara Anjasmara from ITS visited Curtin. Feb 2024</div>
+            </div>
+        </div>
+        <!-- News 9: HK PolyU -->
+        <a href="https://www.polyu.edu.hk/en/lsgi/people/academic-staff/prof-weng-qihao/" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/visit-hk-polyu.jpg" alt="HK PolyU" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Visited Hong Kong PolyU</div>
+                <div class="card-desc">Visited Prof Qihao Weng&rsquo;s Lab, HK Polytechnic University. Dec 2023</div>
+            </div>
+        </a>
+        <!-- News 10: USS Conference (Yale) -->
+        <a href="https://www.ussconference.net/ussc/en" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/uss-conference-yale.jpg" alt="USS Conference" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">USS Conference</div>
+                <div class="card-desc">Photo with Prof Karen C. Seto (Yale). Chaired by Prof Weiqiang Chen (CAS). Dec 2023</div>
+            </div>
+        </a>
+        <!-- News 11: USS Conference (MIT) -->
+        <a href="https://www.ussconference.net/ussc/en" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/uss-conference-mit.jpg" alt="USS Conference MIT" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">USS Conference</div>
+                <div class="card-desc">Photo with Prof Carlo Ratti (MIT Senseable City Lab). Dec 2023</div>
+            </div>
+        </a>
+        <!-- News 12: Canada/Hungary professors -->
+        <div class="event-card">
+            <div class="card-img">
+                <img src="assets/images/visit-canada-hungary.jpg" alt="Canada Hungary Professors" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Professors from Canada &amp; Hungary</div>
+                <div class="card-desc">Prof Bela Palancz (Budapest) and Prof Thian Yew Gan (Alberta) visited Curtin. Oct 2023</div>
+            </div>
+        </div>
+        <!-- News 13: Team Meeting -->
+        <div class="event-card">
+            <div class="card-img">
+                <img src="assets/images/team-meeting-oct2023.jpg" alt="Team Meeting" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Team Meeting</div>
+                <div class="card-desc">Team at Curtin University. Oct 2023</div>
+            </div>
+        </div>
+        <!-- News 14: University of Hong Kong -->
+        <a href="https://fuselab.hku.hk/pi/" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/visit-hku.jpg" alt="HKU Visit" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Visited University of Hong Kong</div>
+                <div class="card-desc">Visited Dr Bin Chen&rsquo;s LUSE Lab. Sept 2023</div>
+            </div>
+        </a>
+        <!-- News 16: NUS Singapore -->
+        <a href="https://ual.sg/authors/filip/" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/visit-nus.jpg" alt="NUS Visit" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Visited NUS Singapore</div>
+                <div class="card-desc">Visited Dr Filip Biljecki&rsquo;s Urban Analytics Lab. Aug 2023</div>
+            </div>
+        </a>
+        <!-- News 17: Peking University -->
+        <div class="event-card">
+            <div class="card-img">
+                <img src="assets/images/visit-peking.jpg" alt="Peking University" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Team Catch Up</div>
+                <div class="card-desc">Team at Peking University. Jun 2023</div>
+            </div>
+        </div>
+        <!-- News 18: SMEC -->
+        <a href="https://www.smec.com/au/" class="event-card" target="_blank">
+            <div class="card-img">
+                <img src="assets/images/visit-smec.jpg" alt="SMEC Visit" loading="lazy">
+            </div>
+            <div class="card-body">
+                <div class="card-title">Visited SMEC</div>
+                <div class="card-desc">Trusted partner on major transport and energy infrastructure projects in 40+ countries. Dec 2022</div>
+            </div>
+        </a>
+    </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods & Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab & Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+
+<!-- ========== JAVASCRIPT ========== -->
+<script>
+    function toggleMember(el) {
+        const wasActive = el.classList.contains('active');
+        document.querySelectorAll('.member-item.active').forEach(item => {
+            item.classList.remove('active');
+        });
+        if (!wasActive) {
+            el.classList.add('active');
+        }
+    }
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.member-item')) {
+            document.querySelectorAll('.member-item.active').forEach(item => {
+                item.classList.remove('active');
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest - Yongze Song</title>
+    <meta name="description" content="Latest highlights, articles, lectures, and training materials from Yongze Song.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* === PAGE-SPECIFIC STYLES FOR latest.html === */
+
+        /* === PAGE HEADER === */
+        .page-header {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 30px 20px 10px;
+        }
+        .page-header h1 {
+            margin: 0 0 6px 0;
+        }
+        .page-header h2 {
+            font-size: 1.3rem;
+        }
+        
+        .page-subtitle {
+            font-size: 0.95rem;
+            color: var(--color-muted);
+            font-weight: 400;
+        }
+
+        /* === FEATURED CARDS SECTION (4-column, same as index.html) === */
+        .featured-cards {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px 20px 10px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+        }
+
+        .feat-card {
+            text-decoration: none;
+            color: var(--color-text);
+            display: block;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .feat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            color: var(--color-text);
+        }
+
+        .feat-card .card-img {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .feat-card .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+        .feat-card:hover .card-img img {
+            transform: scale(1.05);
+        }
+
+        /* Gradient overlays for cards without images */
+        .card-img.grad-infra {
+            background: linear-gradient(135deg, #1a3a5c, #2d5a8e);
+        }
+        .card-img.grad-articles {
+            background: linear-gradient(135deg, #5c1a1a, #8e2d2d);
+        }
+        .card-img.grad-lecture {
+            background: linear-gradient(135deg, #1a5c3a, #2d8e5a);
+        }
+        .card-img.grad-summer {
+            background: linear-gradient(135deg, #5c3a1a, #8e5a2d);
+        }
+        .card-img.grad-methods {
+            background: linear-gradient(135deg, #2c3e50, #4a6fa5);
+        }
+        .card-img.grad-gd {
+            background: linear-gradient(135deg, #4a235a, #7d3c98);
+        }
+
+        /* Icon inside gradient cards */
+        .card-icon {
+            position: relative;
+            z-index: 2;
+            color: rgba(255,255,255,0.85);
+            font-size: 0.75rem;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 0 12px;
+        }
+        .card-icon svg {
+            display: block;
+            margin: 0 auto 6px;
+            width: 32px;
+            height: 32px;
+            opacity: 0.85;
+        }
+
+        .feat-card .card-body {
+            padding: 8px 10px 10px;
+        }
+        .feat-card .card-title {
+            font-family: var(--font-serif);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--color-heading);
+            line-height: 1.35;
+            margin: 0 0 4px 0;
+        }
+        .feat-card .card-desc {
+            font-family: var(--font-sans);
+            font-size: 0.72rem;
+            line-height: 1.45;
+            color: var(--color-muted);
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* === CONTENT SECTIONS === */
+        .content-section {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 10px 20px 20px;
+        }
+        .content-section h2 {
+            font-size: 1.3rem;
+        }
+        .updates-list {
+            font-size: 0.82rem;
+            line-height: 1.65;
+        }
+        .update-item {
+            margin: 4px 0;
+            padding-left: 14px;
+            position: relative;
+        }
+        .update-item::before {
+            content: "\2013";
+            position: absolute;
+            left: 0;
+        }
+        .update-item a { font-weight: 500; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1024px) {
+            .featured-cards {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 14px;
+            }
+        }
+        @media (max-width: 768px) {
+            html, body { font-size: 15px; }
+            h1 { font-size: 1.6rem; }
+            .featured-cards {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .footer-inner { grid-template-columns: 1fr; gap: 16px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="site-title">
+            Yongze Song
+            <span>Geography &amp; Sustainability</span>
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="methods.html">Methods</a>
+            <a href="latest.html">Latest</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ========== PAGE HEADER ========== -->
+<div class="page-header">
+    <h1>Latest</h1>
+    <h2>Highlights</h2>
+</div>
+
+<!-- ========== FEATURED CARDS (4-column, matching index.html) ========== -->
+<section class="featured-cards">
+
+    <!-- Card 1: Sustainable Infrastructure -->
+    <a href="sustainable-infrastructure.html" class="feat-card">
+        <div class="card-img grad-infra">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21" />
+                </svg>
+                Infrastructure
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-title">Sustainable Infrastructure</div>
+            <div class="card-desc">Geospatial intelligence for sustainable infrastructure research</div>
+        </div>
+    </a>
+
+    <!-- Card 2: Recent High Impact Articles -->
+    <a href="high-impact-articles.html" class="feat-card">
+        <div class="card-img grad-articles">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                </svg>
+                Articles
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-title">Recent High Impact Articles</div>
+            <div class="card-desc">Publications in high-impact journals</div>
+        </div>
+    </a>
+
+    <!-- Card 3: Lecture Series -->
+    <a href="lecture-202601.html" class="feat-card">
+        <div class="card-img grad-lecture">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15v3.75m10.5-3.75v3.75" />
+                </svg>
+                Lecture
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-title">Lecture Series: Geospatial Data Analysis, Prediction, and GeoAI</div>
+            <div class="card-desc">New Theories, Methods, and Software. January 2026</div>
+        </div>
+    </a>
+
+    <!-- Card 4: IEEE IGARSS Summer School -->
+    <a href="https://ausgis.github.io/igarss25ss/" target="_blank" rel="noopener" class="feat-card">
+        <div class="card-img grad-summer">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                </svg>
+                Summer School
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-title">IEEE IGARSS Summer School</div>
+            <div class="card-desc">Training Materials, 31 July – 8 August 2025, Brisbane</div>
+        </div>
+    </a>
+
+    <!-- Card 5: Geospatial Theories and Methods -->
+    <a href="methods.html" class="feat-card">
+        <div class="card-img grad-methods">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+                </svg>
+                Methods
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-title">Geospatial Theories and Methods</div>
+            <div class="card-desc">Innovative geospatial theories, methods, and software</div>
+        </div>
+    </a>
+
+    <!-- Card 6: Geographical Detectors & GD R Package Q&A -->
+    <a href="gd.html" class="feat-card">
+        <div class="card-img grad-gd">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+                </svg>
+                R Package
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-title">Geographical Detectors and 'GD' R Package: Q & A</div>
+            <div class="card-desc">Q & A for geographical detectors and the GD R package</div>
+        </div>
+    </a>
+
+</section>
+
+<!-- ========== ADDITIONAL CONTENT ========== -->
+<div class="content-section">
+
+    <h2>Trainings and Presentations</h2>
+    <div class="updates-list">
+        <div class="update-item">Lecture series: Geospatial Data Analysis, Prediction, and GeoAI: New Theories, Methods, and Software. 4 Jan 2026. <a href="lecture-202601.html">Lecture materials</a></div>
+        <div class="update-item">Harvard Spatial Data Lab (SDL) 2025 Monthly Webinars on Spatiotemporal Innovation. <a href="https://yongzesong.com/harvard-sdl-workshop-2025/">Summary and video recordings</a></div>
+        <div class="update-item">IEEE IGARSS Summer School Training Materials, 31 July – 8 August 2025, Brisbane, Australia: <a href="https://ausgis.github.io/igarss25ss/">https://ausgis.github.io/igarss25ss/</a></div>
+        <div class="update-item">Spatiotemporal Innovation Summer School, Harvard University, 16-19 July 2024, Boston, US. <a href="https://yongzesong.com/wp-content/uploads/2024/07/2024_07_prediction_ys.pdf">Spatial Prediction: New Methods and R Packages</a></div>
+    </div>
+
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods & Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab & Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

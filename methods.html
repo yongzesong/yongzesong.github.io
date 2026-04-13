@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methods and Software - Yongze Song</title>
+    <meta name="description" content="Geospatial theories and methods: 39 innovative methods across 23 research themes, 12 open-source R packages, and 200,000+ downloads.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        :root {
+            --part1: #1a5276;
+            --part1-light: #d6eaf8;
+            --part1-bg: #eaf2f8;
+            --part2: #8C1515;
+            --part2-light: #f5d0d0;
+            --part2-bg: #fdf2f2;
+            --part3: #1a6b4a;
+            --part3-light: #d4efdf;
+            --part3-bg: #eafaf1;
+        }
+
+        .main-wrapper { max-width: 1300px; margin: 0 auto; padding: 24px 20px 0; }
+        .page-title { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 700; font-variation-settings: "opsz" 72; text-align: center; margin: 0 0 0.5rem; }
+        .page-subtitle { text-align: center; font-size: 0.88rem; color: var(--color-muted); margin-bottom: 2rem; }
+
+        /* === PART SECTIONS === */
+        .part-section { margin-bottom: 2.5rem; }
+        .part-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 2px solid; }
+        .part-header.p1 { border-color: var(--part1); } .part-header.p2 { border-color: var(--part2); } .part-header.p3 { border-color: var(--part3); }
+        .part-num { font-family: var(--font-serif); font-weight: 700; font-size: 0.75rem; color: #fff; padding: 3px 10px; border-radius: 3px; white-space: nowrap; }
+        .part-num.p1 { background: var(--part1); } .part-num.p2 { background: var(--part2); } .part-num.p3 { background: var(--part3); }
+        .part-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; font-variation-settings: "opsz" 36; }
+
+        /* === FLOW LAYOUT: subcategory groups flow horizontally === */
+        .part-flow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        /* Each subcategory group is an atomic unit */
+        .subcat-group {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 4px;
+        }
+        .subcat-label {
+            font-family: var(--font-sans);
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            padding-left: 2px;
+        }
+        .subcat-label.p1 { color: var(--part1); } .subcat-label.p2 { color: var(--part2); } .subcat-label.p3 { color: var(--part3); }
+
+        .cards-inline {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* === METHOD CARD === */
+        .method-card {
+            width: 168px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: default;
+            flex-shrink: 0;
+        }
+        .method-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+
+        .card-svg { width: 100%; height: 95px; display: block; }
+        .card-svg.p1 { background: var(--part1-bg); } .card-svg.p2 { background: var(--part2-bg); } .card-svg.p3 { background: var(--part3-bg); }
+
+        .card-body { padding: 8px 10px 10px; }
+        .card-abbr { font-family: var(--font-serif); font-size: 0.82rem; font-weight: 700; color: var(--color-heading); margin-bottom: 1px; line-height: 1.3; }
+        .card-full { font-size: 0.62rem; color: var(--color-muted); line-height: 1.35; margin-bottom: 4px; min-height: 2em; }
+        .card-journal { font-size: 0.6rem; font-style: italic; color: #888; line-height: 1.3; margin-bottom: 4px; }
+        .card-abbr a { color: inherit; text-decoration: none; }
+        .card-abbr a:hover { color: var(--color-accent); }
+        .card-full a { color: inherit; text-decoration: none; }
+        .card-full a:hover { color: var(--color-accent); }
+        .card-journal a { color: #888; text-decoration: none; }
+        .card-journal a:hover { color: var(--color-accent); text-decoration: underline; }
+        .card-badge { display: inline-block; font-size: 0.52rem; font-weight: 700; padding: 1px 5px; border-radius: 2px; margin-right: 3px; margin-bottom: 3px; line-height: 1.4; }
+        .card-badge.hc { background: #fff3cd; color: #856404; } .card-badge.mr { background: #d4edda; color: #155724; } .card-badge.mc { background: #d1ecf1; color: #0c5460; }
+        .card-links { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; padding-top: 4px; border-top: 1px solid #f0f0f0; }
+        .card-links a { font-size: 0.6rem; font-weight: 600; padding: 1px 6px; border-radius: 3px; border: 1px solid; transition: background 0.15s; }
+        .card-links a.p1 { color: var(--part1); border-color: var(--part1); } .card-links a.p1:hover { background: var(--part1); color: #fff; text-decoration: none; }
+        .card-links a.p2 { color: var(--part2); border-color: var(--part2); } .card-links a.p2:hover { background: var(--part2); color: #fff; text-decoration: none; }
+        .card-links a.p3 { color: var(--part3); border-color: var(--part3); } .card-links a.p3:hover { background: var(--part3); color: #fff; text-decoration: none; }
+
+        /* === SOFTWARE === */
+        .software-heading { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; text-align: center; margin: 2.5rem 0 1.2rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; }
+        .sw-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 0.5rem; font-size: 0.82rem; line-height: 1.65; }
+        .sw-info { flex: 1; min-width: 0; } .sw-info .sw-name { font-weight: 700; } .sw-info .sw-pkg { font-weight: 600; color: var(--color-accent); }
+        .sw-sub { font-size: 0.76rem; color: var(--color-text); padding-left: 0.5rem; }
+        .sw-badges { flex-shrink: 0; display: flex; gap: 6px; align-items: center; padding-top: 2px; } .sw-badges img { height: 20px; }
+
+
+        /* === MEMBERS CARDS === */
+        .members-heading {
+            font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700;
+            text-align: center; margin: 2.5rem 0 1.2rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0;
+        }
+        .members-grid {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 16px;
+            margin: 0 0 1.5rem;
+        }
+        .mc-card {
+            width: 120px; text-align: center; cursor: pointer; position: relative;
+            transition: transform 0.2s ease;
+        }
+        .mc-card:hover { transform: translateY(-3px); }
+        .mc-card.active { z-index: 200; }
+        .mc-avatar {
+            width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
+            border: 2px solid #e0e0e0; margin: 0 auto 6px; display: block;
+            transition: border-color 0.2s;
+        }
+        .mc-card:hover .mc-avatar { border-color: var(--color-accent); }
+        .mc-name {
+            font-family: var(--font-serif); font-size: 0.72rem; font-weight: 600;
+            color: var(--color-heading); line-height: 1.3; margin-bottom: 3px;
+        }
+        .mc-methods {
+            font-family: var(--font-sans); font-size: 0.58rem; font-weight: 600;
+            color: var(--color-muted); letter-spacing: 0.02em; line-height: 1.4;
+        }
+        /* Detail popup */
+        .mc-detail {
+            display: none; position: absolute; z-index: 100;
+            left: 50%; transform: translateX(-50%);
+            top: calc(100% + 8px);
+            width: 340px; background: #fff; border: 1px solid #e0e0e0;
+            border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            padding: 14px 16px; text-align: left;
+        }
+        .mc-detail::before {
+            content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+            width: 12px; height: 12px; background: #fff; border-left: 1px solid #e0e0e0;
+            border-top: 1px solid #e0e0e0; transform: translateX(-50%) rotate(45deg);
+        }
+        .mc-card.active .mc-detail { display: block; }
+        .mc-detail-name {
+            font-family: var(--font-serif); font-size: 0.85rem; font-weight: 700;
+            color: var(--color-heading); margin-bottom: 2px;
+        }
+        .mc-detail-role {
+            font-size: 0.68rem; color: var(--color-muted); line-height: 1.45; margin-bottom: 8px;
+        }
+        .mc-detail-role strong { font-weight: 600; color: var(--color-text); }
+        .mc-detail-pubs { list-style: none; padding: 0; margin: 0; }
+        .mc-detail-pubs li {
+            font-size: 0.68rem; line-height: 1.5; padding: 4px 0;
+            border-top: 1px solid #f0f0f0; color: var(--color-text);
+        }
+        .mc-detail-pubs li:first-child { border-top: none; }
+        .mc-detail-pubs .journal { font-style: italic; color: #888; }
+        .mc-detail-pubs .badge { font-size: 0.58rem; font-weight: 600; color: var(--color-accent); }
+        .mc-detail-pubs .sub { display: block; font-size: 0.6rem; color: var(--part1); padding-left: 8px; }
+        .mc-detail-pubs .sub::before { content: '→ '; }
+        .mc-detail-pubs .sub a { color: var(--part1); }
+
+        @media (max-width: 768px) {
+            html, body { font-size: 15px; }
+            .method-card { width: 155px; }
+            .members-grid { gap: 12px; }
+            .mc-card { width: 90px; }
+            .mc-avatar { width: 56px; height: 56px; }
+            .mc-detail { width: 280px; }
+            .footer-inner { grid-template-columns: 1fr; gap: 16px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="site-title">Yongze Song<span>Geography &amp; Sustainability</span></a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="publications.html">Publications</a>
+                <a href="methods.html">Methods</a>
+                <a href="latest.html">Latest</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        <h1 class="page-title">Geospatial Theories and Methods</h1>
+        <p class="page-subtitle">39 innovative methods across 23 research themes &middot; 12 open-source R packages &middot; 200,000+ downloads</p>
+
+        <!-- ==================== MEMBERS ==================== -->
+        <h2 class="members-heading" id="members">Members</h2>
+        <div class="members-grid">
+
+            <div class="mc-card">
+                <a href="index.html"><img class="mc-avatar" src="assets/images/yongze-song.jpeg" alt="Yongze Song"></a>
+                <div class="mc-name"><a href="index.html">Yongze Song</a></div>
+                <div class="mc-methods">Supervisor</div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/zehua-zhang.png" alt="Zehua Zhang">
+                <div class="mc-name">Zehua Zhang</div>
+                <div class="mc-methods">RID · HSA · RGD · GIGNN · LPI</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Zehua Zhang</div>
+                    <div class="mc-detail-role"><strong>Postdoc Researcher</strong><br>Curtin University<br>PhD: Curtin University (Chancellor's Commendation Award)<br>Master: University of Melbourne (with Distinction)</div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S2211675324000058">Robust Interaction Detector (RID)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/spatial-statistics">Spatial Statistics</a>.</span> <span class="badge">Highly Cited Paper.</span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">Heterogeneous spatial autocorrelation (HSA)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 4 Most Read Article, 2025)</span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Geocomplexity explains spatial errors</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 30 Most Cited, 2025; Top 1 Most Read, 2023)</span> <span class="sub"><a href="https://cran.r-project.org/web/packages/geocomplexity/index.html">R package "geocomplexity"</a></span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Robust geographical detector (RGD)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span> <span class="sub">Python Code for RGD model</span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S2211675325000429">Geographically informed graph neural network (GIGNN)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/spatial-statistics">Spatial Statistics</a>.</span></li>
+                        <li><a href="https://doi.org/10.1016/j.jag.2025.105072">Local effects of pattern interaction (LPI)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/peng-luo.jpeg" alt="Peng Luo">
+                <div class="mc-name">Peng Luo</div>
+                <div class="mc-methods">GHM · GOZH · GPI · LESH · STUH · FFRK</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Peng Luo</div>
+                    <div class="mc-detail-role"><strong>Postdoc Researcher</strong><br>Massachusetts Institute of Technology (MIT)<br>PhD: Technical University of Munich<br>Master: Peking University</div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://doi.org/10.1080/13658816.2022.2147530">Generalized Heterogeneity Model (GHM)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 4 Most Cited, 2025; Top 10 Most Read, 2024)</span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Geocomplexity explains spatial errors</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 30 Most Cited, 2025; Top 1 Most Read, 2023)</span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">Geographically Optimal Zones-based Heterogeneity (GOZH)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/isprs-journal-of-photogrammetry-and-remote-sensing">ISPRS J. Photogramm. Remote Sens.</a></span> <span class="sub">R Code for GOZH model: Code 1; Code 2</span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">Geographical Pattern Interaction (GPI)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 1 Most Read, 2025)</span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Locally explained heterogeneity model</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tjde20">Int. J. Digital Earth</a>.</span> <span class="sub">R Code for LESH model</span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S1569843224004229">Spatio-temporal unmixing with heterogeneity (STUH)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span></li>
+                        <li><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">Focal-Feature Regression Kriging (FFRK)</a>. <span class="journal"><a href="https://onlinelibrary.wiley.com/journal/15384632">Geographical Analysis.</a></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang">
+                <div class="mc-name">Pengcheng Zhang</div>
+                <div class="mc-methods">DSTGN · GMS · DG · SPOCA</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Pengcheng Zhang</div>
+                    <div class="mc-detail-role"><strong>PhD Researcher:</strong> The Hong Kong Polytechnic University</div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2514330">Dynamic spatiotemporal graph network</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgrs20">GIScience &amp; Remote Sensing.</a></span></li>
+                        <li><a href="https://ieeexplore.ieee.org/abstract/document/10974410">Gaussian Mixture Segmentation (GMS)</a>. <span class="journal"><a href="https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=6979">IEEE Trans. Intell. Transp. Syst.</a></span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">Degree of geocomplexity for validation (DG)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgrs20">GISci. &amp; Remote Sens.</a></span></li>
+                        <li><a href="https://www.mdpi.com/2220-9964/15/2/70">Spatiotemporal Particle Swarm Optimization for Cost Allocation (SPOCA)</a>. <span class="journal"><a href="https://www.mdpi.com/journal/ijgi">ISPRS Int. J. Geo-Inf.</a></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/yang-li.png" alt="Yang Li">
+                <div class="mc-name">Yang Li</div>
+                <div class="mc-methods">GPI · LESH</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Yang Li</div>
+                    <div class="mc-detail-role"><strong>Postdoc Researcher:</strong><br>Beihang University<br>PhD: Beijing Normal University</div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">Geographical Pattern Interaction (GPI)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Locally explained heterogeneity model</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tjde20">Int. J. Digital Earth</a>.</span> <span class="sub">R Code for LESH model</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/jiao-hu.png" alt="Jiao Hu">
+                <div class="mc-name">Jiao Hu</div>
+                <div class="mc-methods">LISP · LPA · LPI</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Jiao Hu</div>
+                    <div class="mc-detail-role"><strong>Research Associate:</strong><br>Curtin University<br>PhD: Chengdu University of Technology</div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">Local indicator of stratified power (LISP)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 2 Most Read, 2026)</span> <span class="sub">R Code for LISP model</span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Local pathways of association (LPA)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span> <span class="sub">R Code for LPA model</span></li>
+                        <li><a href="https://doi.org/10.1016/j.jag.2025.105072">Local effects of pattern interaction (LPI)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/rui-qu.png" alt="Rui Qu">
+                <div class="mc-name">Rui Qu</div>
+                <div class="mc-methods">LPA</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Rui Qu</div>
+                    <div class="mc-detail-role"><strong>Research Associate:</strong><br>Curtin University<br>PhD: Chengdu University of Technology</div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Local pathways of association (LPA)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span> <span class="sub">R Code for LPA model</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/xinyue-yang.jpg" alt="Xinyue Yang">
+                <div class="mc-name">Xinyue Yang</div>
+                <div class="mc-methods">Anisotropy</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Xinyue Yang</div>
+                    <div class="mc-detail-role"><strong>PhD Researcher:</strong><br>Curtin University</div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Spatial irregular anisotropy in urban heat effects</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/sustainable-cities-and-society">Sustainable Cities and Society.</a></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/kai-ren.jpg" alt="Kai Ren">
+                <div class="mc-name">Kai Ren</div>
+                <div class="mc-methods">SDO · Anisotropy</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Kai Ren</div>
+                    <div class="mc-detail-role"><strong>Research Associate:</strong><br>Curtin University</div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://doi.org/10.1080/13658816.2025.2580414">Second-Dimension Outliers (SDO)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Most Read Article, 2026)</span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Spatial irregular anisotropy in urban heat effects</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/sustainable-cities-and-society">Sustainable Cities and Society.</a></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/haiyang-liu.png" alt="Haiyang Liu">
+                <div class="mc-name">Haiyang Liu</div>
+                <div class="mc-methods">DSI · LPI · DG</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Haiyang Liu</div>
+                    <div class="mc-detail-role"><strong>PhD Researcher:</strong><br>Hokkaido University, Japan</div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://doi.org/10.1080/13658816.2026.2614335">Degree of spatial interpretability (DSI)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span></li>
+                        <li><a href="https://doi.org/10.1016/j.jag.2025.105072">Local effects of pattern interaction (LPI)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">Degree of geocomplexity for validation (DG)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgrs20">GISci. &amp; Remote Sens.</a></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/lai-chen.png" alt="Lai Chen">
+                <div class="mc-name">Lai Chen</div>
+                <div class="mc-methods">ST-MST</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Lai Chen</div>
+                    <div class="mc-detail-role"><strong>Research Associate:</strong><br>Curtin University</div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://doi.org/10.1080/13658816.2025.2602536">Spatiotemporal multiscale transformer</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">International Journal of Geographical Information Science.</a></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/wenbo-lv.png" alt="Wenbo Lyu">
+                <div class="mc-name">Wenbo Lyu</div>
+                <div class="mc-methods">tEDM · gdverse</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Wenbo Lyu</div>
+                    <div class="mc-detail-role"></div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0198971526000372">Causal with temporal empirical dynamic modeling (tEDM)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/computers-environment-and-urban-systems">Computers, Environ. and Urban Syst.</a></span></li>
+                        <li><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70032">Spatial Stratified Heterogeneity Family (gdverse)</a>. <span class="journal"><a href="https://onlinelibrary.wiley.com/journal/14679671">Trans. in GIS.</a></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/yilong-wu.png" alt="Yilong Wu">
+                <div class="mc-name">Yilong Wu</div>
+                <div class="mc-methods">FFRK · ESDA</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Yilong Wu</div>
+                    <div class="mc-detail-role"></div>
+                    <ul class="mc-detail-pubs">
+                        <li><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">Focal-Feature Regression Kriging (FFRK)</a>. <span class="journal"><a href="https://onlinelibrary.wiley.com/journal/15384632">Geographical Analysis.</a></span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S0264275126003008">Explainable second-dimension spatial association (ESDA)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/cities">Cities.</a></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mc-card">
+                <a href="lab.html"><img class="mc-avatar" src="assets/images/logo_lab.png" alt="Lab"></a>
+                <div class="mc-name"><a href="lab.html">Lab</a></div>
+                <div class="mc-methods">Geospatial Intelligence Lab</div>
+            </div>
+
+        </div>
+
+        <script>
+        function toggleMemberDetail(card) {
+            const wasActive = card.classList.contains('active');
+            // Close all
+            document.querySelectorAll('.mc-card.active').forEach(c => c.classList.remove('active'));
+            // Toggle clicked
+            if (!wasActive) card.classList.add('active');
+        }
+        // Close when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.mc-card')) {
+                document.querySelectorAll('.mc-card.active').forEach(c => c.classList.remove('active'));
+            }
+        });
+        </script>
+
+        <!-- ==================== PART I ==================== -->
+        <div class="part-section">
+            <div class="part-header p1">
+                <span class="part-num p1">PART I</span>
+                <span class="part-title">Spatial Prediction via Spatial Feature Modeling</span>
+            </div>
+            <div class="part-flow">
+
+                <!-- 1. Spatial validation -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">1. Spatial validation</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <circle cx="87" cy="47" r="30" fill="none" stroke="#1a5276" stroke-width="1.5" opacity="0.25"/><circle cx="87" cy="47" r="20" fill="none" stroke="#1a5276" stroke-width="1.5" opacity="0.4"/><circle cx="87" cy="47" r="10" fill="none" stroke="#1a5276" stroke-width="1.5" opacity="0.6"/><circle cx="87" cy="47" r="3" fill="#1a5276"/>
+                                <circle cx="80" cy="35" r="2.5" fill="#1a5276" opacity="0.4"/><circle cx="95" cy="52" r="2.5" fill="#1a5276" opacity="0.5"/><circle cx="74" cy="50" r="2.5" fill="#1a5276" opacity="0.5"/><circle cx="90" cy="38" r="2.5" fill="#1a5276" opacity="0.6"/><circle cx="100" cy="45" r="2.5" fill="#1a5276" opacity="0.3"/><circle cx="83" cy="58" r="2.5" fill="#1a5276" opacity="0.4"/>
+                                <line x1="87" y1="47" x2="80" y2="35" stroke="#1a5276" stroke-width="0.5" opacity="0.3" stroke-dasharray="2,2"/><line x1="87" y1="47" x2="95" y2="52" stroke="#1a5276" stroke-width="0.5" opacity="0.3" stroke-dasharray="2,2"/>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2026.2614335">DSI</a></div>
+                                <div class="card-full"><a href="https://doi.org/10.1080/13658816.2026.2614335">Degree of Spatial Interpretability</a></div>
+                                <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2026.2614335">Int. J. Geogr. Inf. Sci.</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <!-- Geocomplexity: irregular nested polygons with varying complexity -->
+                                <path d="M87 17 L115 28 L125 52 L110 75 L65 78 L50 55 L58 27 Z" fill="#1a5276" opacity="0.06" stroke="#1a5276" stroke-width="1" opacity="0.3"/>
+                                <path d="M87 27 L108 35 L115 52 L104 67 L72 69 L62 53 L68 34 Z" fill="#1a5276" opacity="0.1" stroke="#1a5276" stroke-width="1" opacity="0.4"/>
+                                <path d="M87 37 L100 42 L105 52 L98 61 L78 62 L72 53 L76 41 Z" fill="#1a5276" opacity="0.18" stroke="#1a5276" stroke-width="1" opacity="0.5"/>
+                                <circle cx="87" cy="50" r="4" fill="#1a5276" opacity="0.6"/>
+                                <text x="87" y="90" text-anchor="middle" font-size="6.5" fill="#1a5276" font-weight="600" opacity="0.5">Complexity</text>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">DG</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">Degree of Geocomplexity</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">GISci. &amp; Remote Sens.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Spatial association -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">2. Spatial association</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <g opacity="0.3"><circle cx="45" cy="55" r="2" fill="#1a5276"/><circle cx="55" cy="50" r="2" fill="#1a5276"/><circle cx="65" cy="42" r="2" fill="#1a5276"/><circle cx="75" cy="46" r="2" fill="#1a5276"/><circle cx="85" cy="32" r="2" fill="#1a5276"/><circle cx="95" cy="36" r="2" fill="#1a5276"/><circle cx="105" cy="28" r="2" fill="#1a5276"/><circle cx="115" cy="22" r="2" fill="#1a5276"/></g>
+                                <g opacity="0.6"><circle cx="45" cy="70" r="2.5" fill="#2980b9"/><circle cx="55" cy="65" r="2.5" fill="#2980b9"/><circle cx="65" cy="58" r="2.5" fill="#2980b9"/><circle cx="75" cy="62" r="2.5" fill="#2980b9"/><circle cx="85" cy="50" r="2.5" fill="#2980b9"/><circle cx="95" cy="54" r="2.5" fill="#2980b9"/><circle cx="105" cy="44" r="2.5" fill="#2980b9"/><circle cx="115" cy="38" r="2.5" fill="#2980b9"/></g>
+                                <line x1="45" y1="55" x2="45" y2="70" stroke="#1a5276" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.4"/><line x1="65" y1="42" x2="65" y2="58" stroke="#1a5276" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.4"/><line x1="85" y1="32" x2="85" y2="50" stroke="#1a5276" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.4"/><line x1="105" y1="28" x2="105" y2="44" stroke="#1a5276" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.4"/>
+                                <text x="87" y="14" text-anchor="middle" font-size="7" fill="#1a5276" font-weight="600" opacity="0.5">2nd Dimension</text>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">SDA</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">Second-Dimension Spatial Association</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/SecDim/vignettes/SecDim.html">R: SecDim</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <g opacity="0.3"><circle cx="50" cy="55" r="2" fill="#1a5276"/><circle cx="60" cy="48" r="2" fill="#1a5276"/><circle cx="70" cy="44" r="2" fill="#1a5276"/><circle cx="80" cy="40" r="2" fill="#1a5276"/><circle cx="90" cy="36" r="2" fill="#1a5276"/><circle cx="100" cy="34" r="2" fill="#1a5276"/><circle cx="110" cy="30" r="2" fill="#1a5276"/><circle cx="120" cy="26" r="2" fill="#1a5276"/></g>
+                                <circle cx="55" cy="20" r="4" fill="none" stroke="#e74c3c" stroke-width="1.5"/><circle cx="55" cy="20" r="2" fill="#e74c3c" opacity="0.6"/>
+                                <circle cx="125" cy="68" r="4" fill="none" stroke="#e74c3c" stroke-width="1.5"/><circle cx="125" cy="68" r="2" fill="#e74c3c" opacity="0.6"/>
+                                <line x1="45" y1="58" x2="125" y2="24" stroke="#1a5276" stroke-width="1" opacity="0.3"/>
+                                <text x="87" y="84" text-anchor="middle" font-size="7" fill="#e74c3c" font-weight="600" opacity="0.6">Outliers</text>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2025.2580414">SDO</a></div>
+                                <div class="card-full"><a href="https://doi.org/10.1080/13658816.2025.2580414">Second-Dimension Outliers</a></div>
+                                <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2025.2580414">Int. J. Geogr. Inf. Sci.</a></div>
+                                <span class="card-badge mr">Most Read 2026</span>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <g opacity="0.3"><circle cx="45" cy="50" r="2" fill="#1a5276"/><circle cx="55" cy="43" r="2" fill="#1a5276"/><circle cx="65" cy="39" r="2" fill="#1a5276"/><circle cx="75" cy="35" r="2" fill="#1a5276"/><circle cx="85" cy="33" r="2" fill="#1a5276"/><circle cx="95" cy="30" r="2" fill="#1a5276"/><circle cx="105" cy="28" r="2" fill="#1a5276"/><circle cx="115" cy="25" r="2" fill="#1a5276"/></g>
+                                <line x1="40" y1="55" x2="120" y2="22" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/>
+                                <rect x="50" y="55" width="70" height="22" rx="3" fill="#1a5276" fill-opacity="0.08" stroke="#1a5276" stroke-width="0.5" opacity="0.5"/>
+                                <text x="85" y="69" text-anchor="middle" font-size="7" fill="#1a5276" font-weight="500" opacity="0.6">Explainable</text>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0264275126003008">ESDA</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S0264275126003008">Explainable Second-Dimension Spatial Association</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0264275126003008">Cities</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Geographical similarity -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">3. Geographical similarity</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <defs><linearGradient id="gs1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a5276" stop-opacity="0.15"/><stop offset="100%" stop-color="#2980b9" stop-opacity="0.4"/></linearGradient></defs>
+                                <ellipse cx="65" cy="47" rx="32" ry="26" fill="url(#gs1)" stroke="#1a5276" stroke-width="0.8" opacity="0.6"/>
+                                <ellipse cx="110" cy="47" rx="32" ry="26" fill="url(#gs1)" stroke="#1a5276" stroke-width="0.8" opacity="0.6"/>
+                                <line x1="65" y1="47" x2="110" y2="47" stroke="#1a5276" stroke-width="1.2" stroke-dasharray="3,2" opacity="0.5"/>
+                                <circle cx="65" cy="47" r="3" fill="#1a5276" opacity="0.7"/><circle cx="110" cy="47" r="3" fill="#2980b9" opacity="0.7"/>
+                                <text x="87" y="14" text-anchor="middle" font-size="7" fill="#1a5276" font-weight="600" opacity="0.5">Optimal Similarity</text>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">GOS</a></div>
+                                <div class="card-full"><a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">Geographically Optimal Similarity</a></div>
+                                <div class="card-journal"><a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">Mathematical Geosciences</a></div>
+                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html">R: geosimilarity</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Spatial autocorrelation -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">4. Spatial autocorrelation</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <g opacity="0.8">
+                                    <rect x="35" y="15" width="15" height="15" fill="#1a5276" opacity="0.8" rx="1"/><rect x="50" y="15" width="15" height="15" fill="#1a5276" opacity="0.6" rx="1"/><rect x="65" y="15" width="15" height="15" fill="#1a5276" opacity="0.3" rx="1"/><rect x="80" y="15" width="15" height="15" fill="#2980b9" opacity="0.2" rx="1"/><rect x="95" y="15" width="15" height="15" fill="#2980b9" opacity="0.15" rx="1"/><rect x="110" y="15" width="15" height="15" fill="#2980b9" opacity="0.1" rx="1"/>
+                                    <rect x="35" y="30" width="15" height="15" fill="#1a5276" opacity="0.65" rx="1"/><rect x="50" y="30" width="15" height="15" fill="#1a5276" opacity="0.5" rx="1"/><rect x="65" y="30" width="15" height="15" fill="#1a5276" opacity="0.25" rx="1"/><rect x="80" y="30" width="15" height="15" fill="#2980b9" opacity="0.2" rx="1"/><rect x="95" y="30" width="15" height="15" fill="#2980b9" opacity="0.3" rx="1"/><rect x="110" y="30" width="15" height="15" fill="#2980b9" opacity="0.4" rx="1"/>
+                                    <rect x="35" y="45" width="15" height="15" fill="#1a5276" opacity="0.2" rx="1"/><rect x="50" y="45" width="15" height="15" fill="#1a5276" opacity="0.15" rx="1"/><rect x="65" y="45" width="15" height="15" fill="#2980b9" opacity="0.2" rx="1"/><rect x="80" y="45" width="15" height="15" fill="#2980b9" opacity="0.4" rx="1"/><rect x="95" y="45" width="15" height="15" fill="#2980b9" opacity="0.6" rx="1"/><rect x="110" y="45" width="15" height="15" fill="#2980b9" opacity="0.7" rx="1"/>
+                                    <rect x="35" y="60" width="15" height="15" fill="#2980b9" opacity="0.1" rx="1"/><rect x="50" y="60" width="15" height="15" fill="#2980b9" opacity="0.15" rx="1"/><rect x="65" y="60" width="15" height="15" fill="#2980b9" opacity="0.3" rx="1"/><rect x="80" y="60" width="15" height="15" fill="#2980b9" opacity="0.5" rx="1"/><rect x="95" y="60" width="15" height="15" fill="#2980b9" opacity="0.75" rx="1"/><rect x="110" y="60" width="15" height="15" fill="#2980b9" opacity="0.9" rx="1"/>
+                                </g>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">HSA</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">Heterogeneous Spatial Autocorrelation</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">Int. J. Geogr. Inf. Sci.</a></div>
+                                <span class="card-badge mr">Top 4 Most Read 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Geocomplexity -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">5. Geocomplexity</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <g stroke="#1a5276" fill="none" stroke-width="0.8" opacity="0.5">
+                                    <rect x="35" y="12" width="48" height="33" rx="1"/><line x1="59" y1="12" x2="59" y2="45"/><line x1="35" y1="28" x2="83" y2="28"/>
+                                    <rect x="35" y="12" width="24" height="16" rx="1"/>
+                                    <rect x="90" y="47" width="48" height="33" rx="1"/><line x1="114" y1="47" x2="114" y2="80"/><line x1="90" y1="63" x2="138" y2="63"/>
+                                    <rect x="90" y="47" width="24" height="16" rx="1"/>
+                                </g>
+                                <path d="M82 43 Q87 28 91 48" stroke="#1a5276" stroke-width="1" fill="none" opacity="0.4"/>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Geocomplexity</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Spatial complexity &amp; error explanation</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Int. J. Geogr. Inf. Sci.</a></div>
+                                <span class="card-badge mc">Top 30 Cited 3y</span>
+                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geocomplexity/index.html">R: geocomplexity</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Generalized heterogeneity -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">6. Generalized heterogeneity</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <defs><linearGradient id="gh1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1a5276" stop-opacity="0.7"/><stop offset="50%" stop-color="#2980b9" stop-opacity="0.3"/><stop offset="100%" stop-color="#1a5276" stop-opacity="0.6"/></linearGradient></defs>
+                                <path d="M35 22 Q60 18 87 42 Q115 66 140 32" fill="none" stroke="url(#gh1)" stroke-width="2.5"/>
+                                <path d="M35 42 Q60 38 87 52 Q115 66 140 52" fill="none" stroke="#1a5276" stroke-width="1" opacity="0.3" stroke-dasharray="3,2"/>
+                                <path d="M35 62 Q60 72 87 57 Q115 42 140 67" fill="none" stroke="#2980b9" stroke-width="1" opacity="0.3" stroke-dasharray="3,2"/>
+                                <circle cx="55" cy="27" r="2" fill="#1a5276" opacity="0.5"/><circle cx="75" cy="35" r="2" fill="#1a5276" opacity="0.5"/><circle cx="95" cy="47" r="2" fill="#1a5276" opacity="0.5"/><circle cx="115" cy="42" r="2" fill="#1a5276" opacity="0.5"/>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2022.2147530">GHM</a></div>
+                                <div class="card-full"><a href="https://doi.org/10.1080/13658816.2022.2147530">Generalized Heterogeneity Model</a></div>
+                                <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2022.2147530">Int. J. Geogr. Inf. Sci.</a></div>
+                                <span class="card-badge mc">Top 4 Cited 3y</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Geostatistics & kriging -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">7. Geostatistics &amp; kriging</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <path d="M30 65 Q50 28 70 47 Q90 66 110 32 Q130 12 150 37" fill="none" stroke="#1a5276" stroke-width="2" opacity="0.6"/>
+                                <path d="M30 67 Q50 30 70 49 Q90 68 110 34 Q130 14 150 39" fill="#1a5276" fill-opacity="0.08"/>
+                                <path d="M30 63 Q50 26 70 45 Q90 64 110 30 Q130 10 150 35" fill="#1a5276" fill-opacity="0.08"/>
+                                <line x1="55" y1="18" x2="55" y2="80" stroke="#1a5276" stroke-width="0.5" stroke-dasharray="2,3" opacity="0.3"/><line x1="90" y1="18" x2="90" y2="80" stroke="#1a5276" stroke-width="0.5" stroke-dasharray="2,3" opacity="0.3"/><line x1="125" y1="18" x2="125" y2="80" stroke="#1a5276" stroke-width="0.5" stroke-dasharray="2,3" opacity="0.3"/>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://ieeexplore.ieee.org/document/8307463">SRK</a></div>
+                                <div class="card-full"><a href="https://ieeexplore.ieee.org/document/8307463">Segment-based Regression Kriging</a></div>
+                                <div class="card-journal"><a href="https://ieeexplore.ieee.org/document/8307463">IEEE Trans. Intell. Transp. Syst.</a></div>
+                                <span class="card-badge hc">Highly Cited</span>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <path d="M25 60 Q45 35 65 50 Q85 65 105 30 Q125 15 155 25" fill="none" stroke="#1a5276" stroke-width="2" opacity="0.6"/>
+                                <circle cx="45" cy="42" r="8" fill="#1a5276" fill-opacity="0.15" stroke="#1a5276" stroke-width="1" opacity="0.5"/>
+                                <circle cx="85" cy="55" r="10" fill="#1a5276" fill-opacity="0.15" stroke="#1a5276" stroke-width="1" opacity="0.5"/>
+                                <circle cx="125" cy="22" r="7" fill="#1a5276" fill-opacity="0.15" stroke="#1a5276" stroke-width="1" opacity="0.5"/>
+                                <circle cx="45" cy="42" r="2" fill="#1a5276" opacity="0.8"/><circle cx="85" cy="55" r="2" fill="#1a5276" opacity="0.8"/><circle cx="125" cy="22" r="2" fill="#1a5276" opacity="0.8"/>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">FFRK</a></div>
+                                <div class="card-full"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">Focal-Feature Regression Kriging</a></div>
+                                <div class="card-journal"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">Geographical Analysis</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Spatial graph network -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">8. Spatial graph network</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <line x1="50" y1="28" x2="87" y2="20" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="50" y1="28" x2="60" y2="55" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="87" y1="20" x2="125" y2="32" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="87" y1="20" x2="87" y2="52" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="60" y1="55" x2="87" y2="52" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="87" y1="52" x2="125" y2="32" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="87" y1="52" x2="115" y2="68" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="125" y1="32" x2="115" y2="68" stroke="#1a5276" stroke-width="1" opacity="0.3"/>
+                                <circle cx="50" cy="28" r="5" fill="#1a5276" opacity="0.7"/><circle cx="87" cy="20" r="5" fill="#1a5276" opacity="0.8"/><circle cx="125" cy="32" r="5" fill="#1a5276" opacity="0.6"/><circle cx="60" cy="55" r="5" fill="#2980b9" opacity="0.6"/><circle cx="87" cy="52" r="5" fill="#2980b9" opacity="0.7"/><circle cx="115" cy="68" r="5" fill="#2980b9" opacity="0.5"/>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2514330">Dynamic Graph</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2514330">Dynamic Spatiotemporal Graph Network</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2514330">GISci. &amp; Remote Sens.</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <line x1="45" y1="37" x2="80" y2="22" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/><line x1="45" y1="37" x2="70" y2="62" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/><line x1="80" y1="22" x2="115" y2="37" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/><line x1="70" y1="62" x2="105" y2="67" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/><line x1="115" y1="37" x2="105" y2="67" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/><line x1="80" y1="22" x2="130" y2="52" stroke="#1a5276" stroke-width="0.8" opacity="0.2" stroke-dasharray="2,2"/>
+                                <circle cx="45" cy="37" r="6" fill="#1a5276" opacity="0.15" stroke="#1a5276" stroke-width="1"/><circle cx="80" cy="22" r="6" fill="#1a5276" opacity="0.15" stroke="#1a5276" stroke-width="1"/><circle cx="115" cy="37" r="6" fill="#1a5276" opacity="0.15" stroke="#1a5276" stroke-width="1"/><circle cx="70" cy="62" r="6" fill="#2980b9" opacity="0.15" stroke="#2980b9" stroke-width="1"/><circle cx="105" cy="67" r="6" fill="#2980b9" opacity="0.15" stroke="#2980b9" stroke-width="1"/><circle cx="130" cy="52" r="6" fill="#2980b9" opacity="0.15" stroke="#2980b9" stroke-width="1"/>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S2211675325000429">GIGNN</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S2211675325000429">Geographically Informed Graph Neural Network</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S2211675325000429">Spatial Statistics</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. Spatial fusion -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">9. Spatial fusion</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <rect x="45" y="15" width="85" height="16" rx="3" fill="#1a5276" opacity="0.15" stroke="#1a5276" stroke-width="0.5"/>
+                                <rect x="45" y="35" width="85" height="16" rx="3" fill="#2980b9" opacity="0.15" stroke="#2980b9" stroke-width="0.5"/>
+                                <rect x="45" y="57" width="85" height="16" rx="3" fill="#1a5276" opacity="0.25" stroke="#1a5276" stroke-width="0.8"/>
+                                <text x="87" y="25" text-anchor="middle" font-size="6" fill="#1a5276" opacity="0.6">Source A</text>
+                                <text x="87" y="45" text-anchor="middle" font-size="6" fill="#2980b9" opacity="0.6">Source B</text>
+                                <text x="87" y="67" text-anchor="middle" font-size="6" fill="#1a5276" font-weight="600" opacity="0.7">Fused</text>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2509099">SCAF</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2509099">Spatial Context-Aware Fusion</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2509099">Int. J. Digital Earth</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. Spatial transformer -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">10. Spatial transformer</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <g opacity="0.4"><rect x="37" y="15" width="10" height="10" rx="1" fill="#1a5276"/><rect x="49" y="15" width="10" height="10" rx="1" fill="#1a5276"/><rect x="61" y="15" width="10" height="10" rx="1" fill="#1a5276"/><rect x="73" y="15" width="10" height="10" rx="1" fill="#1a5276"/><rect x="37" y="27" width="10" height="10" rx="1" fill="#1a5276"/><rect x="49" y="27" width="10" height="10" rx="1" fill="#1a5276"/><rect x="61" y="27" width="10" height="10" rx="1" fill="#1a5276"/><rect x="73" y="27" width="10" height="10" rx="1" fill="#1a5276"/></g>
+                                <g opacity="0.3"><rect x="95" y="18" width="18" height="18" rx="1" fill="#2980b9"/><rect x="115" y="18" width="18" height="18" rx="1" fill="#2980b9"/><rect x="95" y="38" width="18" height="18" rx="1" fill="#2980b9"/><rect x="115" y="38" width="18" height="18" rx="1" fill="#2980b9"/></g>
+                                <rect x="62" y="50" width="50" height="28" rx="2" fill="#1a5276" opacity="0.15" stroke="#1a5276" stroke-width="0.8"/>
+                                <text x="87" y="67" text-anchor="middle" font-size="6" fill="#1a5276" font-weight="600" opacity="0.6">Multi-scale</text>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2025.2602536">Multiscale Transformer</a></div>
+                                <div class="card-full"><a href="https://doi.org/10.1080/13658816.2025.2602536">Spatiotemporal Multiscale Transformer</a></div>
+                                <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2025.2602536">Int. J. Geogr. Inf. Sci.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== PART II ==================== -->
+        <div class="part-section">
+            <div class="part-header p2">
+                <span class="part-num p2">PART II</span>
+                <span class="part-title">Spatial Heterogeneity and Driver Analysis</span>
+            </div>
+            <div class="part-flow">
+
+                <!-- 11. Spatial heterogeneity -->
+                <div class="subcat-group">
+                    <div class="subcat-label p2">11. Spatial heterogeneity</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><rect x="30" y="18" width="28" height="55" rx="2" fill="#8C1515" opacity="0.25"/><rect x="60" y="18" width="23" height="55" rx="2" fill="#8C1515" opacity="0.15"/><rect x="85" y="18" width="26" height="55" rx="2" fill="#8C1515" opacity="0.35"/><rect x="113" y="18" width="24" height="55" rx="2" fill="#8C1515" opacity="0.2"/>
+                                <text x="44" y="49" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.7">Z₁</text><text x="72" y="49" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.7">Z₂</text><text x="98" y="49" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.7">Z₃</text><text x="125" y="49" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.7">Z₄</text>
+                                <circle cx="44" cy="10" r="4" fill="#f1c40f" stroke="#8C1515" stroke-width="0.8"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">OPGD</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">Optimal Parameters-based Geographical Detector</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">GISci. &amp; Remote Sens. (2020)</a></div>
+                                <span class="card-badge hc">Highly Cited</span><span class="card-badge hc">No.1 Most Cited Ever</span>
+                                <div class="card-links"><a class="p2" href="http://cran.r-project.org/web/packages/GD/vignettes/GD.html">R: GD</a><a class="p2" href="https://yongzesong.com/gd/">Q&amp;A</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><g opacity="0.4"><rect x="35" y="16" width="20" height="28" rx="1" fill="#8C1515"/><rect x="57" y="16" width="20" height="28" rx="1" fill="#8C1515" opacity="0.6"/><rect x="79" y="16" width="20" height="28" rx="1" fill="#8C1515" opacity="0.3"/><rect x="101" y="16" width="20" height="28" rx="1" fill="#8C1515" opacity="0.8"/></g>
+                                <circle cx="45" cy="58" r="3" fill="#8C1515" opacity="0.6"/><circle cx="67" cy="63" r="3" fill="#8C1515" opacity="0.4"/><circle cx="89" cy="53" r="3" fill="#8C1515" opacity="0.7"/><circle cx="111" cy="60" r="3" fill="#8C1515" opacity="0.5"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">LISP</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">Local Indicator of Stratified Power</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">Int. J. Geogr. Inf. Sci.</a></div>
+                                <span class="card-badge mr">Top 2 Most Read 2026</span>
+                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/web/packages/localsp/index.html">R: localsp</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M35 28 Q65 22 95 38 Q125 25 145 32" fill="none" stroke="#8C1515" stroke-width="1.5" opacity="0.4"/><path d="M35 28 Q65 22 95 38 Q125 25 145 32 L145 75 L35 75 Z" fill="#8C1515" opacity="0.06"/>
+                                <rect x="50" y="48" width="18" height="18" rx="2" fill="#8C1515" opacity="0.12" stroke="#8C1515" stroke-width="0.5" stroke-dasharray="2,2"/><rect x="100" y="43" width="18" height="18" rx="2" fill="#8C1515" opacity="0.2" stroke="#8C1515" stroke-width="0.5" stroke-dasharray="2,2"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">GOZH</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">Geographically Optimal Zones-based Heterogeneity</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">ISPRS J. Photogramm. Remote Sens.</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><defs><linearGradient id="lesh" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#8C1515" stop-opacity="0.5"/><stop offset="100%" stop-color="#8C1515" stop-opacity="0.1"/></linearGradient></defs>
+                                <rect x="35" y="22" width="105" height="48" rx="3" fill="url(#lesh)"/>
+                                <circle cx="60" cy="46" r="12" fill="none" stroke="#8C1515" stroke-width="1" opacity="0.5"/><circle cx="95" cy="46" r="12" fill="none" stroke="#8C1515" stroke-width="1" opacity="0.3"/><circle cx="125" cy="46" r="8" fill="none" stroke="#8C1515" stroke-width="1" opacity="0.2"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">LESH</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Locally Explained Heterogeneity Model</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Int. J. Digital Earth</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95">
+                                <rect x="30" y="20" width="115" height="55" rx="4" fill="#8C1515" fill-opacity="0.05" stroke="#8C1515" stroke-width="0.8" opacity="0.4"/>
+                                <rect x="38" y="28" width="22" height="16" rx="2" fill="#8C1515" opacity="0.15"/><rect x="64" y="28" width="22" height="16" rx="2" fill="#8C1515" opacity="0.25"/><rect x="90" y="28" width="22" height="16" rx="2" fill="#8C1515" opacity="0.1"/><rect x="116" y="28" width="22" height="16" rx="2" fill="#8C1515" opacity="0.2"/>
+                                <rect x="38" y="50" width="22" height="16" rx="2" fill="#8C1515" opacity="0.2"/><rect x="64" y="50" width="22" height="16" rx="2" fill="#8C1515" opacity="0.1"/><rect x="90" y="50" width="22" height="16" rx="2" fill="#8C1515" opacity="0.3"/><rect x="116" y="50" width="22" height="16" rx="2" fill="#8C1515" opacity="0.15"/>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70032">gdverse</a></div>
+                                <div class="card-full"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70032">Spatial Stratified Heterogeneity Family</a></div>
+                                <div class="card-journal"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70032">Trans. in GIS</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M35 47 Q55 18 75 47 Q95 76 115 47 Q135 18 150 47" fill="none" stroke="#8C1515" stroke-width="1.5" opacity="0.5"/>
+                                <path d="M35 57 Q55 38 75 52 Q95 66 115 52 Q135 38 150 57" fill="none" stroke="#8C1515" stroke-width="0.8" opacity="0.25" stroke-dasharray="3,2"/>
+                                <circle cx="60" cy="30" r="2" fill="#8C1515" opacity="0.4"/><circle cx="80" cy="52" r="2" fill="#8C1515" opacity="0.4"/><circle cx="105" cy="35" r="2" fill="#8C1515" opacity="0.4"/><circle cx="130" cy="45" r="2" fill="#8C1515" opacity="0.4"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.nature.com/articles/s41598-021-96772-z">WGWR</a></div>
+                                <div class="card-full"><a href="https://www.nature.com/articles/s41598-021-96772-z">Wavelet Geographically Weighted Regression</a></div>
+                                <div class="card-journal"><a href="https://www.nature.com/articles/s41598-021-96772-z">Scientific Reports</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12. Spatial interaction -->
+                <div class="subcat-group">
+                    <div class="subcat-label p2">12. Spatial interaction</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><line x1="40" y1="18" x2="40" y2="75" stroke="#8C1515" stroke-width="1" opacity="0.3"/><line x1="87" y1="18" x2="87" y2="75" stroke="#8C1515" stroke-width="1" opacity="0.3"/><line x1="135" y1="18" x2="135" y2="75" stroke="#8C1515" stroke-width="1" opacity="0.3"/><line x1="30" y1="33" x2="145" y2="33" stroke="#8C1515" stroke-width="1" opacity="0.3"/><line x1="30" y1="58" x2="145" y2="58" stroke="#8C1515" stroke-width="1" opacity="0.3"/>
+                                <circle cx="40" cy="33" r="4" fill="#8C1515" opacity="0.6"/><circle cx="87" cy="33" r="4" fill="#8C1515" opacity="0.3"/><circle cx="135" cy="33" r="4" fill="#8C1515" opacity="0.5"/><circle cx="40" cy="58" r="4" fill="#8C1515" opacity="0.4"/><circle cx="87" cy="58" r="4" fill="#8C1515" opacity="0.7"/><circle cx="135" cy="58" r="4" fill="#8C1515" opacity="0.2"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S2211675324000058">RID</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S2211675324000058">Robust Interaction Detector</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S2211675324000058">Spatial Statistics</a></div>
+                                <span class="card-badge hc">Highly Cited</span>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M40 62 Q60 22 87 47 Q115 72 140 32" fill="none" stroke="#8C1515" stroke-width="1.5" opacity="0.4"/>
+                                <path d="M40 32 Q60 62 87 47 Q115 32 140 62" fill="none" stroke="#c0392b" stroke-width="1.5" opacity="0.3"/>
+                                <circle cx="87" cy="47" r="6" fill="#8C1515" opacity="0.15" stroke="#8C1515" stroke-width="1"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">GPI</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">Geographical Pattern Interaction</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">Int. J. Geogr. Inf. Sci.</a></div>
+                                <span class="card-badge mr">Top 1 Most Read 2025</span>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><rect x="45" y="22" width="28" height="48" rx="2" fill="#8C1515" opacity="0.08" stroke="#8C1515" stroke-width="0.5"/><rect x="100" y="22" width="28" height="48" rx="2" fill="#8C1515" opacity="0.08" stroke="#8C1515" stroke-width="0.5"/>
+                                <path d="M73 38 Q87 33 100 38" stroke="#8C1515" stroke-width="1" opacity="0.4" fill="none"/><path d="M73 52 Q87 57 100 52" stroke="#8C1515" stroke-width="1" opacity="0.4" fill="none"/>
+                                <circle cx="59" cy="38" r="2.5" fill="#8C1515" opacity="0.5"/><circle cx="59" cy="52" r="2.5" fill="#8C1515" opacity="0.3"/><circle cx="114" cy="38" r="2.5" fill="#8C1515" opacity="0.4"/><circle cx="114" cy="52" r="2.5" fill="#8C1515" opacity="0.6"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://doi.org/10.1016/j.jag.2025.105072">LPI</a></div>
+                                <div class="card-full"><a href="https://doi.org/10.1016/j.jag.2025.105072">Local Effects of Pattern Interaction</a></div>
+                                <div class="card-journal"><a href="https://doi.org/10.1016/j.jag.2025.105072">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><rect x="35" y="20" width="40" height="52" rx="2" fill="#8C1515" opacity="0.1" stroke="#8C1515" stroke-width="0.5"/><rect x="95" y="20" width="40" height="52" rx="2" fill="#8C1515" opacity="0.1" stroke="#8C1515" stroke-width="0.5"/>
+                                <line x1="75" y1="28" x2="95" y2="33" stroke="#8C1515" stroke-width="1.2" opacity="0.5"/><line x1="75" y1="43" x2="95" y2="48" stroke="#8C1515" stroke-width="1.2" opacity="0.5"/><line x1="75" y1="58" x2="95" y2="53" stroke="#8C1515" stroke-width="1.2" opacity="0.5"/>
+                                <circle cx="55" cy="33" r="3" fill="#8C1515" opacity="0.5"/><circle cx="55" cy="48" r="3" fill="#8C1515" opacity="0.4"/><circle cx="55" cy="63" r="3" fill="#8C1515" opacity="0.3"/><circle cx="115" cy="36" r="3" fill="#c0392b" opacity="0.5"/><circle cx="115" cy="50" r="3" fill="#c0392b" opacity="0.4"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">IDSA</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">Interactive Detector for Spatial Associations</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">Int. J. Geogr. Inf. Sci.</a></div>
+                                <span class="card-badge mc">Top 2 Cited 2023</span>
+                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/web/packages/IDSA/IDSA.pdf">R: IDSA</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 13. Causal discovery -->
+                <div class="subcat-group">
+                    <div class="subcat-label p2">13. Causal discovery</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95">
+                                <line x1="50" y1="47" x2="125" y2="47" stroke="#8C1515" stroke-width="1.5" opacity="0.4" marker-end="url(#arrowP2)"/>
+                                <defs><marker id="arrowP2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#8C1515" opacity="0.5"/></marker></defs>
+                                <circle cx="50" cy="47" r="10" fill="#8C1515" fill-opacity="0.12" stroke="#8C1515" stroke-width="1" opacity="0.5"/>
+                                <circle cx="125" cy="47" r="10" fill="#8C1515" fill-opacity="0.12" stroke="#8C1515" stroke-width="1" opacity="0.5"/>
+                                <path d="M35 25 Q50 15 65 25" fill="none" stroke="#8C1515" stroke-width="0.8" opacity="0.3"/>
+                                <path d="M110 25 Q125 15 140 25" fill="none" stroke="#8C1515" stroke-width="0.8" opacity="0.3"/>
+                                <text x="50" y="50" text-anchor="middle" font-size="8" fill="#8C1515" opacity="0.6">X</text>
+                                <text x="125" y="50" text-anchor="middle" font-size="8" fill="#8C1515" opacity="0.6">Y</text>
+                                <text x="87" y="40" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.4">temporal</text>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0198971526000372">tEDM</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0198971526000372">Causal with Temporal Empirical Dynamic Modeling</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0198971526000372">Computers, Environ. and Urban Syst.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 14. Robust spatial models -->
+                <div class="subcat-group">
+                    <div class="subcat-label p2">14. Robust spatial models</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M65 22 L87 12 L109 22 L115 47 L105 72 L69 72 L59 47 Z" fill="#8C1515" opacity="0.08" stroke="#8C1515" stroke-width="1"/>
+                                <circle cx="75" cy="42" r="2" fill="#8C1515" opacity="0.4"/><circle cx="87" cy="35" r="2" fill="#8C1515" opacity="0.5"/><circle cx="99" cy="45" r="2" fill="#8C1515" opacity="0.4"/><circle cx="83" cy="52" r="2" fill="#8C1515" opacity="0.3"/><circle cx="93" cy="55" r="2" fill="#8C1515" opacity="0.6"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">RGD</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Robust Geographical Detector</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 15. Spatial anisotropy -->
+                <div class="subcat-group">
+                    <div class="subcat-label p2">15. Spatial anisotropy</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><ellipse cx="67" cy="42" rx="25" ry="12" transform="rotate(-30 67 42)" fill="#8C1515" opacity="0.1" stroke="#8C1515" stroke-width="0.8"/>
+                                <ellipse cx="110" cy="52" rx="20" ry="10" transform="rotate(45 110 52)" fill="#8C1515" opacity="0.15" stroke="#8C1515" stroke-width="0.8"/>
+                                <ellipse cx="87" cy="32" rx="18" ry="8" transform="rotate(10 87 32)" fill="#8C1515" opacity="0.12" stroke="#8C1515" stroke-width="0.8"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Spatial Anisotropy</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Spatial irregular anisotropy in urban heat</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Sustain. Cities and Society</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 16. Spatial path analysis -->
+                <div class="subcat-group">
+                    <div class="subcat-label p2">16. Spatial path analysis</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><circle cx="45" cy="47" r="6" fill="#8C1515" opacity="0.3"/><circle cx="87" cy="27" r="6" fill="#8C1515" opacity="0.4"/><circle cx="130" cy="52" r="6" fill="#8C1515" opacity="0.3"/><circle cx="87" cy="67" r="6" fill="#8C1515" opacity="0.2"/>
+                                <path d="M51 45 Q67 28 81 28" stroke="#8C1515" stroke-width="1.5" opacity="0.5" fill="none"/><path d="M93 29 Q115 36 125 49" stroke="#8C1515" stroke-width="1.5" opacity="0.5" fill="none"/>
+                                <path d="M51 52 Q67 67 81 67" stroke="#8C1515" stroke-width="1" opacity="0.3" fill="none" stroke-dasharray="3,2"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">LPA</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Local Pathways of Association</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 17. Spatial segmentation -->
+                <div class="subcat-group">
+                    <div class="subcat-label p2">17. Spatial segmentation</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><line x1="35" y1="47" x2="140" y2="47" stroke="#8C1515" stroke-width="2.5" opacity="0.3"/>
+                                <line x1="67" y1="37" x2="67" y2="57" stroke="#e74c3c" stroke-width="1.5" opacity="0.7"/><line x1="100" y1="37" x2="100" y2="57" stroke="#e74c3c" stroke-width="1.5" opacity="0.7"/><line x1="125" y1="37" x2="125" y2="57" stroke="#e74c3c" stroke-width="1.5" opacity="0.7"/>
+                                <text x="51" y="68" text-anchor="middle" font-size="5.5" fill="#8C1515" opacity="0.5">S₁</text><text x="83" y="68" text-anchor="middle" font-size="5.5" fill="#8C1515" opacity="0.5">S₂</text><text x="112" y="68" text-anchor="middle" font-size="5.5" fill="#8C1515" opacity="0.5">S₃</text><text x="133" y="68" text-anchor="middle" font-size="5.5" fill="#8C1515" opacity="0.5">S₄</text></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://ieeexplore.ieee.org/document/9123684">SHS</a></div>
+                                <div class="card-full"><a href="https://ieeexplore.ieee.org/document/9123684">Spatial Heterogeneity-based Segmentation</a></div>
+                                <div class="card-journal"><a href="https://ieeexplore.ieee.org/document/9123684">IEEE Trans. Intell. Transp. Syst.</a></div>
+                                <div class="card-links"><a class="p2" href="https://cran.rstudio.com/web/packages/HS/index.html">R: HS</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M45 72 Q60 12 75 47 Q90 82 105 42 Q120 2 140 62" fill="none" stroke="#8C1515" stroke-width="1.2" opacity="0.4"/>
+                                <path d="M45 72 Q65 32 87 52 Q110 72 140 37" fill="none" stroke="#c0392b" stroke-width="1.2" opacity="0.3"/>
+                                <path d="M45 47 Q65 67 87 47 Q110 27 140 52" fill="none" stroke="#8C1515" stroke-width="0.8" opacity="0.2" stroke-dasharray="2,2"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://ieeexplore.ieee.org/abstract/document/10974410">GMS</a></div>
+                                <div class="card-full"><a href="https://ieeexplore.ieee.org/abstract/document/10974410">Gaussian Mixture Segmentation</a></div>
+                                <div class="card-journal"><a href="https://ieeexplore.ieee.org/abstract/document/10974410">IEEE Trans. Intell. Transp. Syst.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 18. Spatial unmixing -->
+                <div class="subcat-group">
+                    <div class="subcat-label p2">18. Spatial unmixing</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M35 47 Q55 27 75 47 Q95 67 115 42 Q135 17 150 47" fill="none" stroke="#8C1515" stroke-width="2" opacity="0.5"/>
+                                <path d="M35 47 Q55 37 75 42 Q95 47 115 39 Q135 32 150 42" fill="none" stroke="#c0392b" stroke-width="1" opacity="0.3" stroke-dasharray="3,2"/>
+                                <path d="M35 52 Q55 57 75 55 Q95 52 115 59 Q135 62 150 55" fill="none" stroke="#8C1515" stroke-width="1" opacity="0.3" stroke-dasharray="3,2"/>
+                                <text x="50" y="20" font-size="6" fill="#8C1515" opacity="0.5">Mixed</text><text x="120" y="77" font-size="6" fill="#8C1515" opacity="0.4">Unmixed</text></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224004229">STUH</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224004229">Spatio-temporal Unmixing with Heterogeneity</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224004229">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== PART III ==================== -->
+        <div class="part-section">
+            <div class="part-header p3">
+                <span class="part-num p3">PART III</span>
+                <span class="part-title">Spatial Urban Methods: Patterns, Accessibility, and Decisions</span>
+            </div>
+            <div class="part-flow">
+
+                <!-- 19. Spatial trade-off -->
+                <div class="subcat-group">
+                    <div class="subcat-label p3">19. Spatial trade-off</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p3" viewBox="0 0 175 95"><line x1="45" y1="77" x2="45" y2="12" stroke="#1a6b4a" stroke-width="1" opacity="0.4"/><line x1="45" y1="77" x2="140" y2="77" stroke="#1a6b4a" stroke-width="1" opacity="0.4"/>
+                                <path d="M50 22 Q75 28 95 47 Q115 67 135 72" fill="none" stroke="#1a6b4a" stroke-width="1.8" opacity="0.5"/>
+                                <path d="M50 72 Q75 67 95 47 Q115 28 135 22" fill="none" stroke="#27ae60" stroke-width="1" opacity="0.3" stroke-dasharray="3,2"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://ieeexplore.ieee.org/document/9548776">DTOM</a></div>
+                                <div class="card-full"><a href="https://ieeexplore.ieee.org/document/9548776">Dynamic Trade-Off Model</a></div>
+                                <div class="card-journal"><a href="https://ieeexplore.ieee.org/document/9548776">IEEE Trans. Intell. Transp. Syst.</a></div>
+                                <span class="card-badge hc">Highly Cited</span>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p3" viewBox="0 0 175 95"><rect x="50" y="22" width="30" height="48" rx="3" fill="#1a6b4a" opacity="0.12" stroke="#1a6b4a" stroke-width="0.8"/>
+                                <rect x="93" y="22" width="30" height="48" rx="3" fill="#27ae60" opacity="0.12" stroke="#27ae60" stroke-width="0.8"/>
+                                <text x="65" y="50" text-anchor="middle" font-size="7" fill="#1a6b4a" opacity="0.6">Access</text>
+                                <text x="108" y="50" text-anchor="middle" font-size="5.5" fill="#27ae60" opacity="0.6">Accessibility</text>
+                                <text x="87" y="48" text-anchor="middle" font-size="9" fill="#1a6b4a" opacity="0.4">&Delta;</text></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224001778">SDM</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224001778">Spatial Delta Model</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224001778">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <svg class="card-svg p3" viewBox="0 0 175 95"><line x1="45" y1="77" x2="45" y2="12" stroke="#1a6b4a" stroke-width="1" opacity="0.4"/><line x1="45" y1="77" x2="140" y2="77" stroke="#1a6b4a" stroke-width="1" opacity="0.4"/>
+                                <path d="M50 22 Q75 26 95 42 Q115 58 135 72" fill="none" stroke="#1a6b4a" stroke-width="1.8" opacity="0.5"/>
+                                <text x="38" y="16" font-size="5.5" fill="#1a6b4a" opacity="0.5">Quality</text><text x="133" y="90" font-size="5.5" fill="#1a6b4a" opacity="0.5">Quantity</text></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0303243421002920">STOR</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S0303243421002920">Spatial Trade-Off Relation</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0303243421002920">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 20. Spatial accessibility -->
+                <div class="subcat-group">
+                    <div class="subcat-label p3">20. Spatial accessibility</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p3" viewBox="0 0 175 95"><circle cx="87" cy="47" r="30" fill="#1a6b4a" opacity="0.06" stroke="#1a6b4a" stroke-width="0.5"/>
+                                <circle cx="87" cy="47" r="20" fill="#1a6b4a" opacity="0.1" stroke="#1a6b4a" stroke-width="0.5"/>
+                                <circle cx="87" cy="47" r="10" fill="#1a6b4a" opacity="0.15" stroke="#1a6b4a" stroke-width="0.5"/>
+                                <rect x="84" y="44" width="6" height="6" fill="#1a6b4a" opacity="0.7" rx="1"/>
+                                <circle cx="73" cy="35" r="2" fill="#27ae60" opacity="0.5"/><circle cx="103" cy="39" r="2" fill="#27ae60" opacity="0.5"/><circle cx="80" cy="59" r="2" fill="#27ae60" opacity="0.4"/><circle cx="97" cy="55" r="2" fill="#27ae60" opacity="0.4"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2018.1446713">D2SFCA</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2018.1446713">Spatiotemporal accessibility analysis</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2018.1446713">GISci. &amp; Remote Sens.</a></div>
+                                <span class="card-badge hc">Highly Cited</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 21. Spatial decision-making -->
+                <div class="subcat-group">
+                    <div class="subcat-label p3">21. Spatial decision-making</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p3" viewBox="0 0 175 95"><circle cx="87" cy="20" r="6" fill="#1a6b4a" opacity="0.2" stroke="#1a6b4a" stroke-width="0.8"/>
+                                <line x1="81" y1="26" x2="60" y2="42" stroke="#1a6b4a" stroke-width="0.8" opacity="0.4"/><line x1="93" y1="26" x2="115" y2="42" stroke="#1a6b4a" stroke-width="0.8" opacity="0.4"/>
+                                <circle cx="60" cy="47" r="5" fill="#1a6b4a" opacity="0.15" stroke="#1a6b4a" stroke-width="0.8"/><circle cx="115" cy="47" r="5" fill="#1a6b4a" opacity="0.15" stroke="#1a6b4a" stroke-width="0.8"/>
+                                <line x1="55" y1="52" x2="43" y2="65" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3"/><line x1="65" y1="52" x2="77" y2="65" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3"/><line x1="110" y1="52" x2="98" y2="65" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3"/><line x1="120" y1="52" x2="132" y2="65" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3"/>
+                                <circle cx="43" cy="70" r="4" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="0.5"/><circle cx="77" cy="70" r="4" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="0.5"/><circle cx="98" cy="70" r="4" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="0.5"/><circle cx="132" cy="70" r="4" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="0.5"/></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1364032120308224">MFSD</a></div>
+                                <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S1364032120308224">Multi-factor Spatial Decision Model</a></div>
+                                <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1364032120308224">Renew. Sustain. Energy Rev.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 22. Spatial big data -->
+                <div class="subcat-group">
+                    <div class="subcat-label p3">22. Spatial big data</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p3" viewBox="0 0 175 95"><g opacity="0.4">
+                                <circle cx="50" cy="32" r="1.5" fill="#1a6b4a"/><circle cx="57" cy="39" r="1.5" fill="#1a6b4a"/><circle cx="65" cy="35" r="1.5" fill="#1a6b4a"/><circle cx="73" cy="42" r="1.5" fill="#1a6b4a"/><circle cx="80" cy="37" r="1.5" fill="#1a6b4a"/><circle cx="87" cy="45" r="1.5" fill="#1a6b4a"/><circle cx="95" cy="39" r="1.5" fill="#1a6b4a"/><circle cx="103" cy="47" r="1.5" fill="#1a6b4a"/><circle cx="110" cy="41" r="1.5" fill="#1a6b4a"/><circle cx="117" cy="49" r="1.5" fill="#1a6b4a"/><circle cx="125" cy="43" r="1.5" fill="#1a6b4a"/>
+                                <circle cx="53" cy="52" r="1.5" fill="#27ae60"/><circle cx="60" cy="57" r="1.5" fill="#27ae60"/><circle cx="70" cy="55" r="1.5" fill="#27ae60"/><circle cx="77" cy="59" r="1.5" fill="#27ae60"/><circle cx="85" cy="62" r="1.5" fill="#27ae60"/><circle cx="93" cy="57" r="1.5" fill="#27ae60"/><circle cx="100" cy="65" r="1.5" fill="#27ae60"/><circle cx="107" cy="59" r="1.5" fill="#27ae60"/><circle cx="115" cy="67" r="1.5" fill="#27ae60"/><circle cx="123" cy="62" r="1.5" fill="#27ae60"/>
+                                </g><rect x="50" y="25" width="78" height="50" rx="3" fill="none" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3" stroke-dasharray="3,2"/>
+                                <text x="87" y="18" text-anchor="middle" font-size="6.5" fill="#1a6b4a" font-weight="600" opacity="0.5">City Redefinition</text></svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2018.1511793">Spatial Big Data</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2018.1511793">Spatial Big Data Method for redefining cities</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2018.1511793">Int. J. Geogr. Inf. Sci.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 23. Spatial optimization -->
+                <div class="subcat-group">
+                    <div class="subcat-label p3">23. Spatial optimization</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <svg class="card-svg p3" viewBox="0 0 175 95">
+                                <path d="M30 70 Q50 65 65 50 Q80 35 95 38 Q110 41 125 30 Q140 19 155 25" fill="none" stroke="#1a6b4a" stroke-width="1.5" opacity="0.5"/>
+                                <circle cx="65" cy="50" r="3" fill="#1a6b4a" opacity="0.5"/><circle cx="95" cy="38" r="3" fill="#1a6b4a" opacity="0.5"/><circle cx="125" cy="30" r="3" fill="#1a6b4a" opacity="0.5"/>
+                                <circle cx="95" cy="38" r="10" fill="none" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3" stroke-dasharray="2,2"/>
+                                <path d="M85 60 L90 50 L80 50 Z" fill="#1a6b4a" opacity="0.2"/><path d="M105 60 L110 50 L100 50 Z" fill="#1a6b4a" opacity="0.2"/>
+                                <text x="87" y="80" text-anchor="middle" font-size="6.5" fill="#1a6b4a" font-weight="500" opacity="0.5">Optimization</text>
+                            </svg>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.mdpi.com/2220-9964/15/2/70">SPOCA</a></div>
+                                <div class="card-full"><a href="https://www.mdpi.com/2220-9964/15/2/70">Spatiotemporal Particle Swarm Optimization for Cost Allocation</a></div>
+                                <div class="card-journal"><a href="https://www.mdpi.com/2220-9964/15/2/70">ISPRS Int. J. Geo-Inf.</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== SOFTWARE ==================== -->
+        <h2 class="software-heading" id="software">Open-Source Geospatial Software (200,000+ downloads)</h2>
+        <div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Optimal Parameters-based Geographical Detectors (OPGD)</strong> for spatial factor exploration. <a href="http://cran.r-project.org/web/packages/GD/vignettes/GD.html" class="sw-pkg">R package "GD"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">publication</a><div class="sw-sub">&ndash; Highly Cited Paper &middot; No. 1 Most Cited Article in GIScience &amp; Remote Sensing in 2021&ndash;2023</div></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/GD" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/GD" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Geographically Optimal Similarity (GOS)</strong> for spatial prediction. <a href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html" class="sw-pkg">R package "geosimilarity"</a> | <a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/geosimilarity" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/geosimilarity" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Second-Dimension Spatial Association (SDA)</strong> for spatial prediction. <a href="https://cran.r-project.org/web/packages/SecDim/vignettes/SecDim.html" class="sw-pkg">R package "SecDim"</a> | <a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/SecDim" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/SecDim" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Geocomplexity.</strong> <a href="https://cran.r-project.org/web/packages/geocomplexity/index.html" class="sw-pkg">R package "geocomplexity"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/geocomplexity" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/geocomplexity" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Interactive Detector for Spatial Association (IDSA)</strong> for spatial factor exploration. <a href="https://cran.r-project.org/web/packages/IDSA/IDSA.pdf" class="sw-pkg">R package "IDSA"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">publication</a><div class="sw-sub">&ndash; No. 2 Most Cited Article in IJGIS in 2021&ndash;2023</div></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/IDSA" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/IDSA" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Homogenous Segmentation (HS)</strong> for segmenting spatial lines data. <a href="https://cran.rstudio.com/web/packages/HS/index.html" class="sw-pkg">R package "HS"</a> | <a href="https://ieeexplore.ieee.org/document/9123684">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/HS" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/HS" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Segment-based Kriging (SK)</strong> for spatial prediction. <a href="https://cran.r-project.org/src/contrib/Archive/SK/" class="sw-pkg">R package "SK"</a> | <a href="https://ieeexplore.ieee.org/document/8307463">publication</a><div class="sw-sub">&ndash; Highly Cited Paper</div></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/SK" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/SK" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Energy Decomposition Analysis (EDA)</strong> for analysing carbon emission factors. <a href="https://cran.r-project.org/web/packages/EDA/vignettes/EDA.html" class="sw-pkg">R package "EDA"</a> | <a href="https://www.sciencedirect.com/science/article/pii/S0959652619305992">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/EDA" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/EDA" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">SDGdetector:</strong> Detecting Sustainable Development Goals (SDGs) in Text. <a href="https://cran.r-project.org/web/packages/SDGdetector/index.html" class="sw-pkg">R package "SDGdetector"</a> | <a href="https://joss.theoj.org/papers/10.21105/joss.05124">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/SDGdetector" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/SDGdetector" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">gdverse:</strong> Analysis of Spatial Stratified Heterogeneity. <a href="https://cran.r-project.org/web/packages/gdverse/index.html" class="sw-pkg">R package "gdverse"</a> | <a href="https://onlinelibrary.wiley.com/doi/10.1111/tgis.70032">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/gdverse" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/gdverse" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">localsp:</strong> Local Indicator of Stratified Power. <a href="https://cran.r-project.org/web/packages/localsp/index.html" class="sw-pkg">R package "localsp"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/localsp" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/localsp" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">cisp:</strong> A Correlation Indicator Based on Spatial Patterns. <a href="https://cran.r-project.org/web/packages/cisp/index.html" class="sw-pkg">R package "cisp"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/cisp" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/cisp" alt="downloads/month"></div></div>
+        </div>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods & Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab & Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

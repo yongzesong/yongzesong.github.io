@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GD R Package - Yongze Song</title>
+    <meta name="description" content="Geodetector Model and GD R Package: Q&A, Installation, and Advanced Models documentation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* === PAGE-SPECIFIC STYLES FOR gd.html === */
+
+        html, body {
+            line-height: 1.8;
+        }
+
+        p {
+            line-height: 1.8;
+            font-size: 0.78rem;
+        }
+
+        /* === MAIN LAYOUT: Sidebar + Content === */
+        .main-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 40px;
+        }
+
+        /* --- Left Sidebar (20%) --- */
+        .sidebar {
+            width: 20%;
+            min-width: 180px;
+            flex-shrink: 0;
+        }
+        .sidebar-nav {
+            position: sticky;
+            top: 20px;
+            padding-top: 10px;
+        }
+        .sidebar-nav a {
+            display: block;
+            font-family: var(--font-sans);
+            font-size: 0.78rem;
+            font-weight: 400;
+            color: var(--color-muted);
+            text-decoration: none;
+            padding: 5px 12px;
+            border-left: 2px solid transparent;
+            transition: all 0.2s ease;
+            line-height: 1.5;
+        }
+        .sidebar-nav a:hover {
+            color: var(--color-accent);
+            border-left-color: var(--color-accent);
+        }
+        .sidebar-nav a.active {
+            color: var(--color-accent);
+            font-weight: 600;
+            border-left-color: var(--color-accent);
+        }
+
+        /* Sub-nav styling */
+        .sidebar-nav .sub-nav {
+            display: none;
+            padding-left: 12px;
+        }
+        .sidebar-nav a.active + .sub-nav {
+            display: block;
+        }
+        .sub-nav a {
+            font-size: 0.72rem;
+            padding: 3px 8px;
+        }
+
+        /* --- Right Content (80%) --- */
+        .content-column {
+            flex: 1;
+            min-width: 0;
+        }
+        .content-column h1 {
+            font-family: var(--font-sans);
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 6px;
+        }
+        .content-column h2 {
+            font-size: 0.92rem;
+        }
+        .content-column h3 {
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 6px;
+        }
+        .content-column h4 {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-top: 18px;
+            margin-bottom: 4px;
+        }
+
+        /* Section headings */
+        .section-heading {
+            color: var(--color-accent);
+            border-bottom: 1.5px solid var(--color-accent);
+            padding-bottom: 6px;
+            margin-top: 32px;
+        }
+
+        /* List styles */
+        .section-list {
+            font-size: 0.78rem;
+            line-height: 1.8;
+            margin: 6px 0;
+        }
+        .section-list li {
+            margin: 8px 0;
+            list-style-position: inside;
+            line-height: 1.8;
+        }
+        .section-list ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
+        /* Badge styles */
+        .badges {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0 20px;
+            align-items: center;
+        }
+        .badges img {
+            height: 22px;
+            width: auto;
+        }
+
+        /* Code/Installation box */
+        .code-box {
+            background: #f7f7f7;
+            border: 1px solid #e8e8e8;
+            border-left: 3px solid #555;
+            border-radius: 4px;
+            padding: 14px 18px;
+            margin: 12px 0;
+            overflow-x: auto;
+        }
+        .code-box code {
+            font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.78rem;
+            line-height: 1.7;
+            color: #2d2d2d;
+        }
+        .code-box pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Q&A styles */
+        .qa-item {
+            margin: 16px 0;
+            padding: 16px 20px;
+            background: #fafaf9;
+            border-radius: 6px;
+            border-left: 3px solid var(--color-accent);
+        }
+        .question {
+            font-size: 0.78rem;
+            line-height: 1.8;
+            margin-bottom: 8px;
+            color: var(--color-heading);
+            font-weight: 600;
+        }
+        .question::before {
+            color: var(--color-accent);
+            font-weight: 700;
+        }
+        .answer {
+            font-size: 0.78rem;
+            line-height: 1.8;
+            color: var(--color-text);
+        }
+        .answer p {
+            margin-bottom: 6px;
+        }
+
+        /* Table styles */
+        .table-container {
+            overflow-x: auto;
+            margin: 16px 0;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            line-height: 1.7;
+        }
+        table th {
+            background: #f8f7f5;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: var(--color-muted);
+        }
+        table td {
+            border-bottom: 1px solid #eee;
+            padding: 10px 12px;
+            color: var(--color-text);
+        }
+        table tr:last-child td {
+            border-bottom: none;
+        }
+        table tr:hover {
+            background: #faf9f7;
+        }
+        table a {
+            color: var(--color-accent);
+            text-decoration: none;
+        }
+        table a:hover {
+            text-decoration: underline;
+        }
+
+        /* Reference box */
+        .references-box {
+            background: #fafaf9;
+            border: 1px solid #eee;
+            border-left: 3px solid var(--color-accent);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .references-box ol {
+            margin-left: 20px;
+            padding-left: 0;
+        }
+        .references-box li {
+            font-size: 0.75rem;
+            line-height: 1.8;
+            margin: 8px 0;
+            color: var(--color-muted);
+        }
+        .references-box a {
+            color: var(--color-accent);
+        }
+
+        /* Advanced model items */
+        .model-item {
+            padding: 12px 16px;
+            margin: 10px 0;
+            background: #fafaf9;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+        .model-item h3 {
+            margin-top: 0;
+            margin-bottom: 4px;
+            color: var(--color-accent);
+        }
+        .model-item p {
+            margin-bottom: 0;
+        }
+
+        /* Note styles */
+        .note-box {
+            background: #faf8f5;
+            border: 1px solid #ece6dd;
+            border-left: 3px solid var(--color-accent);
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            line-height: 1.8;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+                gap: 0;
+            }
+            .sidebar {
+                width: 100%;
+                min-width: unset;
+            }
+            .sidebar-nav {
+                position: static;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px 0;
+                border-bottom: 1px solid #e0e0e0;
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+            }
+            .sidebar-nav a {
+                border-left: none;
+                padding: 4px 10px;
+                font-size: 0.75rem;
+            }
+            .sidebar-nav a.active,
+            .sidebar-nav a:hover {
+                border-left: none;
+                background: #f5f0f0;
+                border-radius: 4px;
+            }
+            .sub-nav {
+                display: none !important;
+            }
+            .footer-inner { grid-template-columns: 1fr; gap: 16px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+            .badges { flex-wrap: wrap; }
+        }
+        @media (max-width: 768px) {
+            html, body { font-size: 15px; }
+            h1 { font-size: 1.2rem; }
+            h2 { font-size: 1.1rem; }
+            p { font-size: 0.72rem; }
+            .table-container { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="site-title">
+            Yongze Song
+            <span>Geography &amp; Sustainability</span>
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="methods.html" class="active">Methods</a>
+            <a href="latest.html">Latest</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="main-content">
+
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+        <nav class="sidebar-nav" id="sidebarNav">
+            <a href="#overview" class="active">Overview</a>
+            <a href="#installation">Installation</a>
+            <a href="#qa">Q&amp;A</a>
+            <div class="sub-nav">
+                <a href="#q1">Q1</a>
+                <a href="#q2">Q2</a>
+                <a href="#q3">Q3</a>
+                <a href="#q4">Q4</a>
+                <a href="#q5">Q5</a>
+                <a href="#q6">Q6</a>
+                <a href="#q7">Q7</a>
+                <a href="#q8">Q8</a>
+                <a href="#q9">Q9</a>
+            </div>
+            <a href="#advanced-models">Advanced Models</a>
+            <a href="#references">References</a>
+        </nav>
+    </aside>
+
+    <!-- Right Content -->
+    <div class="content-column">
+
+        <h1 id="overview">Geographical detectors and 'GD' R Package: Q &amp; A</h1>
+
+        <!-- Overview Section -->
+        <div class="bio-section">
+            <p>The geographical detectors (GD) model is a powerful statistical method for spatial heterogeneity analysis and identifying the determinants of geographical phenomena. The 'GD' R package provides an efficient implementation of this model with comprehensive tools for spatial analysis. </p>
+             <p>R package "GD" <a href="https://cran.r-project.org/web/packages/GD/vignettes/GD.html">Tutorial</a></p>
+            <div class="badges">
+                <img src="assets/images/gd-badge.svg" alt="GD Badge">
+                <img src="https://cranlogs.r-pkg.org/badges/grand-total/GD" alt="downloads">
+                <img src="https://cranlogs.r-pkg.org/badges/GD" alt="downloads/month">
+            </div>
+        </div>
+
+        <!-- Installation Section -->
+        <h2 class="section-heading" id="installation">Installation</h2>
+
+        <p>Install the 'GD' R package from CRAN:</p>
+
+        <div class="code-box">
+            <pre><code>install.packages("GD")
+library("GD")</code></pre>
+        </div>
+
+        <h4>Citation</h4>
+        <p style="margin: 10px 0; font-style: italic;">"The OPGD model was performed using 'GD' R package (Song et al., 2020)."</p>
+
+        <h4>Reference</h4>
+        <p>Song, Y., Wang, J., Ge, Y. &amp; Xu, C. (2020). "An optimal parameters-based geographical detector model enhances geographic characteristics of explanatory variables for spatial heterogeneity analysis: Cases with different types of spatial data." <em>GIScience &amp; Remote Sensing</em>, 57(5), 593–610. <a href="https://doi.org/10.1080/15481603.2020.1760434">DOI: 10.1080/15481603.2020.1760434</a></p>
+
+        <div class="note-box">
+            <strong>Note:</strong> Our research team published a series of articles about new methods of spatial stratified heterogeneity theory in top journals. Please refer to the reference list at the end of this page.
+        </div>
+
+        <!-- Q&A Section -->
+        <h2 class="section-heading" id="qa">Q &amp; A</h2>
+
+        <div class="qa-item" id="q1">
+            <div class="question">Q1: What is recommended number of observations for spatial analysis using Geodetector (GD) or OPGD models? How many breaks are recommended for spatial data discretization?</div>
+            <div class="answer">
+                <p>Spatial unit should be defined before modelling because the number of spatial observations is affected by the spatial unit. According to Section 2.1 Optimal spatial data discretization in Song et al. (2021), "there are two applicable strategies based on the number of observations and practical requirements." For a relatively small data set, the recommended number of breaks is from 3 to 6 (or so). For a relatively large amount of data, the recommended break number is an integer sequence from 3 to 22 (or so), and the discretization method is the quantile break.</p>
+            </div>
+        </div>
+
+        <div class="qa-item" id="q2">
+            <div class="question">Q2: If GD/OPGD models and the "GD" R package work for large datasets? How much time does it cost?</div>
+            <div class="answer">
+                <p>GD works for large datasets. According to the analysis in Section 5 Discussion in Song et al. (2020), "When the sample size reaches 1000, 10 000, 100 000, only 0.05 s, 0.14 s, and 1.55 s are used for simultaneous computation of four parts of geographical detectors by the GD package, respectively." If you cost too much time and fail to get results, please stop running and check the data and steps of modelling. If you try to apply GD to a very large dataset, please pay attention to the spatial distribution and density distribution of data, and spatial data discretization during modelling.</p>
+            </div>
+        </div>
+
+        <div class="qa-item" id="q3">
+            <div class="question">Q3: GD package runs well for most variables, but it can't return outcomes for a few variables after a long-time running. What is the issue?</div>
+            <div class="answer">
+                <p>Sometimes because observation data contains "NA". Please remove NA before computation. If the issue still can't be solved, please compute spatial data discretization and GD models separately. If data doesn't contain NA, but the GD R package still can't return results, some explanatory variables may contain too many same value data. This will cause all observations in a spatial zone to be identical, the standard deviation is zero, and GD can't return results. If your case has this issue, you may address it through: (1) increasing the size of spatial units to reduce the number of observations; (2) using quantile breaks; and (3) trying to use higher resolution data. Please make sure that there are at least two observations with different values within each spatial zone. It is recommended to use "quantile breaks" to manually run spatial discretization to check the basic characteristics of variable data. The Geographically Optimal Zones-based Heterogeneity (GOZH) model is recommended if you would like to try the improved GD models (See Q4).</p>
+            </div>
+        </div>
+
+        <div class="qa-item" id="q4">
+            <div class="question">Q4: Are there any advanced GD models for more accurate and effective modelling?</div>
+            <div class="answer">
+                <p>Currently, there are the following advanced GD models:</p>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Description</th>
+                                <th>Publication</th>
+                                <th>Software</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>OPGD</strong></td>
+                                <td>Characterising spatial heterogeneity, identifying geographical factors and interactive impacts</td>
+                                <td><a href="https://yongzesong.com/wp-content/uploads/2021/11/an-optimal-parameters-based-geographical-detector-model-enhances-geographic-characteristics-of-explanatory-variables-for-spatial.pdf">Song et al. (2020)</a></td>
+                                <td>R package "GD". <a href="https://cran.r-project.org/web/packages/GD/vignettes/GD.html">Tutorial</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>IDSA</strong></td>
+                                <td>Estimating power of interactive determinants from spatial perspective</td>
+                                <td><a href="https://yongzesong.com/wp-content/uploads/2021/11/an-interactive-detector-for-spatial-associations.pdf">Song et al. (2021)</a></td>
+                                <td>R package "IDSA"</td>
+                            </tr>
+                            <tr>
+                                <td><strong>GHM</strong></td>
+                                <td>Characterizing local and stratified heterogeneity, improving interpolation</td>
+                                <td><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2022.2147530">Luo, Song*, et al. (2023)</a></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><strong>GOZH</strong></td>
+                                <td>Identifying determinants across large study areas using optimal zones and Ω-index</td>
+                                <td><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">Luo, Song*, et al. (2022)</a></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><strong>RGD</strong></td>
+                                <td>Robust estimation of PD values</td>
+                                <td><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Zhang, Song*, et al. (2022)</a></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p><strong>Review:</strong> Guo, J., Wang, J., Xu, C., &amp; Song, Y. (2022). Modeling of spatial stratified heterogeneity. <em>GIScience &amp; Remote Sensing</em>, 59(1), 1660–1677. <a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2022.2126375">Link</a></p>
+            </div>
+        </div>
+
+        <div class="qa-item" id="q5">
+            <div class="question">Q5: How to export results to data.frame or spreadsheet?</div>
+            <div class="answer">
+                <p>The outcomes are saved as a list of dataframe. <strong>Option 1:</strong> print results, copy to excel. <strong>Option 2:</strong> use "lapply" and "write.csv" to export to .csv files.</p>
+            </div>
+        </div>
+
+        <div class="qa-item" id="q6">
+            <div class="question">Q6: Why the sum of q values of two variables are not equal to the q value of the interaction?</div>
+            <div class="answer">
+                <p>The primary reason is that the sum of Q values of individual variables is the nonlinear enhanced or weakened relations of variables.</p>
+            </div>
+        </div>
+
+        <div class="qa-item" id="q7">
+            <div class="question">Q7: When I plot the results of "gdm" or spatial discretization functions, it returns multiple figures, but I can only see the last one. How to find previous figures?</div>
+            <div class="answer">
+                <p>Please use RStudio and click "last figure" button.</p>
+            </div>
+        </div>
+
+        <div class="qa-item" id="q8">
+            <div class="question">Q8: When I plot figures, some texts or elements are overlapped with legends. How to solve this issue?</div>
+            <div class="answer">
+                <p>Drag the plotting space in RStudio to a larger area, then run the plotting codes.</p>
+            </div>
+        </div>
+
+        <div class="qa-item" id="q9">
+            <div class="question">Q9: In gdm function, everything is good, but it returns an error that continuous variable names are not matched. How to solve?</div>
+            <div class="answer">
+                <p>The data set is not a "real data.frame". Use: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">data &lt;- as.data.frame(data)</code></p>
+            </div>
+        </div>
+
+        <!-- Advanced Models Section -->
+        <h2 class="section-heading" id="advanced-models">Advanced Models</h2>
+
+        <p>The GD framework has been extended with several advanced models to address specific research needs:</p>
+
+        <div class="model-item">
+            <h3>OPGD (Optimal Parameters-based Geographical Detector)</h3>
+            <p>An enhanced version of the original GD model that automatically optimizes discretization parameters to maximize the explanatory power of spatial factors. This model provides better accuracy in identifying spatial heterogeneity and is particularly effective for continuous variables.</p>
+        </div>
+
+        <div class="model-item">
+            <h3>IDSA (Interactive Detector for Spatial Associations)</h3>
+            <p>Extends GD to explicitly model and quantify interactive effects between multiple spatial variables. This model is essential for understanding how different spatial factors interact to influence geographical phenomena.</p>
+        </div>
+
+        <div class="model-item">
+            <h3>GHM (Generalized Heterogeneity Model)</h3>
+            <p>Characterizes both local and stratified heterogeneity patterns, improving spatial interpolation and prediction accuracy. Particularly useful for applications requiring localized heterogeneity assessment.</p>
+        </div>
+
+        <div class="model-item">
+            <h3>GOZH (Geographically Optimal Zones-based Heterogeneity)</h3>
+            <p>Identifies spatial determinants across large study areas by automatically defining optimal spatial zones. The Ω-index provides a new perspective on stratified heterogeneity.</p>
+        </div>
+
+        <div class="model-item">
+            <h3>RGD (Robust Geographical Detector)</h3>
+            <p>A robust version of GD that provides more reliable PD value estimates, particularly when dealing with outliers or non-normally distributed data.</p>
+        </div>
+
+        <!-- References Section -->
+        <h2 class="section-heading" id="references">References</h2>
+
+        <div class="references-box">
+            <ol>
+                <li>Song, Y., Wang, J.F., Ge, Y., et al. (2020). An optimal parameters-based geographical detector model enhances geographic characteristics of explanatory variables for spatial heterogeneity analysis. <em>GIScience &amp; Remote Sensing</em>, 57(5), 593–610. <a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">Link</a></li>
+
+                <li>Wang, J.F., Li, X.H., et al. (2010). Geographical detectors-based health risk assessment and its application in the neural tube defects study for the fanjingshan area, China. <em>International Journal of Geographical Information Science</em>, 24(1), 107–127.</li>
+
+                <li>Wang, J.F., Zhang, T.L., &amp; Fu, B.J. (2016). A measure of spatial stratified heterogeneity. <em>Ecological Indicators</em>, 67, 250–256.</li>
+
+                <li>Luo, P., Song, Y.*, et al. (2023). A generalized heterogeneity model for spatial interpolation. <em>International Journal of Geographical Information Science</em>, 37(3), 634–659. <a href="https://doi.org/10.1080/13658816.2022.2147530">Link</a></li>
+
+                <li>Guo, J., Wang, J., Xu, C., &amp; Song, Y. (2022). Modeling of spatial stratified heterogeneity. <em>GIScience &amp; Remote Sensing</em>, 59(1), 1660–1677. <a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2022.2126375">Link</a></li>
+
+                <li>Song, Y., &amp; Wu, P. (2021). An interactive detector for spatial associations. <em>International Journal of Geographical Information Science</em>. <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">Link</a></li>
+
+                <li>Song, Y., Wright, G., Wu, P., et al. (2018). Segment-Based Spatial Analysis for assessing road infrastructure impact on nearby land use. <em>Remote Sensing</em>, 10(11), 1696. <a href="https://www.mdpi.com/2072-4292/10/11/1696">Link</a></li>
+
+                <li>Luo, P., Song, Y.*, et al. (2022). Identifying determinants of spatio-temporal disparities in soil moisture of the Northern Hemisphere using a geographically optimal zones-based heterogeneity model. <em>ISPRS Journal of Photogrammetry and Remote Sensing</em>, 185, 111–128. <a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">Link</a></li>
+
+                <li>Zhang, Z., Song, Y.*, &amp; Wu, P. (2022). Robust geographical detector. <em>International Journal of Applied Earth Observation and Geoinformation</em>, 109, 102782. <a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Link</a></li>
+
+                <li>Song, Y., Wu, P., et al. (2020). A Spatial Heterogeneity-Based Segmentation Model for evaluating LiDAR point cloud quality. <em>IEEE Transactions on Intelligent Transportation Systems</em>. <a href="https://ieeexplore.ieee.org/document/9123684">Link</a></li>
+
+                <li>Luo, P., Song, Y.*, &amp; Wu, P. (2021). Spatial disparities in trade-offs among multiple ecosystem services: A case study in the Yangtze River Economic Belt. <em>GIScience &amp; Remote Sensing</em>. <a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2021.1947624">Link</a></li>
+
+                <li>Zhang, Z., Song, Y.*, et al. (2023). Spatial disparity of urban performance with economic-social-environmental data fusion. <em>GIScience &amp; Remote Sensing</em>, 60(1), 2167567. <a href="https://www.tandfonline.com/doi/pdf/10.1080/15481603.2023.2167567">Link</a></li>
+            </ol>
+        </div>
+
+    </div>
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods & Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab & Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+
+<!-- Scroll spy: highlight active sidebar link -->
+<script>
+(function() {
+    const sectionIds = ['overview', 'installation', 'qa', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'advanced-models', 'references'];
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+    function onScroll() {
+        let current = sectionIds[0];
+        for (const id of sectionIds) {
+            const el = document.getElementById(id);
+            if (el && el.getBoundingClientRect().top <= 80) {
+                current = id;
+            }
+        }
+
+        navLinks.forEach(a => {
+            const href = a.getAttribute('href');
+            if (href) {
+                a.classList.toggle('active', href === '#' + current);
+            }
+        });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+})();
+</script>
+
+</body>
+</html>

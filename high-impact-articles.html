@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="High impact and highly-cited articles by Dr. Yongze Song in geospatial analysis, spatial statistics, and sustainable infrastructure.">
+    <title>High Impact Articles - Yongze Song</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* === PAGE-SPECIFIC STYLES for high-impact-articles.html === */
+
+        /* === MAIN LAYOUT: sidebar + content === */
+        main {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+            display: grid;
+            grid-template-columns: 20% 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        /* === LEFT SIDEBAR NAV === */
+        .sidebar-nav {
+            position: sticky;
+            top: 2rem;
+            padding-top: 0.5rem;
+        }
+        .sidebar-nav h3 {
+            font-family: var(--font-sans);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 0 0.6rem 0;
+        }
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-nav li {
+            margin-bottom: 0.4rem;
+        }
+        .sidebar-nav a {
+            font-family: var(--font-sans);
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--color-text);
+            text-decoration: none;
+            line-height: 1.4;
+            display: block;
+            padding: 0.2rem 0;
+            transition: color 0.2s;
+        }
+        .sidebar-nav a:hover {
+            color: var(--color-accent);
+            text-decoration: none;
+        }
+        .sidebar-nav a.active {
+            color: var(--color-accent);
+            font-weight: 600;
+        }
+
+        /* === CONTENT AREA === */
+        .content {
+            min-width: 0;
+        }
+
+        /* === SECTION CARDS (no background) === */
+        .section-card {
+            margin-bottom: 2.5rem;
+        }
+        .section-header {
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 0.8rem;
+        }
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        .section-header h2.cited { color: #8b0000; }
+        .section-header h2.recent { color: #8b0000; }
+        .section-date {
+            font-family: var(--font-sans);
+            font-size: 0.72rem;
+            color: #9aa3ad;
+            margin-top: 0.2rem;
+            letter-spacing: 0.02em;
+        }
+        .section-body {
+            padding: 0;
+        }
+
+        /* === ARTICLE ENTRY (no gaps, 1rem font like index.html body) === */
+        .article-entry {
+            margin: 0;
+            padding: 0.15rem 0 0.15rem 2.2rem;
+            position: relative;
+        }
+        .article-num {
+            position: absolute;
+            left: 0;
+            top: 0.4rem;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #b0a89a;
+        }
+        .article-text {
+            font-family: var(--font-sans);
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: var(--color-text);
+        }
+        .article-text em {
+            font-style: italic;
+        }
+        .article-text a.pdf-link {
+            font-family: var(--font-sans);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #b08a00;
+            text-decoration: none;
+            margin-left: 0.2rem;
+        }
+        .article-text a.pdf-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            html, body { font-size: 15px; }
+            main {
+                grid-template-columns: 1fr;
+                padding: 1.5rem 1rem;
+                gap: 1rem;
+            }
+            .sidebar-nav {
+                position: static;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem 1.5rem;
+                border-bottom: 1px solid #e0e0e0;
+                padding-bottom: 1rem;
+            }
+            .sidebar-nav h3 {
+                width: 100%;
+                margin-bottom: 0.3rem;
+            }
+            .sidebar-nav ul {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.3rem 1.2rem;
+            }
+            .sidebar-nav li { margin-bottom: 0; }
+            .footer-inner { grid-template-columns: 1fr; gap: 16px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="site-title">
+                Yongze Song
+                <span>Geography &amp; Sustainability</span>
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="publications.html">Publications</a>
+                <a href="methods.html">Methods</a>
+                <a href="latest.html">Latest</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Left sidebar navigation -->
+        <aside class="sidebar-nav">
+            <h3>On this page</h3>
+            <ul>
+                <li><a href="#highly-cited" class="active">Highly Cited Papers</a></li>
+                <li><a href="#top-20-recent">Top 20 Recent Articles</a></li>
+            </ul>
+        </aside>
+
+        <!-- Right content area -->
+        <div class="content">
+
+            <!-- Section 1: Highly Cited Papers -->
+            <div class="section-card" id="highly-cited">
+                <div class="section-header">
+                    <h2 class="cited">🏆 Highly Cited Papers (Top 1% by citations)</h2>
+                    <div class="section-date">April 2026</div>
+                </div>
+                <div class="section-body">
+                    <div class="article-entry">
+                        <span class="article-num">1.</span>
+                        <div class="article-text">Ming, Yujia, Yong Liu, Yingpeng Li, and Yongze Song. "Unraveling nonlinear and spatial non-stationary effects of urban form on surface urban heat islands using explainable spatial machine learning." <em>Computers Environment and Urban Systems</em> 114 (2024). <a class="pdf-link" href="https://doi.org/10.1016/j.compenvurbsys.2024.102200">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">2.</span>
+                        <div class="article-text">Zhang, Zehua, Yongze Song, Lalinda Karunaratne, and Peng Wu. "Robust interaction detector: A case of road life expectancy analysis." <em>Spatial Statistics</em> 59 (2024). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/pii/S2211675324000058">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">3.</span>
+                        <div class="article-text">Song, Yimeng, Bin Chen, Hung Chak Ho, Mei-Po Kwan, Dong Liu, Fei Wang, Jionghua Wang, Jixuan Cai, Xijing Li, Yong Xu, Qingqing He, Hongzhi Wang, Qiyan Xu, and Yongze Song. "Observed inequality in urban greenspace exposure in China." <em>Environment International</em> 156 (2021). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/pii/S0160412021004037">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">4.</span>
+                        <div class="article-text">Wang, Mengying, Tao Zhou, Yongze Song, Xiang Li, Hao Ma, Yonghua Hu, Yoriko Heianza, and Lu Qi. "Joint exposure to various ambient air pollutants and incident heart failure: a prospective analysis in UK Biobank." <em>European Heart Journal</em> 42, no. 16 (2021). <a class="pdf-link" href="https://academic.oup.com/eurheartj/article/42/16/1582/6126215">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">5.</span>
+                        <div class="article-text">Song, Yongze, Jinfeng Wang, Yong Ge, and Chengdong Xu. "An optimal parameters-based geographical detector model enhances geographic characteristics of explanatory variables for spatial heterogeneity analysis: cases with different types of spatial data." <em>Giscience &amp; Remote Sensing</em> 57, no. 5 (2020). <a class="pdf-link" href="https://www.tandfonline.com/doi/10.1080/15481603.2020.1760434">pdf</a></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Top 20 Recent High Impact Articles -->
+            <div class="section-card" id="top-20-recent">
+                <div class="section-header">
+                    <h2 class="recent">Top 20 Recent High Impact Articles 2025-2026</h2>
+                    <div class="section-date">April 2026</div>
+                </div>
+                <div class="section-body">
+                    <div class="article-entry">
+                        <span class="article-num">1.</span>
+                        <div class="article-text">Luo, Peng, Yang Li, Yongze Song, Ziqi Li, and Liqiu Meng. "Measuring univariate effects in the interaction of geographical patterns." <em>International Journal of Geographical Information Science</em> (2026). <a class="pdf-link" href="https://www.tandfonline.com/doi/10.1080/13658816.2025.2526042">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">2.</span>
+                        <div class="article-text">Wang, Xi, Liang Zhou, Yongze Song, David Lopez-Carr, Shaohua Wang, Hong Chen, Hong Gao, Rongfang Lyu, Qinke Sun, Zecheng Guo, and Wei Wei. "Beyond flat cities: dramatic 2D/3D differences in urban gray-green space configurations and the nonlinear thermal regulation mechanisms." <em>Giscience &amp; Remote Sensing</em> (2025). <a class="pdf-link" href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2572174">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">3.</span>
+                        <div class="article-text">Wang, Xi, Liang Zhou, David Lopez-Carr, Yongze Song, Hong Gao, Tao Che, Zhifeng Liu, and Wei Wei. "Urban grey-green scales: A new perspective for assessing dynamic spatial trade-offs." <em>International Journal of Applied Earth Observation and Geoinformation</em> (2025). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/pii/S1569843225003553">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">4.</span>
+                        <div class="article-text">Jia, Nan, Yinshuai Li, Zhimeng Jiang, Rongfei Su, Xin Lan, Kai Zhang, Wen Song, Rui Zhao, Zilong Xia, Yongze Song, Zehua Zhang, Mengting Wang, Ru Wang, Zhan Zhang, and Ruishan Chen. "Climate change, social environment, health, and urban inequality: Developing a novel adaptive evaluation framework." <em>Sustainable Cities and Society</em> (2025). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/abs/pii/S2210670725003191">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">5.</span>
+                        <div class="article-text">Xie, Huili, Shengping Li, Atiq Zaman, Yongze Song, and Peng Wu. "Integrating life cycle assessment with GIS and AI for the building sector: a comprehensive review." <em>Energy and Buildings</em> (2026). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/pii/S0378778826001556">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">6.</span>
+                        <div class="article-text">Ren, Kai, Yongze Song, Linchao Li, Francesco Mancini, Zhuoyao Xiao, Xueyuan Zhang, Rui Qu, and Qiang Yu. "Identifying climate and environmental determinants of spatial disparities in wheat production using a geospatial machine learning model." <em>Giscience &amp; Remote Sensing</em> (2025). <a class="pdf-link" href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2533487">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">7.</span>
+                        <div class="article-text">Chen, Jie, Geng Sun, Yongze Song, Yinxia Cao, Cheolhee Yoo, Ya Guo, Chunhong Zhao, Linlin Lu, and Qihao Weng. "Global variations of urban form: Characterization and quantification through intelligent remote sensing image analysis." <em>Sustainable Cities and Society</em> (2025). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/pii/S2210670725003002">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">8.</span>
+                        <div class="article-text">Wei, Jingxian, Wenze Yue, Mengmeng Li, Yong Liu, and Yongze Song. "Multi-scenario urban growth boundaries and trade-offs among land use functions." <em>Cities</em> (2025). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/abs/pii/S0264275125000526">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">9.</span>
+                        <div class="article-text">Zhang, Pengcheng, Wen Yi, Yongze Song, Penggao Yan, Peng Wu, Ammar Shemery, Keith Hampson, and Albert P. C. Chan. "Dynamic spatiotemporal graph network for traffic accident risk prediction." <em>Giscience &amp; Remote Sensing</em> (2025). <a class="pdf-link" href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2514330">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">10.</span>
+                        <div class="article-text">Liu, Zhifei, Kang Zheng, Yongze Song, and Jianing Zhang. "Daily high-resolution PM2.5 mapping using spatiotemporal CNN-transformer-KAN model." <em>International Journal of Applied Earth Observation and Geoinformation</em> (2025). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/pii/S1569843225005473">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">11.</span>
+                        <div class="article-text">Liu, Xiaochi, Mark Patrick Taylor, Yongze Song, and C. Marjorie Aelion. "Identifying factors influencing trace metal concentrations in urban residential soil using an optimal parameter-based geographical detector model." <em>Environmental Research</em> (2025). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/pii/S0013935125012964">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">12.</span>
+                        <div class="article-text">Yang, Xinyue, Yongze Song, Cheolhee Yoo, Kai Ren, and Peng Wu. "Irregular anisotropy in surface urban heat island footprint." <em>Sustainable Cities and Society</em> (2025). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">13.</span>
+                        <div class="article-text">Xu, Dong, Xiangbin Peng, Quanzhong Tang, and Yongze Song. "Urbanization's role in shaping ornamental tree diversity: a remote sensing and future scenario-based perspective." <em>Giscience &amp; Remote Sensing</em> (2025). <a class="pdf-link" href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2557050">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">14.</span>
+                        <div class="article-text">Xu, Nan, Huichao Xin, Jiarui Wu, Jiaqi Yao, He Ren, Han-Su Zhang, Hao Xu, Hong Luan, Dong Xu, and Yongze Song. "ResWLI: a new method to retrieve water levels in coastal zones by integrating optical remote sensing and deep learning." <em>Giscience &amp; Remote Sensing</em> (2025). <a class="pdf-link" href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2524891">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">15.</span>
+                        <div class="article-text">Sun, Yanfang, Guosheng Wu, Yongze Song, Haiyang Liu, Lin Wang, Zehua Zhang, and Jiao Hu. "Local effects of pattern interactions in driving urbanization." <em>International Journal of Applied Earth Observation and Geoinformation</em> (2026). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/pii/S1569843225007198">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">16.</span>
+                        <div class="article-text">Ding, Yuan, Dongming Chen, Sisi Zlatanova, Mingguang Wu, Kai Cao, Yongze Song, and Yingbao Yang. "Simplifying complex landmark models with holes for 3D maps: a topological perception-based approach." <em>International Journal of Geographical Information Science</em> (2026). <a class="pdf-link" href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2512222">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">17.</span>
+                        <div class="article-text">Chaturvedi, Shubhangi, Poornima Singh Thakur, Pritee Khanna, Aparajita Ojha, Yongze Song, and Joseph L. Awange. "Satellite Image-Based Surveillance and Early Wildfire Smoke Detection Using a Multiattention Interlaced Network." <em>Ieee Transactions on Industrial Informatics</em> (2025). <a class="pdf-link" href="https://ieeexplore.ieee.org/document/10886910/">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">18.</span>
+                        <div class="article-text">Xu, Nan, Hao Xu, Wenyu Li, Hui Lu, Yongze Song, Jiaqi Yao, Yue Ma, He Ren, Tingting He, Fan Mo, and Peng Gong. "A large-scale estimation method for beach slopes using ICESat-2 altimeter: A case study of New Zealand." <em>International Journal of Applied Earth Observation and Geoinformation</em> (2025). <a class="pdf-link" href="https://www.sciencedirect.com/science/article/pii/S1569843225004157">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">19.</span>
+                        <div class="article-text">Chen, Chunjiang, Yongze Song, Wenbo Lv, Ammar Shemery, Keith Hampson, Wen Yi, Yun Zhong, and Peng Wu. "Predicting pavement cracking performance using laser scanning and geocomplexity-enhanced machine learning." <em>Computer-aided Civil and Infrastructure Engineering</em> (2025). <a class="pdf-link" href="https://onlinelibrary.wiley.com/doi/10.1111/mice.13489">pdf</a></div>
+                    </div>
+                    <div class="article-entry">
+                        <span class="article-num">20.</span>
+                        <div class="article-text">Zheng, Kang, Minmin Yu, Zhifei Liu, Shuai Bao, Ziwu Pan, Yongze Song, Lianqi Zhu, and Zunyi Xie. "Frequency and Prompt Learning Cooperation Enhanced Mamba for Remote Sensing Semantic Segmentation." <em>Ieee Journal of Selected Topics in Applied Earth Observations and Remote Sensing</em> (2026). <a class="pdf-link" href="https://ieeexplore.ieee.org/document/11153830/">pdf</a></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods & Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab & Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
