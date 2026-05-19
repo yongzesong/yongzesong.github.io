@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journals - Yongze Song</title>
+    <meta name="description" content="Curated list of journals in geosciences and social sciences with impact factors and quartile rankings.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* === PAGE-SPECIFIC STYLES for journals.html === */
+
+        /* === PAGE HEADER === */
+        .page-header {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 30px 20px 10px;
+        }
+        .page-header h1 {
+            margin: 0 0 6px 0;
+        }
+        .page-header h2 {
+            font-size: 1.3rem;
+        }
+        .page-subtitle {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--color-muted);
+            font-weight: 400;
+            margin-top: 6px;
+        }
+
+        /* === JOURNALS GRID === */
+        .journals-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 10px 20px 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .panel {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .panel-header {
+            padding: 10px 14px;
+            background: var(--color-heading);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .panel-header.continued { background: #4b5563; }
+        .panel-header h3 {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .panel-header .count {
+            font-family: var(--font-sans);
+            font-size: 0.72rem;
+            font-weight: 400;
+            color: #cfd4dc;
+            letter-spacing: 0.02em;
+        }
+
+        table.journal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-sans);
+            font-size: 0.78rem;
+            line-height: 1.45;
+        }
+        table.journal-table th,
+        table.journal-table td {
+            padding: 6px 10px;
+            text-align: left;
+            border-bottom: 1px solid #f1f1f1;
+            vertical-align: top;
+        }
+        table.journal-table th {
+            background: #f7f7f7;
+            font-weight: 600;
+            font-size: 0.66rem;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        table.journal-table tr:last-child td { border-bottom: none; }
+        table.journal-table tr:hover { background: #fafaf7; }
+
+        td.num {
+            color: #b0a89a;
+            width: 32px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 500;
+        }
+        td.journal-name {
+            color: var(--color-text);
+        }
+        td.if {
+            width: 52px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+        th.right { text-align: right; }
+
+        .if-high { color: #8C1515; }
+        .if-mid  { color: #b86b00; }
+        .if-low  { color: #4b5563; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1100px) {
+            .journals-container { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+            html, body { font-size: 15px; }
+            .journals-container {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .footer-inner { grid-template-columns: 1fr; gap: 16px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="site-title">
+            Yongze Song
+            <span>Geography &amp; Sustainability</span>
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="methods.html">Methods</a>
+            <a href="latest.html">Latest</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ========== PAGE HEADER ========== -->
+<div class="page-header">
+    <h1>Journals</h1>
+    <h2>Geosciences and Social Sciences</h2>
+</div>
+
+<!-- ========== JOURNALS GRID ========== -->
+<section class="journals-container">
+
+    <!-- Geosciences -->
+    <div class="panel">
+        <div class="panel-header">
+            <h3>Geosciences</h3>
+            <span class="count">17 journals</span>
+        </div>
+        <table class="journal-table">
+            <thead>
+                <tr><th>#</th><th>Journal</th><th class="right">IF</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="num">1</td><td class="journal-name">IEEE Geoscience and Remote Sensing Magazine</td><td class="if if-high">16.4</td></tr>
+                <tr><td class="num">2</td><td class="journal-name">ISPRS Journal of Photogrammetry and Remote Sensing</td><td class="if if-high">12.2</td></tr>
+                <tr><td class="num">3</td><td class="journal-name">Remote Sensing of Environment</td><td class="if if-high">11.4</td></tr>
+                <tr><td class="num">4</td><td class="journal-name">IEEE Transactions on Geoscience and Remote Sensing</td><td class="if if-mid">8.6</td></tr>
+                <tr><td class="num">5</td><td class="journal-name">International Journal of Applied Earth Observation and Geoinformation</td><td class="if if-mid">8.6</td></tr>
+                <tr><td class="num">6</td><td class="journal-name">GIScience &amp; Remote Sensing</td><td class="if if-mid">6.9</td></tr>
+                <tr><td class="num">7</td><td class="journal-name">Geo-Spatial Information Science</td><td class="if if-mid">5.5</td></tr>
+                <tr><td class="num">8</td><td class="journal-name">IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing</td><td class="if if-mid">5.3</td></tr>
+                <tr><td class="num">9</td><td class="journal-name">International Journal of Digital Earth</td><td class="if if-low">4.9</td></tr>
+                <tr><td class="num">10</td><td class="journal-name">Geomatics Natural Hazards &amp; Risk</td><td class="if if-low">4.6</td></tr>
+                <tr><td class="num">11</td><td class="journal-name">IEEE Geoscience and Remote Sensing Letters</td><td class="if if-low">4.4</td></tr>
+                <tr><td class="num">12</td><td class="journal-name">Remote Sensing</td><td class="if if-low">4.1</td></tr>
+                <tr><td class="num">13</td><td class="journal-name">European Journal of Remote Sensing</td><td class="if if-low">3.7</td></tr>
+                <tr><td class="num">14</td><td class="journal-name">Photogrammetric Record</td><td class="if if-low">3.6</td></tr>
+                <tr><td class="num">15</td><td class="journal-name">PFG-Journal of Photogrammetry Remote Sensing and Geoinformation Science</td><td class="if if-low">3.3</td></tr>
+                <tr><td class="num">16</td><td class="journal-name">GeoInformatica</td><td class="if if-low">2.6</td></tr>
+                <tr><td class="num">17</td><td class="journal-name">International Journal of Remote Sensing</td><td class="if if-low">2.6</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Social Sciences 1-21 -->
+    <div class="panel">
+        <div class="panel-header">
+            <h3>Social Sciences</h3>
+            <span class="count">1&ndash;21</span>
+        </div>
+        <table class="journal-table">
+            <thead>
+                <tr><th>#</th><th>Journal</th><th class="right">IF</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="num">1</td><td class="journal-name">Transport Reviews</td><td class="if if-mid">9.9</td></tr>
+                <tr><td class="num">2</td><td class="journal-name">Dialogues in Human Geography</td><td class="if if-mid">9.6</td></tr>
+                <tr><td class="num">3</td><td class="journal-name">Landscape and Urban Planning</td><td class="if if-mid">9.2</td></tr>
+                <tr><td class="num">4</td><td class="journal-name">Economic Geography</td><td class="if if-mid">8.9</td></tr>
+                <tr><td class="num">5</td><td class="journal-name">Computers Environment and Urban Systems</td><td class="if if-mid">8.3</td></tr>
+                <tr><td class="num">6</td><td class="journal-name">Transportation Research Part D - Transport and Environment</td><td class="if if-mid">7.7</td></tr>
+                <tr><td class="num">7</td><td class="journal-name">Habitat International</td><td class="if if-mid">7.0</td></tr>
+                <tr><td class="num">8</td><td class="journal-name">Transportation Research Part A - Policy and Practice</td><td class="if if-mid">6.8</td></tr>
+                <tr><td class="num">9</td><td class="journal-name">Cities</td><td class="if if-mid">6.6</td></tr>
+                <tr><td class="num">10</td><td class="journal-name">Journal of Transport Geography</td><td class="if if-mid">6.3</td></tr>
+                <tr><td class="num">11</td><td class="journal-name">Progress in Human Geography</td><td class="if if-mid">6.1</td></tr>
+                <tr><td class="num">12</td><td class="journal-name">Land Use Policy</td><td class="if if-mid">5.9</td></tr>
+                <tr><td class="num">13</td><td class="journal-name">Travel Behaviour and Society</td><td class="if if-mid">5.7</td></tr>
+                <tr><td class="num">14</td><td class="journal-name">Applied Geography</td><td class="if if-mid">5.4</td></tr>
+                <tr><td class="num">15</td><td class="journal-name">Transport Policy</td><td class="if if-mid">5.3</td></tr>
+                <tr><td class="num">16</td><td class="journal-name">International Journal of Geographical Information Science</td><td class="if if-mid">5.1</td></tr>
+                <tr><td class="num">17</td><td class="journal-name">Political Geography</td><td class="if if-low">4.9</td></tr>
+                <tr><td class="num">18</td><td class="journal-name">Transportation Science</td><td class="if if-low">4.8</td></tr>
+                <tr><td class="num">19</td><td class="journal-name">Journal of Urban Technology</td><td class="if if-low">4.4</td></tr>
+                <tr><td class="num">20</td><td class="journal-name">Research in Transportation Business and Management</td><td class="if if-low">4.4</td></tr>
+                <tr><td class="num">21</td><td class="journal-name">Geographical Analysis</td><td class="if if-low">4.3</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Social Sciences 22-42 -->
+    <div class="panel">
+        <div class="panel-header continued">
+            <h3>Social Sciences</h3>
+            <span class="count">22&ndash;42</span>
+        </div>
+        <table class="journal-table">
+            <thead>
+                <tr><th>#</th><th>Journal</th><th class="right">IF</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="num">22</td><td class="journal-name">Regional Studies</td><td class="if if-low">4.2</td></tr>
+                <tr><td class="num">23</td><td class="journal-name">Journal of Urban Health - Bulletin of the New York Academy of Medicine</td><td class="if if-low">4.1</td></tr>
+                <tr><td class="num">24</td><td class="journal-name">Urban Studies</td><td class="if if-low">4.1</td></tr>
+                <tr><td class="num">25</td><td class="journal-name">Environment and Planning A - Economy and Space</td><td class="if if-low">4.0</td></tr>
+                <tr><td class="num">26</td><td class="journal-name">International Journal of Sustainable Transportation</td><td class="if if-low">3.9</td></tr>
+                <tr><td class="num">27</td><td class="journal-name">Journal of Public Transportation</td><td class="if if-low">3.7</td></tr>
+                <tr><td class="num">28</td><td class="journal-name">Journal of Air Transport Management</td><td class="if if-low">3.6</td></tr>
+                <tr><td class="num">29</td><td class="journal-name">Journal of Environmental Planning and Management</td><td class="if if-low">3.6</td></tr>
+                <tr><td class="num">30</td><td class="journal-name">Transactions of the Institute of British Geographers</td><td class="if if-low">3.6</td></tr>
+                <tr><td class="num">31</td><td class="journal-name">Journal of Transport &amp; Health</td><td class="if if-low">3.3</td></tr>
+                <tr><td class="num">32</td><td class="journal-name">Transportation</td><td class="if if-low">3.3</td></tr>
+                <tr><td class="num">33</td><td class="journal-name">Transportation Letters - The International Journal of Transportation Research</td><td class="if if-low">3.3</td></tr>
+                <tr><td class="num">34</td><td class="journal-name">Environment and Planning E - Nature and Space</td><td class="if if-low">3.2</td></tr>
+                <tr><td class="num">35</td><td class="journal-name">International Journal of Health Geographics</td><td class="if if-low">3.2</td></tr>
+                <tr><td class="num">36</td><td class="journal-name">Environment and Planning B - Urban Analytics and City Science</td><td class="if if-low">3.1</td></tr>
+                <tr><td class="num">37</td><td class="journal-name">Geographical Journal</td><td class="if if-low">3.1</td></tr>
+                <tr><td class="num">38</td><td class="journal-name">International Journal of Urban Sciences</td><td class="if if-low">3.0</td></tr>
+                <tr><td class="num">39</td><td class="journal-name">Annals of the American Association of Geographers</td><td class="if if-low">2.9</td></tr>
+                <tr><td class="num">40</td><td class="journal-name">Journal of Economic Geography</td><td class="if if-low">2.9</td></tr>
+                <tr><td class="num">41</td><td class="journal-name">Journal of Geographical Systems</td><td class="if if-low">2.9</td></tr>
+                <tr><td class="num">42</td><td class="journal-name">Regional Science and Urban Economics</td><td class="if if-low">2.9</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h3>Research</h3>
+            <a href="about.html">About</a>
+            <a href="publications.html">Publications</a>
+            <a href="high-impact-articles.html">High Impact Articles</a>
+            <a href="sustainable-infrastructure.html">Sustainable Infrastructure</a>
+        </div>
+        <div class="footer-col">
+            <h3>Methods &amp; Software</h3>
+            <a href="methods.html">Innovative Methods</a>
+            <a href="methods.html#software">R Packages</a>
+            <a href="gd.html">GD Package (Geodetector)</a>
+        </div>
+        <div class="footer-col">
+            <h3>Lab &amp; Team</h3>
+            <a href="lab.html">Geospatial Intelligence Lab</a>
+            <a href="https://spatialmethods.org/">Intl. Society for Spatial Methods</a>
+            <a href="https://sdl.gis.harvard.edu/fellows">Harvard Spatial Data Lab</a>
+        </div>
+        <div class="footer-col">
+            <h3>News</h3>
+            <a href="latest.html">Latest News</a>
+            <a href="lecture-202601.html">Lecture Series (GeoAI)</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-left">
+            <span class="footer-copyright">&copy; 2026 Yongze Song</span>
+            <div class="footer-social">
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
+                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+            </div>
+            <a href="cn.html" class="footer-lang">中文</a>
+        </div>
+        <div class="footer-right">
+            <a href="lab.html"><img src="assets/images/logo_v02.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_03.png" alt="Spatial Methods"></a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
