@@ -103,7 +103,7 @@
         .card-abbr-overlay a:hover { color: var(--color-accent); }
         .card-author {
             position: absolute; top: 6px; right: 6px;
-            width: 31px; height: 31px; border-radius: 50%; overflow: hidden;
+            width: 31px; height: 31px; border-radius: 50%; overflow: hidden; cursor: pointer;
             transition: transform 0.15s ease;
         }
         .card-author img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -127,6 +127,14 @@
         .card-links a.p1 { color: var(--part1); border-color: var(--part1); } .card-links a.p1:hover { background: var(--part1); color: #fff; text-decoration: none; }
         .card-links a.p2 { color: var(--part2); border-color: var(--part2); } .card-links a.p2:hover { background: var(--part2); color: #fff; text-decoration: none; }
         .card-links a.p3 { color: var(--part3); border-color: var(--part3); } .card-links a.p3:hover { background: var(--part3); color: #fff; text-decoration: none; }
+
+        /* === IMPORTANT CONCEPTS === */
+        .concepts-heading { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; text-align: center; margin: 2.5rem 0 1.2rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; }
+        .concepts-list { margin: 0 0 1rem; padding-left: 1.3rem; }
+        .concepts-list > li { font-size: 0.85rem; line-height: 1.4; margin-bottom: 0.1rem; color: var(--color-text); padding-left: 0.2rem; }
+        .concepts-list .concept-name { font-weight: 700; color: var(--color-heading); }
+        .concepts-list a { color: var(--color-accent); text-decoration: none; }
+        .concepts-list a:hover { text-decoration: underline; }
 
         /* === SOFTWARE === */
         .software-heading { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; text-align: center; margin: 2.5rem 0 1.2rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; }
@@ -200,6 +208,20 @@
         .mc-detail-pubs .sub::before { content: '→ '; }
         .mc-detail-pubs .sub a { color: var(--part1); }
 
+        /* === MEMBER CARD POPUP (shared by method-card avatars) === */
+        .member-popup {
+            display: none; position: absolute; z-index: 1000;
+            width: 340px; background: #fff; border: 1px solid #e0e0e0;
+            border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            padding: 14px 16px; text-align: left;
+        }
+        .member-popup.open { display: block; }
+        .member-popup::before {
+            content: ''; position: absolute; top: -6px; left: var(--arrow-left, 50%);
+            width: 12px; height: 12px; background: #fff; border-left: 1px solid #e0e0e0;
+            border-top: 1px solid #e0e0e0; transform: translateX(-50%) rotate(45deg);
+        }
+
         @media (max-width: 768px) {
             html, body { font-size: 15px; }
             .cards-inline { grid-auto-columns: 155px; }
@@ -235,13 +257,17 @@
         <h2 class="members-heading" id="members">Members</h2>
         <div class="members-grid">
 
-            <div class="mc-card">
-                <a href="index.html"><img class="mc-avatar" src="assets/images/yongze-song.jpeg" alt="Yongze Song"></a>
-                <div class="mc-name"><a href="index.html">Yongze Song</a></div>
+            <div class="mc-card" data-member="yongze-song" onclick="toggleMemberDetail(this)">
+                <img class="mc-avatar" src="assets/images/yongze-song.jpeg" alt="Yongze Song">
+                <div class="mc-name">Yongze Song</div>
                 <div class="mc-methods">Supervisor</div>
+                <div class="mc-detail">
+                    <div class="mc-detail-name">Yongze Song</div>
+                    <div class="mc-detail-role"><strong>Associate Professor</strong><br>Curtin University<br>Email: <a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a><br>Homepage: <a href="https://yongzesong.com/" target="_blank">yongzesong.com</a><br><br>Australian Young Tall Poppy Science Award winner<br>Fellow of Royal Geographical Society (UK)<br>Fellow of Harvard Spatial Data Lab (US)<br>Fellow of DAAD AInet (Germany)<br>Special Issue Editor (SIE) &amp; Associate Editor &ndash; International Journal of Applied Earth Observation and Geoinformation<br>Associate Editor &ndash; GIScience &amp; Remote Sensing<br>Special Issue Editor (SIE) &ndash; Geomatica<br>Editor &ndash; Geoscientific Model Development<br>Associate Editor &ndash; All Earth<br>Editor &ndash; Journal of Spatial Science</div>
+                </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="zehua-zhang" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/zehua-zhang.png" alt="Zehua Zhang">
                 <div class="mc-name">Zehua Zhang</div>
                 <div class="mc-methods">RID · HSA · RGD · GIGNN · LPI</div>
@@ -259,7 +285,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="peng-luo" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/peng-luo.jpeg" alt="Peng Luo">
                 <div class="mc-name">Peng Luo</div>
                 <div class="mc-methods">GHM · GOZH · GPI · LESH · STUH · FFRK</div>
@@ -278,7 +304,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="pengcheng-zhang" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang">
                 <div class="mc-name">Pengcheng Zhang</div>
                 <div class="mc-methods">DSTGN · GMS · DG · SPOCA</div>
@@ -294,7 +320,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="yang-li" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/yang-li.png" alt="Yang Li">
                 <div class="mc-name">Yang Li</div>
                 <div class="mc-methods">GPI · LESH</div>
@@ -308,7 +334,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="jiao-hu" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/jiao-hu.png" alt="Jiao Hu">
                 <div class="mc-name">Jiao Hu</div>
                 <div class="mc-methods">LISP · LPA · LPI</div>
@@ -323,7 +349,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="rui-qu" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/rui-qu.png" alt="Rui Qu">
                 <div class="mc-name">Rui Qu</div>
                 <div class="mc-methods">LPA</div>
@@ -336,7 +362,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="xinyue-yang" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/xinyue-yang.jpg" alt="Xinyue Yang">
                 <div class="mc-name">Xinyue Yang</div>
                 <div class="mc-methods">Anisotropy</div>
@@ -349,7 +375,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="kai-ren" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/kai-ren.jpg" alt="Kai Ren">
                 <div class="mc-name">Kai Ren</div>
                 <div class="mc-methods">SOH · SDO · Anisotropy</div>
@@ -364,7 +390,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="haiyang-liu" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/haiyang-liu.png" alt="Haiyang Liu">
                 <div class="mc-name">Haiyang Liu</div>
                 <div class="mc-methods">DSI · LPI · DG</div>
@@ -379,7 +405,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="lai-chen" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/lai-chen.png" alt="Lai Chen">
                 <div class="mc-name">Lai Chen</div>
                 <div class="mc-methods">ST-MST</div>
@@ -392,7 +418,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="wenbo-lyu" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/wenbo-lv.png" alt="Wenbo Lyu">
                 <div class="mc-name">Wenbo Lyu</div>
                 <div class="mc-methods">GCMC · tEDM · gdverse</div>
@@ -407,7 +433,7 @@
                 </div>
             </div>
 
-            <div class="mc-card" onclick="toggleMemberDetail(this)">
+            <div class="mc-card" data-member="yilong-wu" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/yilong-wu.png" alt="Yilong Wu">
                 <div class="mc-name">Yilong Wu</div>
                 <div class="mc-methods">FFRK · ESDA</div>
@@ -465,12 +491,12 @@
                                     <line x1="87" y1="47" x2="80" y2="35" stroke="#1a5276" stroke-width="0.5" opacity="0.3" stroke-dasharray="2,2"/><line x1="87" y1="47" x2="95" y2="52" stroke="#1a5276" stroke-width="0.5" opacity="0.3" stroke-dasharray="2,2"/>
                                 </svg>
                                 <span class="card-abbr-overlay p1"><a href="https://doi.org/10.1080/13658816.2026.2614335">DSI</a></span>
-                                <a class="card-author" href="https://kevinoceanliu.github.io/" target="_blank" title="Haiyang Liu"><img src="assets/images/haiyang-liu.png" alt="Haiyang Liu" loading="lazy"></a>
+                                <span class="card-author" title="Haiyang Liu" onclick="showMemberCard(event, 'haiyang-liu')"><img src="assets/images/haiyang-liu.png" alt="Haiyang Liu" loading="lazy"></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2026.2614335">Degree of Spatial Interpretability</a></div>
                                 <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2026.2614335">Int. J. Geogr. Inf. Sci.</a></div>
-                                <div class="card-links"><a class="p1" href="https://github.com/KevinOceanLiu/DSI" target="_blank">R Code</a></div>
+                                <div class="card-links"><a class="p1" href="https://github.com/KevinOceanLiu/DSI" target="_blank">R Code</a><a class="p1" href="pdf/DSI-liu2026.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -483,12 +509,14 @@
                                 <circle cx="87" cy="50" r="4" fill="#1a5276" opacity="0.6"/>
                                 <text x="87" y="90" text-anchor="middle" font-size="6.5" fill="#1a5276" font-weight="600" opacity="0.5">Complexity</text>
                             </svg>
-                                <a class="card-author" href="https://kevinoceanliu.github.io/" target="_blank" title="Haiyang Liu"><img src="assets/images/haiyang-liu.png" alt="Haiyang Liu" loading="lazy"></a>
+                                <span class="card-author" title="Haiyang Liu" onclick="showMemberCard(event, 'haiyang-liu')"><img src="assets/images/haiyang-liu.png" alt="Haiyang Liu" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">DG</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">Degree of Geocomplexity</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">GISci. &amp; Remote Sens.</a></div>
+                            
+                                <div class="card-links"><a class="p1" href="pdf/DG-zhang2026.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -506,13 +534,13 @@
                                 <line x1="45" y1="55" x2="45" y2="70" stroke="#1a5276" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.4"/><line x1="65" y1="42" x2="65" y2="58" stroke="#1a5276" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.4"/><line x1="85" y1="32" x2="85" y2="50" stroke="#1a5276" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.4"/><line x1="105" y1="28" x2="105" y2="44" stroke="#1a5276" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.4"/>
                                 <text x="87" y="14" text-anchor="middle" font-size="7" fill="#1a5276" font-weight="600" opacity="0.5">2nd Dimension</text>
                             </svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">SDA</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">Second-Dimension Spatial Association</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">Int. J. Appl. Earth Obs. Geoinf.</a></div>
-                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/SecDim/vignettes/SecDim.html">R: SecDim</a></div>
+                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/SecDim/vignettes/SecDim.html">R package: SecDim</a><a class="p1" href="pdf/SDA-song2022.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -523,12 +551,14 @@
                                 <rect x="50" y="55" width="70" height="22" rx="3" fill="#1a5276" fill-opacity="0.08" stroke="#1a5276" stroke-width="0.5" opacity="0.5"/>
                                 <text x="85" y="69" text-anchor="middle" font-size="7" fill="#1a5276" font-weight="500" opacity="0.6">Explainable</text>
                             </svg>
-                                <a class="card-author" href="http://yilongwu.top/" target="_blank" title="Yilong Wu"><img src="assets/images/yilong-wu.png" alt="Yilong Wu" loading="lazy"></a>
+                                <span class="card-author" title="Yilong Wu" onclick="showMemberCard(event, 'yilong-wu')"><img src="assets/images/yilong-wu.png" alt="Yilong Wu" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://www.sciencedirect.com/science/article/pii/S0264275126003008">ESDA</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0264275126003008">Explainable Second-Dimension Spatial Association</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0264275126003008">Cities</a></div>
+                            
+                                <div class="card-links"><a class="p1" href="pdf/ESDA-wu2026.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -547,13 +577,15 @@
                                 <line x1="45" y1="58" x2="125" y2="24" stroke="#1a5276" stroke-width="1" opacity="0.3"/>
                                 <text x="87" y="84" text-anchor="middle" font-size="7" fill="#e74c3c" font-weight="600" opacity="0.6">Outliers</text>
                             </svg>
-                                <a class="card-author" href="https://renkaigis.cn/" target="_blank" title="Kai Ren"><img src="assets/images/kai-ren.jpg" alt="Kai Ren" loading="lazy"></a>
+                                <span class="card-author" title="Kai Ren" onclick="showMemberCard(event, 'kai-ren')"><img src="assets/images/kai-ren.jpg" alt="Kai Ren" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://doi.org/10.1080/13658816.2025.2580414">SDO</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2025.2580414">Second-Dimension Outliers</a></div>
                                 <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2025.2580414">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mr">Most Read 2026</span>
+                            
+                                <div class="card-links"><a class="p1" href="pdf/SDO-ren2025.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -568,14 +600,13 @@
                                 <line x1="87" y1="16" x2="87" y2="74" stroke="#1a5276" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.4"/>
                                 <text x="87" y="88" text-anchor="middle" font-size="7" fill="#e74c3c" font-weight="600" opacity="0.6">Outlier-driven strata</text>
                             </svg>
-                                <a class="card-author" href="https://renkaigis.cn/" target="_blank" title="Kai Ren"><img src="assets/images/kai-ren.jpg" alt="Kai Ren" loading="lazy"></a>
+                                <span class="card-author" title="Kai Ren" onclick="showMemberCard(event, 'kai-ren')"><img src="assets/images/kai-ren.jpg" alt="Kai Ren" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://doi.org/10.1080/13658816.2026.2682957">SOH</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2026.2682957">Spatial Outliers explain Heterogeneity</a></div>
-                                <div class="card-full"><a href="https://doi.org/10.1080/13658816.2026.2682957">Second-Dimension Outlier-driven Heterogeneity</a></div>
                                 <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2026.2682957">Int. J. Geogr. Inf. Sci.</a></div>
-                                <div class="card-links"><a class="p1" href="https://github.com/renkaigis/Second-dimension_Outlier-driven_Heterogeneity">R Code</a></div>
+                                <div class="card-links"><a class="p1" href="https://github.com/renkaigis/Second-dimension_Outlier-driven_Heterogeneity">R Code</a><a class="p1" href="pdf/SOH-ren2026.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -595,14 +626,14 @@
                                     <rect x="35" y="60" width="15" height="15" fill="#2980b9" opacity="0.1" rx="1"/><rect x="50" y="60" width="15" height="15" fill="#2980b9" opacity="0.15" rx="1"/><rect x="65" y="60" width="15" height="15" fill="#2980b9" opacity="0.3" rx="1"/><rect x="80" y="60" width="15" height="15" fill="#2980b9" opacity="0.5" rx="1"/><rect x="95" y="60" width="15" height="15" fill="#2980b9" opacity="0.75" rx="1"/><rect x="110" y="60" width="15" height="15" fill="#2980b9" opacity="0.9" rx="1"/>
                                 </g>
                             </svg>
-                                <a class="card-author" href="https://www.researchgate.net/profile/Zehua-Zhang-25" target="_blank" title="Zehua Zhang"><img src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy"></a>
+                                <span class="card-author" title="Zehua Zhang" onclick="showMemberCard(event, 'zehua-zhang')"><img src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">HSA</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">Heterogeneous Spatial Autocorrelation</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mr">Top 4 Most Read 2025</span>
-                                <div class="card-links"><a class="p1" href="https://github.com/Zehua-Zhang-01/Heterogeneous_Spatial_Autocorrelation_Model" target="_blank">R Code</a></div>
+                                <div class="card-links"><a class="p1" href="https://github.com/Zehua-Zhang-01/Heterogeneous_Spatial_Autocorrelation_Model" target="_blank">R Code</a><a class="p1" href="pdf/HSA-zhang2024.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -620,13 +651,15 @@
                                 <path d="M30 63 Q50 26 70 45 Q90 64 110 30 Q130 10 150 35" fill="#1a5276" fill-opacity="0.08"/>
                                 <line x1="55" y1="18" x2="55" y2="80" stroke="#1a5276" stroke-width="0.5" stroke-dasharray="2,3" opacity="0.3"/><line x1="90" y1="18" x2="90" y2="80" stroke="#1a5276" stroke-width="0.5" stroke-dasharray="2,3" opacity="0.3"/><line x1="125" y1="18" x2="125" y2="80" stroke="#1a5276" stroke-width="0.5" stroke-dasharray="2,3" opacity="0.3"/>
                             </svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://ieeexplore.ieee.org/document/8307463">SRK</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://ieeexplore.ieee.org/document/8307463">Segment-based Regression Kriging</a></div>
                                 <div class="card-journal"><a href="https://ieeexplore.ieee.org/document/8307463">IEEE Trans. Intell. Transp. Syst.</a></div>
                                 <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span>
+                            
+                                <div class="card-links"><a class="p1" href="pdf/SRK-song2018.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -638,12 +671,14 @@
                                 <circle cx="125" cy="22" r="7" fill="#1a5276" fill-opacity="0.15" stroke="#1a5276" stroke-width="1" opacity="0.5"/>
                                 <circle cx="45" cy="42" r="2" fill="#1a5276" opacity="0.8"/><circle cx="85" cy="55" r="2" fill="#1a5276" opacity="0.8"/><circle cx="125" cy="22" r="2" fill="#1a5276" opacity="0.8"/>
                             </svg>
-                                <a class="card-author" href="https://peng-luo.com/" target="_blank" title="Peng Luo"><img src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy"></a>
+                                <span class="card-author" title="Peng Luo" onclick="showMemberCard(event, 'peng-luo')"><img src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">FFRK</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">Focal-Feature Regression Kriging</a></div>
                                 <div class="card-journal"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">Geographical Analysis</a></div>
+                            
+                                <div class="card-links"><a class="p1" href="pdf/FFRK-luo2026.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -663,13 +698,13 @@
                                 </g>
                                 <path d="M82 43 Q87 28 91 48" stroke="#1a5276" stroke-width="1" fill="none" opacity="0.4"/>
                             </svg>
-                                <a class="card-author" href="https://www.researchgate.net/profile/Zehua-Zhang-25" target="_blank" title="Zehua Zhang"><img src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy"></a>
+                                <span class="card-author" title="Zehua Zhang" onclick="showMemberCard(event, 'zehua-zhang')"><img src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy"></span>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Geocomplexity</a></div>
-                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Spatial complexity &amp; error explanation</a></div>
+                                <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Explains spatial errors</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mc">Top 30 Cited 3y</span>
-                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geocomplexity/index.html">R: geocomplexity</a></div>
+                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geocomplexity/index.html">R package: geocomplexity</a><a class="p1" href="pdf/GEOC-zhang2023.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -689,13 +724,13 @@
                                 <circle cx="65" cy="47" r="3" fill="#1a5276" opacity="0.7"/><circle cx="110" cy="47" r="3" fill="#2980b9" opacity="0.7"/>
                                 <text x="87" y="14" text-anchor="middle" font-size="7" fill="#1a5276" font-weight="600" opacity="0.5">Optimal Similarity</text>
                             </svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">GOS</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">Geographically Optimal Similarity</a></div>
                                 <div class="card-journal"><a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">Mathematical Geosciences</a></div>
-                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html">R: geosimilarity</a></div>
+                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html">R package: geosimilarity</a><a class="p1" href="pdf/GOS-song2022.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -710,10 +745,12 @@
                                 <line x1="50" y1="28" x2="87" y2="20" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="50" y1="28" x2="60" y2="55" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="87" y1="20" x2="125" y2="32" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="87" y1="20" x2="87" y2="52" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="60" y1="55" x2="87" y2="52" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="87" y1="52" x2="125" y2="32" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="87" y1="52" x2="115" y2="68" stroke="#1a5276" stroke-width="1" opacity="0.3"/><line x1="125" y1="32" x2="115" y2="68" stroke="#1a5276" stroke-width="1" opacity="0.3"/>
                                 <circle cx="50" cy="28" r="5" fill="#1a5276" opacity="0.7"/><circle cx="87" cy="20" r="5" fill="#1a5276" opacity="0.8"/><circle cx="125" cy="32" r="5" fill="#1a5276" opacity="0.6"/><circle cx="60" cy="55" r="5" fill="#2980b9" opacity="0.6"/><circle cx="87" cy="52" r="5" fill="#2980b9" opacity="0.7"/><circle cx="115" cy="68" r="5" fill="#2980b9" opacity="0.5"/>
                             </svg>
-                                <a class="card-author" href="lab.html" target="_blank" title="Pengcheng Zhang"><img src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang" loading="lazy"></a>
+                                <span class="card-author" title="Pengcheng Zhang" onclick="showMemberCard(event, 'pengcheng-zhang')"><img src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang" loading="lazy"></span>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2514330">Dynamic Spatiotemporal Graph Network</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2514330">GISci. &amp; Remote Sens.</a></div>
+                            
+                                <div class="card-links"><a class="p1" href="pdf/DSTGN-zhang2025.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -722,12 +759,14 @@
                                 <line x1="45" y1="37" x2="80" y2="22" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/><line x1="45" y1="37" x2="70" y2="62" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/><line x1="80" y1="22" x2="115" y2="37" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/><line x1="70" y1="62" x2="105" y2="67" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/><line x1="115" y1="37" x2="105" y2="67" stroke="#1a5276" stroke-width="1.2" opacity="0.4"/><line x1="80" y1="22" x2="130" y2="52" stroke="#1a5276" stroke-width="0.8" opacity="0.2" stroke-dasharray="2,2"/>
                                 <circle cx="45" cy="37" r="6" fill="#1a5276" opacity="0.15" stroke="#1a5276" stroke-width="1"/><circle cx="80" cy="22" r="6" fill="#1a5276" opacity="0.15" stroke="#1a5276" stroke-width="1"/><circle cx="115" cy="37" r="6" fill="#1a5276" opacity="0.15" stroke="#1a5276" stroke-width="1"/><circle cx="70" cy="62" r="6" fill="#2980b9" opacity="0.15" stroke="#2980b9" stroke-width="1"/><circle cx="105" cy="67" r="6" fill="#2980b9" opacity="0.15" stroke="#2980b9" stroke-width="1"/><circle cx="130" cy="52" r="6" fill="#2980b9" opacity="0.15" stroke="#2980b9" stroke-width="1"/>
                             </svg>
-                                <a class="card-author" href="https://www.researchgate.net/profile/Zehua-Zhang-25" target="_blank" title="Zehua Zhang"><img src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy"></a>
+                                <span class="card-author" title="Zehua Zhang" onclick="showMemberCard(event, 'zehua-zhang')"><img src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://www.sciencedirect.com/science/article/pii/S2211675325000429">GIGNN</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S2211675325000429">Geographically Informed Graph Neural Network</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S2211675325000429">Spatial Statistics</a></div>
+                            
+                                <div class="card-links"><a class="p1" href="pdf/GIGNN-zhang2025.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -747,12 +786,14 @@
                                 <text x="87" y="45" text-anchor="middle" font-size="6" fill="#2980b9" opacity="0.6">Source B</text>
                                 <text x="87" y="67" text-anchor="middle" font-size="6" fill="#1a5276" font-weight="600" opacity="0.7">Fused</text>
                             </svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2509099">SCAF</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2509099">Spatial Context-Aware Fusion</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2509099">Int. J. Digital Earth</a></div>
+                            
+                                <div class="card-links"><a class="p1" href="pdf/SCAF-song2025.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -769,11 +810,13 @@
                                 <rect x="62" y="50" width="50" height="28" rx="2" fill="#1a5276" opacity="0.15" stroke="#1a5276" stroke-width="0.8"/>
                                 <text x="87" y="67" text-anchor="middle" font-size="6" fill="#1a5276" font-weight="600" opacity="0.6">Multi-scale</text>
                             </svg>
-                                <a class="card-author" href="lab.html" target="_blank" title="Lai Chen"><img src="assets/images/lai-chen.png" alt="Lai Chen" loading="lazy"></a>
+                                <span class="card-author" title="Lai Chen" onclick="showMemberCard(event, 'lai-chen')"><img src="assets/images/lai-chen.png" alt="Lai Chen" loading="lazy"></span>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2025.2602536">Multiscale Transformer</a></div>
                                 <div class="card-full"><a href="https://doi.org/10.1080/13658816.2025.2602536">Spatiotemporal Multiscale Transformer</a></div>
                                 <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2025.2602536">Int. J. Geogr. Inf. Sci.</a></div>
+                            
+                                <div class="card-links"><a class="p1" href="pdf/STMST-chen2025.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -793,13 +836,15 @@
                                 <path d="M35 62 Q60 72 87 57 Q115 42 140 67" fill="none" stroke="#2980b9" stroke-width="1" opacity="0.3" stroke-dasharray="3,2"/>
                                 <circle cx="55" cy="27" r="2" fill="#1a5276" opacity="0.5"/><circle cx="75" cy="35" r="2" fill="#1a5276" opacity="0.5"/><circle cx="95" cy="47" r="2" fill="#1a5276" opacity="0.5"/><circle cx="115" cy="42" r="2" fill="#1a5276" opacity="0.5"/>
                             </svg>
-                                <a class="card-author" href="https://peng-luo.com/" target="_blank" title="Peng Luo"><img src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy"></a>
+                                <span class="card-author" title="Peng Luo" onclick="showMemberCard(event, 'peng-luo')"><img src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy"></span>
                                 <span class="card-abbr-overlay p1"><a href="https://doi.org/10.1080/13658816.2022.2147530">GHM</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2022.2147530">Generalized Heterogeneity Model</a></div>
                                 <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2022.2147530">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mc">Top 4 Cited 3y</span>
+                            
+                                <div class="card-links"><a class="p1" href="pdf/GHM-luo2022.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -825,41 +870,41 @@
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><rect x="30" y="18" width="28" height="55" rx="2" fill="#8C1515" opacity="0.25"/><rect x="60" y="18" width="23" height="55" rx="2" fill="#8C1515" opacity="0.15"/><rect x="85" y="18" width="26" height="55" rx="2" fill="#8C1515" opacity="0.35"/><rect x="113" y="18" width="24" height="55" rx="2" fill="#8C1515" opacity="0.2"/>
                                 <text x="44" y="49" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.7">Z₁</text><text x="72" y="49" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.7">Z₂</text><text x="98" y="49" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.7">Z₃</text><text x="125" y="49" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.7">Z₄</text>
                                 <circle cx="44" cy="10" r="4" fill="#f1c40f" stroke="#8C1515" stroke-width="0.8"/></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">OPGD</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">Optimal Parameters-based Geographical Detector</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">GISci. &amp; Remote Sens. (2020)</a></div>
-                                <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span><span class="card-badge hc">No.1 Most Cited Ever</span>
-                                <div class="card-links"><a class="p2" href="http://cran.r-project.org/web/packages/GD/vignettes/GD.html">R: GD</a><a class="p2" href="https://yongzesong.com/gd/">Q&amp;A</a></div>
+                                <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span><span class="card-badge hc">No.1 Most Cited in History</span>
+                                <div class="card-links"><a class="p2" href="http://cran.r-project.org/web/packages/GD/vignettes/GD.html">R package: GD</a><a class="p2" href="https://yongzesong.com/gd/">Q&amp;A</a><a class="p2" href="pdf/OPGD-song2020.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
                             <div class="card-media">
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><g opacity="0.4"><rect x="35" y="16" width="20" height="28" rx="1" fill="#8C1515"/><rect x="57" y="16" width="20" height="28" rx="1" fill="#8C1515" opacity="0.6"/><rect x="79" y="16" width="20" height="28" rx="1" fill="#8C1515" opacity="0.3"/><rect x="101" y="16" width="20" height="28" rx="1" fill="#8C1515" opacity="0.8"/></g>
                                 <circle cx="45" cy="58" r="3" fill="#8C1515" opacity="0.6"/><circle cx="67" cy="63" r="3" fill="#8C1515" opacity="0.4"/><circle cx="89" cy="53" r="3" fill="#8C1515" opacity="0.7"/><circle cx="111" cy="60" r="3" fill="#8C1515" opacity="0.5"/></svg>
-                                <a class="card-author" href="https://www.researchgate.net/profile/Jiao-Hu-8" target="_blank" title="Jiao Hu"><img src="assets/images/jiao-hu.png" alt="Jiao Hu" loading="lazy"></a>
+                                <span class="card-author" title="Jiao Hu" onclick="showMemberCard(event, 'jiao-hu')"><img src="assets/images/jiao-hu.png" alt="Jiao Hu" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">LISP</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">Local Indicator of Stratified Power</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mr">Top 2 Most Read 2026</span>
-                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/web/packages/localsp/index.html">R: localsp</a><a class="p2" href="https://doi.org/10.6084/m9.figshare.26518651.v3" target="_blank">R Code</a></div>
+                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/web/packages/localsp/index.html">R package: localsp</a><a class="p2" href="https://doi.org/10.6084/m9.figshare.26518651.v3" target="_blank">R Code</a><a class="p2" href="pdf/LISP-hu2024.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
                             <div class="card-media">
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M35 28 Q65 22 95 38 Q125 25 145 32" fill="none" stroke="#8C1515" stroke-width="1.5" opacity="0.4"/><path d="M35 28 Q65 22 95 38 Q125 25 145 32 L145 75 L35 75 Z" fill="#8C1515" opacity="0.06"/>
                                 <rect x="50" y="48" width="18" height="18" rx="2" fill="#8C1515" opacity="0.12" stroke="#8C1515" stroke-width="0.5" stroke-dasharray="2,2"/><rect x="100" y="43" width="18" height="18" rx="2" fill="#8C1515" opacity="0.2" stroke="#8C1515" stroke-width="0.5" stroke-dasharray="2,2"/></svg>
-                                <a class="card-author" href="https://peng-luo.com/" target="_blank" title="Peng Luo"><img src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy"></a>
+                                <span class="card-author" title="Peng Luo" onclick="showMemberCard(event, 'peng-luo')"><img src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">GOZH</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">Geographically Optimal Zones-based Heterogeneity</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">ISPRS J. Photogramm. Remote Sens.</a></div>
-                                <div class="card-links"><a class="p2" href="https://github.com/yongzesong/gozh" target="_blank">R Code 1</a><a class="p2" href="https://github.com/pengtum/GOZH-model/tree/main" target="_blank">R Code 2</a></div>
+                                <div class="card-links"><a class="p2" href="https://github.com/yongzesong/gozh" target="_blank">R Code 1</a><a class="p2" href="https://github.com/pengtum/GOZH-model/tree/main" target="_blank">R Code 2</a><a class="p2" href="pdf/GOZH-luo2022.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -867,13 +912,13 @@
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><defs><linearGradient id="lesh" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#8C1515" stop-opacity="0.5"/><stop offset="100%" stop-color="#8C1515" stop-opacity="0.1"/></linearGradient></defs>
                                 <rect x="35" y="22" width="105" height="48" rx="3" fill="url(#lesh)"/>
                                 <circle cx="60" cy="46" r="12" fill="none" stroke="#8C1515" stroke-width="1" opacity="0.5"/><circle cx="95" cy="46" r="12" fill="none" stroke="#8C1515" stroke-width="1" opacity="0.3"/><circle cx="125" cy="46" r="8" fill="none" stroke="#8C1515" stroke-width="1" opacity="0.2"/></svg>
-                                <a class="card-author" href="lab.html" target="_blank" title="Yang Li"><img src="assets/images/yang-li.png" alt="Yang Li" loading="lazy"></a>
+                                <span class="card-author" title="Yang Li" onclick="showMemberCard(event, 'yang-li')"><img src="assets/images/yang-li.png" alt="Yang Li" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">LESH</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Locally Explained Heterogeneity Model</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Int. J. Digital Earth</a></div>
-                                <div class="card-links"><a class="p2" href="https://github.com/liyang4991/LESH-model/tree/main" target="_blank">R Code</a></div>
+                                <div class="card-links"><a class="p2" href="https://github.com/liyang4991/LESH-model/tree/main" target="_blank">R Code</a><a class="p2" href="pdf/LESH-li2023.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -882,11 +927,11 @@
                                 <rect x="38" y="28" width="22" height="16" rx="2" fill="#8C1515" opacity="0.15"/><rect x="64" y="28" width="22" height="16" rx="2" fill="#8C1515" opacity="0.25"/><rect x="90" y="28" width="22" height="16" rx="2" fill="#8C1515" opacity="0.1"/><rect x="116" y="28" width="22" height="16" rx="2" fill="#8C1515" opacity="0.2"/>
                                 <rect x="38" y="50" width="22" height="16" rx="2" fill="#8C1515" opacity="0.2"/><rect x="64" y="50" width="22" height="16" rx="2" fill="#8C1515" opacity="0.1"/><rect x="90" y="50" width="22" height="16" rx="2" fill="#8C1515" opacity="0.3"/><rect x="116" y="50" width="22" height="16" rx="2" fill="#8C1515" opacity="0.15"/>
                             </svg>
-                                <a class="card-author" href="https://github.com/spatlyu" target="_blank" title="Wenbo Lyu"><img src="assets/images/wenbo-lv.png" alt="Wenbo Lyu" loading="lazy"></a>
+                                <span class="card-author" title="Wenbo Lyu" onclick="showMemberCard(event, 'wenbo-lyu')"><img src="assets/images/wenbo-lv.png" alt="Wenbo Lyu" loading="lazy"></span>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70032">gdverse: Spatial Stratified Heterogeneity Family</a></div>
                                 <div class="card-journal"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70032">Trans. in GIS</a></div>
-                                <div class="card-links"><a class="p2" href="https://github.com/stscl/gdverse" target="_blank">R: gdverse</a></div>
+                                <div class="card-links"><a class="p2" href="https://github.com/stscl/gdverse" target="_blank">R package: gdverse</a><a class="p2" href="pdf/gdverse-lyu2026.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -894,12 +939,14 @@
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M35 47 Q55 18 75 47 Q95 76 115 47 Q135 18 150 47" fill="none" stroke="#8C1515" stroke-width="1.5" opacity="0.5"/>
                                 <path d="M35 57 Q55 38 75 52 Q95 66 115 52 Q135 38 150 57" fill="none" stroke="#8C1515" stroke-width="0.8" opacity="0.25" stroke-dasharray="3,2"/>
                                 <circle cx="60" cy="30" r="2" fill="#8C1515" opacity="0.4"/><circle cx="80" cy="52" r="2" fill="#8C1515" opacity="0.4"/><circle cx="105" cy="35" r="2" fill="#8C1515" opacity="0.4"/><circle cx="130" cy="45" r="2" fill="#8C1515" opacity="0.4"/></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.nature.com/articles/s41598-021-96772-z">WGWR</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.nature.com/articles/s41598-021-96772-z">Wavelet Geographically Weighted Regression</a></div>
                                 <div class="card-journal"><a href="https://www.nature.com/articles/s41598-021-96772-z">Scientific Reports</a></div>
+                            
+                                <div class="card-links"><a class="p2" href="pdf/WGWR-song2021.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -913,13 +960,13 @@
                             <div class="card-media">
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M65 22 L87 12 L109 22 L115 47 L105 72 L69 72 L59 47 Z" fill="#8C1515" opacity="0.08" stroke="#8C1515" stroke-width="1"/>
                                 <circle cx="75" cy="42" r="2" fill="#8C1515" opacity="0.4"/><circle cx="87" cy="35" r="2" fill="#8C1515" opacity="0.5"/><circle cx="99" cy="45" r="2" fill="#8C1515" opacity="0.4"/><circle cx="83" cy="52" r="2" fill="#8C1515" opacity="0.3"/><circle cx="93" cy="55" r="2" fill="#8C1515" opacity="0.6"/></svg>
-                                <a class="card-author" href="https://www.researchgate.net/profile/Zehua-Zhang-25" target="_blank" title="Zehua Zhang"><img src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy"></a>
+                                <span class="card-author" title="Zehua Zhang" onclick="showMemberCard(event, 'zehua-zhang')"><img src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">RGD</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Robust Geographical Detector</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Int. J. Appl. Earth Obs. Geoinf.</a></div>
-                                <div class="card-links"><a class="p2" href="https://github.com/zehua-zhang-01/robust_geographical_detector" target="_blank">Python Code</a></div>
+                                <div class="card-links"><a class="p2" href="https://github.com/zehua-zhang-01/robust_geographical_detector" target="_blank">Python Code</a><a class="p2" href="pdf/RGD-zhang2022.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -933,13 +980,15 @@
                             <div class="card-media">
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><line x1="40" y1="18" x2="40" y2="75" stroke="#8C1515" stroke-width="1" opacity="0.3"/><line x1="87" y1="18" x2="87" y2="75" stroke="#8C1515" stroke-width="1" opacity="0.3"/><line x1="135" y1="18" x2="135" y2="75" stroke="#8C1515" stroke-width="1" opacity="0.3"/><line x1="30" y1="33" x2="145" y2="33" stroke="#8C1515" stroke-width="1" opacity="0.3"/><line x1="30" y1="58" x2="145" y2="58" stroke="#8C1515" stroke-width="1" opacity="0.3"/>
                                 <circle cx="40" cy="33" r="4" fill="#8C1515" opacity="0.6"/><circle cx="87" cy="33" r="4" fill="#8C1515" opacity="0.3"/><circle cx="135" cy="33" r="4" fill="#8C1515" opacity="0.5"/><circle cx="40" cy="58" r="4" fill="#8C1515" opacity="0.4"/><circle cx="87" cy="58" r="4" fill="#8C1515" opacity="0.7"/><circle cx="135" cy="58" r="4" fill="#8C1515" opacity="0.2"/></svg>
-                                <a class="card-author" href="https://www.researchgate.net/profile/Zehua-Zhang-25" target="_blank" title="Zehua Zhang"><img src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy"></a>
+                                <span class="card-author" title="Zehua Zhang" onclick="showMemberCard(event, 'zehua-zhang')"><img src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.sciencedirect.com/science/article/pii/S2211675324000058">RID</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S2211675324000058">Robust Interaction Detector</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S2211675324000058">Spatial Statistics</a></div>
                                 <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span>
+                            
+                                <div class="card-links"><a class="p2" href="pdf/RID-zhang2024.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -947,13 +996,15 @@
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M40 62 Q60 22 87 47 Q115 72 140 32" fill="none" stroke="#8C1515" stroke-width="1.5" opacity="0.4"/>
                                 <path d="M40 32 Q60 62 87 47 Q115 32 140 62" fill="none" stroke="#c0392b" stroke-width="1.5" opacity="0.3"/>
                                 <circle cx="87" cy="47" r="6" fill="#8C1515" opacity="0.15" stroke="#8C1515" stroke-width="1"/></svg>
-                                <a class="card-author" href="https://peng-luo.com/" target="_blank" title="Peng Luo"><img src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy"></a>
+                                <span class="card-author" title="Peng Luo" onclick="showMemberCard(event, 'peng-luo')"><img src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">GPI</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">Geographical Pattern Interaction</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mr">Top 1 Most Read 2025</span>
+                            
+                                <div class="card-links"><a class="p2" href="pdf/GPI-luo2025.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -961,12 +1012,14 @@
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><rect x="45" y="22" width="28" height="48" rx="2" fill="#8C1515" opacity="0.08" stroke="#8C1515" stroke-width="0.5"/><rect x="100" y="22" width="28" height="48" rx="2" fill="#8C1515" opacity="0.08" stroke="#8C1515" stroke-width="0.5"/>
                                 <path d="M73 38 Q87 33 100 38" stroke="#8C1515" stroke-width="1" opacity="0.4" fill="none"/><path d="M73 52 Q87 57 100 52" stroke="#8C1515" stroke-width="1" opacity="0.4" fill="none"/>
                                 <circle cx="59" cy="38" r="2.5" fill="#8C1515" opacity="0.5"/><circle cx="59" cy="52" r="2.5" fill="#8C1515" opacity="0.3"/><circle cx="114" cy="38" r="2.5" fill="#8C1515" opacity="0.4"/><circle cx="114" cy="52" r="2.5" fill="#8C1515" opacity="0.6"/></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://doi.org/10.1016/j.jag.2025.105072">LPI</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://doi.org/10.1016/j.jag.2025.105072">Local Effects of Pattern Interaction</a></div>
                                 <div class="card-journal"><a href="https://doi.org/10.1016/j.jag.2025.105072">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                            
+                                <div class="card-links"><a class="p2" href="pdf/LPI-song2025.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -974,14 +1027,14 @@
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><rect x="35" y="20" width="40" height="52" rx="2" fill="#8C1515" opacity="0.1" stroke="#8C1515" stroke-width="0.5"/><rect x="95" y="20" width="40" height="52" rx="2" fill="#8C1515" opacity="0.1" stroke="#8C1515" stroke-width="0.5"/>
                                 <line x1="75" y1="28" x2="95" y2="33" stroke="#8C1515" stroke-width="1.2" opacity="0.5"/><line x1="75" y1="43" x2="95" y2="48" stroke="#8C1515" stroke-width="1.2" opacity="0.5"/><line x1="75" y1="58" x2="95" y2="53" stroke="#8C1515" stroke-width="1.2" opacity="0.5"/>
                                 <circle cx="55" cy="33" r="3" fill="#8C1515" opacity="0.5"/><circle cx="55" cy="48" r="3" fill="#8C1515" opacity="0.4"/><circle cx="55" cy="63" r="3" fill="#8C1515" opacity="0.3"/><circle cx="115" cy="36" r="3" fill="#c0392b" opacity="0.5"/><circle cx="115" cy="50" r="3" fill="#c0392b" opacity="0.4"/></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">IDSA</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">Interactive Detector for Spatial Associations</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mc">Top 2 Cited 2023</span>
-                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/web/packages/IDSA/IDSA.pdf">R: IDSA</a></div>
+                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/web/packages/IDSA/IDSA.pdf">R package: IDSA</a><a class="p2" href="pdf/IDSA-song2021.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1004,12 +1057,14 @@
                                 <text x="125" y="50" text-anchor="middle" font-size="8" fill="#8C1515" opacity="0.6">Y</text>
                                 <text x="87" y="40" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.4">temporal</text>
                             </svg>
-                                <a class="card-author" href="https://github.com/spatlyu" target="_blank" title="Wenbo Lyu"><img src="assets/images/wenbo-lv.png" alt="Wenbo Lyu" loading="lazy"></a>
+                                <span class="card-author" title="Wenbo Lyu" onclick="showMemberCard(event, 'wenbo-lyu')"><img src="assets/images/wenbo-lv.png" alt="Wenbo Lyu" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0198971526000372">tEDM</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0198971526000372">Causal with Temporal Empirical Dynamic Modeling</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0198971526000372">Computers, Environ. and Urban Syst.</a></div>
+                            
+                                <div class="card-links"><a class="p2" href="pdf/tEDM-lyu2026.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1028,13 +1083,13 @@
                                 <text x="125" y="63" text-anchor="middle" font-size="8" fill="#8C1515" opacity="0.6">Y</text>
                                 <text x="87" y="20" text-anchor="middle" font-size="6" fill="#8C1515" opacity="0.4">spatial</text>
                             </svg>
-                                <a class="card-author" href="https://github.com/spatlyu" target="_blank" title="Wenbo Lyu"><img src="assets/images/wenbo-lv.png" alt="Wenbo Lyu" loading="lazy"></a>
+                                <span class="card-author" title="Wenbo Lyu" onclick="showMemberCard(event, 'wenbo-lyu')"><img src="assets/images/wenbo-lv.png" alt="Wenbo Lyu" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2026.2687121">GCMC</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2026.2687121">Geographical Cross Mapping Cardinality</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2026.2687121">Int. J. Geogr. Inf. Sci.</a></div>
-                                <div class="card-links"><a class="p2" href="https://cloud.r-project.org/package=spEDM" target="_blank">R: spEDM</a></div>
+                                <div class="card-links"><a class="p2" href="https://cloud.r-project.org/package=spEDM" target="_blank">R package: spEDM</a><a class="p2" href="pdf/GCMC-lyu2026.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1048,11 +1103,13 @@
                             <svg class="card-svg p2" viewBox="0 0 175 95"><ellipse cx="67" cy="42" rx="25" ry="12" transform="rotate(-30 67 42)" fill="#8C1515" opacity="0.1" stroke="#8C1515" stroke-width="0.8"/>
                                 <ellipse cx="110" cy="52" rx="20" ry="10" transform="rotate(45 110 52)" fill="#8C1515" opacity="0.15" stroke="#8C1515" stroke-width="0.8"/>
                                 <ellipse cx="87" cy="32" rx="18" ry="8" transform="rotate(10 87 32)" fill="#8C1515" opacity="0.12" stroke="#8C1515" stroke-width="0.8"/></svg>
-                                <a class="card-author" href="https://www.researchgate.net/profile/Xinyue-Yang-28" target="_blank" title="Xinyue Yang"><img src="assets/images/xinyue-yang.jpg" alt="Xinyue Yang" loading="lazy"></a>
+                                <span class="card-author" title="Xinyue Yang" onclick="showMemberCard(event, 'xinyue-yang')"><img src="assets/images/xinyue-yang.jpg" alt="Xinyue Yang" loading="lazy"></span>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Spatial Irregular Anisotropy</a></div>
                                 <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Spatial irregular anisotropy in urban heat</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Sustain. Cities and Society</a></div>
+                            
+                                <div class="card-links"><a class="p2" href="pdf/SIA-yang2025.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1067,13 +1124,13 @@
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><circle cx="45" cy="47" r="6" fill="#8C1515" opacity="0.3"/><circle cx="87" cy="27" r="6" fill="#8C1515" opacity="0.4"/><circle cx="130" cy="52" r="6" fill="#8C1515" opacity="0.3"/><circle cx="87" cy="67" r="6" fill="#8C1515" opacity="0.2"/>
                                 <path d="M51 45 Q67 28 81 28" stroke="#8C1515" stroke-width="1.5" opacity="0.5" fill="none"/><path d="M93 29 Q115 36 125 49" stroke="#8C1515" stroke-width="1.5" opacity="0.5" fill="none"/>
                                 <path d="M51 52 Q67 67 81 67" stroke="#8C1515" stroke-width="1" opacity="0.3" fill="none" stroke-dasharray="3,2"/></svg>
-                                <a class="card-author" href="https://www.researchgate.net/profile/Jiao-Hu-8" target="_blank" title="Jiao Hu"><img src="assets/images/jiao-hu.png" alt="Jiao Hu" loading="lazy"></a>
+                                <span class="card-author" title="Jiao Hu" onclick="showMemberCard(event, 'jiao-hu')"><img src="assets/images/jiao-hu.png" alt="Jiao Hu" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">LPA</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Local Pathways of Association</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Int. J. Appl. Earth Obs. Geoinf.</a></div>
-                                <div class="card-links"><a class="p2" href="https://figshare.com/articles/dataset/Local_pathways_of_association/27187623" target="_blank">R Code</a></div>
+                                <div class="card-links"><a class="p2" href="https://figshare.com/articles/dataset/Local_pathways_of_association/27187623" target="_blank">R Code</a><a class="p2" href="pdf/LPA-hu2025.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1088,13 +1145,13 @@
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><line x1="35" y1="47" x2="140" y2="47" stroke="#8C1515" stroke-width="2.5" opacity="0.3"/>
                                 <line x1="67" y1="37" x2="67" y2="57" stroke="#e74c3c" stroke-width="1.5" opacity="0.7"/><line x1="100" y1="37" x2="100" y2="57" stroke="#e74c3c" stroke-width="1.5" opacity="0.7"/><line x1="125" y1="37" x2="125" y2="57" stroke="#e74c3c" stroke-width="1.5" opacity="0.7"/>
                                 <text x="51" y="68" text-anchor="middle" font-size="5.5" fill="#8C1515" opacity="0.5">S₁</text><text x="83" y="68" text-anchor="middle" font-size="5.5" fill="#8C1515" opacity="0.5">S₂</text><text x="112" y="68" text-anchor="middle" font-size="5.5" fill="#8C1515" opacity="0.5">S₃</text><text x="133" y="68" text-anchor="middle" font-size="5.5" fill="#8C1515" opacity="0.5">S₄</text></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://ieeexplore.ieee.org/document/9123684">SHS</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://ieeexplore.ieee.org/document/9123684">Spatial Heterogeneity-based Segmentation</a></div>
                                 <div class="card-journal"><a href="https://ieeexplore.ieee.org/document/9123684">IEEE Trans. Intell. Transp. Syst.</a></div>
-                                <div class="card-links"><a class="p2" href="https://cran.rstudio.com/web/packages/HS/index.html">R: HS</a></div>
+                                <div class="card-links"><a class="p2" href="https://cran.rstudio.com/web/packages/HS/index.html">R package: HS</a><a class="p2" href="pdf/SHS-song2020.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1102,12 +1159,14 @@
                                 <svg class="card-svg p2" viewBox="0 0 175 95"><path d="M45 72 Q60 12 75 47 Q90 82 105 42 Q120 2 140 62" fill="none" stroke="#8C1515" stroke-width="1.2" opacity="0.4"/>
                                 <path d="M45 72 Q65 32 87 52 Q110 72 140 37" fill="none" stroke="#c0392b" stroke-width="1.2" opacity="0.3"/>
                                 <path d="M45 47 Q65 67 87 47 Q110 27 140 52" fill="none" stroke="#8C1515" stroke-width="0.8" opacity="0.2" stroke-dasharray="2,2"/></svg>
-                                <a class="card-author" href="lab.html" target="_blank" title="Pengcheng Zhang"><img src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang" loading="lazy"></a>
+                                <span class="card-author" title="Pengcheng Zhang" onclick="showMemberCard(event, 'pengcheng-zhang')"><img src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://ieeexplore.ieee.org/abstract/document/10974410">GMS</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://ieeexplore.ieee.org/abstract/document/10974410">Gaussian Mixture Segmentation</a></div>
                                 <div class="card-journal"><a href="https://ieeexplore.ieee.org/abstract/document/10974410">IEEE Trans. Intell. Transp. Syst.</a></div>
+                            
+                                <div class="card-links"><a class="p2" href="pdf/GMS-zhang2025.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1123,12 +1182,14 @@
                                 <path d="M35 47 Q55 37 75 42 Q95 47 115 39 Q135 32 150 42" fill="none" stroke="#c0392b" stroke-width="1" opacity="0.3" stroke-dasharray="3,2"/>
                                 <path d="M35 52 Q55 57 75 55 Q95 52 115 59 Q135 62 150 55" fill="none" stroke="#8C1515" stroke-width="1" opacity="0.3" stroke-dasharray="3,2"/>
                                 <text x="50" y="20" font-size="6" fill="#8C1515" opacity="0.5">Mixed</text><text x="120" y="77" font-size="6" fill="#8C1515" opacity="0.4">Unmixed</text></svg>
-                                <a class="card-author" href="https://peng-luo.com/" target="_blank" title="Peng Luo"><img src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy"></a>
+                                <span class="card-author" title="Peng Luo" onclick="showMemberCard(event, 'peng-luo')"><img src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy"></span>
                                 <span class="card-abbr-overlay p2"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224004229">STUH</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224004229">Spatio-temporal Unmixing with Heterogeneity</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224004229">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                            
+                                <div class="card-links"><a class="p2" href="pdf/STUH-luo2024.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1156,13 +1217,15 @@
                                 <circle cx="87" cy="47" r="10" fill="#1a6b4a" opacity="0.15" stroke="#1a6b4a" stroke-width="0.5"/>
                                 <rect x="84" y="44" width="6" height="6" fill="#1a6b4a" opacity="0.7" rx="1"/>
                                 <circle cx="73" cy="35" r="2" fill="#27ae60" opacity="0.5"/><circle cx="103" cy="39" r="2" fill="#27ae60" opacity="0.5"/><circle cx="80" cy="59" r="2" fill="#27ae60" opacity="0.4"/><circle cx="97" cy="55" r="2" fill="#27ae60" opacity="0.4"/></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p3"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2018.1446713">D2SFCA</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2018.1446713">Spatiotemporal accessibility analysis</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2018.1446713">GISci. &amp; Remote Sens.</a></div>
                                 <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span>
+                            
+                                <div class="card-links"><a class="p3" href="pdf/D2SFCA-song2018.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1177,13 +1240,15 @@
                                 <svg class="card-svg p3" viewBox="0 0 175 95"><line x1="45" y1="77" x2="45" y2="12" stroke="#1a6b4a" stroke-width="1" opacity="0.4"/><line x1="45" y1="77" x2="140" y2="77" stroke="#1a6b4a" stroke-width="1" opacity="0.4"/>
                                 <path d="M50 22 Q75 28 95 47 Q115 67 135 72" fill="none" stroke="#1a6b4a" stroke-width="1.8" opacity="0.5"/>
                                 <path d="M50 72 Q75 67 95 47 Q115 28 135 22" fill="none" stroke="#27ae60" stroke-width="1" opacity="0.3" stroke-dasharray="3,2"/></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p3"><a href="https://ieeexplore.ieee.org/document/9548776">DTOM</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://ieeexplore.ieee.org/document/9548776">Dynamic Trade-Off Model</a></div>
                                 <div class="card-journal"><a href="https://ieeexplore.ieee.org/document/9548776">IEEE Trans. Intell. Transp. Syst.</a></div>
                                 <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span>
+                            
+                                <div class="card-links"><a class="p3" href="pdf/DTOM-song2021.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1193,12 +1258,14 @@
                                 <text x="65" y="50" text-anchor="middle" font-size="7" fill="#1a6b4a" opacity="0.6">Access</text>
                                 <text x="108" y="50" text-anchor="middle" font-size="5.5" fill="#27ae60" opacity="0.6">Accessibility</text>
                                 <text x="87" y="48" text-anchor="middle" font-size="9" fill="#1a6b4a" opacity="0.4">&Delta;</text></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p3"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224001778">SDM</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224001778">Spatial Delta Model</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224001778">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                            
+                                <div class="card-links"><a class="p3" href="pdf/SDM-song2024.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1206,12 +1273,14 @@
                                 <svg class="card-svg p3" viewBox="0 0 175 95"><line x1="45" y1="77" x2="45" y2="12" stroke="#1a6b4a" stroke-width="1" opacity="0.4"/><line x1="45" y1="77" x2="140" y2="77" stroke="#1a6b4a" stroke-width="1" opacity="0.4"/>
                                 <path d="M50 22 Q75 26 95 42 Q115 58 135 72" fill="none" stroke="#1a6b4a" stroke-width="1.8" opacity="0.5"/>
                                 <text x="38" y="16" font-size="5.5" fill="#1a6b4a" opacity="0.5">Quality</text><text x="133" y="90" font-size="5.5" fill="#1a6b4a" opacity="0.5">Quantity</text></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p3"><a href="https://www.sciencedirect.com/science/article/pii/S0303243421002920">STOR</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0303243421002920">Spatial Trade-Off Relation</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0303243421002920">Int. J. Appl. Earth Obs. Geoinf.</a></div>
+                            
+                                <div class="card-links"><a class="p3" href="pdf/STOR-song2021.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1227,11 +1296,13 @@
                                 <circle cx="53" cy="52" r="1.5" fill="#27ae60"/><circle cx="60" cy="57" r="1.5" fill="#27ae60"/><circle cx="70" cy="55" r="1.5" fill="#27ae60"/><circle cx="77" cy="59" r="1.5" fill="#27ae60"/><circle cx="85" cy="62" r="1.5" fill="#27ae60"/><circle cx="93" cy="57" r="1.5" fill="#27ae60"/><circle cx="100" cy="65" r="1.5" fill="#27ae60"/><circle cx="107" cy="59" r="1.5" fill="#27ae60"/><circle cx="115" cy="67" r="1.5" fill="#27ae60"/><circle cx="123" cy="62" r="1.5" fill="#27ae60"/>
                                 </g><rect x="50" y="25" width="78" height="50" rx="3" fill="none" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3" stroke-dasharray="3,2"/>
                                 <text x="87" y="18" text-anchor="middle" font-size="6.5" fill="#1a6b4a" font-weight="600" opacity="0.5">City Redefinition</text></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2018.1511793">Spatial Boundaries of Cities</a></div>
                                 <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2018.1511793">POI for redefining spatial boundaries of cities</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2018.1511793">Int. J. Geogr. Inf. Sci.</a></div>
+                            
+                                <div class="card-links"><a class="p3" href="pdf/SBC-song2018.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1248,12 +1319,14 @@
                                 <circle cx="60" cy="47" r="5" fill="#1a6b4a" opacity="0.15" stroke="#1a6b4a" stroke-width="0.8"/><circle cx="115" cy="47" r="5" fill="#1a6b4a" opacity="0.15" stroke="#1a6b4a" stroke-width="0.8"/>
                                 <line x1="55" y1="52" x2="43" y2="65" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3"/><line x1="65" y1="52" x2="77" y2="65" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3"/><line x1="110" y1="52" x2="98" y2="65" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3"/><line x1="120" y1="52" x2="132" y2="65" stroke="#1a6b4a" stroke-width="0.8" opacity="0.3"/>
                                 <circle cx="43" cy="70" r="4" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="0.5"/><circle cx="77" cy="70" r="4" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="0.5"/><circle cx="98" cy="70" r="4" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="0.5"/><circle cx="132" cy="70" r="4" fill="#27ae60" opacity="0.2" stroke="#27ae60" stroke-width="0.5"/></svg>
-                                <a class="card-author" href="index.html" target="_blank" title="Yongze Song"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></a>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
                                 <span class="card-abbr-overlay p3"><a href="https://www.sciencedirect.com/science/article/pii/S1364032120308224">MFSD</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1364032120308224">Multi-factor Spatial Decision Model</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1364032120308224">Renew. Sustain. Energy Rev.</a></div>
+                            
+                                <div class="card-links"><a class="p3" href="pdf/MFSD-song2020.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1272,12 +1345,14 @@
                                 <path d="M85 60 L90 50 L80 50 Z" fill="#1a6b4a" opacity="0.2"/><path d="M105 60 L110 50 L100 50 Z" fill="#1a6b4a" opacity="0.2"/>
                                 <text x="87" y="80" text-anchor="middle" font-size="6.5" fill="#1a6b4a" font-weight="500" opacity="0.5">Optimization</text>
                             </svg>
-                                <a class="card-author" href="lab.html" target="_blank" title="Pengcheng Zhang"><img src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang" loading="lazy"></a>
+                                <span class="card-author" title="Pengcheng Zhang" onclick="showMemberCard(event, 'pengcheng-zhang')"><img src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang" loading="lazy"></span>
                                 <span class="card-abbr-overlay p3"><a href="https://www.mdpi.com/2220-9964/15/2/70">SPOCA</a></span>
                             </div>
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.mdpi.com/2220-9964/15/2/70">Spatiotemporal Particle Swarm Optimization for Cost Allocation</a></div>
                                 <div class="card-journal"><a href="https://www.mdpi.com/2220-9964/15/2/70">ISPRS Int. J. Geo-Inf.</a></div>
+                            
+                                <div class="card-links"><a class="p3" href="pdf/SPOCA-zhang2026.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1285,6 +1360,36 @@
 
             </div>
         </div>
+
+        <!-- ==================== IMPORTANT CONCEPTS ==================== -->
+        <h2 class="concepts-heading" id="concepts">Important Concepts in Geospatial Analysis</h2>
+        <ol class="concepts-list">
+            <li><span class="concept-name">Spatial validation:</span> <a href="pdf/DSI-liu2026.pdf">degree of spatial interpretability</a>, <a href="pdf/DG-zhang2026.pdf">degree of geocomplexity</a></li>
+            <li><span class="concept-name">Spatial association:</span> <a href="pdf/SDA-song2022.pdf">second-dimension spatial association</a>, <a href="pdf/ESDA-wu2026.pdf">explainable second-dimension spatial association</a></li>
+            <li><span class="concept-name">Spatial outliers:</span> <a href="pdf/SDO-ren2025.pdf">second-dimension outliers</a>, <a href="pdf/SOH-ren2026.pdf">second-dimension outlier-driven heterogeneity</a></li>
+            <li><span class="concept-name">Spatial autocorrelation:</span> <a href="pdf/HSA-zhang2024.pdf">heterogeneous spatial autocorrelation</a></li>
+            <li><span class="concept-name">Geostatistics or kriging:</span> <a href="pdf/SRK-song2018.pdf">segment-based regression kriging</a>, <a href="pdf/FFRK-luo2026.pdf">focal-feature regression kriging</a></li>
+            <li><span class="concept-name">Geocomplexity:</span> <a href="pdf/GEOC-zhang2023.pdf">geocomplexity</a></li>
+            <li><span class="concept-name">Geographical similarity:</span> <a href="pdf/GOS-song2022.pdf">geographically optimal similarity</a></li>
+            <li><span class="concept-name">Spatial graph network:</span> <a href="pdf/GIGNN-zhang2025.pdf">geographically informed graph neural network</a>, <a href="pdf/DSTGN-zhang2025.pdf">dynamic spatiotemporal graph network</a></li>
+            <li><span class="concept-name">Spatial fusion:</span> <a href="pdf/SCAF-song2025.pdf">spatial context-aware fusion</a></li>
+            <li><span class="concept-name">Spatial transformer:</span> <a href="pdf/STMST-chen2025.pdf">spatiotemporal multiscale transformer</a></li>
+            <li><span class="concept-name">Generalized heterogeneity:</span> <a href="pdf/GHM-luo2022.pdf">generalized heterogeneity</a></li>
+            <li><span class="concept-name">Spatial heterogeneity:</span> <a href="pdf/OPGD-song2020.pdf">spatial stratified heterogeneity</a>, <a href="pdf/LISP-hu2024.pdf">local stratified heterogeneity</a>, <a href="pdf/GOZH-luo2022.pdf">geographically optimal zones-based heterogeneity</a>, <a href="pdf/LESH-li2023.pdf">locally explained heterogeneity</a>, <a href="pdf/gdverse-lyu2026.pdf">spatial stratified heterogeneity family</a>, <a href="pdf/WGWR-song2021.pdf">wavelet geographically weighted regression</a></li>
+            <li><span class="concept-name">Robust spatial models:</span> <a href="pdf/RGD-zhang2022.pdf">robust geographical detector</a></li>
+            <li><span class="concept-name">Spatial interaction:</span> <a href="pdf/RID-zhang2024.pdf">robust interaction detector</a>, <a href="pdf/IDSA-song2021.pdf">interactive detector for spatial association</a>, <a href="pdf/GPI-luo2025.pdf">geographical pattern interaction</a>, <a href="pdf/LPI-song2025.pdf">local effects of pattern interaction</a></li>
+            <li><span class="concept-name">Causal discovery:</span> <a href="pdf/tEDM-lyu2026.pdf">temporal empirical dynamic modeling</a>, <a href="pdf/GCMC-lyu2026.pdf">geographical cross mapping cardinality</a></li>
+            <li><span class="concept-name">Spatial anisotropy:</span> <a href="pdf/SIA-yang2025.pdf">spatial irregular anisotropy</a></li>
+            <li><span class="concept-name">Spatial path analysis:</span> <a href="pdf/LPA-hu2025.pdf">local pathways of association</a></li>
+            <li><span class="concept-name">Spatial segmentation:</span> <a href="pdf/SHS-song2020.pdf">spatial heterogeneity-based segmentation</a>, <a href="pdf/GMS-zhang2025.pdf">gaussian mixture segmentation</a></li>
+            <li><span class="concept-name">Spatial unmixing:</span> <a href="pdf/STUH-luo2024.pdf">spatio-temporal unmixing with heterogeneity</a></li>
+            <li><span class="concept-name">Spatial accessibility:</span> <a href="pdf/D2SFCA-song2018.pdf">D2SFCA spatiotemporal accessibility</a></li>
+            <li><span class="concept-name">Spatial trade-off:</span> <a href="pdf/STOR-song2021.pdf">spatial trade-off relation</a>, <a href="pdf/DTOM-song2021.pdf">dynamic trade-off</a>, <a href="pdf/SDM-song2024.pdf">spatial delta model</a></li>
+            <li><span class="concept-name">Spatial boundary:</span> <a href="pdf/SBC-song2018.pdf">spatial big data-based city redefinition</a></li>
+            <li><span class="concept-name">Spatial decision-making:</span> <a href="pdf/MFSD-song2020.pdf">MFSD spatial decision making</a></li>
+            <li><span class="concept-name">Spatial optimization:</span> <a href="pdf/SPOCA-zhang2026.pdf">spatiotemporal particle swarm optimization for cost allocation</a></li>
+            <li><span class="concept-name">Advanced geographical detector models:</span> <a href="pdf/OPGD-song2020.pdf">Optimal Parameters-based Geographical Detector (OPGD)</a>, <a href="pdf/RID-zhang2024.pdf">Robust Interaction Detector (RID)</a>, <a href="pdf/LISP-hu2024.pdf">Local Indicator of Stratified Power (LISP)</a>, <a href="pdf/GOZH-luo2022.pdf">Geographically Optimal Zones-based Heterogeneity (GOZH)</a>, <a href="pdf/GPI-luo2025.pdf">Geographical Pattern Interaction (GPI)</a>, <a href="pdf/IDSA-song2021.pdf">Interactive Detector for Spatial Associations (IDSA)</a>, <a href="pdf/RGD-zhang2022.pdf">Robust Geographical Detector (RGD)</a>, <a href="pdf/LESH-li2023.pdf">Locally Explained Heterogeneity model (LESH)</a>, <a href="pdf/GHM-luo2022.pdf">Generalized Heterogeneity Model (GHM)</a>, <a href="pdf/HSA-zhang2024.pdf">Heterogeneous Spatial Autocorrelation (HSA)</a></li>
+        </ol>
 
         <!-- ==================== SOFTWARE ==================== -->
         <h2 class="software-heading" id="software">Open-Source Geospatial Software (260,000+ downloads)</h2>
@@ -1303,6 +1408,9 @@
             <div class="sw-row"><div class="sw-info"><strong class="sw-name">cisp:</strong> A Correlation Indicator Based on Spatial Patterns. <a href="https://cran.r-project.org/web/packages/cisp/index.html" class="sw-pkg">R package "cisp"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/cisp" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/cisp" alt="downloads/month"></div></div>
         </div>
     </div>
+
+    <!-- Member card popup (shared by method-card avatars) -->
+    <div id="memberPopup" class="member-popup" onclick="event.stopPropagation()"></div>
 
     <!-- ========== FOOTER ========== -->
 <footer class="site-footer">
@@ -1373,6 +1481,55 @@
     if (document.fonts && document.fonts.ready) { document.fonts.ready.then(fitLabels); }
     window.addEventListener('load', fitLabels);
     window.addEventListener('resize', fitLabels);
+})();
+</script>
+<script>
+(function () {
+    var memberDetails = {};
+    function build() {
+        document.querySelectorAll('.mc-card[data-member]').forEach(function (c) {
+            var d = c.querySelector('.mc-detail');
+            if (d) memberDetails[c.dataset.member] = d.innerHTML;
+        });
+    }
+    if (document.readyState !== 'loading') build();
+    else document.addEventListener('DOMContentLoaded', build);
+
+    window.showMemberCard = function (event, slug) {
+        event.preventDefault();
+        event.stopPropagation();
+        var html = memberDetails[slug];
+        if (!html) return;
+        var pop = document.getElementById('memberPopup');
+        pop.innerHTML = html;
+        pop.classList.add('open');                 // make visible so we can measure it
+
+        var rect = event.currentTarget.getBoundingClientRect();
+        var pw = pop.offsetWidth;
+        var margin = 8;
+        var avatarCenter = rect.left + window.scrollX + rect.width / 2;
+        var left = avatarCenter - pw / 2;
+        var minLeft = window.scrollX + margin;
+        var maxLeft = window.scrollX + document.documentElement.clientWidth - pw - margin;
+        if (left > maxLeft) left = maxLeft;
+        if (left < minLeft) left = minLeft;
+        pop.style.left = left + 'px';
+        pop.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+
+        // arrow points at the avatar, clamped to the popup body
+        var arrow = avatarCenter - left;
+        arrow = Math.max(14, Math.min(pw - 14, arrow));
+        pop.style.setProperty('--arrow-left', arrow + 'px');
+    };
+    window.closeMemberCard = function () {
+        document.getElementById('memberPopup').classList.remove('open');
+    };
+    // Close on outside click or Escape (avatar clicks stop propagation themselves)
+    document.addEventListener('click', function () { window.closeMemberCard(); });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') window.closeMemberCard();
+    });
+    window.addEventListener('resize', function () { window.closeMemberCard(); });
 })();
 </script>
 </body>
