@@ -486,8 +486,8 @@
 <!-- ========== FEATURED CARDS (full-width 4-column) ========== -->
 <section class="featured-cards">
 
-    <!-- Card 1: Research Excellence -->
-    <a href="https://www.youtube.com/watch?v=Z_JNJb9KJb0" class="feat-card" target="_blank" rel="noopener">
+    <!-- Card 1: Research Excellence (video) -->
+    <a href="video/geospatial-intelligence-changing-planet-1080p.mp4" class="feat-card" onclick="openVideo(event)">
         <div class="card-img">
             <img src="assets/images/research-excellence-v2.jpg" alt="Research Excellence">
             <div class="play-overlay"><div class="play-btn"></div></div>
@@ -653,6 +653,54 @@
         </div>
     </div>
 </footer>
+
+<!-- ========== VIDEO LIGHTBOX ========== -->
+<div id="videoModal" class="video-modal" onclick="closeVideo(event)">
+    <div class="video-modal-inner" onclick="event.stopPropagation()">
+        <button type="button" class="video-modal-fs" onclick="fullscreenVideo()" title="Full screen">⛶ Full screen</button>
+        <span class="video-modal-close" onclick="closeVideo()" title="Close">&times;</span>
+        <video id="videoPlayer" controls playsinline preload="metadata">
+            <source src="video/geospatial-intelligence-changing-planet-1080p.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+<style>
+    .video-modal { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; padding: 24px; }
+    .video-modal.open { display: flex; }
+    .video-modal-inner { position: relative; width: 100%; max-width: 960px; }
+    .video-modal-inner video { width: 100%; max-height: 85vh; border-radius: 8px; display: block; background: #000; }
+    .video-modal-close { position: absolute; top: -34px; right: 0; font-size: 2rem; line-height: 1; color: #fff; cursor: pointer; }
+    .video-modal-close:hover { color: var(--color-accent); }
+    .video-modal-fs { position: absolute; top: -32px; left: 0; font-size: 0.85rem; line-height: 1; color: #fff; background: none; border: 1px solid rgba(255,255,255,0.5); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+    .video-modal-fs:hover { color: var(--color-accent); border-color: var(--color-accent); }
+</style>
+<script>
+    function openVideo(event) {
+        if (event) event.preventDefault();
+        var modal = document.getElementById('videoModal');
+        var player = document.getElementById('videoPlayer');
+        modal.classList.add('open');
+        if (player.play) { var p = player.play(); if (p && p.catch) p.catch(function () {}); }
+    }
+    function closeVideo() {
+        var modal = document.getElementById('videoModal');
+        var player = document.getElementById('videoPlayer');
+        modal.classList.remove('open');
+        player.pause();
+    }
+    function fullscreenVideo() {
+        var player = document.getElementById('videoPlayer');
+        var el = player.parentElement;  // fullscreen the wrapper so controls stay visible
+        var req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if (req) {
+            req.call(el);
+        } else if (player.webkitEnterFullscreen) {
+            player.webkitEnterFullscreen();  // iOS Safari (video element only)
+        }
+    }
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeVideo(); });
+</script>
 
 </body>
 </html>
