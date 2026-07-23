@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
     <title>Methods and Software - Yongze Song</title>
-    <meta name="description" content="Geospatial theories and methods: 41 innovative methods across 24 research themes, 12 open-source R packages, and 260,000+ downloads.">
+    <meta name="description" content="Geospatial theories and methods: 42 innovative methods across 24 research themes, 12 open-source R packages, and 260,000+ downloads.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -251,7 +251,7 @@
 
     <div class="main-wrapper">
         <h1 class="page-title">Geospatial Theories and Methods</h1>
-        <p class="page-subtitle">41 innovative methods across 24 research themes &middot; 12 open-source R packages &middot; 260,000+ downloads</p>
+        <p class="page-subtitle">42 innovative methods across 24 research themes &middot; 12 open-source R packages &middot; 260,000+ downloads</p>
 
         <!-- ==================== MEMBERS ==================== -->
         <h2 class="members-heading" id="members">Members</h2>
@@ -393,7 +393,7 @@
             <div class="mc-card" data-member="haiyang-liu" onclick="toggleMemberDetail(this)">
                 <img class="mc-avatar" src="assets/images/haiyang-liu.png" alt="Haiyang Liu">
                 <div class="mc-name">Haiyang Liu</div>
-                <div class="mc-methods">DSI · LPI · DG</div>
+                <div class="mc-methods">DSI · LPI · DG · PSL</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Haiyang Liu</div>
                     <div class="mc-detail-role"><strong>PhD Researcher:</strong><br>Hokkaido University, Japan<br>Email: <a href="mailto:haiyang.liu.q6@elms.hokudai.ac.jp">haiyang.liu.q6@elms.hokudai.ac.jp</a><br>Homepage: <a href="https://kevinoceanliu.github.io/" target="_blank">kevinoceanliu.github.io</a></div>
@@ -401,6 +401,7 @@
                         <li><a href="https://doi.org/10.1080/13658816.2026.2614335">Degree of spatial interpretability (DSI)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="sub"><a href="https://github.com/KevinOceanLiu/DSI" target="_blank">R Code for DSI model</a></span></li>
                         <li><a href="https://doi.org/10.1016/j.jag.2025.105072">Local effects of pattern interaction (LPI)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span></li>
                         <li><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">Degree of geocomplexity for validation (DG)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgrs20">GISci. &amp; Remote Sens.</a></span></li>
+                        <li><a href="https://link.springer.com/article/10.1007/s41651-026-00279-y">Pattern similarity learning (PSL)</a>. <span class="journal"><a href="https://link.springer.com/journal/41651">J. Geovis. Spatial Anal.</a></span></li>
                     </ul>
                 </div>
             </div>
@@ -731,6 +732,33 @@
                                 <div class="card-abbr"><a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">Geographically Optimal Similarity</a></div>
                                 <div class="card-journal"><a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">Mathematical Geosciences</a></div>
                                 <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html">R package: geosimilarity</a><a class="p1" href="pdf/GOS-song2022.pdf" target="_blank">PDF</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <div class="card-media">
+                                <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <!-- Pattern Similarity Learning: target location linked to samples weighted by pattern similarity -->
+                                <line x1="87" y1="47" x2="52" y2="26" stroke="#1a5276" stroke-width="2.2" opacity="0.55"/>
+                                <line x1="87" y1="47" x2="58" y2="66" stroke="#1a5276" stroke-width="1.9" opacity="0.5"/>
+                                <line x1="87" y1="47" x2="122" y2="30" stroke="#1a5276" stroke-width="1.4" opacity="0.4"/>
+                                <line x1="87" y1="47" x2="95" y2="20" stroke="#1a5276" stroke-width="0.9" opacity="0.3" stroke-dasharray="2,2"/>
+                                <line x1="87" y1="47" x2="128" y2="61" stroke="#1a5276" stroke-width="0.8" opacity="0.25" stroke-dasharray="2,2"/>
+                                <circle cx="52" cy="26" r="4" fill="#1a5276" opacity="0.75"/>
+                                <circle cx="58" cy="66" r="3.6" fill="#1a5276" opacity="0.65"/>
+                                <circle cx="122" cy="30" r="3" fill="#2980b9" opacity="0.5"/>
+                                <circle cx="95" cy="20" r="2.6" fill="#2980b9" opacity="0.4"/>
+                                <circle cx="128" cy="61" r="2.4" fill="#2980b9" opacity="0.35"/>
+                                <circle cx="87" cy="47" r="6" fill="none" stroke="#1a5276" stroke-width="1.5" opacity="0.7"/>
+                                <circle cx="87" cy="47" r="3" fill="#1a5276"/>
+                                <text x="87" y="90" text-anchor="middle" font-size="6.5" fill="#1a5276" font-weight="600" opacity="0.5">Pattern Similarity</text>
+                            </svg>
+                                <span class="card-author" title="Haiyang Liu" onclick="showMemberCard(event, 'haiyang-liu')"><img src="assets/images/haiyang-liu.png" alt="Haiyang Liu" loading="lazy"></span>
+                                <span class="card-abbr-overlay p1"><a href="https://link.springer.com/article/10.1007/s41651-026-00279-y">PSL</a></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://link.springer.com/article/10.1007/s41651-026-00279-y">Pattern Similarity Learning</a></div>
+                                <div class="card-journal"><a href="https://link.springer.com/article/10.1007/s41651-026-00279-y">J. Geovis. Spatial Anal.</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/PSL-liu2026.pdf" target="_blank">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1370,7 +1398,7 @@
             <li><span class="concept-name">Spatial autocorrelation:</span> <a href="pdf/HSA-zhang2024.pdf">heterogeneous spatial autocorrelation</a></li>
             <li><span class="concept-name">Geostatistics or kriging:</span> <a href="pdf/SRK-song2018.pdf">segment-based regression kriging</a>, <a href="pdf/FFRK-luo2026.pdf">focal-feature regression kriging</a></li>
             <li><span class="concept-name">Geocomplexity:</span> <a href="pdf/GEOC-zhang2023.pdf">geocomplexity</a></li>
-            <li><span class="concept-name">Geographical similarity:</span> <a href="pdf/GOS-song2022.pdf">geographically optimal similarity</a></li>
+            <li><span class="concept-name">Geographical similarity:</span> <a href="pdf/GOS-song2022.pdf">geographically optimal similarity</a>, <a href="pdf/PSL-liu2026.pdf">pattern similarity learning</a></li>
             <li><span class="concept-name">Spatial graph network:</span> <a href="pdf/GIGNN-zhang2025.pdf">geographically informed graph neural network</a>, <a href="pdf/DSTGN-zhang2025.pdf">dynamic spatiotemporal graph network</a></li>
             <li><span class="concept-name">Spatial fusion:</span> <a href="pdf/SCAF-song2025.pdf">spatial context-aware fusion</a></li>
             <li><span class="concept-name">Spatial transformer:</span> <a href="pdf/STMST-chen2025.pdf">spatiotemporal multiscale transformer</a></li>
