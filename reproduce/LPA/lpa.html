@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Reproducing Local Pathways of Association — Step-by-Step Guide</title>
-<meta name="description" content="Step-by-step, verified guide to reproducing the local pathways of association (LPA) model in R: Ripley's K for the local range, lavaan for the local structural equation model, and every value in the published Table 2.">
+<meta name="description" content="Step-by-step guide to reproducing the local pathways of association (LPA) model in R: Ripley's K for the local range, lavaan for the local structural equation model, and every value in the published Table 2.">
 <link rel="canonical" href="https://yongzesong.com/reproduce/LPA/lpa.html">
 <link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
@@ -439,13 +439,6 @@ pre.code code{
   max-height:320px;
   white-space:pre;
 }
-.console .lbl{
-  display:block;
-  color:#8b949e;
-  font-size:.72rem;
-  margin-bottom:6px;
-  font-family:inherit;
-}
 
 .tablewrap{
   margin:1.2em 0;
@@ -780,8 +773,9 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 <button id="menu-btn" aria-label="Menu">☰</button>
 
 <aside id="sidebar">
+  <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
   <div class="brand">Reproducing Local Pathways of Association</div>
-  <div class="brand-sub">LPA · local path coefficients · verified against the published table</div>
+  <div class="brand-sub">LPA · local path coefficients</div>
   <input id="toc-filter" type="text" placeholder="Filter sections...">
   <nav id="toc">
     <a href="#overview">1&nbsp;Overview &amp; Scope</a>
@@ -815,7 +809,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 
 <header class="hero">
   <h1>Reproducing Local Pathways of Association</h1>
-  <div class="sub">A complete, verified walkthrough of the LPA model — path analysis made local, so
+  <div class="sub">A complete walkthrough of the LPA model — path analysis made local, so
   that the coefficient linking climate to vegetation is allowed to differ between the northern
   Qiangtang and the southeastern gorges instead of being averaged into one number for the whole
   Tibetan Plateau. From Ripley's K to the published table, on the published case.</div>
@@ -828,7 +822,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
       <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
     </div>
   </div>
-  <a class="dlbtn" href="lpa-code-and-data.zip" download>⬇ Download code &amp; data (zip, 796&nbsp;KB)</a>
+  <a class="dlbtn" href="lpa-code-and-data.zip" download>⬇ Download code &amp; data (zip, 795&nbsp;KB)</a>
   <div class="dlnote"><code>R/</code> pipeline scripts · <code>config/project-config.R</code> ·
   <code>data/lpa-tibetan-plateau.csv</code> (1,801 sampling locations, the published case, carrying
   both the observed variables and the authors' own output) · <code>tests/</code> ·
@@ -941,7 +935,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
       that can be mapped, summarised and significance-tested like any other spatial variable.</li>
   </ul>
   <div class="callout c-note">
-    <div class="callout-h"><span class="callout-i">i</span>How local is "local" here</div>
+    <div class="callout-h"><span class="callout-i">◆</span>How local is "local" here</div>
     <div class="callout-b">
       <p>The estimated range of 705&nbsp;km puts a median of 596 of the 1,801 locations inside every
       neighbourhood — a third of the study area per fit. Neighbouring models therefore share most of
@@ -974,6 +968,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
             <td><b>partial</b> — see §3.3 Step&nbsp;3</td></tr>
       </tbody>
     </table>
+    <figcaption>What this page reproduces, and against what. The published Table 2 values are matched exactly; the optimal local range differs by 0.3&nbsp;% because it is re-estimated rather than read off.</figcaption>
   </figure>
   <div class="callout c-warn">
     <div class="callout-h"><span class="callout-i">!</span>What is reconstructed rather than reproduced</div>
@@ -989,12 +984,12 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
   <h4>How to use this page</h4>
   <p>Read §2 to get the pipeline running, then §3.2 to confirm it reproduces the published table
   before trusting anything else it prints. §3.3 walks the method one step at a time, each with the
-  code, the console output from a verified run and the figure it produced. §4 is for porting the
+  code, the console output it produces and the figure it draws. §4 is for porting the
   model to another study area.</p>
 </section>
 
 <section id="setup">
-  <h2>2&nbsp;Setup, Structure &amp; Data</h2>
+  <h2>2&nbsp;Setup, Structure &amp; Data Contract</h2>
 
   <h3 id="environment">2.1&nbsp;Environment &amp; Dependencies</h3>
   <p>Two packages carry the method: <code>spatstat.explore</code> for Ripley's K and
@@ -1012,7 +1007,7 @@ install.packages(c("ggplot2", "patchwork"))</code></pre>
   </div>
   <figure class="tablewrap compact">
     <table>
-      <thead><tr><th>Package</th><th>Role in the pipeline</th><th>Verified with</th></tr></thead>
+      <thead><tr><th>Package</th><th>Role in the pipeline</th><th>Version</th></tr></thead>
       <tbody>
         <tr><td><code>spatstat.explore</code>, <code>spatstat.geom</code></td>
             <td><code>Kest()</code> with edge correction, and the observation window it is corrected against (Step&nbsp;1)</td><td>3.8.1 / 3.8.2</td></tr>
@@ -1023,6 +1018,7 @@ install.packages(c("ggplot2", "patchwork"))</code></pre>
         <tr><td>base R</td><td>distances, neighbourhoods, the convex hull outline, the summaries</td><td>4.6.0</td></tr>
       </tbody>
     </table>
+    <figcaption>Package roles and the versions the pipeline was run with. Only <code>spatstat</code> and <code>lavaan</code> do analytical work; the rest draw figures.</figcaption>
   </figure>
   <div class="callout c-tip">
     <div class="callout-h"><span class="callout-i">✓</span>No spatial data stack required</div>
@@ -1114,6 +1110,7 @@ SIG_LEVEL         <- 0.05</code></pre>
         <tr><td><code>sig.P_climate</code> … <code>sig.climate_soil</code></td><td>the matching p-values</td><td>the authors' LPA run</td></tr>
       </tbody>
     </table>
+    <figcaption>Data contract for <code>data/lpa-input.csv</code>. The last fourteen columns are the authors' own published output, which is what makes an exact reproduction of Table&nbsp;2 possible.</figcaption>
   </figure>
   <p>Every observed variable arrives standardised — mean 0, standard deviation 1 to machine
   precision — so no scaling happens in the pipeline, and a coefficient outside [−1,&nbsp;1] is a
@@ -1183,7 +1180,7 @@ SIG_LEVEL         <- 0.05</code></pre>
   water content loads negatively (−0.763). Fitted this way, the model returns coefficients of the
   right sign and the right magnitude at most locations.</p>
   <div class="callout c-note">
-    <div class="callout-h"><span class="callout-i">i</span>Treat this as a hypothesis, not a recovery</div>
+    <div class="callout-h"><span class="callout-i">◆</span>Treat this as a hypothesis, not a recovery</div>
     <div class="callout-b">
       <p>The reconstruction is consistent with everything observable in the released material, and it
       is still a guess about a file that was never released. If you have the authors' original
@@ -1213,7 +1210,7 @@ Rscript run-all.R          # 2. full pipeline (~11 min)
 Rscript run-all.R 20 40    # re-run single steps (10 20 30 40 50 90)
 Rscript run-all.R figures  # only the figure scripts</code></pre>
   </div>
-  <div class="console"><span class="lbl">Verified run · key lines (2026-07-25)</span>Project : lpa-demo
+  <div class="console">Project : lpa-demo
 Domain  : Tibetan Plateau ecosystem (NDVI, LST, precipitation, soil water)
 == Step 10 — prepare data ================================
    1801 locations, 27 columns, coordinates in km
@@ -1255,7 +1252,7 @@ Domain  : Tibetan Plateau ecosystem (NDVI, LST, precipitation, soil water)
       p-values</b>, not over all 1,801 and not over the filtered subset. Using the filtered subset
       instead moves four of the seven percentages off the printed value.</li>
   </ul>
-  <div class="console"><span class="lbl">Rscript run-all.R test · test-01, abridged (31 assertions in full)</span>== test-01: published values ==================================
+  <div class="console">== test-01: published values ==================================
    [ok] lambda1 mean                       got    -0.370  want    -0.370
    [ok] lambda1 min                        got    -0.967  want    -0.967
    [ok] lambda1 max                        got     0.747  want     0.747
@@ -1288,6 +1285,7 @@ Domain  : Tibetan Plateau ecosystem (NDVI, LST, precipitation, soil water)
         <tr><td>λ₇ Climate ~ Soil</td><td>0.427 [−0.969, 0.997]</td><td>62.35&nbsp;%</td><td>0.677**</td><td>exact</td></tr>
       </tbody>
     </table>
+    <figcaption>The seven pathways: local coefficient distributions, the share of locations where each is significant, and the published global coefficient beside each one. Every printed figure matches the published Table&nbsp;2.</figcaption>
   </figure>
   <div class="callout c-repro">
     <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
@@ -1308,12 +1306,12 @@ Domain  : Tibetan Plateau ecosystem (NDVI, LST, precipitation, soil water)
   value.</p>
 
   <h3 id="core-steps">3.3&nbsp;Core Analytical Steps</h3>
-  <p>Five stages: purpose → code → verified output → result → <i>how to read it</i>. Step numbers
+  <p>Five stages: purpose → code → output → result → <i>how to read it</i>. Step numbers
   match the script numbers (Step&nbsp;1 is <code>R/20-optimal-range.R</code>).</p>
 
   <article class="step-card" id="step-1">
     <div class="step-card-h">
-      <span class="step-label">Step 1 · verified</span>
+      <span class="step-label">Step 1</span>
       <h4>Identify the optimal local range</h4>
     </div>
     <div class="step-card-b">
@@ -1345,7 +1343,7 @@ Domain  : Tibetan Plateau ecosystem (NDVI, LST, precipitation, soil water)
 }</code></pre>
       </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">Rscript run-all.R 20</span>== Step 20 — optimal local range =========================
+      <div class="console">== Step 20 — optimal local range =========================
    L peaks at r = 705.29 km (correction 'border', rectangle window), L_max = 128.94
    L is within 5 of its maximum from 687 to 723 km — the peak is a plateau 36 km wide
    the border correction stops being reliable beyond 751 km
@@ -1379,7 +1377,7 @@ Domain  : Tibetan Plateau ecosystem (NDVI, LST, precipitation, soil water)
           <span class="credit">Hu et al. (2025), IJAEOG 139:104531.</span></figcaption>
         </figure>
       </div>
-      <h4>How to read it</h4>
+      <h4>How to read this result</h4>
       <p>The reproduction lands 2&nbsp;km from the published value, a difference of 0.3&nbsp;%, and
       that residual is a projection choice the article does not state: scaling longitude by
       cos(latitude) gives 705.29&nbsp;km, treating both axes at 111.32&nbsp;km per degree gives
@@ -1390,7 +1388,7 @@ Domain  : Tibetan Plateau ecosystem (NDVI, LST, precipitation, soil water)
       reading of the same data. The honest statement is that the published range and this one fall
       on the same plateau — not that the third decimal was recovered.</p>
       <div class="callout c-note">
-        <div class="callout-h"><span class="callout-i">i</span>Why the curve is cut short</div>
+        <div class="callout-h"><span class="callout-i">◆</span>Why the curve is cut short</div>
         <div class="callout-b">
           <p>The figure stops at 748&nbsp;km although the search grid runs to 1,200. The border
           correction only counts points whose whole neighbourhood of radius r lies inside the
@@ -1428,7 +1426,7 @@ Domain  : Tibetan Plateau ecosystem (NDVI, LST, precipitation, soil water)
 
   <article class="step-card" id="step-2">
     <div class="step-card-h">
-      <span class="step-label">Step 2 · verified</span>
+      <span class="step-label">Step 2</span>
       <h4>Examine the local path at one location</h4>
     </div>
     <div class="step-card-b">
@@ -1458,7 +1456,7 @@ fit_local_sem <- function(dat, model = SEM_MODEL, paths = PATHS) {
 }</code></pre>
       </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">location 176 (87.67 E, 29.63 N), 596 neighbours</span>lavaan 0.7-2 ended normally after 80 iterations
+      <div class="console">lavaan 0.7-2 ended normally after 80 iterations
 
   Estimator                                         ML
   Number of model parameters                        17
@@ -1488,13 +1486,13 @@ Regressions:
 Warning message:
 lavaan->lav_object_post_check():
    some estimated ov variances are negative</div>
-      <h4>How to read it</h4>
+      <h4>How to read this result</h4>
       <p>The <code>Std.all</code> column is what LPA keeps. Four of its values here — the
       precipitation loading of −0.409, the LST loading of 1.207, the water-content loading of −0.895
       and the NDVI loading of 1.052 — are λ₁ to λ₄ at this one location, and the three regressions
       are λ₇, λ₆ and λ₅ in that order. Repeating this fit 1,801 times is the whole of Step 3.</p>
       <div class="callout c-note">
-        <div class="callout-h"><span class="callout-i">i</span>Where the coefficients above one come from</div>
+        <div class="callout-h"><span class="callout-i">◆</span>Where the coefficients above one come from</div>
         <div class="callout-b">
           <p>Two standardised loadings here exceed 1, and the warning at the foot of the output
           explains why: the fit has assigned negative residual variance to NDVI and LST. A negative
@@ -1507,7 +1505,7 @@ lavaan->lav_object_post_check():
         </div>
       </div>
       <div class="callout c-note">
-        <div class="callout-h"><span class="callout-i">i</span>A local fit can fail, and should be allowed to</div>
+        <div class="callout-h"><span class="callout-i">◆</span>A local fit can fail, and should be allowed to</div>
         <div class="callout-b">
           <p>134 of the 1,801 neighbourhoods do not converge, and the pipeline records NA rather than
           a number for those. The published output has the same behaviour on a larger scale — 328
@@ -1521,7 +1519,7 @@ lavaan->lav_object_post_check():
 
   <article class="step-card" id="step-3">
     <div class="step-card-h">
-      <span class="step-label">Step 3 · verified</span>
+      <span class="step-label">Step 3</span>
       <h4>Local pathway analysis across space</h4>
     </div>
     <div class="step-card-b">
@@ -1546,7 +1544,7 @@ lavaan->lav_object_post_check():
 }</code></pre>
       </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">results/recomputed-vs-published.csv · the refit against the published surfaces</span>  lambda                     path        kind  n_compared  correlation  sign_agreement
+      <div class="console">  lambda                     path        kind  n_compared  correlation  sign_agreement
  lambda1 Precipitation =~ Climate Measurement        1612        0.779            93.1
  lambda2           LST =~ Climate Measurement         306        0.826            93.5
  lambda3    Water content =~ Soil Measurement        1362        0.310            98.7
@@ -1568,7 +1566,7 @@ lavaan->lav_object_post_check():
           location. The diagonal is exact agreement.</figcaption>
         </figure>
       </div>
-      <h4>How to read it</h4>
+      <h4>How to read this result</h4>
       <p>The refit reproduces the measurement half of the model well and the structural half poorly.
       The four measurement pathways agree in sign at 93–100&nbsp;% of locations and correlate 0.31 to
       0.83; the three structural pathways agree in sign at 72–82&nbsp;% and one of them, climate on
@@ -1598,7 +1596,7 @@ lavaan->lav_object_post_check():
 
   <article class="step-card" id="step-4">
     <div class="step-card-h">
-      <span class="step-label">Step 4 · verified</span>
+      <span class="step-label">Step 4</span>
       <h4>Pathway assessment and significance</h4>
     </div>
     <div class="step-card-b">
@@ -1620,7 +1618,7 @@ summarise_lambda <- function(lambda, p, range = LAMBDA_PLOT_RANGE,
 }</code></pre>
       </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">results/lambda-range-filter.csv · what the [-1, 1] window removes</span>  lambda                     path    n n_kept pct_kept        min       max
+      <div class="console">  lambda                     path    n n_kept pct_kept        min       max
  lambda1 Precipitation =~ Climate 1732   1732   100.00 -9.665e-01    0.7466
  lambda2           LST =~ Climate 1732   1212    69.98 -6.052e-01   21.8025
  lambda3    Water content =~ Soil 1475   1472    99.80 -1.364e+00    0.4304
@@ -1657,7 +1655,7 @@ summarise_lambda <- function(lambda, p, range = LAMBDA_PLOT_RANGE,
           56&nbsp;%; λ₁ keeps everything.</figcaption>
         </figure>
       </div>
-      <h4>How to read it</h4>
+      <h4>How to read this result</h4>
       <p>Two of these panels carry a warning rather than a finding. The maps in fig03 and fig04 look
       complete, but λ₄ is drawn at 56&nbsp;% of locations and λ₅ at 50&nbsp;% — the rest are either
       missing or outside the plotted range. A reader of the published figure has no way to tell the
@@ -1668,7 +1666,7 @@ summarise_lambda <- function(lambda, p, range = LAMBDA_PLOT_RANGE,
 
   <article class="step-card" id="step-5">
     <div class="step-card-h">
-      <span class="step-label">Step 5 · verified</span>
+      <span class="step-label">Step 5</span>
       <h4>Model evaluation, and the cost of the radius</h4>
     </div>
     <div class="step-card-b">
@@ -1693,7 +1691,7 @@ for (r in RADIUS_SENSITIVITY) {
 }</code></pre>
       </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">Rscript run-all.R 50</span>== Step 50 — radius sensitivity ==========================
+      <div class="console">== Step 50 — radius sensitivity ==========================
    150 locations at 6 radii: 400, 500, 600, 705.29, 800, 900 km
    r = 400.00 km: median 248 neighbours, 88 % converged, mean |lambda| sd 0.286
    r = 500.00 km: median 362 neighbours, 88 % converged, mean |lambda| sd 0.334
@@ -1723,8 +1721,9 @@ for (r in RADIUS_SENSITIVITY) {
             <tr><td>900</td><td>870</td><td>−0.298</td><td>0.184</td><td>−0.888</td><td>0.988</td><td>−0.649</td><td>0.258</td><td>0.480</td></tr>
           </tbody>
         </table>
+        <figcaption>Radius sensitivity: the seven mean path coefficients recomputed at six local ranges. Signs are stable throughout; two of the seven magnitudes are not.</figcaption>
       </figure>
-      <h4>How to read it</h4>
+      <h4>How to read this result</h4>
       <p>No pathway changes sign anywhere between 400 and 900&nbsp;km, which is the reassuring half
       of the result: the direction of every arrow is a property of the plateau rather than of the
       radius. The magnitudes are another matter. Three pathways barely move — precipitation on
@@ -1748,10 +1747,8 @@ for (r in RADIUS_SENSITIVITY) {
       </div>
     </div>
   </article>
-</section>
 
-<section id="interpretation">
-  <h3>3.4&nbsp;Reading the Results Together</h3>
+  <h3 id="interpretation">3.4&nbsp;Reading the Results Together</h3>
   <div class="step-grid">
     <div class="kv"><div class="k">The pathways are local</div><div class="v">every global coefficient is
       significant at p&nbsp;&lt;&nbsp;0.01, yet six of the seven local ranges cross zero — the
@@ -1781,7 +1778,7 @@ for (r in RADIUS_SENSITIVITY) {
   of the study area and moving by 0.16 when the radius changes is good evidence of spatial
   heterogeneity in the climate-to-soil pathway. It is weak evidence about any particular valley.</p>
   <div class="callout c-interpret">
-    <div class="callout-h"><span class="callout-i">→</span>What to claim, and what not to</div>
+    <div class="callout-h"><span class="callout-i">◆</span>What to claim, and what not to</div>
     <div class="callout-b">
       <p><b>Claim:</b> the association between these variables varies across the plateau by more than
       a global model can express, with a consistent geography — the vegetation loading strongest in
@@ -1831,6 +1828,7 @@ for (r in RADIUS_SENSITIVITY) {
             not after a reviewer asks.</td></tr>
       </tbody>
     </table>
+    <figcaption>The configuration entries to change when porting the model to another study area. Everything else in the pipeline follows from these.</figcaption>
   </figure>
   <div class="callout c-warn">
     <div class="callout-h"><span class="callout-i">!</span>Three failure modes worth anticipating</div>
@@ -1863,7 +1861,27 @@ for (r in RADIUS_SENSITIVITY) {
         <tr><td>Limitations</td><td>convergence rate, map coverage, overlapping neighbourhoods</td><td><code>results/local-fit-diagnostics.csv</code>, <code>results/map-coverage.csv</code></td></tr>
       </tbody>
     </table>
+    <figcaption>A manuscript skeleton for reporting an LPA analysis, with the output file behind each section.</figcaption>
   </figure>
+  <h4>Manuscript outline</h4>
+  <div class="codewrap nofold">
+    <span class="code-label">manuscript outline</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>1  Introduction       &#8212; associations between variables are assumed constant over
+                         space; path analysis is global; the contribution (3 aims)
+2  LPA model          &#8212; 2.1 The optimal local range (Ripley's K, Besag's L)
+                         2.2 The local structural equation model
+                         2.3 Estimation at every location; the surfaces
+                         2.4 Assessment: significance, convergence, coverage
+3  Case &amp; data        &#8212; study area, the observed variables, the causal diagram
+4  Results            &#8212; 4.1 the local range and what fixes it
+                         4.2 the seven pathway surfaces and their significance
+                         4.3 local against global coefficients
+                         4.4 sensitivity to the radius
+5  Discussion         &#8212; what varies in space and what does not; the identification
+                         limits of the reconstructed specification
+6  Conclusions        &#8212; the local pathways, and the radius they depend on</code></pre>
+  </div>
   <h4>Questions a reviewer will ask</h4>
   <p><i>Why that radius?</i> → <code>results/optimal-range.csv</code> shows the estimate and the three
   alternatives. <i>Would a different radius change the conclusion?</i> →
@@ -1892,7 +1910,7 @@ for (r in RADIUS_SENSITIVITY) {
       written by every run</div></div>
   </div>
   <h4>References &amp; credits</h4>
-  <p>Demo outputs were generated by the scripts in this folder (verified 2026-07-25) with R 4.6.0,
+  <p>Demo outputs were generated by the scripts in this folder with R 4.6.0,
   <code>lavaan</code> 0.7.2 and <code>spatstat.explore</code> 3.8.1. Reference figures are reproduced
   from the article, which is open access under CC&nbsp;BY, for comparison. The data file and the
   violin-plot script were provided by the authors.</p>
@@ -2029,8 +2047,8 @@ for (r in RADIUS_SENSITIVITY) {
 })();
 </script>
 <script>
-// Lightweight R/bash highlighter (single pass over raw text).
-document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code').forEach(function(codeEl){
+// Lightweight R/bash/YAML highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code, pre.code.lang-yaml code').forEach(function(codeEl){
   var src = codeEl.textContent;
   var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
   var isR = codeEl.parentElement.classList.contains('lang-r');

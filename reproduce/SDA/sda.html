@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Reproducing the SDA Model — Step-by-Step Guide</title>
-<meta name="description" content="Step-by-step, verified guide to reproducing the second dimension of spatial association (SDA) model in R using the SecDim package.">
+<meta name="description" content="Step-by-step guide to reproducing the second dimension of spatial association (SDA) model in R using the SecDim package.">
 <link rel="canonical" href="https://yongzesong.com/reproduce/SDA/sda.html">
 <link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
@@ -439,13 +439,6 @@ pre.code code{
   max-height:320px;
   white-space:pre;
 }
-.console .lbl{
-  display:block;
-  color:#8b949e;
-  font-size:.72rem;
-  margin-bottom:6px;
-  font-family:inherit;
-}
 
 .tablewrap{
   margin:1.2em 0;
@@ -783,7 +776,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 <aside id="sidebar">
   <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
   <div class="brand">Reproducing the SDA Model</div>
-  <div class="brand-sub">Second dimension of spatial association · verified template</div>
+  <div class="brand-sub">Second dimension of spatial association</div>
   <input id="toc-filter" type="text" placeholder="Filter sections...">
   <nav id="toc">
     <a href="#overview">1&nbsp;Overview &amp; Scope</a>
@@ -817,7 +810,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 
 <header class="hero">
   <h1>Reproducing the Second Dimension of Spatial Association (SDA)</h1>
-  <div class="sub">A complete, verified walkthrough of the SDA model — which builds explanatory
+  <div class="sub">A complete walkthrough of the SDA model — which builds explanatory
   variables from the geographical environment <i>around</i> the samples rather than only at them —
   from raw data to manuscript. The method is implemented here in a single self-contained R file
   that needs no package at all.</div>
@@ -988,8 +981,8 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 
   <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
   <p>Everything tagged <i>Demo run</i> regenerates from this folder; everything tagged
-  <i>Published reference</i> is a static image from the source articles. The demo was verified end
-  to end on 2026-07-25 with R&nbsp;4.6.0, and it reproduces the published result twice over: the
+  <i>Published reference</i> is a static image from the source articles. The demo runs end
+  to end with R&nbsp;4.6.0, and it reproduces the published result twice over: the
   generated variables are identical to the published values, and selecting from all 440 candidates
   returns exactly the ten variables of the paper's Fig.&nbsp;5(a).</p>
   <figure class="tablewrap compact">
@@ -1516,7 +1509,7 @@ Rscript run-all.R          # 2. full pipeline
 Rscript run-all.R 30 40    # re-run single steps (10 20 30 40 50 90)
 Rscript run-all.R figures  # only the figure scripts</code></pre>
   </div>
-  <div class="console"><span class="lbl">Verified run · key lines (2026-07-25)</span>Project : sda-demo
+  <div class="console">Project : sda-demo
 Domain  : geochemical mapping (trace elements)
 == Step 1/5  Prepare data ======================================
    samples: 614 rows | grid: 68757 cells (112x denser than the samples)
@@ -1590,7 +1583,7 @@ Finished in 6.0 s</div>
     figure. <code>tests/test-01</code> asserts the set equality, so any future edit to the method
     that changes the selection is caught.</figcaption>
   </figure>
-  <div class="console"><span class="lbl">Verified output of Rscript run-all.R test</span>== test-01  Reproduce the published second-dimension variables ===========
+  <div class="console">== test-01  Reproduce the published second-dimension variables ===========
    generated variable count matches the published set   pass
    generated row count matches the sample count         pass
    values identical to published (max diff 2.27e-13)    pass
@@ -1616,12 +1609,12 @@ Finished in 6.0 s</div>
   </div>
 
   <h3 id="core-steps">3.3&nbsp;Core Analytical Steps</h3>
-  <p>Five stages: purpose → code → verified output → result → <i>how to read it</i>. The step
+  <p>Five stages: purpose → code → output → result → <i>how to read it</i>. The step
   numbers match the script numbers (Step&nbsp;2 is <code>R/20-generate-sdvars.R</code>).</p>
 
   <article class="step-card" id="step-1">
     <div class="step-card-h">
-      <span class="step-label">Step 1 · verified</span>
+      <span class="step-label">Step 1</span>
       <h4>Prepare data — the samples, the grid, and the response</h4>
     </div>
     <div class="step-card-b">
@@ -1637,7 +1630,7 @@ Finished in 6.0 s</div>
         <pre class="code lang-bash"><code>Rscript run-all.R 10</code></pre>
       </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">Verified console output</span>== Step 1/5  Prepare data ======================================
+      <div class="console">== Step 1/5  Prepare data ======================================
    samples: 614 rows | grid: 68757 cells (112x denser than the samples)
    grid surfaces available: Elevation
    response 'Cr_ppm' log-transformed (skew 1.58 -> -0.85)
@@ -1650,7 +1643,7 @@ Finished in 6.0 s</div>
             <li><b>The 112× ratio is the opportunity.</b> Every sample sits on one grid cell and
                 near 111 others. The first dimension uses one of them; the second dimension is a
                 rule for using the rest.</li>
-            <li><b>Log first, then everything else.</b> Skew of 3.61 means a handful of samples
+            <li><b>Log first, then everything else.</b> Skew of 1.58 means a handful of samples
                 would dominate every correlation in the selection stage, and the quantile
                 structure the method depends on would be read through those few values.</li>
           </ul>
@@ -1661,7 +1654,7 @@ Finished in 6.0 s</div>
 
   <article class="step-card" id="step-2">
     <div class="step-card-h">
-      <span class="step-label">Step 2 · verified · the method</span>
+      <span class="step-label">Step 2 · the method</span>
       <h4>Build the second dimension</h4>
     </div>
     <div class="step-card-b">
@@ -1685,7 +1678,7 @@ Finished in 6.0 s</div>
         <pre class="code lang-bash"><code>Rscript run-all.R 20</code></pre>
       </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">Verified console output</span>== Step 2/5  Generate second-dimension variables ================
+      <div class="console">== Step 2/5  Generate second-dimension variables ================
    b = {1, 3, 5, 7, 9} km  x  tau = {0, 0.1, ... 1}  ->  55 variables per surface
    Elevation  614 points x 68757 cells -> 55 variables in 2.3s
    wrote data/derived/sdvars-generated.csv (614 rows)
@@ -1726,7 +1719,7 @@ Finished in 6.0 s</div>
 
   <article class="step-card" id="step-3">
     <div class="step-card-h">
-      <span class="step-label">Step 3 · verified</span>
+      <span class="step-label">Step 3</span>
       <h4>Select variables — 440 candidates down to 10</h4>
     </div>
     <div class="step-card-b">
@@ -1746,7 +1739,7 @@ x   &lt;- lapply(xall, function(m) m[-krm, , drop = FALSE])
 sel &lt;- sda_select(y, x, ctr.vif = VIF_MAX)      # 440 -> 10</code></pre>
       </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">Verified console output</span>== Step 3/5  Select second-dimension variables =================
+      <div class="console">== Step 3/5  Select second-dimension variables =================
    candidates: 8 surfaces x 55 variables = 440
    removed 5 outlier(s) beyond 2.5 SD
    selected 10 of 440 variables in 0.17s
@@ -1779,7 +1772,7 @@ sel &lt;- sda_select(y, x, ctr.vif = VIF_MAX)      # 440 -> 10</code></pre>
 
   <article class="step-card" id="step-4">
     <div class="step-card-h">
-      <span class="step-label">Step 4 · verified · the core result</span>
+      <span class="step-label">Step 4 · the core result</span>
       <h4>Cross validation — does the second dimension actually predict better?</h4>
     </div>
     <div class="step-card-b">
@@ -1864,7 +1857,7 @@ fit_eval("FDA", "random forest", randomForest(x = ftr, y = ytr), fte)</code></pr
 
   <article class="step-card" id="step-5">
     <div class="step-card-h">
-      <span class="step-label">Step 5 · verified</span>
+      <span class="step-label">Step 5</span>
       <h4>Searching range — how far outside the samples is worth looking?</h4>
     </div>
     <div class="step-card-b">
@@ -2109,7 +2102,7 @@ fit_eval("FDA", "random forest", randomForest(x = ftr, y = ytr), fte)</code></pr
             variables equal the published values and the selection equals Fig.&nbsp;5(a).</li>
         <li>Delete <code>results/</code>, <code>tables/</code>, <code>figs/</code> and
             <code>data/derived/</code>, re-run <code>Rscript run-all.R</code> — every number and
-            figure on this page regenerates (verified 2026-07-25, ~6&nbsp;s).</li>
+            figure on this page regenerates (~6&nbsp;s).</li>
         <li>The searching ranges, quantiles, VIF threshold, split fraction and seed are stated in
             the manuscript and match <code>config/project-config.R</code>.</li>
         <li>Variable selection is reported as having been done on training data only.</li>
@@ -2130,7 +2123,7 @@ fit_eval("FDA", "random forest", randomForest(x = ftr, y = ytr), fte)</code></pr
     </div>
   </div>
   <h4>References &amp; credits</h4>
-  <p>Demo outputs were generated by the scripts in this folder (verified 2026-07-25). Reference
+  <p>Demo outputs were generated by the scripts in this folder. Reference
   figures are reproduced from the cited articles for comparison; the SDA article is open access
   under CC&nbsp;BY-NC-ND, and the remaining figures are © their authors and publishers. The method
   implementation follows the author's <code>SecDim</code> package, with the two corrections
@@ -2266,8 +2259,8 @@ fit_eval("FDA", "random forest", randomForest(x = ftr, y = ytr), fte)</code></pr
 })();
 </script>
 <script>
-// Lightweight R/bash highlighter (single pass over raw text).
-document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code').forEach(function(codeEl){
+// Lightweight R/bash/YAML highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code, pre.code.lang-yaml code').forEach(function(codeEl){
   var src = codeEl.textContent;
   var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
   var isR = codeEl.parentElement.classList.contains('lang-r');

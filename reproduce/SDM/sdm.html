@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Reproducing the Spatial Delta Model for Accessibility — Step-by-Step Guide</title>
-<meta name="description" content="Step-by-step, verified guide to reproducing the spatial delta model (SDM) in R, separating access from accessibility to urban greenspace and analysing the difference between them.">
+<meta name="description" content="Step-by-step guide to reproducing the spatial delta model (SDM) in R, separating access from accessibility to urban greenspace and analysing the difference between them.">
 <link rel="canonical" href="https://yongzesong.com/reproduce/SDM/sdm.html">
 <link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
@@ -439,13 +439,6 @@ pre.code code{
   max-height:320px;
   white-space:pre;
 }
-.console .lbl{
-  display:block;
-  color:#8b949e;
-  font-size:.72rem;
-  margin-bottom:6px;
-  font-family:inherit;
-}
 
 .tablewrap{
   margin:1.2em 0;
@@ -781,8 +774,9 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 <button id="menu-btn" aria-label="Menu">☰</button>
 
 <aside id="sidebar">
+  <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
   <div class="brand">Reproducing the SDM</div>
-  <div class="brand-sub">Spatial Delta Model for accessibility · verified template</div>
+  <div class="brand-sub">Spatial Delta Model for accessibility</div>
   <input id="toc-filter" type="text" placeholder="Filter sections...">
   <nav id="toc">
     <a href="#overview">1&nbsp;Overview &amp; Scope</a>
@@ -816,7 +810,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 
 <header class="hero">
   <h1>Reproducing the Spatial Delta Model for Accessibility</h1>
-  <div class="sub">A complete, verified walkthrough of the Spatial Delta Model — which separates
+  <div class="sub">A complete walkthrough of the Spatial Delta Model — which separates
   how much greenspace is <i>there</i> from how easily it can actually be <i>reached and used</i>,
   and studies the gap between them — from raw data to manuscript, on the published Perth case.</div>
   <div class="director-card">
@@ -969,8 +963,8 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 
   <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
   <p>Everything tagged <i>Demo run</i> regenerates from this folder; everything tagged
-  <i>Published reference</i> is a static image from the article. Verified end to end on
-  2026-07-25 with R&nbsp;4.6.0.</p>
+  <i>Published reference</i> is a static image from the article. It runs end to end
+  with R&nbsp;4.6.0.</p>
   <div class="callout c-warn">
     <div class="callout-h"><span class="callout-i">!</span>What is reproduced, and what is demonstrated</div>
     <div class="callout-b">
@@ -1019,7 +1013,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 </section>
 
 <section id="setup">
-  <h2>2&nbsp;Setup, Structure &amp; Data</h2>
+  <h2>2&nbsp;Setup, Structure &amp; Data Contract</h2>
 
   <h3 id="environment">2.1&nbsp;Environment &amp; Dependencies</h3>
   <p>Four packages carry the pipeline. A fifth is needed only for the Step&nbsp;2 demonstration,
@@ -1045,7 +1039,7 @@ remotes::install_github("uva-bi-sdad/catchment")</code></pre>
         <tr><td><code>catchment</code></td><td><code>catchment_ratio()</code> — the MG2SFCA demonstration</td><td>Step 2 only</td></tr>
       </tbody>
     </table>
-    <figcaption>Package roles. The verified environment is in <code>env/session-info.txt</code>.</figcaption>
+    <figcaption>Package roles. The environment is in <code>env/session-info.txt</code>.</figcaption>
   </figure>
 
   <h3 id="structure-config">2.2&nbsp;Project Structure &amp; Configuration</h3>
@@ -1206,7 +1200,7 @@ Rscript run-all.R          # 2. full pipeline
 Rscript run-all.R 30 40    # re-run single steps (10 20 30 40 50 90)
 Rscript run-all.R figures  # only the figure scripts</code></pre>
   </div>
-  <div class="console"><span class="lbl">Verified run · key lines (2026-07-25)</span>Project : sdm-demo
+  <div class="console">Project : sdm-demo
 Domain  : urban greenspace, Perth
 == Step 1/5  Prepare data ======================================
    analysis table: 8259 residential blocks, 47 columns
@@ -1276,7 +1270,7 @@ Finished in 15.1 s</div>
   straight lines. The demonstration is faithful to the practical tutorial — it reproduces that
   document's printed median of 0.0105 — but it is not the paper's β, and nothing downstream
   uses it.</p>
-  <div class="console"><span class="lbl">Verified output of Rscript run-all.R test</span>== test-01  The published analysis table ================================
+  <div class="console">== test-01  The published analysis table ================================
    8259 residential blocks, as published                      pass
    nine SA3 regions                                           pass
    six walking times are present                              pass
@@ -1302,11 +1296,11 @@ Finished in 15.1 s</div>
    11 passed, 0 failed</div>
 
   <h3 id="core-steps">3.3&nbsp;Core Analytical Steps</h3>
-  <p>Five stages: purpose → code → verified output → result → <i>how to read it</i>.</p>
+  <p>Five stages: purpose → code → output → result → <i>how to read it</i>.</p>
 
   <article class="step-card" id="step-1">
     <div class="step-card-h">
-      <span class="step-label">Step 1 · verified</span>
+      <span class="step-label">Step 1</span>
       <h4>Prepare data — and check the identity the model rests on</h4>
     </div>
     <div class="step-card-b">
@@ -1314,8 +1308,24 @@ Finished in 15.1 s</div>
       <p>Reads the analysis table and the block geometry, records what each column is, and confirms
       that δ really is β&nbsp;−&nbsp;α at every walking time. That check is cheap and it is the one
       thing that must be true for anything downstream to mean what it says.</p>
+      <h4>Code</h4>
+      <div class="codewrap nofold">
+        <span class="code-label">R — from R/10-prepare-data.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>d &lt;- read_analysis()
+
+# The identity the whole model rests on: delta must be beta - alpha
+# at every walking time, or nothing downstream means what it says.
+worst &lt;- 0
+for (t in WALK_TIMES) {
+  dev   &lt;- max(abs(d[[col_delta(t)]] -
+                   (d[[col_accessibility(t)]] - d[[col_access(t)]])))
+  worst &lt;- max(worst, dev)
+}
+if (worst &gt; 1e-4) log_warn("delta does not match beta - alpha; check the input table")</code></pre>
+      </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">Verified console output</span>== Step 1/5  Prepare data ======================================
+      <div class="console">== Step 1/5  Prepare data ======================================
    analysis table: 8259 residential blocks, 47 columns
    regions: 9 (Bayswater-Bassendean, Belmont-Victoria Park, Canning ...)
    scales: 3/5/10/15/20/30 minutes (250/417/833/1250/1667/2500 m) at 5 km/h
@@ -1363,7 +1373,7 @@ beta &lt;- catchment::catchment_ratio(
   providers_value = "AREASQKM21", max_cost = d0, return_type = "region")</code></pre>
       </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">Verified console output</span>== Step 2/5  How access and accessibility are computed =========
+      <div class="console">== Step 2/5  How access and accessibility are computed =========
    demonstrating at 3 minutes = 250 m (5 km/h)
    consumers: 8276 Residential blocks | providers: 1173 Parkland blocks
    access: greenspace area within 250 m; 34.6% of blocks reach any greenspace
@@ -1396,7 +1406,7 @@ beta &lt;- catchment::catchment_ratio(
 
   <article class="step-card" id="step-3">
     <div class="step-card-h">
-      <span class="step-label">Step 3 · verified · the model</span>
+      <span class="step-label">Step 3 · the model</span>
       <h4>The delta, and the green-city classification</h4>
     </div>
     <div class="step-card-b">
@@ -1405,6 +1415,23 @@ beta &lt;- catchment::catchment_ratio(
       the sign of the result, and summarises by region. The near-zero class needs a band rather
       than an exact value, since δ is continuous: one tenth of a standard deviation, which keeps
       the classification comparable across scales.</p>
+      <h4>Code</h4>
+      <div class="codewrap nofold">
+        <span class="code-label">R — from R/30-delta.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>a &lt;- d[[col_access(t)]]; b &lt;- d[[col_accessibility(t)]]; dl &lt;- d[[col_delta(t)]]
+
+# Summarise the difference at each walking time
+data.frame(walk_minutes = t,
+           mean_delta     = mean(dl),
+           share_positive = mean(dl &gt; 0),
+           share_negative = mean(dl &lt; 0),
+           cor_access_accessibility = stats::cor(a, b))
+
+# The green-city classification: a band of width sd/10 around zero is "zero"
+eps &lt;- stats::sd(dl) / 10
+k   &lt;- ifelse(dl &gt; eps, "positive", ifelse(dl &lt; -eps, "negative", "zero"))</code></pre>
+      </div>
       <h4>Example output</h4>
       <figure class="tablewrap compact">
         <table>
@@ -1469,7 +1496,7 @@ beta &lt;- catchment::catchment_ratio(
 
   <article class="step-card" id="step-4">
     <div class="step-card-h">
-      <span class="step-label">Step 4 · verified</span>
+      <span class="step-label">Step 4</span>
       <h4>What explains the difference</h4>
     </div>
     <div class="step-card-b">
@@ -1547,13 +1574,31 @@ g &lt;- GD::gd(df ~ strata, dd)      # g$Factor$qv is the Power of Determinant</
 
   <article class="step-card" id="step-5">
     <div class="step-card-h">
-      <span class="step-label">Step 5 · verified</span>
+      <span class="step-label">Step 5</span>
       <h4>Interactions — pairs that explain more together</h4>
     </div>
     <div class="step-card-b">
       <h4>What this step does</h4>
       <p>Overlays each pair of stratifications and scores the combined zones, classifying the pair
       into the five standard interaction types.</p>
+      <h4>Code</h4>
+      <div class="codewrap nofold">
+        <span class="code-label">R — from R/50-interactions.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># Each variable becomes spatial strata through a tree fitted against delta
+strata_of &lt;- function(x) {
+  if (is.character(x) || is.factor(x)) return(as.character(x))
+  tr &lt;- rpart::rpart(df ~ v, data = data.frame(df = y, v = x),
+                     minbucket = TREE_MINBUCKET)
+  as.character(as.numeric(tr$where))
+}
+
+# Power of Determinant of one stratification, and of a pair combined
+pd_strata &lt;- function(s)
+  as.numeric(GD::gd(df ~ strata, data.frame(df = y, strata = s))$Factor$qv)
+
+single &lt;- vapply(lapply(vars, strata_of), pd_strata, numeric(1))</code></pre>
+      </div>
       <h4>Example output</h4>
       <figure class="tablewrap compact">
         <table>
@@ -1759,7 +1804,7 @@ g &lt;- GD::gd(df ~ strata, dd)      # g$Factor$qv is the Power of Determinant</
             every scale and the full 8,259-row join.</li>
         <li>Delete <code>results/</code>, <code>tables/</code>, <code>figs/</code> and
             <code>data/derived/</code>, re-run <code>Rscript run-all.R</code> — every number and
-            figure on this page regenerates (verified 2026-07-25, ~15&nbsp;s).</li>
+            figure on this page regenerates (~15&nbsp;s).</li>
         <li>The walking times, the speed behind the distances, the distance basis
             (network or straight-line) and the tree's minimum node size are stated in the
             manuscript and match <code>config/project-config.R</code>.</li>
@@ -1782,7 +1827,7 @@ g &lt;- GD::gd(df ~ strata, dd)      # g$Factor$qv is the Power of Determinant</
     </div>
   </div>
   <h4>References &amp; credits</h4>
-  <p>Demo outputs were generated by the scripts in this folder (verified 2026-07-25) from the
+  <p>Demo outputs were generated by the scripts in this folder from the
   authors' own analysis table. Reference figures are reproduced from the article, which is open
   access under CC&nbsp;BY, and from the accompanying practical tutorial.</p>
   <ol>
@@ -1913,8 +1958,8 @@ g &lt;- GD::gd(df ~ strata, dd)      # g$Factor$qv is the Power of Determinant</
 })();
 </script>
 <script>
-// Lightweight R/bash highlighter (single pass over raw text).
-document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code').forEach(function(codeEl){
+// Lightweight R/bash/YAML highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code, pre.code.lang-yaml code').forEach(function(codeEl){
   var src = codeEl.textContent;
   var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
   var isR = codeEl.parentElement.classList.contains('lang-r');

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Reproducing Geocomplexity Explains Spatial Errors — Step-by-Step Guide</title>
-<meta name="description" content="Step-by-step, verified guide to reproducing the geocomplexity (GC) model in R using the geocomplexity package, and its claim that spatial model errors cluster where the geography is complex.">
+<meta name="description" content="Step-by-step guide to reproducing the geocomplexity (GC) model in R using the geocomplexity package, and its claim that spatial model errors cluster where the geography is complex.">
 <link rel="canonical" href="https://yongzesong.com/reproduce/GC/gc.html">
 <link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
@@ -439,13 +439,6 @@ pre.code code{
   max-height:320px;
   white-space:pre;
 }
-.console .lbl{
-  display:block;
-  color:#8b949e;
-  font-size:.72rem;
-  margin-bottom:6px;
-  font-family:inherit;
-}
 
 .tablewrap{
   margin:1.2em 0;
@@ -781,8 +774,9 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 <button id="menu-btn" aria-label="Menu">☰</button>
 
 <aside id="sidebar">
+  <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
   <div class="brand">Reproducing Geocomplexity</div>
-  <div class="brand-sub">Geocomplexity explains spatial errors · verified template</div>
+  <div class="brand-sub">Geocomplexity explains spatial errors</div>
   <input id="toc-filter" type="text" placeholder="Filter sections...">
   <nav id="toc">
     <a href="#overview">1&nbsp;Overview &amp; Scope</a>
@@ -815,7 +809,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 
 <header class="hero">
   <h1>Reproducing Geocomplexity Explains Spatial Errors</h1>
-  <div class="sub">A complete, verified walkthrough of geocomplexity — a local measure of how
+  <div class="sub">A complete walkthrough of geocomplexity — a local measure of how
   far a variable's neighbourhood departs from smooth spatial dependence — and of the claim it was
   built to support: that the places a model gets wrong are the places the geography is complex.
   From raw data to manuscript, on the published case.</div>
@@ -828,7 +822,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
       <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
     </div>
   </div>
-  <a class="dlbtn" href="gc-code-and-data.zip" download>⬇ Download code &amp; data (zip, 476&nbsp;KB)</a>
+  <a class="dlbtn" href="gc-code-and-data.zip" download>⬇ Download code &amp; data (zip, 474&nbsp;KB)</a>
   <div class="dlnote"><code>R/</code> pipeline scripts · <code>config/project-config.R</code> ·
   <code>data/econineq.gpkg</code> (333 Australian SA3 regions, the published case) ·
   <code>tests/</code> · <code>run-all.R</code> — unzip and run
@@ -966,8 +960,8 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 
   <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
   <p>Everything tagged <i>Demo run</i> regenerates from this folder; everything tagged
-  <i>Published reference</i> is a static image from the article. The demo was verified end to end
-  on 2026-07-25 with R&nbsp;4.6.0 and <code>geocomplexity</code>&nbsp;0.3.0.</p>
+  <i>Published reference</i> is a static image from the article. The demo runs end to end
+  with R&nbsp;4.6.0 and <code>geocomplexity</code>&nbsp;0.3.0.</p>
   <div class="callout c-warn">
     <div class="callout-h"><span class="callout-i">!</span>What is reproduced exactly, and what is not</div>
     <div class="callout-b">
@@ -1049,7 +1043,7 @@ install.packages(c("ggplot2", "scales"))</code></pre>
         <tr><td><code>ggplot2</code>, <code>scales</code></td><td>the six figures</td><td>figures only</td></tr>
       </tbody>
     </table>
-    <figcaption>Package roles. The verified environment is recorded in
+    <figcaption>Package roles. The environment is recorded in
     <code>env/session-info.txt</code>.</figcaption>
   </figure>
 
@@ -1174,7 +1168,7 @@ Rscript run-all.R          # 2. full pipeline
 Rscript run-all.R 30 40    # re-run single steps (10 20 30 40 50 90)
 Rscript run-all.R figures  # only the figure scripts</code></pre>
   </div>
-  <div class="console"><span class="lbl">Verified run · key lines (2026-07-25)</span>Project : gc-demo
+  <div class="console">Project : gc-demo
 Domain  : economic inequality (Gini coefficient)
 == Step 1/5  Prepare data ======================================
    333 spatial units, geometry: MULTIPOLYGON
@@ -1211,7 +1205,7 @@ Finished in 89.0 s</div>
   <p><code>run-all.R test</code> locks the numbers published in the <code>geocomplexity</code>
   package vignettes, computed by the method's authors on this same layer. All twelve checks agree
   to four decimals, including the adaptive bandwidth the GWR search selects.</p>
-  <div class="console"><span class="lbl">Verified output of Rscript run-all.R test</span>== test-01  Reproduce the published geocomplexity values =================
+  <div class="console">== test-01  Reproduce the published geocomplexity values =================
    layer has the published 333 units                        pass
    layer carries Gini and 8 explanatory variables           pass
    MLR   R2 = 0.5846 (got 0.5846)                           pass
@@ -1263,12 +1257,12 @@ Finished in 89.0 s</div>
   </div>
 
   <h3 id="core-steps">3.3&nbsp;Core Analytical Steps</h3>
-  <p>Five stages: purpose → code → verified output → result → <i>how to read it</i>. Step numbers
+  <p>Five stages: purpose → code → output → result → <i>how to read it</i>. Step numbers
   match the script numbers (Step&nbsp;4 is <code>R/40-explain-errors.R</code>).</p>
 
   <article class="step-card" id="step-1">
     <div class="step-card-h">
-      <span class="step-label">Step 1 · verified</span>
+      <span class="step-label">Step 1</span>
       <h4>Prepare data — the layer and the neighbourhood</h4>
     </div>
     <div class="step-card-b">
@@ -1284,7 +1278,7 @@ Finished in 89.0 s</div>
 wt &lt;- sdsfun::spdep_contiguity_swm(x, queen = TRUE, style = "B")</code></pre>
       </div>
       <h4>Example output</h4>
-      <div class="console"><span class="lbl">Verified console output</span>== Step 1/5  Prepare data ======================================
+      <div class="console">== Step 1/5  Prepare data ======================================
    333 spatial units, geometry: MULTIPOLYGON
    CRS: GDA94
    response: Gini | 8 explanatory variables: Induscale, IT, Income, Sexrat, Houseown, Indemp, Indcom, Hiedu
@@ -1314,7 +1308,7 @@ wt &lt;- sdsfun::spdep_contiguity_swm(x, queen = TRUE, style = "B")</code></pre>
 
   <article class="step-card" id="step-2">
     <div class="step-card-h">
-      <span class="step-label">Step 2 · verified · the measure</span>
+      <span class="step-label">Step 2 · the measure</span>
       <h4>Compute geocomplexity — and check the measure against its alternatives</h4>
     </div>
     <div class="step-card-b">
@@ -1354,6 +1348,24 @@ wt &lt;- sdsfun::spdep_contiguity_swm(x, queen = TRUE, style = "B")</code></pre>
           variables across the SA3 regions, coloured by the Gini coefficient.</figcaption>
         </figure>
       </div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Complexity is a property of a variable, not of a place.</b> Income is complex
+                through the arid interior and simple across the settled south-east; industrial
+                employment is the reverse. There is no single map of &ldquo;complex regions&rdquo;
+                to draw &mdash; each variable carries its own.</li>
+            <li><b>Read the maps in quantile classes, not on a linear ramp.</b> Geocomplexity is
+                strongly right-skewed, so an equal-interval ramp paints almost every region the
+                same shade and hides the structure Step&nbsp;4 goes on to use.</li>
+            <li><b>Check the measure before trusting the pattern.</b> The comparison in fig04
+                exists so the choice of <code>moran</code>, <code>spvar</code> or
+                <code>shannon</code> is a stated decision; the warning below shows how little the
+                three agree.</li>
+          </ul>
+        </div>
+      </div>
       <div class="callout c-warn">
         <div class="callout-h"><span class="callout-i">!</span>The three measures are not interchangeable</div>
         <div class="callout-b">
@@ -1373,7 +1385,7 @@ wt &lt;- sdsfun::spdep_contiguity_swm(x, queen = TRUE, style = "B")</code></pre>
 
   <article class="step-card" id="step-3">
     <div class="step-card-h">
-      <span class="step-label">Step 3 · verified</span>
+      <span class="step-label">Step 3</span>
       <h4>Baseline models — and the precondition that makes the claim worth testing</h4>
     </div>
     <div class="step-card-b">
@@ -1381,6 +1393,23 @@ wt &lt;- sdsfun::spdep_contiguity_swm(x, queen = TRUE, style = "B")</code></pre>
       <p>Fits three models of increasing spatial awareness — a global linear model, a non-linear
       but aspatial support-vector regression, and a locally varying GWR — and keeps their errors.
       Then it tests whether those errors are spatially structured at all.</p>
+      <h4>Code</h4>
+      <div class="codewrap nofold">
+        <span class="code-label">R — from R/30-baseline-models.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>f &lt;- stats::as.formula(paste(RESPONSE, "~", paste(preds, collapse = " + ")))
+
+# Three models of increasing spatial awareness; each leaves errors behind
+m_mlr &lt;- stats::lm(f, data = d)                          # global, linear
+m_svr &lt;- e1071::svm(f, data = d, kernel = "radial",      # non-linear, aspatial
+                    cost = SVR_COST, gamma = SVR_GAMMA)
+bw    &lt;- GWmodel::bw.gwr(f, data = sp, approach = GWR_APPROACH,
+                         kernel = GWR_KERNEL, adaptive = GWR_ADAPTIVE)
+m_gwr &lt;- GWmodel::gwr.basic(f, data = sp, bw = bw,       # locally varying
+                            kernel = GWR_KERNEL, adaptive = GWR_ADAPTIVE)
+
+errs[["MLR"]] &lt;- y - stats::fitted(m_mlr)                # the subject of Step 4</code></pre>
+      </div>
       <h4>Example output</h4>
       <figure class="tablewrap compact">
         <table>
@@ -1422,7 +1451,7 @@ wt &lt;- sdsfun::spdep_contiguity_swm(x, queen = TRUE, style = "B")</code></pre>
 
   <article class="step-card" id="step-4">
     <div class="step-card-h">
-      <span class="step-label">Step 4 · verified · the claim</span>
+      <span class="step-label">Step 4 · the claim</span>
       <h4>Geocomplexity explains the errors</h4>
     </div>
     <div class="step-card-b">
@@ -1511,7 +1540,7 @@ g  &lt;- GWmodel::gwr.basic(f, data = sp, bw = bw, adaptive = TRUE)</code></pre>
 
   <article class="step-card" id="step-5">
     <div class="step-card-h">
-      <span class="step-label">Step 5 · verified</span>
+      <span class="step-label">Step 5</span>
       <h4>Improve the models — the practical consequence</h4>
     </div>
     <div class="step-card-b">
@@ -1730,7 +1759,7 @@ g2 &lt;- geocomplexity::gwr_geoc(Gini ~ ., data = x, bw = "AIC", adaptive = TRUE
             published values to four decimals.</li>
         <li>Delete <code>results/</code>, <code>tables/</code>, <code>figs/</code> and
             <code>data/derived/</code>, re-run <code>Rscript run-all.R</code> — every number and
-            figure on this page regenerates (verified 2026-07-25, ~90&nbsp;s).</li>
+            figure on this page regenerates (~90&nbsp;s).</li>
         <li>The weight matrix, the calculation method, and the GWR bandwidth criterion are stated
             in the manuscript and match <code>config/project-config.R</code>.</li>
         <li>Error explanation is reported on absolute errors, and the local coefficients are
@@ -1752,7 +1781,7 @@ g2 &lt;- geocomplexity::gwr_geoc(Gini ~ ., data = x, bw = "AIC", adaptive = TRUE
     </div>
   </div>
   <h4>References &amp; credits</h4>
-  <p>Demo outputs were generated by the scripts in this folder (verified 2026-07-25) using the CRAN
+  <p>Demo outputs were generated by the scripts in this folder using the CRAN
   <code>geocomplexity</code> package. Reference figures are reproduced from the article, which is
   open access, for comparison.</p>
   <ol>
@@ -1884,8 +1913,8 @@ g2 &lt;- geocomplexity::gwr_geoc(Gini ~ ., data = x, bw = "AIC", adaptive = TRUE
 })();
 </script>
 <script>
-// Lightweight R/bash highlighter (single pass over raw text).
-document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code').forEach(function(codeEl){
+// Lightweight R/bash/YAML highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code, pre.code.lang-yaml code').forEach(function(codeEl){
   var src = codeEl.textContent;
   var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
   var isR = codeEl.parentElement.classList.contains('lang-r');

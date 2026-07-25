@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Spatial Trade-Off Relation</title>
-<meta name="description" content="Step-by-step, verified guide to reproducing the spatial trade-off relation (STOR) model in R — entropy-weighted quantity and quality indices, LOESS utility and marginal utility, DMU stages, LISA trade-off clusters, and GAM/GWR contribution analysis.">
+<title>Reproducing the STOR Model — Step-by-Step Guide</title>
+<meta name="description" content="Step-by-step guide to reproducing the spatial trade-off relation (STOR) model in R — entropy-weighted quantity and quality indices, LOESS utility and marginal utility, DMU stages, LISA trade-off clusters, and GAM/GWR contribution analysis.">
 <link rel="canonical" href="https://yongzesong.com/reproduce/STOR/stor.html">
 <link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
@@ -439,13 +439,6 @@ pre.code code{
   max-height:320px;
   white-space:pre;
 }
-.console .lbl{
-  display:block;
-  color:#8b949e;
-  font-size:.72rem;
-  margin-bottom:6px;
-  font-family:inherit;
-}
 
 .tablewrap{
   margin:1.2em 0;
@@ -783,7 +776,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 <aside id="sidebar">
   <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
   <div class="brand">Reproducing the STOR Model</div>
-  <div class="brand-sub">Spatial trade-off relation · verified template</div>
+  <div class="brand-sub">Spatial trade-off relation</div>
   <input id="toc-filter" type="text" placeholder="Filter sections...">
   <nav id="toc">
     <a href="#overview">1&nbsp;Overview &amp; Scope</a>
@@ -817,7 +810,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 
 <header class="hero">
   <h1>Reproducing the Spatial Trade-Off Relation (STOR) Model</h1>
-  <div class="sub">A complete, verified walkthrough of the STOR model — which measures the
+  <div class="sub">A complete walkthrough of the STOR model — which measures the
   <i>quantity</i> and <i>quality</i> of infrastructure as two entropy-weighted indices, reads their
   relation as a utility function, and cuts it into stages of diminishing marginal utility — from
   block-level indicators to manuscript. The method is implemented here in a single self-contained
@@ -832,7 +825,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
       <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
     </div>
   </div>
-  <a class="dlbtn" href="stor-code-and-data.zip" download>⬇ Download code &amp; data (zip, 0.3&nbsp;MB)</a>
+  <a class="dlbtn" href="stor-code-and-data.zip" download>⬇ Download code &amp; data (zip, 280&nbsp;KB)</a>
   <div class="dlnote"><code>R/</code> pipeline scripts including the complete method in
   <code>R/02-stor-core.R</code> · <code>config/project-config.R</code> · <code>data/</code>
   (1,600 simulated blocks with 14 indicators and the embedded ground truth) · <code>tests/</code> ·
@@ -989,7 +982,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
   the map. The pipeline is then judged by whether it <i>recovers</i> what the simulation hid —
   which is verified by <code>run-all.R test</code>. Everything tagged <i>Demo run</i> regenerates
   from this folder; everything tagged <i>Published reference</i> is a static image from the source
-  article. The demo was verified end to end on 2026-07-25 with R&nbsp;4.6.0.</p>
+  article. The demo runs end to end with R&nbsp;4.6.0.</p>
   <figure class="tablewrap compact">
     <table>
       <thead>
@@ -1584,7 +1577,7 @@ Rscript run-all.R test     # only the verification tests                    (~5 
 Rscript run-all.R 30       # re-run one step, e.g. the DMU analysis
 Rscript run-all.R figures  # only the figure scripts</code></pre>
   </div>
-  <div class="console"><span class="lbl">Rscript run-all.R — verified 2026-07-25, R 4.6.0 (17.8 s)</span>==================================================================
+  <div class="console">==================================================================
 Project : stor-demo
 Domain  : sustainable road infrastructure (simulated blocks)
 ==================================================================
@@ -1667,7 +1660,7 @@ Outputs: results/  tables/  figs/  data/</div>
     t<sub>2</sub> = 0.585, and a mean Γ<sub>B</sub> contribution of 16.2% against 5.9% for
     Γ<sub>A</sub> (paper Figs. 6b, 11a).</figcaption>
   </figure>
-  <div class="console"><span class="lbl">Rscript run-all.R test — 25/25 checks</span>==================================================================
+  <div class="console">==================================================================
 Project : stor-demo
 Domain  : sustainable road infrastructure (simulated blocks)
 ==================================================================
@@ -1720,10 +1713,11 @@ Outputs: results/  tables/  figs/  data/</div>
 
   <article id="step-1" class="step-card">
     <div class="step-card-h">
-      <span class="step-label">Step 1 · R/10-simulate-data.R</span>
+      <span class="step-label">Step 1</span>
       <h4>Simulate a study area with a known trade-off inside</h4>
     </div>
     <div class="step-card-b">
+      <h4>What this step does</h4>
       <p>A 40&nbsp;×&nbsp;40 grid of 10&nbsp;km blocks. An urbanisation field — one main city, one
       secondary town, smooth spatial noise — is pushed through a rank-based Beta transform, so the
       quantity latent keeps the spatial pattern but gains the right-skewed, full-range distribution
@@ -1731,6 +1725,7 @@ Outputs: results/  tables/  figs/  data/</div>
       to that latent, plus a smooth quality field of its own. Fourteen indicators, population and
       income are then generated per block. On real data this whole step is replaced by loading
       <code>data/blocks.csv</code>.</p>
+      <h4>Code</h4>
       <div class="codewrap">
         <span class="code-label">R/10-simulate-data.R — the embedded utility curve</span>
         <button class="copybtn" type="button">Copy</button>
@@ -1751,31 +1746,44 @@ beta_a &lt;- 0.5 + 1.0 * g$x_km / max(g$x_km)   # quantity payoff grows eastward
 beta_b &lt;- 35  + 20  * g$y_km / max(g$y_km)   # quality payoff grows northward
 blocks$income &lt;- 38 + beta_a * q_true + beta_b * qual_true + rnorm(n, 0, 1.5)</code></pre>
       </div>
-      <div class="console"><span class="lbl">console — step 10</span>== 10  Simulate block data (40 x 40 blocks) ==============
+      <h4>Example output</h4>
+      <div class="console">== 10  Simulate block data (40 x 40 blocks) ==============
    wrote data/blocks.csv (1600 rows)
    wrote data/derived/simulation-truth.csv (1600 rows)
    embedded DMU boundaries: t1 = 0.070, t2 = 0.585</div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The truth is planted, so the pipeline can be graded.</b> The boundaries written to <code>simulation-truth.csv</code> — t<sub>1</sub>&nbsp;=&nbsp;0.070, t<sub>2</sub>&nbsp;=&nbsp;0.585 — are what Step&nbsp;3 has to recover without being told. On real data nothing is planted and this step is one <code>read.csv()</code>.</li>
+            <li><b>Skew is a modelling choice, not noise.</b> The Beta transform keeps the city gradient but pushes most blocks to low quantity, matching Fig.&nbsp;6a. A symmetric quantity latent would put too few blocks below t<sub>1</sub> for the IR stage to be estimable.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </article>
 
   <article id="step-2" class="step-card">
     <div class="step-card-h">
-      <span class="step-label">Step 2 · R/20-srii.R</span>
+      <span class="step-label">Step 2</span>
       <h4>Entropy-weighted quantity and quality indices (Eq. 3–6)</h4>
     </div>
     <div class="step-card-b">
+      <h4>What this step does</h4>
       <p>One call does the index work: <code>stor_srii(blocks, INDICATORS)</code> standardizes
       every indicator with its sign, computes entropy weights within each of the six categories,
       and assembles Γ<sub>A</sub>, Γ<sub>B</sub> and Γ per block. The weights land in
       <code>results/entropy-weights.csv</code> — the analogue of the paper's Table&nbsp;2 — and
       the block-level indices in <code>results/srii-blocks.csv</code>.</p>
+      <h4>Code</h4>
       <div class="codewrap nofold">
         <span class="code-label">R/20-srii.R — the entire analytical content of the step</span>
         <button class="copybtn" type="button">Copy</button>
         <pre class="code lang-r"><code>blocks &lt;- read_result(F_BLOCKS)
 srii &lt;- stor_srii(blocks, INDICATORS)   # weights + categories + Gamma_A/B + SRII</code></pre>
       </div>
-      <div class="console"><span class="lbl">console — step 20</span>== 20  SRII: entropy-weighted indices ====================
+      <h4>Example output</h4>
+      <div class="console">== 20  SRII: entropy-weighted indices ====================
    Gamma_A mean 0.331 (sd 0.219), Gamma_B mean 0.500 (sd 0.136)
    category density          weights: 0.34 0.33 0.33
    category performance      weights: 0.27 0.26 0.23 0.24
@@ -1797,19 +1805,30 @@ srii &lt;- stor_srii(blocks, INDICATORS)   # weights + categories + Gamma_A/B + 
           is metropolitan, quality is broad with regional texture.</figcaption>
         </figure>
       </div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Entropy weights are computed within categories, not across them.</b> Each category's weights sum to one, so a category with four indicators does not outvote one with two. This is why the printed weights sit near 1/n<sub>category</sub> rather than near 1/14.</li>
+            <li><b>Γ<sub>A</sub> and Γ<sub>B</sub> are not interchangeable.</b> Quantity has the larger spread (sd&nbsp;0.219 against 0.136) because supply is concentrated while quality is diffuse — the asymmetry the whole trade-off analysis rests on.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </article>
 
   <article id="step-3" class="step-card">
     <div class="step-card-h">
-      <span class="step-label">Step 3 · R/30-dmu.R</span>
+      <span class="step-label">Step 3</span>
       <h4>The utility curve, marginal utility and DMU stages (Eq. 7–9)</h4>
     </div>
     <div class="step-card-b">
+      <h4>What this step does</h4>
       <p>The model's namesake result. <code>stor_utility()</code> fits u(Γ<sub>A</sub>) by LOESS on
       the 1,600 raw blocks; <code>stor_dmu()</code> reads t<sub>1</sub> from max(η) and
       t<sub>2</sub> from max(u); each block is then classified IR / MR / NR by its
       Γ<sub>A</sub>.</p>
+      <h4>Code</h4>
       <div class="codewrap nofold">
         <span class="code-label">R/30-dmu.R — the entire analytical content of the step</span>
         <button class="copybtn" type="button">Copy</button>
@@ -1818,7 +1837,8 @@ srii &lt;- stor_srii(blocks, INDICATORS)   # weights + categories + Gamma_A/B + 
 dmu  &lt;- stor_dmu(util$curve)            # t1 = max(eta), t2 = max(u)
 stages &lt;- dmu$stage_of(srii$gamma_a)    # IR / MR / NR per block</code></pre>
       </div>
-      <div class="console"><span class="lbl">console — step 30</span>== 30  DMU: utility curve and stage boundaries ===========
+      <h4>Example output</h4>
+      <div class="console">== 30  DMU: utility curve and stage boundaries ===========
    t1 = 0.092 (max eta), t2 = 0.576 (eta = 0); embedded truth 0.070 / 0.585
    blocks per stage: IR 205, MR 1162, NR 233</div>
       <div class="figpair">
@@ -1859,21 +1879,32 @@ stages &lt;- dmu$stage_of(srii$gamma_a)    # IR / MR / NR per block</code></pre>
           metropolitan core.</figcaption>
         </figure>
       </div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The recovered boundaries are the accuracy check.</b> t<sub>1</sub>&nbsp;=&nbsp;0.092 against an embedded 0.070, t<sub>2</sub>&nbsp;=&nbsp;0.576 against 0.585: the LOESS fit finds the downturn precisely and the early inflection approximately, which is the expected asymmetry — max(η) sits on a steep, sparsely-sampled part of the curve.</li>
+            <li><b>MR holds most of the blocks by construction.</b> 1,162 of 1,600 fall between the two boundaries. A stage split far from this shape usually means the LOESS span is wrong for your sample size, not that the area has no middle stage.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </article>
 
   <article id="step-4" class="step-card">
     <div class="step-card-h">
-      <span class="step-label">Step 4 · R/40-lisa.R</span>
+      <span class="step-label">Step 4</span>
       <h4>Hotspots, cold spots and trade-off strategies (§3.3 of the paper)</h4>
     </div>
     <div class="step-card-b">
+      <h4>What this step does</h4>
       <p>Local Moran's&nbsp;I runs on each dimension separately (999 conditional permutations,
       p&nbsp;&lt;&nbsp;0.05), and the overlay makes the trade-off spatial: blocks LL in both
       dimensions are joint cold spots; blocks LL in only one dimension name their own remedy.
       That per-block strategy map is the demo's stand-in for the paper's cold-spot town
       identification (its Fig.&nbsp;3), which additionally aggregates blocks into towns using a
       POI-density layer not distributed with the article.</p>
+      <h4>Code</h4>
       <div class="codewrap nofold">
         <span class="code-label">R/40-lisa.R — the entire analytical content of the step</span>
         <button class="copybtn" type="button">Copy</button>
@@ -1882,7 +1913,8 @@ class_a &lt;- stor_lisa_class(stor_local_moran(srii$gamma_a, nb, LISA_NSIM), LIS
 class_b &lt;- stor_lisa_class(stor_local_moran(srii$gamma_b, nb, LISA_NSIM), LISA_ALPHA)
 groups  &lt;- stor_tradeoff_groups(class_a, class_b)      # hotspot / cold spot / strategy</code></pre>
       </div>
-      <div class="console"><span class="lbl">console — step 40</span>== 40  LISA: clusters and trade-off groups ===============
+      <h4>Example output</h4>
+      <div class="console">== 40  LISA: clusters and trade-off groups ===============
    clusters: Hotspot 117, Others 1241, Cold spot 242
    strategies (cold-side blocks): Increase quantity 181, Increase both 242,
                                   Increase quality 49, No cold spot 1128</div>
@@ -1911,20 +1943,31 @@ groups  &lt;- stor_tradeoff_groups(class_a, class_b)      # hotspot / cold spot 
         population and area thresholds → 203 cold-spot towns/villages, split by DMU stage.
         <span class="credit">Song et al. (2021), CC BY-NC-ND.</span></figcaption>
       </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The strategy comes from the pair of classes, not from either one.</b> A block that is LL in quantity only needs supply; LL in quality only needs upgrading; LL in both is the joint cold spot. Reading one dimension alone hides which of the three a place is.</li>
+            <li><b>Hotspots ring the city rather than covering it.</b> The NR downturn pulls quality back down in the most urban blocks, so they miss the joint hotspot — the trade-off made spatial, and the reason the overlay is worth drawing at all.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </article>
 
   <article id="step-5" class="step-card">
     <div class="step-card-h">
-      <span class="step-label">Step 5 · R/50-income-models.R</span>
+      <span class="step-label">Step 5</span>
       <h4>What each dimension contributes to income (Eq. 10–11)</h4>
     </div>
     <div class="step-card-b">
+      <h4>What this step does</h4>
       <p>Two models, one question: how much of block income does each dimension explain? The GAM
       (<code>mgcv</code>) captures the nonlinear effects; the base-R GWR captures the regional
       ones, with its adaptive bandwidth chosen by AICc (k&nbsp;=&nbsp;80 of 1,600 wins). The
       contribution of a dimension is the deviance explained that disappears when it is dropped,
       averaged over the two models — the paper's Fig.&nbsp;11a quantity.</p>
+      <h4>Code</h4>
       <div class="codewrap nofold">
         <span class="code-label">R/50-income-models.R — the entire analytical content of the step</span>
         <button class="copybtn" type="button">Copy</button>
@@ -1932,7 +1975,8 @@ groups  &lt;- stor_tradeoff_groups(class_a, class_b)      # hotspot / cold spot 
 gwr_full &lt;- stor_gwr_select(z, X, coords, GWR_NEIGHBORS)   # AICc picks k
 contribution_B &lt;- dev_expl(gam_full) - dev_expl(gam_a)      # drop-one deviance</code></pre>
       </div>
-      <div class="console"><span class="lbl">console — step 50</span>== 50  GAM + GWR: income contribution ====================
+      <h4>Example output</h4>
+      <div class="console">== 50  GAM + GWR: income contribution ====================
    GAM deviance explained 47.0% (Gamma_A 0.6%, Gamma_B 28.1%)
    GWR (adaptive k = 80) R2 0.939 (Gamma_A 0.2%, Gamma_B 4.3%)
    GWR bandwidth candidates: k=40 AICc=6200.7; k=60 AICc=6169.9;
@@ -1962,6 +2006,15 @@ contribution_B &lt;- dev_expl(gam_full) - dev_expl(gam_a)      # drop-one devian
         rises IR → MR → NR, the pattern the contribution analysis then decomposes.
         <span class="credit">Song et al. (2021), CC BY-NC-ND.</span></figcaption>
       </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Contribution is a drop-one quantity, so the two dimensions need not sum to the total.</b> Γ<sub>B</sub> explains 28.1% of GAM deviance against Γ<sub>A</sub>'s 0.6%; the remainder is shared between them and cannot be assigned to either.</li>
+            <li><b>GWR and GAM disagree in size, not in direction.</b> GWR attributes far less to either dimension (4.3% and 0.2%) because its local intercepts already absorb the regional drift. Averaging the two is deliberate — reporting only the GAM would overstate the effect.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </article>
 
@@ -2122,6 +2175,27 @@ contribution_B &lt;- dev_expl(gam_full) - dev_expl(gam_a)      # drop-one devian
     <figcaption>The result files are the manuscript's skeleton; the writing fills in why each
     number matters for the study area.</figcaption>
   </figure>
+  <h4>Manuscript outline</h4>
+  <div class="codewrap nofold">
+    <span class="code-label">manuscript outline</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>1  Introduction       &#8212; infrastructure is assessed by quantity alone; quality and
+                         its trade-off with quantity; the contribution (3 aims)
+2  STOR model         &#8212; 2.1 The indicator system and its two dimensions
+                         2.2 Entropy-weighted indices (Eq. 3&#8211;6)
+                         2.3 Utility, marginal utility and DMU stages (Eq. 7&#8211;9)
+                         2.4 Spatial clusters and trade-off strategies
+                         2.5 Outcome contribution (Eq. 10&#8211;11)
+3  Case &amp; data        &#8212; study area, block definition, the 14 indicators
+4  Results            &#8212; 4.1 the two indices across space
+                         4.2 the trade-off relation and its stage boundaries
+                         4.3 stage profiles and where each stage sits
+                         4.4 cold spots and the strategy each one implies
+                         4.5 what each dimension contributes to the outcome
+5  Discussion         &#8212; what the stage boundaries mean for investment; the limits
+                         of an entropy-weighted index
+6  Conclusions        &#8212; the trade-off, its boundaries, and the policy reading</code></pre>
+  </div>
 
   <h3 id="repro-package">4.3&nbsp;Final Reproducibility Package</h3>
   <div class="step-grid">
@@ -2138,7 +2212,7 @@ contribution_B &lt;- dev_expl(gam_full) - dev_expl(gam_a)      # drop-one devian
             local Moran and GWR implementations match their references.</li>
         <li>Delete <code>results/</code>, <code>tables/</code>, <code>figs/</code> and
             <code>data/</code> outputs, re-run <code>Rscript run-all.R</code> — every number and
-            figure on this page regenerates (verified 2026-07-25, ~18&nbsp;s).</li>
+            figure on this page regenerates (~18&nbsp;s).</li>
         <li>The LOESS span, bin count, LISA permutations and alpha, GWR bandwidth candidates and
             seed are stated in the manuscript and match <code>config/project-config.R</code>.</li>
         <li>The indicator signs of Table&nbsp;1 are stated with their justification.</li>
@@ -2162,8 +2236,8 @@ contribution_B &lt;- dev_expl(gam_full) - dev_expl(gam_a)      # drop-one devian
     </div>
   </div>
   <h4>References &amp; credits</h4>
-  <p>Demo outputs were generated by the scripts in this folder on simulated data (verified
-  2026-07-25). Reference figures are reproduced from the cited article for comparison; the STOR
+  <p>Demo outputs were generated by the scripts in this folder on simulated data.
+  Reference figures are reproduced from the cited article for comparison; the STOR
   article is open access under CC&nbsp;BY-NC-ND. The implementation follows the article's §3; the
   GWR and cold-spot-town departures are described in §2.1 above.</p>
   <ol>
@@ -2291,8 +2365,8 @@ contribution_B &lt;- dev_expl(gam_full) - dev_expl(gam_a)      # drop-one devian
 })();
 </script>
 <script>
-// Lightweight R/bash highlighter (single pass over raw text).
-document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code').forEach(function(codeEl){
+// Lightweight R/bash/YAML highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code, pre.code.lang-yaml code').forEach(function(codeEl){
   var src = codeEl.textContent;
   var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
   var isR = codeEl.parentElement.classList.contains('lang-r');
