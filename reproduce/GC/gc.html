@@ -1,0 +1,1957 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reproducing Geocomplexity Explains Spatial Errors — Step-by-Step Guide</title>
+<meta name="description" content="Step-by-step, verified guide to reproducing the geocomplexity (GC) model in R using the geocomplexity package, and its claim that spatial model errors cluster where the geography is complex.">
+<link rel="canonical" href="https://yongzesong.com/reproduce/GC/gc.html">
+<link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../../assets/images/apple-touch-icon.png">
+<style>
+:root{
+  --accent:#B2182B;
+  --accent-2:#2166AC;
+  --accent-soft:#f7e9ea;
+  --bg:#ffffff;
+  --fg:#1a1d21;
+  --muted:#5a626b;
+  --line:#e6e8eb;
+  --side-bg:#fbfcfd;
+  --code-bg:#f6f8fa;
+  --code-fg:#24292e;
+  --nav-fg:#495057;
+  --nav-l2:#6c757d;
+  --nav-active:#2761e3;
+  --nav-active-bg:#eef4ff;
+  --nav-hover:#eef0f2;
+  --sidew:290px;
+  --rightw:var(--sidew);
+  --maxw:880px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+[data-theme=dark]{
+  --bg:#0f1216;
+  --fg:#e6e8eb;
+  --muted:#9aa4af;
+  --line:#242a31;
+  --side-bg:#0c1014;
+  --code-bg:#161b22;
+  --code-fg:#d1d7de;
+  --accent-soft:#2a1416;
+  --nav-fg:#b4bcc4;
+  --nav-l2:#8b939c;
+  --nav-active:#6ea8fe;
+  --nav-active-bg:#15202f;
+  --nav-hover:#171c22;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:var(--mono);
+  font-size:.88em;
+  background:var(--code-bg);
+  color:var(--code-fg);
+  padding:.1em .35em;
+  border-radius:4px;
+}
+
+/* Sidebar: LISP-GC navigation pattern, SOH dark-mode behavior. */
+#menu-btn{
+  display:none;
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:60;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 11px;
+  font-size:1.05rem;
+  cursor:pointer;
+  color:var(--fg);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+#sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:var(--sidew);
+  overflow-y:auto;
+  background:var(--side-bg);
+  border-right:1px solid var(--line);
+  padding:22px 18px 40px;
+  z-index:50;
+}
+#sidebar .back-to-site{
+  display:inline-block;
+  font-size:.78rem;
+  color:var(--muted);
+  text-decoration:none;
+  margin-bottom:10px;
+  padding:3px 8px;
+  border:1px solid var(--line);
+  border-radius:5px;
+}
+#sidebar .back-to-site:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+}
+#sidebar .brand{
+  font-size:1.06rem;
+  font-weight:700;
+  color:var(--fg);
+  line-height:1.35;
+  margin-bottom:4px;
+}
+#sidebar .brand-sub{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+#toc-filter{
+  width:100%;
+  padding:6px 10px;
+  font-size:.85rem;
+  border:1px solid var(--line);
+  border-radius:6px;
+  margin-bottom:14px;
+  outline:none;
+  background:var(--bg);
+  color:var(--fg);
+}
+#toc-filter:focus{border-color:var(--nav-active)}
+#toc a{
+  display:block;
+  padding:4px 8px;
+  font-size:.88rem;
+  color:var(--nav-fg);
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  line-height:1.35;
+  margin:1px 0;
+}
+#toc a.l2{
+  padding-left:22px;
+  font-size:.82rem;
+  color:var(--nav-l2);
+}
+#toc a:hover{
+  background:var(--nav-hover);
+  text-decoration:none;
+}
+#toc a.active{
+  color:var(--nav-active);
+  border-left-color:var(--nav-active);
+  background:var(--nav-active-bg);
+  font-weight:600;
+}
+.side-foot{
+  padding:16px 8px 0;
+  margin-top:14px;
+  border-top:1px solid var(--line);
+}
+.themebtn{
+  font:inherit;
+  font-size:.82rem;
+  cursor:pointer;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:5px 10px;
+  color:var(--muted);
+}
+.themebtn:hover{color:var(--fg)}
+
+/* Hero and content. */
+.hero{
+  border-bottom:1px solid var(--line);
+  padding:34px 40px 26px;
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  background:var(--bg);
+}
+.hero h1{
+  margin:0 0 6px;
+  font-size:1.9rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  color:var(--fg);
+}
+.hero .sub{
+  color:var(--muted);
+  font-size:1.05rem;
+}
+.cite-lead{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--fg);
+  margin-top:16px;
+}
+.cite{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:12px;
+}
+.cite div+div{margin-top:4px}
+.dlbtn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding:9px 18px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  font-size:.92rem;
+  border-radius:8px;
+}
+.dlbtn:hover{filter:brightness(1.12);text-decoration:none}
+.dlnote{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* Lab director card adapted from lab.html, with template typography and colours. */
+.director-card{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  margin:18px 0 4px;
+  padding:16px;
+  background:var(--side-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+.director-card img{
+  width:110px;
+  min-width:110px;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:50%;
+  background:#fff;
+}
+.director-info h3{
+  font-size:1.16rem;
+  line-height:1.25;
+  margin:0 0 4px;
+}
+.director-info p{
+  font-size:.82rem;
+  line-height:1.5;
+  margin:2px 0;
+  color:var(--muted);
+}
+.director-info a{
+  font-size:.82rem;
+  font-weight:600;
+}
+
+/* Fixed right rail for related reproducible-model tutorials. */
+.related-rail{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  width:var(--rightw);
+  overflow-y:auto;
+  z-index:40;
+  padding:22px 18px 40px;
+  border-left:1px solid var(--line);
+  background:var(--side-bg);
+}
+.related-rail .rail-title{
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1.35;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.related-rail a{
+  display:block;
+  padding:4px 8px;
+  margin:1px 0;
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  color:var(--nav-fg);
+  font-size:.88rem;
+  line-height:1.35;
+}
+.related-rail a:hover{
+  text-decoration:none;
+  background:var(--nav-hover);
+}
+.related-rail a.current{
+  color:var(--nav-active);
+  background:var(--nav-active-bg);
+  border-left-color:var(--nav-active);
+  font-weight:600;
+}
+.related-rail .rail-note{
+  color:var(--muted);
+  font-size:.76rem;
+  line-height:1.45;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+main{
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  padding:26px 40px 90px;
+}
+section{padding-top:4px}
+h2{
+  font-size:1.5rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  margin:48px 0 14px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+  color:var(--fg);
+}
+section:first-of-type h2{margin-top:20px}
+h3{
+  font-size:1.16rem;
+  font-weight:600;
+  margin:30px 0 10px;
+  letter-spacing:-.005em;
+  color:var(--fg);
+}
+h4{
+  font-size:1rem;
+  font-weight:600;
+  margin:20px 0 8px;
+  color:var(--fg);
+}
+p{margin:.7em 0}
+ul,ol{
+  margin:.6em 0;
+  padding-left:1.3em;
+}
+li{margin:.28em 0}
+
+/* Reusable content blocks. */
+.callout{
+  border:1px solid var(--line);
+  border-left-width:4px;
+  border-radius:8px;
+  padding:12px 16px;
+  margin:1.2em 0;
+  background:var(--side-bg);
+}
+.callout-h{
+  font-weight:700;
+  font-size:.92rem;
+  margin-bottom:2px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.callout-i{font-size:1rem}
+.callout-b p{margin:.4em 0}
+.callout-b ul{margin:.4em 0}
+.c-interpret{border-left-color:var(--accent);background:var(--accent-soft)}
+.c-tip{border-left-color:#178a3c}
+.c-warn{border-left-color:#d98a00}
+.c-repro{border-left-color:var(--accent-2)}
+.c-note{border-left-color:#8b939c}
+
+.codewrap{
+  position:relative;
+  margin:1.1em 0;
+}
+.code-label{
+  position:absolute;
+  top:-9px;
+  left:12px;
+  font-size:.7rem;
+  font-family:var(--mono);
+  background:var(--accent);
+  color:#fff;
+  padding:1px 8px;
+  border-radius:4px;
+  letter-spacing:.02em;
+}
+.copybtn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  font:inherit;
+  font-size:.74rem;
+  cursor:pointer;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:3px 9px;
+  color:var(--muted);
+  opacity:.85;
+  transition:.15s;
+}
+.copybtn:hover{
+  color:var(--fg);
+  opacity:1;
+  border-color:var(--accent);
+}
+.copybtn.ok{
+  color:#178a3c;
+  border-color:#178a3c;
+}
+pre.code{
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px;
+  overflow-x:auto;
+  margin:0;
+  font-family:var(--mono);
+  font-size:.83rem;
+  line-height:1.5;
+}
+pre.code code{
+  background:none;
+  padding:0;
+  color:var(--code-fg);
+  white-space:pre;
+}
+.console{
+  background:#22262b;
+  color:#d8dee4;
+  border-radius:8px;
+  padding:12px 15px;
+  margin:14px 0;
+  font-family:var(--mono);
+  font-size:.78rem;
+  line-height:1.5;
+  overflow:auto;
+  max-height:320px;
+  white-space:pre;
+}
+.console .lbl{
+  display:block;
+  color:#8b949e;
+  font-size:.72rem;
+  margin-bottom:6px;
+  font-family:inherit;
+}
+
+.tablewrap{
+  margin:1.2em 0;
+  overflow-x:auto;
+}
+.tablewrap table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:.86rem;
+}
+.tablewrap th{
+  text-align:left;
+  border-bottom:2px solid var(--fg);
+  padding:7px 10px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.tablewrap td{
+  border-bottom:1px solid var(--line);
+  padding:6px 10px;
+  vertical-align:top;
+}
+.tablewrap tbody tr:hover{background:rgba(127,127,127,.05)}
+.tablewrap figcaption{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:8px;
+}
+.tablewrap.compact td,
+.tablewrap.compact th{
+  padding:4px 8px;
+  font-size:.8rem;
+}
+table code{font-size:.82em}
+
+figure.fig{
+  margin:1.2em 0;
+  text-align:center;
+}
+figure.fig img{
+  max-width:100%;
+  height:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+figure.fig figcaption{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:8px;
+  text-align:left;
+}
+.credit{
+  display:block;
+  font-style:italic;
+  margin-top:2px;
+}
+.figpair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin:1.2em 0;
+}
+.figpair figure{margin:0}
+.figpair img{
+  max-width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+.figpair figcaption{
+  font-size:.78rem;
+  color:var(--muted);
+  margin-top:6px;
+  text-align:left;
+}
+.pairtag{
+  font-size:.72rem;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:5px;
+  margin-bottom:6px;
+  display:inline-block;
+}
+.tag-demo{
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+.tag-paper{
+  background:#eef3f8;
+  color:var(--accent-2);
+}
+[data-theme=dark] .tag-paper{background:#14202e}
+.pairnote{
+  font-size:.82rem;
+  color:var(--muted);
+  border-left:3px solid var(--line);
+  padding-left:12px;
+  margin:.2em 0 1em;
+}
+
+.flow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:8px;
+  margin:16px 0;
+}
+.flow .chip{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 12px;
+  background:var(--side-bg);
+  font-size:.8rem;
+  line-height:1.4;
+  flex:1;
+  min-width:135px;
+}
+.flow .chip b{
+  display:block;
+  font-size:.9rem;
+  color:var(--fg);
+}
+.flow .chip.hl{
+  border-color:var(--nav-active);
+  background:var(--nav-active-bg);
+}
+.flow .arrow{
+  align-self:center;
+  color:var(--muted);
+  font-size:1.1rem;
+}
+.mini-badge{
+  display:inline-block;
+  font-size:.68rem;
+  font-weight:600;
+  border-radius:4px;
+  padding:1px 6px;
+  margin-left:4px;
+  vertical-align:1px;
+  background:#eceff1;
+  color:#6c757d;
+}
+.mini-badge.oa{
+  background:#d8f3e1;
+  color:#1c7a43;
+}
+
+.step-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:1.4em 0 1.8em;
+  overflow:hidden;
+  background:var(--bg);
+}
+.step-card-h{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  background:var(--side-bg);
+}
+.step-label{
+  display:inline-block;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+.step-card-h h4{
+  margin:0;
+  font-size:1.05rem;
+}
+.step-card-b{padding:14px 16px 16px}
+.step-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+.kv{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  background:var(--side-bg);
+}
+.kv .k{
+  font-size:.72rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+.kv .v{
+  font-size:.9rem;
+  color:var(--fg);
+}
+
+#lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(15,18,22,.88);
+  display:none;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  cursor:zoom-out;
+  padding:30px;
+}
+#lightbox img{
+  max-width:96%;
+  max-height:96%;
+  background:#fff;
+  border-radius:6px;
+  padding:10px;
+}
+#lightbox.open{display:flex}
+
+@media (max-width:1000px){
+  #sidebar{
+    transform:translateX(-100%);
+    transition:transform .2s;
+  }
+  #sidebar.open{
+    transform:none;
+    box-shadow:0 0 30px rgba(0,0,0,.2);
+  }
+  #menu-btn{display:block}
+  .hero,
+  main{
+    margin-left:0;
+    margin-right:0;
+  }
+  .hero{padding:60px 20px 22px}
+  main{
+    padding:20px 20px 70px;
+    max-width:none;
+  }
+  .director-card{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+  .director-card img{
+    width:90px;
+    height:90px;
+    align-self:center;
+  }
+  .figpair{grid-template-columns:1fr}
+  .related-rail{display:none}
+}
+@media print{
+  #sidebar,
+  #menu-btn,
+  .copybtn,
+  #lightbox{display:none}
+  .hero,
+  main{margin-left:0}
+}
+
+/* --- Page additions shared with the LPI tutorial --- */
+.figpair.triple{grid-template-columns:1fr 1fr 1fr}
+.tag-lisp{background:#e9f7f4;color:#0f766e}
+[data-theme=dark] .tag-lisp{background:#0e2320}
+.tablewrap td.num,.tablewrap th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre.code .cm{color:#7f8896;font-style:italic}
+pre.code .st{color:#20794d}
+pre.code .kw{color:#8f3faf;font-weight:600}
+[data-theme=dark] pre.code .cm{color:#8b949e}
+[data-theme=dark] pre.code .st{color:#7ee2a8}
+[data-theme=dark] pre.code .kw{color:#d2a8ff}
+@media (max-width:1000px){.figpair.triple{grid-template-columns:1fr}}
+
+/* Half-width figures (method flowchart, single-map demo panels). */
+figure.fig.half img{max-width:50%}
+@media (max-width:1000px){figure.fig.half img{max-width:100%}}
+
+/* Equation display blocks (DSI page): serif-style formula rows. */
+.eq{
+  font-size:1.02rem;
+  margin:.6em 0;
+  padding:10px 14px;
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+
+/* Collapsible code boxes: long blocks start collapsed to a ~3-line preview.
+   The expand/collapse control is a full-height accent strip on the LEFT edge of
+   the box — clickable at any scroll position. */
+.codewrap.collapsed pre.code{max-height:78px;overflow:hidden}
+.codewrap.has-fold pre.code{padding-left:46px}
+.codewrap.has-fold .code-label{left:44px}
+.foldbtn{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  width:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:none;
+  border-left:1px solid var(--line);   /* rotated 180deg: renders on the visual right, against the code */
+  border-radius:0 10px 10px 0;         /* rotated 180deg: rounds the visual left corners */
+  background:var(--code-bg);
+  color:var(--muted);
+  font:inherit;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  cursor:pointer;
+}
+.foldbtn:hover{color:var(--fg);background:var(--nav-hover)}
+@media print{
+  .foldbtn{display:none}
+  .codewrap.collapsed pre.code{max-height:none}
+  .codewrap.has-fold pre.code{padding-left:16px}
+}
+
+/* featured figure above section 1 */
+figure.featured-fig{width:50%;margin:0 auto 1.6em;text-align:center;}
+figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff;}
+@media (max-width:1000px){figure.featured-fig{width:100%;}}
+</style>
+</head>
+<body>
+
+<button id="menu-btn" aria-label="Menu">☰</button>
+
+<aside id="sidebar">
+  <div class="brand">Reproducing Geocomplexity</div>
+  <div class="brand-sub">Geocomplexity explains spatial errors · verified template</div>
+  <input id="toc-filter" type="text" placeholder="Filter sections...">
+  <nav id="toc">
+    <a href="#overview">1&nbsp;Overview &amp; Scope</a>
+    <a class="l2" href="#core-idea">1.1&nbsp;Core idea</a>
+    <a class="l2" href="#method-logic">1.2&nbsp;Method logic</a>
+    <a class="l2" href="#reproduction-scope">1.3&nbsp;Reproduction scope</a>
+    <a href="#setup">2&nbsp;Setup &amp; Data</a>
+    <a class="l2" href="#environment">2.1&nbsp;Environment</a>
+    <a class="l2" href="#structure-config">2.2&nbsp;Structure &amp; config</a>
+    <a class="l2" href="#data-contract">2.3&nbsp;Data contract</a>
+    <a href="#pipeline">3&nbsp;Pipeline &amp; Results</a>
+    <a class="l2" href="#pipeline-execution">3.1&nbsp;Pipeline execution</a>
+    <a class="l2" href="#reproduce-paper">3.2&nbsp;Reproduce the published values</a>
+    <a class="l2" href="#core-steps">3.3&nbsp;Core analytical steps</a>
+    <a class="l2" href="#step-1">·&ensp;Step&nbsp;1&nbsp;Prepare data</a>
+    <a class="l2" href="#step-2">·&ensp;Step&nbsp;2&nbsp;Compute geocomplexity</a>
+    <a class="l2" href="#step-3">·&ensp;Step&nbsp;3&nbsp;Baseline models</a>
+    <a class="l2" href="#step-4">·&ensp;Step&nbsp;4&nbsp;Explain the errors</a>
+    <a class="l2" href="#step-5">·&ensp;Step&nbsp;5&nbsp;Improve the models</a>
+    <a class="l2" href="#interpretation">3.4&nbsp;Reading the results</a>
+    <a href="#adaptation">4&nbsp;Adaptation &amp; Reproducibility</a>
+    <a class="l2" href="#port-domain">4.1&nbsp;Port to your domain</a>
+    <a class="l2" href="#write-paper">4.2&nbsp;Write the paper</a>
+    <a class="l2" href="#repro-package">4.3&nbsp;Reproducibility package</a>
+  </nav>
+  <div class="side-foot">
+    <button id="themebtn" class="themebtn">Dark mode</button>
+  </div>
+</aside>
+
+<header class="hero">
+  <h1>Reproducing Geocomplexity Explains Spatial Errors</h1>
+  <div class="sub">A complete, verified walkthrough of geocomplexity — a local measure of how
+  far a variable's neighbourhood departs from smooth spatial dependence — and of the claim it was
+  built to support: that the places a model gets wrong are the places the geography is complex.
+  From raw data to manuscript, on the published case.</div>
+  <div class="director-card">
+    <img src="../../assets/images/yongze-song.png" alt="Yongze Song">
+    <div class="director-info">
+      <h3>Yongze Song</h3>
+      <p>Associate Professor, Curtin University</p>
+      <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.2) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.8)</p>
+      <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
+    </div>
+  </div>
+  <a class="dlbtn" href="gc-code-and-data.zip" download>⬇ Download code &amp; data (zip, 476&nbsp;KB)</a>
+  <div class="dlnote"><code>R/</code> pipeline scripts · <code>config/project-config.R</code> ·
+  <code>data/econineq.gpkg</code> (333 Australian SA3 regions, the published case) ·
+  <code>tests/</code> · <code>run-all.R</code> — unzip and run
+  <code>Rscript run-all.R test</code> from the <code>GC/</code> folder root.</div>
+  <div class="cite-lead">To cite the geocomplexity model and its R package and codes in publications, please use:</div>
+  <div class="cite">
+    <div>Zhang&nbsp;Z, Song&nbsp;Y, Luo&nbsp;P, Wu&nbsp;P (2023). Geocomplexity explains spatial
+    errors. <i>International Journal of Geographical Information Science</i> 37(7):1449–1469.
+    <a href="https://doi.org/10.1080/13658816.2023.2203212">doi</a> ·
+    <a href="../../pdf/GEOC-zhang2023.pdf">PDF</a></div>
+    <div>Lyu&nbsp;W, Song&nbsp;Y, et&nbsp;al. <i>geocomplexity: Geographical Complexity</i>.
+    R package.
+    <a href="https://cran.r-project.org/package=geocomplexity">CRAN</a> ·
+    <a href="https://cran.r-project.org/web/packages/geocomplexity/vignettes/gcc.html">vignettes</a></div>
+  </div>
+</header>
+
+<aside class="related-rail" aria-label="Related tutorials for reproducible models">
+  <div class="rail-title">Related tutorials for reproducible models</div>
+  <a href="../../methods.html">Geospatial Theories and Methods</a>
+  <a href="../OPGD/opgd.html">1 &middot; OPGD &mdash; Optimal Parameters Geographical Detector</a>
+  <a class="current" href="gc.html">2 &middot; GC &mdash; Geocomplexity</a>
+  <a href="../LPI/lpi.html">3 &middot; LPI &mdash; Local Pattern Interaction</a>
+  <a href="../LPA/lpa.html">4 &middot; LPA &mdash; Local Pathways of Association</a>
+  <a href="../SDA/sda.html">5 &middot; SDA &mdash; Second Dimension of Spatial Association</a>
+  <a href="../SOH/soh.html">6 &middot; SOH &mdash; Second-dimension Outlier-driven Heterogeneity</a>
+  <a href="../DSI/dsi.html">7 &middot; DSI &mdash; Degree of Spatial Interpretability</a>
+  <a href="../STOR/stor.html">8 &middot; STOR &mdash; Spatial Trade-Off Relation</a>
+  <a href="../SDM/sdm.html">9 &middot; SDM &mdash; Spatial Delta Model for Accessibility</a>
+</aside>
+
+<main>
+
+<figure class="featured-fig">
+  <img src="assets/featured-gc.jpg" alt="Geocomplexity of income against income level, coloured by Gini (GC)" decoding="async">
+</figure>
+
+<section id="overview">
+  <h2>1&nbsp;Method Overview &amp; Reproduction Scope</h2>
+
+  <h3 id="core-idea">1.1&nbsp;Core Idea</h3>
+  <p>Spatial models rest on an assumption they rarely state aloud: that nearby places behave
+  similarly, so a value can be borrowed from its neighbourhood. Where that holds, models work.
+  Where it breaks — a coastline, a city edge, a mining town in a pastoral district — the model
+  keeps borrowing anyway, and gets it wrong.</p>
+  <p><b>Geocomplexity</b> measures where it breaks. At each location it asks how far the local
+  arrangement of a variable departs from smooth spatial dependence: low where the neighbourhood is
+  orderly, high where it is not. The paper's claim follows directly, and is testable: if
+  geocomplexity marks the places where the assumption fails, then it should predict <i>where a
+  model's errors are</i> — and it does, without ever seeing the model.</p>
+  <ul>
+    <li><b>Research problem:</b> spatial model errors are not random, they cluster, and the usual
+        diagnostics report only <i>that</i> they cluster rather than <i>why</i>.</li>
+    <li><b>One-line contribution:</b> geocomplexity turns the local breakdown of spatial dependence
+        into a number computed from the explanatory variables alone, and that number explains a
+        measurable share of the errors of ordinary, non-linear and locally varying models.</li>
+    <li><b>Why it matters:</b> a diagnostic computed <i>before</i> fitting tells you where the
+        model will struggle; and because it is just another variable, feeding it back in improves
+        the model — R² rises from 0.585 to 0.622 for a linear model and 0.802 to 0.836 for
+        geographically weighted regression in the demo below.</li>
+  </ul>
+  <figure class="fig">
+    <span class="pairtag tag-paper">Published reference · geocomplexity</span>
+    <img src="assets/paper-gc-fig1-concept.jpg" alt="A measure of spatial local complexity, Zhang et al. 2023 Figure 1">
+    <figcaption>Paper Fig. 1 — the measure. Geocomplexity splits into a <i>local</i> feature (the
+    LISA term, how the location relates to its neighbours) and a <i>surrounding</i> feature (how
+    those neighbours relate to each other). Every neighbour under the queen criterion counts. The
+    worked grid on the right shows the result: A₁ at −2.90 sits in a uniform patch and is
+    <i>simple</i>; A₂ at 0.13 sits where three values meet and is <i>complex</i>.
+    <span class="credit">Zhang, Song, Luo &amp; Wu (2023), IJGIS 37(7):1449–1469 (open access).</span></figcaption>
+  </figure>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Reader anchor</div>
+    <div class="callout-b">
+      <p>Models assume the neighbourhood is informative → geocomplexity measures where that
+      assumption breaks down → those are the places the model errs → so geocomplexity explains
+      spatial errors, and adding it repairs part of them. Everything on this page serves that
+      line.</p>
+    </div>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>What you need</div>
+    <div class="callout-b">
+      <p>R 4.1+ with <code>sf</code>, <code>sdsfun</code> and <code>geocomplexity</code> for the
+      method itself, plus <code>e1071</code>, <code>GWmodel</code> and <code>ggplot2</code> for the
+      models and figures. The case data ship in this folder. The full pipeline takes about
+      90&nbsp;seconds, nearly all of it in the bandwidth searches of the five geographically
+      weighted regressions.</p>
+    </div>
+  </div>
+
+  <h3 id="method-logic">1.2&nbsp;Method Logic</h3>
+  <p>Geocomplexity sits at the root of a family of methods on this site: once you can measure where
+  spatial dependence breaks down locally, you can use that measure as a diagnostic, as an
+  explanatory variable, or as a weight.</p>
+  <div class="flow">
+    <div class="chip hl"><b>GEOC 2023</b>geocomplexity; explains spatial errors<br>
+      <a href="https://doi.org/10.1080/13658816.2023.2203212">Zhang et al., IJGIS</a> · <a href="../../pdf/GEOC-zhang2023.pdf">PDF</a><span class="mini-badge oa">open access</span></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>LPI 2026</b>GC of each variable becomes an extra explanatory variable<br>
+      <a href="../LPI/lpi.html">LPI tutorial</a></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>GeoCGWR</b>GC enters the geographical weighting itself<br>
+      <code>gwr_geoc()</code> in the package</div>
+  </div>
+  <h4>Key concepts and equations</h4>
+  <ul>
+    <li><b>Spatial local complexity (the <code>moran</code> measure, package default).</b> The
+      decomposition in Fig. 1 above:
+      <div class="eq">ρ<sub>i</sub>&nbsp;=&nbsp;−(1/m)&nbsp;Z<sub>i</sub>&nbsp;Σ<sub>j</sub>&nbsp;W<sub>ij</sub>Z<sub>j</sub>&nbsp;−&nbsp;(1/m)&nbsp;Σ<sub>j</sub>&nbsp;W<sub>ij</sub>Z<sub>j</sub>&nbsp;(1/v<sub>k</sub>)&nbsp;Σ<sub>k</sub>&nbsp;W<sub>jk</sub>W<sub>ik</sub>Z<sub>k</sub></div>
+      The first term is local Moran — the location against its neighbours. The second is what
+      geocomplexity adds — the neighbours against <i>each other</i>. A place can agree with its
+      neighbours while those neighbours disagree among themselves, and only the second term
+      sees it.</li>
+    <li><b>Two alternative measures, for different questions.</b> <code>spvar</code> is the spatial
+      variance, Γ&nbsp;=&nbsp;Σ<sub>i</sub>Σ<sub>j≠i</sub>ω<sub>ij</sub>(y<sub>i</sub>−y<sub>j</sub>)²/2
+      ÷ Σ<sub>i</sub>Σ<sub>j≠i</sub>ω<sub>ij</sub> — the raw local fluctuation.
+      <code>shannon</code> is the entropy of the neighbourhood. They are not interchangeable, and
+      Step&nbsp;2 measures how far apart they are.</li>
+    <li><b>One variable or the whole configuration.</b> <code>geocd_*</code> gives the complexity
+      of each variable separately; <code>geocs_*</code> gives one number for the whole
+      geographical configuration, built from the similarity between locations.</li>
+    <li><b>The claim under test.</b> With <i>e<sub>i</sub></i> the error of some fitted model at
+      location <i>i</i>, geocomplexity should explain |<i>e<sub>i</sub></i>|. Because the strength
+      of that relationship varies over space, the explanation itself is fitted with geographically
+      weighted regression — as in the paper.</li>
+  </ul>
+  <figure class="fig half">
+    <span class="pairtag tag-paper">Published reference · geocomplexity</span>
+    <img src="assets/paper-gc-fig3-workflow.jpg" alt="Workflow of the geocomplexity study, Zhang et al. 2023 Figure 3">
+    <figcaption>Paper Fig. 3 — the workflow this page follows: compute geocomplexity from the
+    explanatory variables, fit conventional models, then use geocomplexity to explain what those
+    models got wrong.</figcaption>
+  </figure>
+
+  <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
+  <p>Everything tagged <i>Demo run</i> regenerates from this folder; everything tagged
+  <i>Published reference</i> is a static image from the article. The demo was verified end to end
+  on 2026-07-25 with R&nbsp;4.6.0 and <code>geocomplexity</code>&nbsp;0.3.0.</p>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>What is reproduced exactly, and what is not</div>
+    <div class="callout-b">
+      <p>The values checked by <code>run-all.R test</code> are those published in the
+      <b>package's own vignettes</b>, computed by the method's authors on this same layer — and
+      they reproduce to four decimals. The <b>article's</b> Tables 3–4 are a different matter: the
+      shipped layer carries all eight explanatory variables, whereas the article reports a
+      variable-selection step it does not fully specify, so its absolute R² values are not
+      reachable from this data. What does reproduce is the mechanism and the ordering, which is
+      the paper's actual argument — see §3.2, where both are set side by side.</p>
+    </div>
+  </div>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Demo template</th><th>Published reference</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data</td>
+            <td>333 Australian SA3 regions, Gini coefficient and 8 explanatory variables
+                (<code>data/econineq.gpkg</code>, shipped with the package)</td>
+            <td>the same case: economic inequality across Australia</td></tr>
+        <tr><td>Method</td>
+            <td><code>geocd_vector()</code> / <code>geocs_vector()</code> / <code>gwr_geoc()</code>
+                from the authors' package</td>
+            <td>Zhang et&nbsp;al. (2023) §3, and the package vignettes</td></tr>
+        <tr><td>Tables</td>
+            <td><code>results/baseline-models.csv</code>, <code>error-explanation.csv</code>,
+                <code>model-improvement.csv</code>, <code>gc-method-comparison.csv</code></td>
+            <td>vignette values reproduced exactly by <code>run-all.R test</code>; article
+                Tables 3–4 shown for comparison</td></tr>
+        <tr><td>Figures</td>
+            <td>fig01–fig06 from <code>R/p01–p03</code></td>
+            <td>paper Figs 1, 3, 5, 6, 8 embedded as reference images</td></tr>
+      </tbody>
+    </table>
+    <figcaption>What the template regenerates versus what is shown as published reference.</figcaption>
+  </figure>
+  <h4>How to use this page</h4>
+  <ul>
+    <li><b>To reproduce the demo:</b> run <code>Rscript run-all.R test</code>, then
+        <code>Rscript run-all.R</code>. Every number and figure below regenerates.</li>
+    <li><b>To use geocomplexity on your own data:</b> §2.3 gives the data contract — one layer with
+        a response and explanatory variables — and §4.1 the porting steps.</li>
+    <li><b>To see geocomplexity used as a building block:</b> the <a href="../LPI/lpi.html">LPI
+        tutorial</a> treats the geocomplexity of every variable as an extra explanatory variable in
+        a local stratified-power model.</li>
+  </ul>
+</section>
+
+<section id="setup">
+  <h2>2&nbsp;Setup, Structure &amp; Data Contract</h2>
+
+  <h3 id="environment">2.1&nbsp;Environment &amp; Dependencies</h3>
+  <p>The method is the CRAN <code>geocomplexity</code> package, written by the authors of the
+  article. The pipeline adds the two model families whose errors are examined, and each step
+  reports and continues if an optional package is missing.</p>
+  <div class="codewrap">
+    <span class="code-label">R console</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># The method and its spatial-weights helper
+install.packages(c("geocomplexity", "sdsfun", "sf", "spdep"))
+
+# The models whose errors are explained
+install.packages(c("e1071", "GWmodel"))
+
+# Figures
+install.packages(c("ggplot2", "scales"))</code></pre>
+  </div>
+  <figure class="tablewrap">
+    <table>
+      <thead><tr><th>Package</th><th>Role in the pipeline</th><th>Required?</th></tr></thead>
+      <tbody>
+        <tr><td><code>geocomplexity</code></td><td><code>geocd_vector()</code> per-variable complexity, <code>geocs_vector()</code> whole-configuration complexity, <code>gwr_geoc()</code> geocomplexity-weighted GWR</td><td>yes</td></tr>
+        <tr><td><code>sdsfun</code>, <code>sf</code></td><td>spatial weight matrices and the study layer</td><td>yes</td></tr>
+        <tr><td><code>spdep</code></td><td>Moran's I test on the model errors (Step&nbsp;3)</td><td>diagnostic only</td></tr>
+        <tr><td><code>e1071</code></td><td>the support-vector regression baseline</td><td>that model only</td></tr>
+        <tr><td><code>GWmodel</code></td><td>the GWR baseline, and the error-explanation regressions</td><td>Step&nbsp;4</td></tr>
+        <tr><td><code>ggplot2</code>, <code>scales</code></td><td>the six figures</td><td>figures only</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Package roles. The verified environment is recorded in
+    <code>env/session-info.txt</code>.</figcaption>
+  </figure>
+
+  <h3 id="structure-config">2.2&nbsp;Project Structure &amp; Configuration</h3>
+  <p>One entry script runs the five pipeline steps, the figures, or the tests. Each step writes to
+  <code>results/</code>, <code>tables/</code>, <code>figs/</code> or <code>data/derived/</code> and
+  reads what the previous step wrote, so any step can be re-run in isolation.</p>
+  <div class="codewrap">
+    <span class="code-label">folder tree</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>GC/
+├── gc.html                        # this guide
+├── run-all.R                      # entry point: full run, single steps, figures, test
+├── assets/                        # figures shown in this guide (web copies)
+├── config/project-config.R        # the ONLY file to edit for a new domain
+├── R/
+│   ├── 00-config.R, 01-helpers.R  # paths, IO, spatial weights
+│   ├── 10-prepare-data.R          # read the layer, build the weight matrix
+│   ├── 20-geocomplexity.R         # compute GC; compare moran / spvar / shannon
+│   ├── 30-baseline-models.R       # MLR, SVR, GWR and their errors
+│   ├── 40-explain-errors.R        # GWR of |error| on geocomplexity  <- the claim
+│   ├── 50-improve-models.R        # GCMLR and GeoCGWR
+│   ├── 90-tables.R                # LaTeX tables + session info
+│   └── p01 … p03                  # figure scripts
+├── data/econineq.gpkg             # 333 SA3 regions, the published case
+├── tests/                         # test-01 published values; test-02 properties
+├── env/                           # requirements.md, session-info.txt
+├── results/  tables/  figs/       # generated output, never hand-edited</code></pre>
+  </div>
+  <h4>Main configuration file</h4>
+  <div class="codewrap">
+    <span class="code-label">config/project-config.R (key lines)</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>INPUT_FILE &lt;- "data/econineq.gpkg"   # one layer: response + explanatory variables
+RESPONSE   &lt;- "Gini"
+PREDICTORS &lt;- NULL                    # NULL = every remaining column
+
+# The neighbourhood definition. Geocomplexity is a statement about a
+# neighbourhood, so this is a modelling choice, not a detail.
+WEIGHTS_TYPE  &lt;- "contiguity"        # "contiguity" or "knn"
+WEIGHTS_QUEEN &lt;- TRUE                # queen (TRUE) or rook (FALSE)
+WEIGHTS_STYLE &lt;- "B"                 # "B" binary, "W" row-standardised
+
+GC_METHOD           &lt;- "moran"                            # the working measure
+GC_METHODS_COMPARED &lt;- c("moran", "spvar", "shannon")     # compared in Step 2
+
+# Models whose errors are explained, and the geocomplexity that explains them
+SVR_COST &lt;- 1.4; SVR_GAMMA &lt;- 0.2      # the paper's cross-validated optimum
+GWR_APPROACH &lt;- "AIC"                  # bandwidth criterion
+ERROR_EXPLAIN_VARS &lt;- c("Income", "Indemp")</code></pre>
+  </div>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Parameter</th><th>Default</th><th>Origin / rationale</th></tr></thead>
+      <tbody>
+        <tr><td><code>WEIGHTS_QUEEN</code>, <code>WEIGHTS_STYLE</code></td><td class="num">TRUE, "B"</td><td>queen contiguity with a binary matrix, as in the paper's Fig. 1 and its Table 5 comparison</td></tr>
+        <tr><td><code>GC_METHOD</code></td><td class="num">moran</td><td>the package default and the article's measure; Step&nbsp;2 shows what changes under the alternatives</td></tr>
+        <tr><td><code>SVR_COST</code>, <code>SVR_GAMMA</code></td><td class="num">1.4, 0.2</td><td>the values the article selected by ten-fold cross-validation</td></tr>
+        <tr><td><code>ERROR_EXPLAIN_VARS</code></td><td class="num">Income, Indemp</td><td>the two variables whose geocomplexity the article carries into its error models</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Free parameters and the published choices they follow.</figcaption>
+  </figure>
+
+  <h3 id="data-contract">2.3&nbsp;Data Contract</h3>
+  <p>Geocomplexity needs a geometry, because it is computed from neighbourhoods. One layer —
+  polygons or points — carrying the response and the explanatory variables is the whole
+  requirement.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Column</th><th>Config key</th><th>Type</th><th>Meaning</th><th>Required?</th></tr></thead>
+      <tbody>
+        <tr><td>geometry</td><td>—</td><td>polygon or point</td><td>defines the neighbourhoods</td><td>yes</td></tr>
+        <tr><td>response</td><td><code>RESPONSE</code></td><td>numeric</td><td>the dependent variable (demo: <code>Gini</code>)</td><td>yes</td></tr>
+        <tr><td>explanatory</td><td><code>PREDICTORS</code></td><td>numeric</td><td>the variables whose geocomplexity is measured</td><td>≥ 1</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Required schema of <code>INPUT_FILE</code>. Column names are declared in the
+    config, not hard-coded.</figcaption>
+  </figure>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th class="num">Gini</th><th class="num">Induscale</th><th class="num">IT</th><th class="num">Income</th><th class="num">Indemp</th><th>…</th><th>geom</th></tr></thead>
+      <tbody>
+        <tr><td class="num">0.420</td><td class="num">0</td><td class="num">84.3</td><td class="num">67,869</td><td class="num">2,136</td><td>…</td><td>MULTIPOLYGON</td></tr>
+        <tr><td class="num">0.460</td><td class="num">0</td><td class="num">76.2</td><td class="num">46,822</td><td class="num">843</td><td>…</td><td>MULTIPOLYGON</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Shape of <code>data/econineq.gpkg</code> — 333 SA3 regions, the Gini coefficient
+    and eight explanatory variables, in GDA94. First two rows; the highlighter colours the code blocks, the table is verbatim.</figcaption>
+  </figure>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>The weight matrix is part of the method, not a setting</div>
+    <div class="callout-b">
+      <p>Every geocomplexity value is a statement about a neighbourhood, so changing the
+      neighbourhood changes the answer — <code>tests/test-02</code> asserts exactly that. Queen
+      contiguity on polygons is the paper's choice; k-nearest neighbours suits points or very
+      irregular polygons. Watch the connectivity: a unit with no neighbour at all has no neighbourhood
+      and no defined complexity, and Step&nbsp;1 reports that case. Every region in this layer has
+      at least one neighbour, but the queen graph still splits into two disconnected sub-graphs,
+      which is normal for a country with offshore regions.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>3&nbsp;Reproduction Pipeline, Results &amp; Validation</h2>
+
+  <h3 id="pipeline-execution">3.1&nbsp;Pipeline Execution</h3>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Full run</div><div class="v"><code>Rscript run-all.R</code> (~90&nbsp;s)</div></div>
+    <div class="kv"><div class="k">Verification</div><div class="v"><code>Rscript run-all.R test</code> — do this first</div></div>
+    <div class="kv"><div class="k">Output folders</div><div class="v"><code>results/ tables/ figs/ data/derived/</code></div></div>
+  </div>
+  <div class="codewrap">
+    <span class="code-label">terminal</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-bash"><code>cd GC                      # this folder
+Rscript run-all.R test     # 1. check against the published values
+Rscript run-all.R          # 2. full pipeline
+
+Rscript run-all.R 30 40    # re-run single steps (10 20 30 40 50 90)
+Rscript run-all.R figures  # only the figure scripts</code></pre>
+  </div>
+  <div class="console"><span class="lbl">Verified run · key lines (2026-07-25)</span>Project : gc-demo
+Domain  : economic inequality (Gini coefficient)
+== Step 1/5  Prepare data ======================================
+   333 spatial units, geometry: MULTIPOLYGON
+   response: Gini | 8 explanatory variables: Induscale, IT, Income, ...
+   weights: queen contiguity, style 'B'
+   neighbours per unit: min 1, median 5, max 12
+== Step 2/5  Compute geocomplexity =============================
+   method 'moran': 8 variables -> 8 GC columns
+   method 'moran  ' mean GC over all variables = 0.8329
+   method 'spvar  ' mean GC over all variables = 0.0998
+   method 'shannon' mean GC over all variables = 0.7927
+   moran vs spvar:   correlation -0.45 to 0.06 (median -0.09)
+   moran vs shannon: correlation  0.26 to 0.82 (median  0.63)
+== Step 3/5  Baseline models and their errors ==================
+   MLR  R2 = 0.5846  RMSE = 0.03060
+   SVR  R2 = 0.8030  RMSE = 0.02108  (cost = 1.4, gamma = 0.2)
+   GWR  R2 = 0.8024  RMSE = 0.02111  (adaptive bandwidth 28 by AIC)
+   MLR errors: Moran's I = +0.422 (p = 1.53e-30) -> spatially structured
+   SVR errors: Moran's I = +0.234 (p = 7.48e-11) -> spatially structured
+   GWR errors: Moran's I = +0.105 (p = 0.00188)  -> spatially structured
+== Step 4/5  Geocomplexity explains the errors =================
+   MLR  errors: R2 = 0.1806  RSS = 0.1101  AIC = -1685  (bandwidth 37)
+   SVR  errors: R2 = 0.0888  RSS = 0.0763  AIC = -1816  (bandwidth 55)
+   GWR  errors: R2 = 0.0220  RSS = 0.0654  AIC = -1884  (bandwidth 114)
+   error explained, high to low: MLR 0.181 > SVR 0.089 > GWR 0.022
+== Step 5/5  Geocomplexity improves the models =================
+   MLR -> GCMLR:   R2 0.5846 -> 0.6215 (+6.3%)
+   GWR -> GeoCGWR: R2 0.8024 -> 0.8360 (+4.2%)
+Finished in 89.0 s</div>
+
+  <h3 id="reproduce-paper">3.2&nbsp;Reproduce the Published Values</h3>
+  <p>Two different things are checked here, and it is worth being precise about which is which.</p>
+  <h4>The package's published values — reproduced exactly</h4>
+  <p><code>run-all.R test</code> locks the numbers published in the <code>geocomplexity</code>
+  package vignettes, computed by the method's authors on this same layer. All twelve checks agree
+  to four decimals, including the adaptive bandwidth the GWR search selects.</p>
+  <div class="console"><span class="lbl">Verified output of Rscript run-all.R test</span>== test-01  Reproduce the published geocomplexity values =================
+   layer has the published 333 units                        pass
+   layer carries Gini and 8 explanatory variables           pass
+   MLR   R2 = 0.5846 (got 0.5846)                           pass
+   MLR   adjusted R2 = 0.5743 (got 0.5743)                  pass
+   GCMLR R2 = 0.6215 (got 0.6215)                           pass
+   GCMLR adjusted R2 = 0.6024 (got 0.6024)                  pass
+   adding geocomplexity raises the linear model's R2        pass
+   GeoCGWR R2 = 0.836 (got 0.8360)                          pass
+   GeoCGWR adjusted R2 = 0.8319 (got 0.8319)                pass
+   GWR selects an adaptive bandwidth of 28 (got 28)         pass
+   GWR R2 = 0.8025 (got 0.8024)                             pass
+   GeoCGWR improves on the GWR baseline                     pass
+   12 passed, 0 failed
+   PASS - the pipeline reproduces the published values
+
+== test-02  Geocomplexity properties ====================================
+   a smooth gradient is less complex than spatial noise       pass
+   adding a constant leaves geocomplexity unchanged           pass
+   a different spatial weight matrix gives a different result pass
+   ...
+   9 passed, 0 failed</div>
+  <h4>The article's tables — mechanism reproduced, magnitudes not</h4>
+  <p>The article's Tables 3–4 are computed after a variable-selection step that it does not fully
+  specify, while the shipped layer carries all eight explanatory variables. The absolute values
+  therefore differ. What survives — and what the paper actually argues — is the ordering:</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Quantity</th><th class="num">MLR</th><th class="num">SVR</th><th class="num">GWR</th><th>Agreement</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Model R², published</td><td class="num">0.47</td><td class="num">0.65</td><td class="num">0.76</td><td>—</td></tr>
+        <tr><td>Model R², here</td><td class="num">0.585</td><td class="num">0.803</td><td class="num">0.802</td><td>same ranking of spatial awareness</td></tr>
+        <tr><td>Error explained by geocomplexity, published</td><td class="num">0.467</td><td class="num">0.166</td><td class="num">0.136</td><td>—</td></tr>
+        <tr><td>Error explained by geocomplexity, here</td><td class="num">0.181</td><td class="num">0.089</td><td class="num">0.022</td><td><b>same descending order</b></td></tr>
+      </tbody>
+    </table>
+    <figcaption>The finding is the descending order, and it reproduces: the more spatially aware
+    the model, the less of its error geocomplexity has left to explain. The magnitudes differ
+    because the modelling table does.</figcaption>
+  </figure>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+    <div class="callout-b">
+      <p>21 checks pass — 12 against the published vignette values, 9 on properties the measure
+      must satisfy regardless of dataset. If those hold, the pipeline is running the reference
+      implementation as its authors intended.</p>
+    </div>
+  </div>
+
+  <h3 id="core-steps">3.3&nbsp;Core Analytical Steps</h3>
+  <p>Five stages: purpose → code → verified output → result → <i>how to read it</i>. Step numbers
+  match the script numbers (Step&nbsp;4 is <code>R/40-explain-errors.R</code>).</p>
+
+  <article class="step-card" id="step-1">
+    <div class="step-card-h">
+      <span class="step-label">Step 1 · verified</span>
+      <h4>Prepare data — the layer and the neighbourhood</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Reads the layer, summarises the variables, and builds the spatial weight matrix that every
+      later step depends on. It also counts neighbours, because a unit with none has no
+      neighbourhood and therefore no geocomplexity.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — from R/10-prepare-data.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>x  &lt;- sf::read_sf("data/econineq.gpkg")
+wt &lt;- sdsfun::spdep_contiguity_swm(x, queen = TRUE, style = "B")</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>== Step 1/5  Prepare data ======================================
+   333 spatial units, geometry: MULTIPOLYGON
+   CRS: GDA94
+   response: Gini | 8 explanatory variables: Induscale, IT, Income, Sexrat, Houseown, Indemp, Indcom, Hiedu
+   weights: queen contiguity, style 'B'
+   neighbours per unit: min 1, median 5, max 12
+   wrote data/derived/analysis-layer.gpkg and weights.rds</div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The weight matrix is the method's first assumption.</b> Queen contiguity says
+                two regions are neighbours if they touch at all. Change that and every
+                geocomplexity value changes with it — which is a property, not a bug, and
+                <code>tests/test-02</code> checks it holds.</li>
+            <li><b>Connectivity is worth checking before trusting the numbers.</b> Every
+                region here has at least one neighbour (minimum 1, median 5), so geocomplexity is
+                defined everywhere — but the queen graph still falls into two disconnected
+                sub-graphs, because the offshore regions touch each other and not the mainland.
+                A unit with no neighbour at all would have no neighbourhood to be complex relative
+                to, and the step reports that case rather than letting it become a silent
+                <code>NA</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-2">
+    <div class="step-card-h">
+      <span class="step-label">Step 2 · verified · the measure</span>
+      <h4>Compute geocomplexity — and check the measure against its alternatives</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Computes the geocomplexity of every explanatory variable, then recomputes it under all
+      three measures so the choice is visible rather than buried in a default.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — from R/20-geocomplexity.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>gc &lt;- geocomplexity::geocd_vector(xp, wt = wt, method = "moran",
+                                  normalize = TRUE, returnsf = FALSE)
+
+# and, for the comparison, the same call with method = "spvar" / "shannon"</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="fig">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="assets/fig01-geocomplexity-maps.jpg" alt="Geocomplexity of income and industrial employees, demo">
+        <figcaption>fig01 — geocomplexity of the two variables the error models use, in quantile
+        classes. Income is complex through the arid interior and simple across the settled
+        south-east; industrial employment is the reverse, complex in the west and along the
+        eastern seaboard. Quantile classes are used because geocomplexity is strongly
+        skewed — a linear ramp paints almost every region the same shade.</figcaption>
+      </figure>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/fig04-gc-methods.jpg" alt="Mean geocomplexity by method, demo">
+          <figcaption>fig04 — the same variables under the three measures. They are on different
+          scales, and they do not rank the variables the same way.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · geocomplexity</span>
+          <img src="assets/paper-gc-fig5-gcvars.jpg" alt="Geocomplexity of selected variables, Zhang et al. 2023 Figure 5">
+          <figcaption>Paper Fig. 5 — the published counterpart: geocomplexity of the selected
+          variables across the SA3 regions, coloured by the Gini coefficient.</figcaption>
+        </figure>
+      </div>
+      <div class="callout c-warn">
+        <div class="callout-h"><span class="callout-i">!</span>The three measures are not interchangeable</div>
+        <div class="callout-b">
+          <p>Across the eight variables, <code>moran</code> and <code>spvar</code> correlate at a
+          median of <b>−0.09</b> — essentially unrelated — while <code>moran</code> and
+          <code>shannon</code> reach <b>+0.63</b> and <code>spvar</code> against
+          <code>shannon</code> is <b>−0.60</b>. They answer different questions: local
+          autocorrelation, raw fluctuation, and neighbourhood entropy. Name the measure in the
+          Methods section; a result under one is not a result under another. The
+          <a href="../LPI/lpi.html">LPI tutorial</a> uses <code>spvar</code> deliberately, because
+          there geocomplexity enters as an explanatory variable describing pattern intensity
+          rather than as a diagnostic of dependence.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-3">
+    <div class="step-card-h">
+      <span class="step-label">Step 3 · verified</span>
+      <h4>Baseline models — and the precondition that makes the claim worth testing</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Fits three models of increasing spatial awareness — a global linear model, a non-linear
+      but aspatial support-vector regression, and a locally varying GWR — and keeps their errors.
+      Then it tests whether those errors are spatially structured at all.</p>
+      <h4>Example output</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Model</th><th class="num">R²</th><th class="num">RMSE</th><th>Errors: Moran's I</th></tr></thead>
+          <tbody>
+            <tr><td>MLR — global linear</td><td class="num">0.5846</td><td class="num">0.0306</td><td class="num">+0.422 (p ≈ 10⁻³⁰)</td></tr>
+            <tr><td>SVR — non-linear, aspatial</td><td class="num">0.8030</td><td class="num">0.0211</td><td class="num">+0.234 (p ≈ 10⁻¹¹)</td></tr>
+            <tr><td>GWR — locally varying</td><td class="num">0.8024</td><td class="num">0.0211</td><td class="num">+0.105 (p = 0.002)</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/baseline-models.csv</code>. Every model's errors are
+        significantly clustered — which is what makes the next step worth running.</figcaption>
+      </figure>
+      <figure class="fig half">
+        <span class="pairtag tag-paper">Published reference · geocomplexity</span>
+        <img src="assets/paper-gc-fig6-errors.jpg" alt="Statistical distribution of model errors, Zhang et al. 2023 Figure 6">
+        <figcaption>Paper Fig. 6 — the published error distributions for the same three model
+        families.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Clustered errors are the precondition, and they are tested rather than
+                assumed.</b> If Moran's I on the errors were near zero there would be nothing
+                spatial left to explain, and Step&nbsp;4 would be measuring noise.</li>
+            <li><b>Spatial awareness shows up in the errors, not just the fit.</b> Moran's I falls
+                from +0.42 to +0.23 to +0.11 as the model becomes more spatially explicit. GWR has
+                already absorbed most of the spatial structure — which is exactly why it has least
+                left for geocomplexity to explain.</li>
+            <li><b>SVR and GWR fit almost identically here (0.803 vs 0.802) but differently.</b>
+                The same R² conceals very different error geographies, and the Moran's I column is
+                what reveals it.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-4">
+    <div class="step-card-h">
+      <span class="step-label">Step 4 · verified · the claim</span>
+      <h4>Geocomplexity explains the errors</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Regresses each model's <i>absolute</i> error on the geocomplexity of income and industrial
+      employment, using GWR so the strength of the explanation is allowed to vary over space —
+      as the article does. Magnitude, not sign, is what is being explained: a model can be wrong in
+      either direction.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — from R/40-explain-errors.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>dat$abs_error &lt;- abs(err[[nm]])          # what the model got wrong
+f  &lt;- abs_error ~ GC_Income + GC_Indemp  # explained by geocomplexity alone
+bw &lt;- GWmodel::bw.gwr(f, data = sp, approach = "AIC", adaptive = TRUE)
+g  &lt;- GWmodel::gwr.basic(f, data = sp, bw = bw, adaptive = TRUE)</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Errors of</th><th class="num">Bandwidth</th><th class="num">R²</th><th class="num">RSS</th><th class="num">AIC</th></tr></thead>
+          <tbody>
+            <tr><td><b>MLR</b></td><td class="num">37</td><td class="num">0.1806</td><td class="num">0.1101</td><td class="num">−1685</td></tr>
+            <tr><td>SVR</td><td class="num">55</td><td class="num">0.0888</td><td class="num">0.0763</td><td class="num">−1816</td></tr>
+            <tr><td>GWR</td><td class="num">114</td><td class="num">0.0220</td><td class="num">0.0654</td><td class="num">−1884</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/error-explanation.csv</code> — geocomplexity alone, with no
+        access to the model or its inputs, accounts for 18% of where the linear model goes
+        wrong.</figcaption>
+      </figure>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/fig02-error-explained.jpg" alt="Share of each model's error explained by geocomplexity, demo">
+          <figcaption>fig02 — the headline: the share of each model's error that geocomplexity
+          accounts for, falling as the model becomes more spatially aware.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/fig06-local-coefficients.jpg" alt="Local coefficients of geocomplexity in the error explanation, demo">
+          <figcaption>fig06 — where geocomplexity matters. The MLR row is strongly negative around
+          the eastern metropolitan regions; the GWR row is nearly blank, because little is
+          left.</figcaption>
+        </figure>
+      </div>
+      <figure class="fig half">
+        <span class="pairtag tag-paper">Published reference · geocomplexity</span>
+        <img src="assets/paper-gc-fig8-coefficients.jpg" alt="Coefficients of geocomplexity in multiple regression error explanation, Zhang et al. 2023 Figure 8">
+        <figcaption>Paper Fig. 8 — the published counterpart of fig06: local coefficients of the
+        geocomplexity of income and of industrial employees in the multiple-regression error
+        explanation.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The ordering is the finding.</b> 0.181 → 0.089 → 0.022. The better a model
+                already handles space, the less geocomplexity has to say about its mistakes. That
+                is what makes this a claim about spatial dependence rather than a coincidence: it
+                behaves the way the theory says it must.</li>
+            <li><b>Nothing about the model was used.</b> Geocomplexity is computed from the
+                explanatory variables and the geometry alone, before any model is fitted. That it
+                still predicts where the errors fall is the whole point — and it means the
+                diagnostic is available <i>before</i> committing to a model.</li>
+            <li><b>The relationship is local, which is why the global scatter looks flat.</b>
+                Pooled over the country the association is weak; mapped, it is concentrated in the
+                dense eastern cities where regions are small and neighbourhoods change quickly.
+                A global regression would have concluded there was nothing here.</li>
+            <li><b>Bandwidth tells the same story from another angle.</b> It widens from 37 to 114
+                regions as the model improves: the remaining error structure gets broader and
+                vaguer until there is little local signal left to chase.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/error-explanation.csv</code> holds one row per model, and the R² column
+          should descend with the model's spatial awareness. If it does not, check that the errors
+          were actually clustered in Step&nbsp;3.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-5">
+    <div class="step-card-h">
+      <span class="step-label">Step 5 · verified</span>
+      <h4>Improve the models — the practical consequence</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>If geocomplexity knows where a model is wrong, giving the model that information should
+      help. Two ways: add it as explanatory variables (GCMLR), or build it into the geographical
+      weighting itself (GeoCGWR).</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — from R/50-improve-models.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># geocomplexity as extra explanatory variables
+m2 &lt;- lm(Gini ~ ., data = cbind(d, gc))
+
+# geocomplexity inside the geographical weighting
+g2 &lt;- geocomplexity::gwr_geoc(Gini ~ ., data = x, bw = "AIC", adaptive = TRUE)</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Model</th><th>Variant</th><th class="num">R²</th><th class="num">Adjusted R²</th></tr></thead>
+          <tbody>
+            <tr><td>MLR</td><td>baseline</td><td class="num">0.5846</td><td class="num">0.5743</td></tr>
+            <tr><td><b>GCMLR</b></td><td>+ geocomplexity</td><td class="num">0.6215</td><td class="num">0.6024</td></tr>
+            <tr><td>GWR</td><td>baseline</td><td class="num">0.8024</td><td class="num">0.7409</td></tr>
+            <tr><td><b>GeoCGWR</b></td><td>+ geocomplexity</td><td class="num">0.8360</td><td class="num">0.8319</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/model-improvement.csv</code> — these four numbers are the
+        package's published vignette values, reproduced to four decimals by
+        <code>run-all.R test</code>.</figcaption>
+      </figure>
+      <figure class="fig half">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="assets/fig05-model-improvement.jpg" alt="Model performance with and without geocomplexity, demo">
+        <figcaption>fig05 — adding geocomplexity raises R² in both families: +6.3% for the linear
+        model, +4.2% for geographically weighted regression.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The adjusted R² is the honest column.</b> GCMLR adds eight variables, so a naive
+                R² would rise anyway. Adjusted R² rises too (0.574 → 0.602), which means the gain
+                survives the cost of the extra parameters.</li>
+            <li><b>GeoCGWR gains more than it appears.</b> R² moves 0.802 → 0.836, but adjusted R²
+                moves 0.741 → 0.832 — because weighting by geocomplexity buys the fit with far
+                fewer effective parameters than widening the bandwidth would.</li>
+            <li><b>Improvement and explanation are the same fact.</b> Step&nbsp;4 showed
+                geocomplexity knows where the linear model errs; here that knowledge is handed
+                back and the error shrinks. A method that explained errors but could not reduce
+                them would be far less interesting.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <h3 id="interpretation">3.4&nbsp;Reading the Results Together</h3>
+  <div class="step-grid">
+    <div class="kv"><div class="k">The errors are spatial</div><div class="v">Moran's I on the
+      residuals is +0.42, +0.23, +0.11 and significant for all three models — clustered error is
+      the norm, not the exception.</div></div>
+    <div class="kv"><div class="k">Geocomplexity explains them</div><div class="v">18%, 9% and 2%
+      of the absolute error, computed without ever seeing the model, and descending exactly as the
+      model's spatial awareness rises.</div></div>
+    <div class="kv"><div class="k">And repairs part of them</div><div class="v">R² 0.585→0.622 and
+      0.802→0.836, with adjusted R² rising in both.</div></div>
+  </div>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>How to interpret — several angles</div>
+    <div class="callout-b">
+      <ul>
+        <li><b>Mechanism.</b> Every spatial model borrows information from neighbourhoods. Where a
+            variable's neighbourhood is internally inconsistent, the borrowed information is
+            wrong, and the model pays for it in error. Geocomplexity measures that inconsistency
+            directly, which is why it can anticipate the error without seeing the model.</li>
+        <li><b>Diagnostic angle.</b> Because it needs only the explanatory variables and the
+            geometry, geocomplexity can be mapped <i>before</i> fitting anything. It answers "where
+            will this be hard?" — useful for deciding where to sample more, or where to distrust a
+            prediction.</li>
+        <li><b>Why the local view is necessary.</b> Pooled over Australia the error–complexity
+            association is nearly flat; mapped, it is strong in the metropolitan east and absent in
+            the interior. Reporting only a global coefficient would have concluded, wrongly, that
+            there was no effect.</li>
+        <li><b>What geocomplexity is not.</b> It is not a measure of the response's own pattern,
+            and not a substitute for local autocorrelation statistics — the article's Table 5
+            compares the two directly. It is a property of the explanatory geography, which is what
+            lets it be computed in advance.</li>
+        <li><b>Honest limits.</b> The measure depends on a weight matrix you chose; the queen
+            graph here splits into two disconnected sub-graphs, so the offshore regions are only
+            ever compared with each other; and the three available measures disagree (median
+            correlation −0.09 between <code>moran</code> and <code>spvar</code>). State the
+            weights and the measure, or the number is not reproducible.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>Reading order for your own run</div>
+    <div class="callout-b">
+      <p>1) Step&nbsp;3's Moran's I on the errors — is there spatial structure to explain at all.
+      2) <code>results/error-explanation.csv</code> — how much geocomplexity accounts for, and
+      whether the order across models makes sense. 3) <code>figs/fig06</code> — where it matters,
+      since the story is local. 4) <code>results/model-improvement.csv</code> — whether feeding it
+      back helps, on adjusted R². 5) <code>results/gc-method-correlation.csv</code> — whether your
+      conclusion survives a change of measure.</p>
+    </div>
+  </div>
+</section>
+
+<section id="adaptation">
+  <h2>4&nbsp;Adaptation, Writing &amp; Reproducibility</h2>
+
+  <h3 id="port-domain">4.1&nbsp;Port to Your Domain</h3>
+  <p>Geocomplexity needs only a geometry and some variables, so it travels wherever spatial models
+  do. Within this tutorial series it appears in three different roles:</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Role</th><th>Where</th><th>What geocomplexity is used as</th></tr></thead>
+      <tbody>
+        <tr><td>Diagnostic</td><td>this page (Zhang et&nbsp;al. 2023)</td><td>an explanation of where models err, computed before fitting</td></tr>
+        <tr><td>Explanatory variable</td><td><a href="../LPI/lpi.html">LPI tutorial</a></td><td>GC of every variable joins the variable set, doubling it from {X} to {X, GC(X)}</td></tr>
+        <tr><td>Spatial weight</td><td><code>gwr_geoc()</code>, §3 Step&nbsp;5</td><td>complexity enters the geographical weighting itself</td></tr>
+      </tbody>
+    </table>
+    <figcaption>The same measure, used three ways. Which one you want decides the calculation
+    method as much as the domain does.</figcaption>
+  </figure>
+  <h4>What to edit</h4>
+  <ol>
+    <li><code>config/project-config.R</code> — <code>INPUT_FILE</code> and <code>RESPONSE</code>,
+        then the neighbourhood: <code>WEIGHTS_TYPE</code> (<code>"knn"</code> for points),
+        <code>WEIGHTS_QUEEN</code> and <code>WEIGHTS_STYLE</code>.</li>
+    <li><code>GC_METHOD</code> — <code>"moran"</code> when geocomplexity is a diagnostic of
+        spatial dependence, as here; <code>"spvar"</code> when it stands for pattern intensity, as
+        in the LPI tutorial; <code>"shannon"</code> for neighbourhood diversity. Step&nbsp;2 prints
+        the correlation between them so the choice can be defended.</li>
+    <li><code>ERROR_EXPLAIN_VARS</code> — which variables' complexity carries the explanation.
+        <code>NULL</code> uses all of them, which is a reasonable starting point before
+        selecting.</li>
+    <li>Nothing else: <code>Rscript run-all.R test</code>, then <code>Rscript run-all.R</code>.</li>
+  </ol>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Common pitfalls</div>
+    <div class="callout-b">
+      <p>Report the weight matrix and the calculation method together — a geocomplexity value means
+      nothing without both, and the three methods can rank your variables differently. Check
+      connectivity before trusting anything: units with no neighbour have no defined complexity,
+      and disconnected sub-graphs mean some units are only ever compared with a handful of others.
+      Explain the <i>absolute</i> error, not the signed one, unless you have a reason to expect
+      direction. And do not read a flat global scatter as absence of effect — the association is
+      local, which is the whole reason the explanation is fitted with GWR.</p>
+    </div>
+  </div>
+
+  <h3 id="write-paper">4.2&nbsp;Write the Paper</h3>
+  <p>The published study has a clean architecture: define the measure, show it on the data, fit
+  conventional models, then use the measure to explain their errors and to improve them.</p>
+  <figure class="tablewrap">
+    <table>
+      <thead><tr><th>Manuscript section</th><th>Template output</th><th>Writing job</th></tr></thead>
+      <tbody>
+        <tr><td>Methods</td><td><code>config/project-config.R</code>, <code>results/gc-method-comparison.csv</code></td><td>define geocomplexity and its two terms, state the weight matrix and the calculation method, and justify the choice against the alternatives</td></tr>
+        <tr><td>Results</td><td><code>figs/fig01–fig06</code>, <code>tables/table-baseline-models.tex</code>, <code>table-error-explanation.tex</code></td><td>map the complexity, show the models' errors are clustered, then the share explained and where; every finding sentence carries a number</td></tr>
+        <tr><td>Discussion</td><td><code>results/error-explanation.csv</code>, <code>model-improvement.csv</code></td><td>argue the ordering across models, the local geography of the effect, and what the diagnostic is worth before fitting</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Where each manuscript section draws its material from.</figcaption>
+  </figure>
+  <h4>Manuscript skeleton</h4>
+  <div class="codewrap nofold">
+    <span class="code-label">manuscript outline</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>1  Introduction        — spatial models assume dependence; errors cluster;
+                          the gap: which places, and why (3 aims)
+2  Geocomplexity       — 2.1 Local and surrounding features (all formulas)
+                          2.2 Calculation methods and the weight matrix
+                          2.3 Design: explaining errors with GWR
+3  Case &amp; data         — study area, response, explanatory variables
+4  Results             — 4.1 geocomplexity across the study area
+                          4.2 baseline models and the structure of their errors
+                          4.3 error explained, by model
+                          4.4 where it is explained (local coefficients)
+                          4.5 improvement when geocomplexity is fed back
+5  Discussion          — the ordering across models; the local geography;
+                          use as a pre-fit diagnostic; limits of the measure
+6  Conclusions         — 6-8 sentences answering the aims</code></pre>
+  </div>
+  <h4>Results-to-manuscript map</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Manuscript element</th><th>Source file</th><th>Shown in</th></tr></thead>
+      <tbody>
+        <tr><td>Geocomplexity maps</td><td><code>figs/fig01</code></td><td>§4.1</td></tr>
+        <tr><td>Method comparison</td><td><code>figs/fig04</code>, <code>tables/table-gc-methods.tex</code></td><td>§2.2 / supplement</td></tr>
+        <tr><td>Baseline models and error autocorrelation</td><td><code>tables/table-baseline-models.tex</code></td><td>§4.2</td></tr>
+        <tr><td><b>Main table</b> (error explained)</td><td><code>tables/table-error-explanation.tex</code></td><td>§4.3</td></tr>
+        <tr><td>Local coefficients</td><td><code>figs/fig06</code>, <code>results/error-explanation-coefficients.csv</code></td><td>§4.4</td></tr>
+        <tr><td>Improvement</td><td><code>figs/fig05</code>, <code>tables/table-model-improvement.tex</code></td><td>§4.5</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Every manuscript element traces to one regenerable file.</figcaption>
+  </figure>
+
+  <h3 id="repro-package">4.3&nbsp;Final Reproducibility Package</h3>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Code</div><div class="v">numbered scripts in <code>R/</code> + <code>run-all.R</code> + <code>config/project-config.R</code> + <code>tests/</code></div></div>
+    <div class="kv"><div class="k">Data</div><div class="v"><code>data/econineq.gpkg</code> with <code>data/provenance.md</code></div></div>
+    <div class="kv"><div class="k">Results</div><div class="v"><code>figs/fig01–fig06</code> + <code>tables/*.tex</code> + <code>env/session-info.txt</code></div></div>
+  </div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Before claiming reproducible</div>
+    <div class="callout-b">
+      <ul>
+        <li><code>Rscript run-all.R test</code> passes — 21 checks, including the package's own
+            published values to four decimals.</li>
+        <li>Delete <code>results/</code>, <code>tables/</code>, <code>figs/</code> and
+            <code>data/derived/</code>, re-run <code>Rscript run-all.R</code> — every number and
+            figure on this page regenerates (verified 2026-07-25, ~90&nbsp;s).</li>
+        <li>The weight matrix, the calculation method, and the GWR bandwidth criterion are stated
+            in the manuscript and match <code>config/project-config.R</code>.</li>
+        <li>Error explanation is reported on absolute errors, and the local coefficients are
+            mapped rather than summarised to a single global number.</li>
+        <li><code>env/session-info.txt</code> is included in the deposit.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>Anticipate the reviewer</div>
+    <div class="callout-b">
+      <p><i>Is geocomplexity just local autocorrelation?</i> → no: it adds the term describing how
+      the neighbours relate to <i>each other</i>, and the article's Table&nbsp;5 compares the two
+      head to head. <i>Why that weight matrix?</i> → state it; <code>tests/test-02</code> shows the
+      result depends on it. <i>Why that calculation method?</i> →
+      <code>results/gc-method-correlation.csv</code>. <i>Could the improvement be from extra
+      parameters alone?</i> → adjusted R² rises too. <i>Is the effect real if the global scatter is
+      flat?</i> → yes, and <code>figs/fig06</code> shows where it lives.</p>
+    </div>
+  </div>
+  <h4>References &amp; credits</h4>
+  <p>Demo outputs were generated by the scripts in this folder (verified 2026-07-25) using the CRAN
+  <code>geocomplexity</code> package. Reference figures are reproduced from the article, which is
+  open access, for comparison.</p>
+  <ol>
+    <li>Zhang Z, Song Y, Luo P, Wu P (2023). Geocomplexity explains spatial errors.
+        <i>International Journal of Geographical Information Science</i> 37(7):1449–1469.
+        <a href="https://doi.org/10.1080/13658816.2023.2203212">doi:10.1080/13658816.2023.2203212</a>
+        · <a href="../../pdf/GEOC-zhang2023.pdf">PDF</a>
+        (source of the concept, workflow, Fig. 5, Fig. 6 and Fig. 8 reference images, and of the
+        case reproduced here)</li>
+    <li>Lyu W, Song Y, et al. <i>geocomplexity: Geographical Complexity</i>. R package.
+        <a href="https://cran.r-project.org/package=geocomplexity">CRAN</a> ·
+        <a href="https://cran.r-project.org/web/packages/geocomplexity/vignettes/gcc.html">calculation vignette</a> ·
+        <a href="https://cran.r-project.org/web/packages/geocomplexity/vignettes/gca.html">application vignette</a>
+        (the reference implementation, the source of the demo data, and of the values locked in
+        <code>tests/test-01</code>)</li>
+    <li>Anselin L (1995). Local indicators of spatial association — LISA.
+        <i>Geographical Analysis</i> 27(2):93–115.
+        <a href="https://doi.org/10.1111/j.1538-4632.1995.tb00338.x">doi:10.1111/j.1538-4632.1995.tb00338.x</a>
+        (the local Moran term geocomplexity extends)</li>
+    <li>Sun Y, Wu G, Song Y, et al. (2026). Local effects of pattern interactions in driving
+        urbanization. <i>Int J Appl Earth Obs Geoinf</i> 146:105072.
+        <a href="https://doi.org/10.1016/j.jag.2025.105072">doi:10.1016/j.jag.2025.105072</a>
+        · <a href="../LPI/lpi.html">LPI tutorial</a>
+        (geocomplexity used as an explanatory variable)</li>
+  </ol>
+</section>
+
+</main>
+<div id="lightbox"><img alt="enlarged figure" loading="lazy" decoding="async"></div>
+
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var sidebar=document.getElementById('sidebar');
+  var menuBtn=document.getElementById('menu-btn');
+  var themeBtn=document.getElementById('themebtn');
+  var filter=document.getElementById('toc-filter');
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var lightbox=document.getElementById('lightbox');
+  var lightboxImg=lightbox ? lightbox.querySelector('img') : null;
+
+  function setTheme(mode){
+    if(mode==='dark'){
+      root.setAttribute('data-theme','dark');
+      if(themeBtn) themeBtn.textContent='Light mode';
+    }else{
+      root.removeAttribute('data-theme');
+      if(themeBtn) themeBtn.textContent='Dark mode';
+    }
+    try{localStorage.setItem('reproduce-template-theme',mode)}catch(e){}
+  }
+  try{
+    var saved=localStorage.getItem('reproduce-template-theme');
+    if(saved==='dark') setTheme('dark');
+  }catch(e){}
+
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      setTheme(root.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+    });
+  }
+
+  if(menuBtn && sidebar){
+    menuBtn.addEventListener('click',function(){
+      sidebar.classList.toggle('open');
+    });
+  }
+  links.forEach(function(a){
+    a.addEventListener('click',function(){
+      if(sidebar) sidebar.classList.remove('open');
+    });
+  });
+
+  if(filter){
+    filter.addEventListener('input',function(){
+      var q=filter.value.trim().toLowerCase();
+      links.forEach(function(a){
+        a.style.display=a.textContent.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+      });
+    });
+  }
+
+  document.querySelectorAll('.copybtn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var box=btn.closest('.codewrap');
+      var code=box ? box.querySelector('pre code') : null;
+      if(!code) return;
+      navigator.clipboard.writeText(code.innerText).then(function(){
+        btn.classList.add('ok');
+        btn.textContent='Copied';
+        setTimeout(function(){
+          btn.classList.remove('ok');
+          btn.textContent='Copy';
+        },1200);
+      });
+    });
+  });
+
+  document.querySelectorAll('figure img,.figpair img').forEach(function(img){
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',function(){
+      if(!lightbox || !lightboxImg) return;
+      lightboxImg.src=img.src;
+      lightboxImg.alt=img.alt || 'enlarged figure';
+      lightbox.classList.add('open');
+    });
+  });
+  if(lightbox){
+    lightbox.addEventListener('click',function(){
+      lightbox.classList.remove('open');
+      if(lightboxImg) lightboxImg.removeAttribute('src');
+    });
+  }
+
+  var headings=[].slice.call(document.querySelectorAll('section[id],h3[id],article[id]'));
+  function onScroll(){
+    var active=null;
+    var y=window.scrollY+110;
+    headings.forEach(function(h){
+      if(h.offsetTop<=y) active=h.id;
+    });
+    links.forEach(function(a){
+      a.classList.toggle('active',a.getAttribute('href')==='#'+active);
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+</script>
+<script>
+// Lightweight R/bash highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code').forEach(function(codeEl){
+  var src = codeEl.textContent;
+  var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var isR = codeEl.parentElement.classList.contains('lang-r');
+  var kw = isR
+    ? /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")|\b(function|if|else|for|while|return|library|source|TRUE|FALSE|NULL|NA_real_|NA_character_|NA|in)\b/g
+    : /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")/g;
+  var out = '', last = 0, m;
+  while ((m = kw.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    if (m[1])      out += '<span class="cm">' + esc(m[1]) + '</span>';
+    else if (m[2]) out += '<span class="st">' + esc(m[2]) + '</span>';
+    else           out += '<span class="kw">' + esc(m[3]) + '</span>';
+    last = kw.lastIndex;
+  }
+  out += esc(src.slice(last));
+  codeEl.innerHTML = out;
+});
+</script>
+<script>
+// Collapsible code boxes: boxes longer than 4 lines start collapsed to a 3-line preview.
+document.querySelectorAll('.codewrap:not(.nofold)').forEach(function(w){
+  var code=w.querySelector('pre.code code');
+  if(!code) return;
+  var lines=code.textContent.replace(/\n+$/,'').split('\n').length;
+  if(lines<=4) return;
+  w.classList.add('has-fold','collapsed');
+  var chip=w.querySelector('.code-label');
+  if(chip) chip.textContent+=' · '+lines+' lines';
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.className='foldbtn';
+  btn.title='Expand / collapse code';
+  function label(){
+    btn.textContent=w.classList.contains('collapsed') ? 'Expand' : 'Collapse ▴';
+  }
+  label();
+  btn.addEventListener('click',function(){
+    w.classList.toggle('collapsed');
+    label();
+    if(w.classList.contains('collapsed')) w.scrollIntoView({block:'nearest'});
+  });
+  w.appendChild(btn);
+});
+</script>
+<script>
+// Match the director avatar to the height of the name-to-email text block (desktop only).
+(function(){
+  function sizeDirectorAvatar(){
+    document.querySelectorAll('.director-card').forEach(function(card){
+      var img=card.querySelector('img');
+      var info=card.querySelector('.director-info');
+      if(!img||!info) return;
+      if(window.innerWidth<=1000){
+        img.style.width='';img.style.height='';img.style.minWidth='';
+        return;
+      }
+      var h=Math.round(info.getBoundingClientRect().height);
+      img.style.height=h+'px';
+      img.style.width=h+'px';
+      img.style.minWidth=h+'px';
+    });
+  }
+  window.addEventListener('load',sizeDirectorAvatar);
+  window.addEventListener('resize',sizeDirectorAvatar);
+  sizeDirectorAvatar();
+})();
+</script>
+</body>
+</html>

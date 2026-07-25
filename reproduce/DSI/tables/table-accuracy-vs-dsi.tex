@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\caption{Predictive accuracy against spatial interpretability. Models are ordered by $\theta_{probable}$.}
+\label{tab:accuracy-vs-dsi}
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Model} & \textbf{$R^2$} & \textbf{RMSE} & \textbf{$\theta_{probable}$} & \textbf{$\theta_{max}$} \\
+\hline
+xgbTree & 0.318 & 4.407 & 0.601 & 0.735 \\
+rf & 0.366 & 4.122 & 0.445 & 0.515 \\
+knn & 0.309 & 4.320 & 0.433 & 0.526 \\
+rpart & 0.217 & 4.779 & 0.423 & 0.537 \\
+cubist & 0.309 & 4.355 & 0.416 & 0.473 \\
+\hline
+\end{tabular}
+\end{table}

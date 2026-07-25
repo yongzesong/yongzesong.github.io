@@ -7,8 +7,24 @@
     <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
-    <meta name="description" content="Lecture series on Geospatial Data Analysis, Prediction, and GeoAI by Dr. Yongze Song. Course materials, lecture slides, code, and assignments.">
+    <meta name="description" content="Lecture series on Geospatial Data Analysis, Prediction, and GeoAI by Yongze Song. Course materials, lecture slides, code, and assignments.">
+    <!-- Open Graph / Twitter Card -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Yongze Song">
+    <meta property="og:locale" content="en_AU">
+    <meta property="og:title" content="Lecture Series - Yongze Song">
+    <meta property="og:description" content="Lecture series on Geospatial Data Analysis, Prediction, and GeoAI by Yongze Song. Course materials, lecture slides, code, and assignments.">
+    <meta property="og:url" content="https://yongzesong.com/lecture-202601.html">
+    <meta property="og:image" content="https://yongzesong.com/assets/images/harvard-lectures.jpg">
+    <meta property="og:image:alt" content="Lecture on geospatial data analysis and GeoAI">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@YongzeSong">
+    <meta name="twitter:creator" content="@YongzeSong">
+    <meta name="twitter:title" content="Lecture Series - Yongze Song">
+    <meta name="twitter:description" content="Lecture series on Geospatial Data Analysis, Prediction, and GeoAI by Yongze Song. Course materials, lecture slides, code, and assignments.">
+    <meta name="twitter:image" content="https://yongzesong.com/assets/images/harvard-lectures.jpg">
     <title>Lecture Series - Yongze Song</title>
+    <link rel="canonical" href="https://yongzesong.com/lecture-202601.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -160,55 +176,22 @@
         .qa-section li { margin-bottom: 4px; }
         .qa-section ul { list-style: circle; }
 
-        /* Feedback form */
-        .feedback-section { margin-top: 2.5em; }
-        .feedback-form { max-width: 600px; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: var(--color-heading);
-        }
-        .form-group label .req { font-weight: 400; color: var(--color-muted); font-size: 0.8rem; }
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group textarea {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: var(--font-sans);
-            font-size: 0.85rem;
-            line-height: 1.8;
-        }
-        .form-group textarea { min-height: 100px; resize: vertical; }
-        .star-rating { display: flex; gap: 4px; font-size: 1.3rem; color: #ccc; cursor: pointer; }
-        .star-rating .star { transition: color 0.2s; }
-        .star-rating .star:hover,
-        .star-rating .star.active { color: #f5a623; }
-        .submit-btn {
-            font-family: var(--font-sans);
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--color-muted);
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-        }
-        .submit-btn:hover { color: var(--color-heading); }
-
         /* === RESPONSIVE === */
         @media (max-width: 768px) {
             .lecturer-card { flex-direction: column; }
             .lecturer-logos { flex-direction: row; align-items: center; min-width: auto; }
             .materials-grid { grid-template-columns: 1fr; }
         }
+    
+        /* Mobile readability: keep primary reading text at 15px or above */
+        @media (max-width: 768px) {
+            p, li { font-size: 1rem; }
+            p.description, p.topic-desc { font-size: 0.95rem; }
+        }
     </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
     <header class="site-header">
         <div class="header-inner">
             <a href="index.html" class="site-title">
@@ -225,14 +208,12 @@
         </div>
     </header>
 
-    <main>
+    <main id="main">
         <div class="page-title">
             <h1>Geospatial Data Analysis, Prediction, and GeoAI:<br>New Theories, Methods, and Software</h1>
         </div>
 
-
-
-        <p class="description">This lecture series provides a comprehensive overview of the latest theories, analytical methods, and software tools for spatial research and applications. Students will learn how to design and conduct spatial analysis, handle diverse geospatial and remote sensing data, and apply advanced modeling and GeoAI techniques to address complex problems in sustainability, urban development, natural, built and social environments, and decision-making.</p>
+        <p class="description">This lecture series provides a comprehensive overview of the latest theories, analytical methods, and software tools for spatial research and applications. Students will learn how to design and conduct spatial analysis, handle diverse geospatial and remote sensing data, and apply advanced modelling and GeoAI techniques to address complex problems in sustainability, urban development, natural, built and social environments, and decision-making.</p>
 
         <!-- ===== COURSE OVERVIEW ===== -->
         <div class="section-heading">Course Overview</div>
@@ -259,7 +240,7 @@
         <div class="sub-item">
             <div class="sub-label">&#x1F4E6; Additional Resources</div>
             <ul>
-                <li>IEEE IGARSS Summer School Training Materials: <a href="https://ausgis.github.io/igarss25ss/" target="_blank">https://ausgis.github.io/igarss25ss/</a></li>
+                <li>IEEE IGARSS Summer School Training Materials: <a href="https://ausgis.github.io/igarss25ss/" target="_blank" rel="noopener noreferrer">https://ausgis.github.io/igarss25ss/</a></li>
             </ul>
         </div>
 
@@ -497,40 +478,6 @@
             </ol>
         </div>
 
-        <!-- ===== FEEDBACK ===== -->
-        <div class="feedback-section">
-            <div class="section-heading">Student Feedback</div>
-
-            <form class="feedback-form" onsubmit="return false;">
-                <div class="form-group">
-                    <label>Name <span class="req">(required)</span></label>
-                    <input type="text" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label>Email <span class="req">(required)</span></label>
-                    <input type="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label>Rate your experience <span class="req">(required)</span></label>
-                    <div class="star-rating" id="starRating">
-                        <span class="star" data-value="1">&#9734;</span>
-                        <span class="star" data-value="2">&#9734;</span>
-                        <span class="star" data-value="3">&#9734;</span>
-                        <span class="star" data-value="4">&#9734;</span>
-                        <span class="star" data-value="5">&#9734;</span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>What knowledge and skills did you learn? How about your experience in the lecture?</label>
-                    <textarea name="experience"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>How could we improve?</label>
-                    <textarea name="improve"></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Send feedback</button>
-            </form>
-        </div>
     </main>
 
     <!-- ========== FOOTER ========== -->
@@ -565,37 +512,20 @@
             <div class="footer-left">
                 <span class="footer-copyright">&copy; 2026 Yongze Song</span>
                 <div class="footer-social">
-                    <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
-                    <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
-                    <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
-                    <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
-                    <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                    <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar" loading="lazy" decoding="async"></a>
+                    <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate" loading="lazy" decoding="async"></a>
+                    <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID" loading="lazy" decoding="async"></a>
+                    <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn" loading="lazy" decoding="async"></a>
+                    <a href="https://x.com/YongzeSong" title="X (formerly Twitter)"><img src="assets/images/x-logo.svg" alt="X" loading="lazy" decoding="async"></a>
                 </div>
                 <a href="cn.html" class="footer-lang">中文</a>
             </div>
             <div class="footer-right">
-                <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods"></a>
-                <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab"></a>
+                <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods" loading="lazy" decoding="async"></a>
+                <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab" loading="lazy" decoding="async"></a>
             </div>
         </div>
     </footer>
 
-    <script>
-        // Star rating interaction
-        document.querySelectorAll('#starRating .star').forEach(function(star) {
-            star.addEventListener('click', function() {
-                var val = parseInt(this.getAttribute('data-value'));
-                document.querySelectorAll('#starRating .star').forEach(function(s, i) {
-                    if (i < val) {
-                        s.classList.add('active');
-                        s.innerHTML = '&#9733;';
-                    } else {
-                        s.classList.remove('active');
-                        s.innerHTML = '&#9734;';
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 </html>

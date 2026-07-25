@@ -1,0 +1,10 @@
+"test","quantity","value"
+"marginal (SOP vs shuffled SOP)","observed",0.699422364741941
+"marginal (SOP vs shuffled SOP)","null mean",0.399764838905159
+"marginal (SOP vs shuffled SOP)","null 95th percentile",0.449874513848524
+"marginal (SOP vs shuffled SOP)","empirical p",0.0196078431372549
+"conditional (covariates + SOP vs covariates + shuffled SOP)","observed",0.700081544971088
+"conditional (covariates + SOP vs covariates + shuffled SOP)","null mean",0.612329926444551
+"conditional (covariates + SOP vs covariates + shuffled SOP)","null 95th percentile",0.631463390487946
+"conditional (covariates + SOP vs covariates + shuffled SOP)","empirical p",0.0196078431372549
+"conditional (covariates + SOP vs covariates + shuffled SOP)","covariates only (A3)",0.586383518911541

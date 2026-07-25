@@ -1,0 +1,10 @@
+"variable","role","mean","sd","min","max"
+"Gini","response",0.4632,0.0476,0.34,0.63
+"Induscale","explanatory",0.0185,0.0413,0,0.277
+"IT","explanatory",81.8967,6.582,59.3,95.7
+"Income","explanatory",58010.1051,11902.0621,39860,112355
+"Sexrat","explanatory",1.0904,0.0986,0.88,1.44
+"Houseown","explanatory",31.5781,8.4031,2.4,50.1
+"Indemp","explanatory",3937.2853,2972.8317,0,17490
+"Indcom","explanatory",291.4114,246.984,0,1957
+"Hiedu","explanatory",28.7652,12.3909,9.9,61.8

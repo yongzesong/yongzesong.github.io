@@ -1,0 +1,87 @@
+# =============================================================================
+# LPI project configuration — the single file to edit when porting the
+# pipeline to a new domain. Every R script reads this file; none of them
+# hard-code variable names, coordinates, or parameters.
+#
+# Method: LPI (Local Pattern Interaction) = LISP local stratified power
+#         + geocomplexity (GC) patterns + local interactions + GOZH total effect
+# =============================================================================
+
+project:
+  name: "lpi-application-template"
+  domain: "example"              # short label for your application domain
+  crs_input: 4326                # CRS of the coordinates in the analysis table
+  crs_projected: 32650           # metric CRS for distance computation — EDIT
+                                 # to a projected CRS suited to your region
+                                 # (units must be metres; the demo data sit in
+                                 # UTM zone 50N = 32650)
+
+data:
+  use_example: true              # true  = 01-prepare-data.R simulates a demo
+                                 #         dataset so the pipeline runs end to end
+                                 # false = 01-prepare-data.R reads your raw data
+                                 #         (edit that script for your source format)
+  analysis_table: "data/processed/analysis-table.csv"
+  boundary: ""                   # optional study-area boundary for maps, e.g.
+                                 # "data/boundary/study-area.gpkg" ("" = no boundary)
+  id_col: "uid"
+  x_col: "lon"                   # longitude / easting column in analysis table
+  y_col: "lat"                   # latitude / northing column in analysis table
+
+response:
+  direct_col: "y"                # observed response column in the analysis table
+  response_name: "z"             # standard internal name used by the pipeline
+
+predictors:
+  x_vars: ["x1", "x2", "x3", "x4", "x5", "x6"]
+  # Display labels used in every figure (keep short; GC labels are derived
+  # automatically as "GC(<label>)").
+  labels:
+    x1: "Variable 1"
+    x2: "Variable 2"
+    x3: "Variable 3"
+    x4: "Variable 4"
+    x5: "Variable 5"
+    x6: "Variable 6"
+
+params:
+  gc:                            # Step 03 geocomplexity
+    knn_share: 0.02              # k = max(knn_min, knn_share * n)
+    knn_min: 30
+    method: "spvar"              # geocomplexity::geocd_vector method
+  lisp:                          # Steps 04-05 local range + local q
+    threshold_multiplier: 2      # local extent = multiplier * variogram range
+    discnum: 4                   # discretisation bins inside local windows
+    discmethod: "quantile"
+  interaction:                   # Step 06 local pairwise interactions
+    top_n_vars: 5                # pairs are formed among the top-N variables
+                                 # by mean local q (N=5 gives 10 pairs)
+    min_local_n: 10              # fallback neighbourhood size if the distance
+                                 # circle contains fewer points
+  global:                        # Step 08 global benchmark (OPGD-style)
+    n_strata: 5
+    top_n_interactions: 10
+  cores: "auto"                  # "auto" = detectCores() - 1, or an integer
+
+validation:
+  holdout:                       # Step 09 subsample stability
+    n_repeats: 20
+    drop_share: 0.05
+    top_n_vars: 10
+    seed: 2026
+  sensitivity:                   # Step 10 parameter sensitivity
+    threshold_multipliers: [1.5, 2, 3]
+    discnums: [3, 4, 5]
+    top_n_vars: 5
+
+figures:
+  # Fixed six-class palette for quantile-binned maps (colour-method mapping
+  # stays constant across all figures).
+  palette: ["#1F6B4A", "#4F9C93", "#8FC8BE", "#E6A8B6", "#D85A8E", "#8F1E5F"]
+  interaction_colors:
+    xx: "#1F6B4A"                # X x X pairs
+    xgc: "#8FC8BE"               # X x GC pairs
+    gcgc: "#8F1E5F"              # GC x GC pairs
+  point_size: 0.6
+  width_single: 5                # inches, single-panel figures
+  width_full: 14                 # inches, four-panel map rows

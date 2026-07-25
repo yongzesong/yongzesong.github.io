@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering
+\caption{Spatial characteristics of the response and of each model's residuals, with the resulting degree of spatial interpretability for individual characteristics.}
+\label{tab:dsi}
+\begin{tabular}{lrrrrrr}
+\hline
+\textbf{Model} & \textbf{$\delta^a_0$} & \textbf{$\delta^a_r$} & \textbf{$\eta^a$} & \textbf{$\delta^h_0$} & \textbf{$\delta^h_r$} & \textbf{$\eta^h$} \\
+\hline
+xgbTree & 0.642 & 0.426 & 0.337 & 0.522 & 0.208 & 0.601 \\
+rpart & 0.642 & 0.516 & 0.197 & 0.522 & 0.301 & 0.423 \\
+knn & 0.642 & 0.538 & 0.163 & 0.522 & 0.296 & 0.433 \\
+rf & 0.642 & 0.561 & 0.126 & 0.522 & 0.290 & 0.445 \\
+cubist & 0.642 & 0.580 & 0.097 & 0.522 & 0.305 & 0.416 \\
+\hline
+\end{tabular}
+\\[2pt]\footnotesize $\delta^a$ is Moran's I under 8-nearest-neighbour weights; $\delta^h$ is the Q statistic under tree strata. Subscript 0 denotes the response field and $r$ the residual field.
+\end{table}

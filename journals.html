@@ -8,7 +8,23 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
     <title>Journals - Yongze Song</title>
+    <link rel="canonical" href="https://yongzesong.com/journals.html">
     <meta name="description" content="Curated list of journals in geosciences and social sciences with impact factors and quartile rankings.">
+    <!-- Open Graph / Twitter Card -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Yongze Song">
+    <meta property="og:locale" content="en_AU">
+    <meta property="og:title" content="Journals - Yongze Song">
+    <meta property="og:description" content="Curated list of journals in geosciences and social sciences with impact factors and quartile rankings.">
+    <meta property="og:url" content="https://yongzesong.com/journals.html">
+    <meta property="og:image" content="https://yongzesong.com/assets/images/research-excellence-v2.jpg">
+    <meta property="og:image:alt" content="Yongze Song research">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@YongzeSong">
+    <meta name="twitter:creator" content="@YongzeSong">
+    <meta name="twitter:title" content="Journals - Yongze Song">
+    <meta name="twitter:description" content="Curated list of journals in geosciences and social sciences with impact factors and quartile rankings.">
+    <meta name="twitter:image" content="https://yongzesong.com/assets/images/research-excellence-v2.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -132,7 +148,7 @@
             .journals-container { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 768px) {
-            html, body { font-size: 15px; }
+            html, body { font-size: 16px; }
             .journals-container {
                 grid-template-columns: 1fr;
                 gap: 14px;
@@ -140,9 +156,15 @@
             .footer-inner { grid-template-columns: 1fr; gap: 16px; }
             .footer-bottom { flex-direction: column; gap: 8px; }
         }
+    
+        /* Mobile readability: keep primary reading text at 15px or above */
+        @media (max-width: 768px) {
+            td.journal-name, .journal-table td, .journal-table th { font-size: 0.95rem; }
+        }
     </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <!-- ========== HEADER ========== -->
 <header class="site-header">
@@ -160,6 +182,8 @@
         </nav>
     </div>
 </header>
+
+<main id="main">
 
 <!-- ========== PAGE HEADER ========== -->
 <div class="page-header">
@@ -206,7 +230,7 @@
     <!-- Social Sciences 1-21 -->
     <div class="panel">
         <div class="panel-header">
-            <h3>Social Sciences</h3>
+            <h3>Social Sciences<span class="sr-only"> (journals 1&ndash;21)</span></h3>
             <span class="count">1&ndash;21</span>
         </div>
         <table class="journal-table">
@@ -242,7 +266,7 @@
     <!-- Social Sciences 22-42 -->
     <div class="panel">
         <div class="panel-header continued">
-            <h3>Social Sciences</h3>
+            <h3>Social Sciences<span class="sr-only"> (journals 22&ndash;42)</span></h3>
             <span class="count">22&ndash;42</span>
         </div>
         <table class="journal-table">
@@ -277,6 +301,8 @@
 
 </section>
 
+</main>
+
 <!-- ========== FOOTER ========== -->
 <footer class="site-footer">
     <div class="footer-inner">
@@ -309,17 +335,17 @@
         <div class="footer-left">
             <span class="footer-copyright">&copy; 2026 Yongze Song</span>
             <div class="footer-social">
-                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
-                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
-                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
-                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
-                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar" loading="lazy" decoding="async"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate" loading="lazy" decoding="async"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID" loading="lazy" decoding="async"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn" loading="lazy" decoding="async"></a>
+                <a href="https://x.com/YongzeSong" title="X (formerly Twitter)"><img src="assets/images/x-logo.svg" alt="X" loading="lazy" decoding="async"></a>
             </div>
             <a href="cn.html" class="footer-lang">中文</a>
         </div>
         <div class="footer-right">
-            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods"></a>
-            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods" loading="lazy" decoding="async"></a>
+            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab" loading="lazy" decoding="async"></a>
         </div>
     </div>
 </footer>

@@ -1,0 +1,15 @@
+"name","category","dimension","weight"
+"craf_schools","accessibility","B",0.309889585115066
+"craf_hospitals","accessibility","B",0.351755194109842
+"craf_industry","accessibility","B",0.338355220775092
+"intersection_density","connectivity","A",1
+"road_density","density","A",0.343224168283881
+"main_road_density","density","A",0.328222815283247
+"roads_per_person","density","A",0.328553016432872
+"roughness","performance","B",0.267341347548535
+"rutting","performance","B",0.260074501330966
+"deflection","performance","B",0.230488068573002
+"curvature","performance","B",0.242096082547496
+"crash_rate","safety","B",1
+"dist_ports","transport_modes","B",0.472414562312474
+"dist_airports","transport_modes","B",0.527585437687526

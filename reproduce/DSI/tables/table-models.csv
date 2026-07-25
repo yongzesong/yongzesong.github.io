@@ -1,0 +1,6 @@
+"model","label","type"
+"rpart","Regression tree","Tree-based model"
+"rf","Random forest","Tree-based model"
+"xgbTree","Extreme gradient boosting","Tree-based model"
+"cubist","Cubist rule-based model","Rule-based model"
+"knn","k-nearest neighbours","Neighbourhood-based model"

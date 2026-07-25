@@ -1,0 +1,11 @@
+"variable","surface","buffer_km","quantile","correlation"
+"pH_b9t0.9","pH",9,0.9,0.5081
+"pH_b9t0.7","pH",9,0.7,0.4849
+"NDVI_b9t0.1","NDVI",9,0.1,-0.4341
+"pH_b3t0.9","pH",3,0.9,0.4244
+"NDVI_b5t0.1","NDVI",5,0.1,-0.4164
+"NDVI_b7t0.4","NDVI",7,0.4,-0.3913
+"pH_b1t1","pH",1,1,0.3577
+"Water_b9t1","Water",9,1,-0.2238
+"Road_b9t0.8","Road",9,0.8,-0.176
+"SOC_b9t1","SOC",9,1,0.0182

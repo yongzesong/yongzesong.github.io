@@ -1,0 +1,5 @@
+"variable","method","n_intervals","qv"
+"Precipitation","equal",7,0.8694
+"Tempchange","sd",7,0.3266
+"Popdensity","quantile",7,0.1962
+"GDP","quantile",7,0.0993

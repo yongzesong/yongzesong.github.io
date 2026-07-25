@@ -1,0 +1,6 @@
+"model","eta_heterogeneity_primary","eta_heterogeneity_alternative","difference","strata_primary","strata_alternative"
+"cubist",0.4163,0.8295,0.4131,"tree","kmeans"
+"knn",0.4333,0.7918,0.3585,"tree","kmeans"
+"rf",0.4447,0.7201,0.2754,"tree","kmeans"
+"rpart",0.4226,0.7705,0.3478,"tree","kmeans"
+"xgbTree",0.6007,0.7161,0.1154,"tree","kmeans"

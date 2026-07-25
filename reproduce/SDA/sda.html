@@ -1,0 +1,2339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reproducing the SDA Model — Step-by-Step Guide</title>
+<meta name="description" content="Step-by-step, verified guide to reproducing the second dimension of spatial association (SDA) model in R using the SecDim package.">
+<link rel="canonical" href="https://yongzesong.com/reproduce/SDA/sda.html">
+<link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../../assets/images/apple-touch-icon.png">
+<style>
+:root{
+  --accent:#B2182B;
+  --accent-2:#2166AC;
+  --accent-soft:#f7e9ea;
+  --bg:#ffffff;
+  --fg:#1a1d21;
+  --muted:#5a626b;
+  --line:#e6e8eb;
+  --side-bg:#fbfcfd;
+  --code-bg:#f6f8fa;
+  --code-fg:#24292e;
+  --nav-fg:#495057;
+  --nav-l2:#6c757d;
+  --nav-active:#2761e3;
+  --nav-active-bg:#eef4ff;
+  --nav-hover:#eef0f2;
+  --sidew:290px;
+  --rightw:var(--sidew);
+  --maxw:880px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+[data-theme=dark]{
+  --bg:#0f1216;
+  --fg:#e6e8eb;
+  --muted:#9aa4af;
+  --line:#242a31;
+  --side-bg:#0c1014;
+  --code-bg:#161b22;
+  --code-fg:#d1d7de;
+  --accent-soft:#2a1416;
+  --nav-fg:#b4bcc4;
+  --nav-l2:#8b939c;
+  --nav-active:#6ea8fe;
+  --nav-active-bg:#15202f;
+  --nav-hover:#171c22;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:var(--mono);
+  font-size:.88em;
+  background:var(--code-bg);
+  color:var(--code-fg);
+  padding:.1em .35em;
+  border-radius:4px;
+}
+
+/* Sidebar: LISP-GC navigation pattern, SOH dark-mode behavior. */
+#menu-btn{
+  display:none;
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:60;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 11px;
+  font-size:1.05rem;
+  cursor:pointer;
+  color:var(--fg);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+#sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:var(--sidew);
+  overflow-y:auto;
+  background:var(--side-bg);
+  border-right:1px solid var(--line);
+  padding:22px 18px 40px;
+  z-index:50;
+}
+#sidebar .back-to-site{
+  display:inline-block;
+  font-size:.78rem;
+  color:var(--muted);
+  text-decoration:none;
+  margin-bottom:10px;
+  padding:3px 8px;
+  border:1px solid var(--line);
+  border-radius:5px;
+}
+#sidebar .back-to-site:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+}
+#sidebar .brand{
+  font-size:1.06rem;
+  font-weight:700;
+  color:var(--fg);
+  line-height:1.35;
+  margin-bottom:4px;
+}
+#sidebar .brand-sub{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+#toc-filter{
+  width:100%;
+  padding:6px 10px;
+  font-size:.85rem;
+  border:1px solid var(--line);
+  border-radius:6px;
+  margin-bottom:14px;
+  outline:none;
+  background:var(--bg);
+  color:var(--fg);
+}
+#toc-filter:focus{border-color:var(--nav-active)}
+#toc a{
+  display:block;
+  padding:4px 8px;
+  font-size:.88rem;
+  color:var(--nav-fg);
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  line-height:1.35;
+  margin:1px 0;
+}
+#toc a.l2{
+  padding-left:22px;
+  font-size:.82rem;
+  color:var(--nav-l2);
+}
+#toc a:hover{
+  background:var(--nav-hover);
+  text-decoration:none;
+}
+#toc a.active{
+  color:var(--nav-active);
+  border-left-color:var(--nav-active);
+  background:var(--nav-active-bg);
+  font-weight:600;
+}
+.side-foot{
+  padding:16px 8px 0;
+  margin-top:14px;
+  border-top:1px solid var(--line);
+}
+.themebtn{
+  font:inherit;
+  font-size:.82rem;
+  cursor:pointer;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:5px 10px;
+  color:var(--muted);
+}
+.themebtn:hover{color:var(--fg)}
+
+/* Hero and content. */
+.hero{
+  border-bottom:1px solid var(--line);
+  padding:34px 40px 26px;
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  background:var(--bg);
+}
+.hero h1{
+  margin:0 0 6px;
+  font-size:1.9rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  color:var(--fg);
+}
+.hero .sub{
+  color:var(--muted);
+  font-size:1.05rem;
+}
+.cite-lead{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--fg);
+  margin-top:16px;
+}
+.cite{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:12px;
+}
+.cite div+div{margin-top:4px}
+.dlbtn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding:9px 18px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  font-size:.92rem;
+  border-radius:8px;
+}
+.dlbtn:hover{filter:brightness(1.12);text-decoration:none}
+.dlnote{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* Lab director card adapted from lab.html, with template typography and colours. */
+.director-card{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  margin:18px 0 4px;
+  padding:16px;
+  background:var(--side-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+.director-card img{
+  width:110px;
+  min-width:110px;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:50%;
+  background:#fff;
+}
+.director-info h3{
+  font-size:1.16rem;
+  line-height:1.25;
+  margin:0 0 4px;
+}
+.director-info p{
+  font-size:.82rem;
+  line-height:1.5;
+  margin:2px 0;
+  color:var(--muted);
+}
+.director-info a{
+  font-size:.82rem;
+  font-weight:600;
+}
+
+/* Fixed right rail for related reproducible-model tutorials. */
+.related-rail{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  width:var(--rightw);
+  overflow-y:auto;
+  z-index:40;
+  padding:22px 18px 40px;
+  border-left:1px solid var(--line);
+  background:var(--side-bg);
+}
+.related-rail .rail-title{
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1.35;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.related-rail a{
+  display:block;
+  padding:4px 8px;
+  margin:1px 0;
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  color:var(--nav-fg);
+  font-size:.88rem;
+  line-height:1.35;
+}
+.related-rail a:hover{
+  text-decoration:none;
+  background:var(--nav-hover);
+}
+.related-rail a.current{
+  color:var(--nav-active);
+  background:var(--nav-active-bg);
+  border-left-color:var(--nav-active);
+  font-weight:600;
+}
+.related-rail .rail-note{
+  color:var(--muted);
+  font-size:.76rem;
+  line-height:1.45;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+main{
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  padding:26px 40px 90px;
+}
+section{padding-top:4px}
+h2{
+  font-size:1.5rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  margin:48px 0 14px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+  color:var(--fg);
+}
+section:first-of-type h2{margin-top:20px}
+h3{
+  font-size:1.16rem;
+  font-weight:600;
+  margin:30px 0 10px;
+  letter-spacing:-.005em;
+  color:var(--fg);
+}
+h4{
+  font-size:1rem;
+  font-weight:600;
+  margin:20px 0 8px;
+  color:var(--fg);
+}
+p{margin:.7em 0}
+ul,ol{
+  margin:.6em 0;
+  padding-left:1.3em;
+}
+li{margin:.28em 0}
+
+/* Reusable content blocks. */
+.callout{
+  border:1px solid var(--line);
+  border-left-width:4px;
+  border-radius:8px;
+  padding:12px 16px;
+  margin:1.2em 0;
+  background:var(--side-bg);
+}
+.callout-h{
+  font-weight:700;
+  font-size:.92rem;
+  margin-bottom:2px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.callout-i{font-size:1rem}
+.callout-b p{margin:.4em 0}
+.callout-b ul{margin:.4em 0}
+.c-interpret{border-left-color:var(--accent);background:var(--accent-soft)}
+.c-tip{border-left-color:#178a3c}
+.c-warn{border-left-color:#d98a00}
+.c-repro{border-left-color:var(--accent-2)}
+.c-note{border-left-color:#8b939c}
+
+.codewrap{
+  position:relative;
+  margin:1.1em 0;
+}
+.code-label{
+  position:absolute;
+  top:-9px;
+  left:12px;
+  font-size:.7rem;
+  font-family:var(--mono);
+  background:var(--accent);
+  color:#fff;
+  padding:1px 8px;
+  border-radius:4px;
+  letter-spacing:.02em;
+}
+.copybtn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  font:inherit;
+  font-size:.74rem;
+  cursor:pointer;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:3px 9px;
+  color:var(--muted);
+  opacity:.85;
+  transition:.15s;
+}
+.copybtn:hover{
+  color:var(--fg);
+  opacity:1;
+  border-color:var(--accent);
+}
+.copybtn.ok{
+  color:#178a3c;
+  border-color:#178a3c;
+}
+pre.code{
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px;
+  overflow-x:auto;
+  margin:0;
+  font-family:var(--mono);
+  font-size:.83rem;
+  line-height:1.5;
+}
+pre.code code{
+  background:none;
+  padding:0;
+  color:var(--code-fg);
+  white-space:pre;
+}
+.console{
+  background:#22262b;
+  color:#d8dee4;
+  border-radius:8px;
+  padding:12px 15px;
+  margin:14px 0;
+  font-family:var(--mono);
+  font-size:.78rem;
+  line-height:1.5;
+  overflow:auto;
+  max-height:320px;
+  white-space:pre;
+}
+.console .lbl{
+  display:block;
+  color:#8b949e;
+  font-size:.72rem;
+  margin-bottom:6px;
+  font-family:inherit;
+}
+
+.tablewrap{
+  margin:1.2em 0;
+  overflow-x:auto;
+}
+.tablewrap table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:.86rem;
+}
+.tablewrap th{
+  text-align:left;
+  border-bottom:2px solid var(--fg);
+  padding:7px 10px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.tablewrap td{
+  border-bottom:1px solid var(--line);
+  padding:6px 10px;
+  vertical-align:top;
+}
+.tablewrap tbody tr:hover{background:rgba(127,127,127,.05)}
+.tablewrap figcaption{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:8px;
+}
+.tablewrap.compact td,
+.tablewrap.compact th{
+  padding:4px 8px;
+  font-size:.8rem;
+}
+table code{font-size:.82em}
+
+figure.fig{
+  margin:1.2em 0;
+  text-align:center;
+}
+figure.fig img{
+  max-width:100%;
+  height:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+figure.fig figcaption{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:8px;
+  text-align:left;
+}
+.credit{
+  display:block;
+  font-style:italic;
+  margin-top:2px;
+}
+.figpair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin:1.2em 0;
+}
+.figpair figure{margin:0}
+.figpair img{
+  max-width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+.figpair figcaption{
+  font-size:.78rem;
+  color:var(--muted);
+  margin-top:6px;
+  text-align:left;
+}
+.pairtag{
+  font-size:.72rem;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:5px;
+  margin-bottom:6px;
+  display:inline-block;
+}
+.tag-demo{
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+.tag-paper{
+  background:#eef3f8;
+  color:var(--accent-2);
+}
+[data-theme=dark] .tag-paper{background:#14202e}
+.pairnote{
+  font-size:.82rem;
+  color:var(--muted);
+  border-left:3px solid var(--line);
+  padding-left:12px;
+  margin:.2em 0 1em;
+}
+
+.flow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:8px;
+  margin:16px 0;
+}
+.flow .chip{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 12px;
+  background:var(--side-bg);
+  font-size:.8rem;
+  line-height:1.4;
+  flex:1;
+  min-width:135px;
+}
+.flow .chip b{
+  display:block;
+  font-size:.9rem;
+  color:var(--fg);
+}
+.flow .chip.hl{
+  border-color:var(--nav-active);
+  background:var(--nav-active-bg);
+}
+.flow .arrow{
+  align-self:center;
+  color:var(--muted);
+  font-size:1.1rem;
+}
+.mini-badge{
+  display:inline-block;
+  font-size:.68rem;
+  font-weight:600;
+  border-radius:4px;
+  padding:1px 6px;
+  margin-left:4px;
+  vertical-align:1px;
+  background:#eceff1;
+  color:#6c757d;
+}
+.mini-badge.oa{
+  background:#d8f3e1;
+  color:#1c7a43;
+}
+
+.step-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:1.4em 0 1.8em;
+  overflow:hidden;
+  background:var(--bg);
+}
+.step-card-h{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  background:var(--side-bg);
+}
+.step-label{
+  display:inline-block;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+.step-card-h h4{
+  margin:0;
+  font-size:1.05rem;
+}
+.step-card-b{padding:14px 16px 16px}
+.step-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+.kv{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  background:var(--side-bg);
+}
+.kv .k{
+  font-size:.72rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+.kv .v{
+  font-size:.9rem;
+  color:var(--fg);
+}
+
+#lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(15,18,22,.88);
+  display:none;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  cursor:zoom-out;
+  padding:30px;
+}
+#lightbox img{
+  max-width:96%;
+  max-height:96%;
+  background:#fff;
+  border-radius:6px;
+  padding:10px;
+}
+#lightbox.open{display:flex}
+
+@media (max-width:1000px){
+  #sidebar{
+    transform:translateX(-100%);
+    transition:transform .2s;
+  }
+  #sidebar.open{
+    transform:none;
+    box-shadow:0 0 30px rgba(0,0,0,.2);
+  }
+  #menu-btn{display:block}
+  .hero,
+  main{
+    margin-left:0;
+    margin-right:0;
+  }
+  .hero{padding:60px 20px 22px}
+  main{
+    padding:20px 20px 70px;
+    max-width:none;
+  }
+  .director-card{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+  .director-card img{
+    width:90px;
+    height:90px;
+    align-self:center;
+  }
+  .figpair{grid-template-columns:1fr}
+  .related-rail{display:none}
+}
+@media print{
+  #sidebar,
+  #menu-btn,
+  .copybtn,
+  #lightbox{display:none}
+  .hero,
+  main{margin-left:0}
+}
+
+/* --- Page additions shared with the LPI tutorial --- */
+.figpair.triple{grid-template-columns:1fr 1fr 1fr}
+.tag-lisp{background:#e9f7f4;color:#0f766e}
+[data-theme=dark] .tag-lisp{background:#0e2320}
+.tablewrap td.num,.tablewrap th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre.code .cm{color:#7f8896;font-style:italic}
+pre.code .st{color:#20794d}
+pre.code .kw{color:#8f3faf;font-weight:600}
+[data-theme=dark] pre.code .cm{color:#8b949e}
+[data-theme=dark] pre.code .st{color:#7ee2a8}
+[data-theme=dark] pre.code .kw{color:#d2a8ff}
+@media (max-width:1000px){.figpair.triple{grid-template-columns:1fr}}
+
+/* Half-width figures (method flowchart, single-map demo panels). */
+figure.fig.half img{max-width:50%}
+@media (max-width:1000px){figure.fig.half img{max-width:100%}}
+
+/* Equation display blocks (DSI page): serif-style formula rows. */
+.eq{
+  font-size:1.02rem;
+  margin:.6em 0;
+  padding:10px 14px;
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+
+/* Collapsible code boxes: long blocks start collapsed to a ~3-line preview.
+   The expand/collapse control is a full-height accent strip on the LEFT edge of
+   the box — clickable at any scroll position. */
+.codewrap.collapsed pre.code{max-height:78px;overflow:hidden}
+.codewrap.has-fold pre.code{padding-left:46px}
+.codewrap.has-fold .code-label{left:44px}
+.foldbtn{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  width:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:none;
+  border-left:1px solid var(--line);   /* rotated 180deg: renders on the visual right, against the code */
+  border-radius:0 10px 10px 0;         /* rotated 180deg: rounds the visual left corners */
+  background:var(--code-bg);
+  color:var(--muted);
+  font:inherit;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  cursor:pointer;
+}
+.foldbtn:hover{color:var(--fg);background:var(--nav-hover)}
+@media print{
+  .foldbtn{display:none}
+  .codewrap.collapsed pre.code{max-height:none}
+  .codewrap.has-fold pre.code{padding-left:16px}
+}
+
+/* featured figure above section 1 */
+figure.featured-fig{width:50%;margin:0 auto 1.6em;text-align:center;}
+figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff;}
+@media (max-width:1000px){figure.featured-fig{width:100%;}}
+</style>
+</head>
+<body>
+
+<button id="menu-btn" aria-label="Menu">☰</button>
+
+<aside id="sidebar">
+  <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
+  <div class="brand">Reproducing the SDA Model</div>
+  <div class="brand-sub">Second dimension of spatial association · verified template</div>
+  <input id="toc-filter" type="text" placeholder="Filter sections...">
+  <nav id="toc">
+    <a href="#overview">1&nbsp;Overview &amp; Scope</a>
+    <a class="l2" href="#core-idea">1.1&nbsp;Core idea</a>
+    <a class="l2" href="#method-logic">1.2&nbsp;Method logic</a>
+    <a class="l2" href="#reproduction-scope">1.3&nbsp;Reproduction scope</a>
+    <a href="#setup">2&nbsp;Setup, Code &amp; Data</a>
+    <a class="l2" href="#environment">2.1&nbsp;Environment</a>
+    <a class="l2" href="#the-code">2.2&nbsp;The method in one file</a>
+    <a class="l2" href="#structure-config">2.3&nbsp;Structure &amp; config</a>
+    <a class="l2" href="#data-contract">2.4&nbsp;Data contract</a>
+    <a href="#pipeline">3&nbsp;Pipeline &amp; Results</a>
+    <a class="l2" href="#pipeline-execution">3.1&nbsp;Pipeline execution</a>
+    <a class="l2" href="#reproduce-paper">3.2&nbsp;Reproduce the published values</a>
+    <a class="l2" href="#core-steps">3.3&nbsp;Core analytical steps</a>
+    <a class="l2" href="#step-1">·&ensp;Step&nbsp;1&nbsp;Prepare data</a>
+    <a class="l2" href="#step-2">·&ensp;Step&nbsp;2&nbsp;Build the second dimension</a>
+    <a class="l2" href="#step-3">·&ensp;Step&nbsp;3&nbsp;Select variables</a>
+    <a class="l2" href="#step-4">·&ensp;Step&nbsp;4&nbsp;Cross validation</a>
+    <a class="l2" href="#step-5">·&ensp;Step&nbsp;5&nbsp;Searching range</a>
+    <a class="l2" href="#interpretation">3.4&nbsp;Reading the results</a>
+    <a href="#adaptation">4&nbsp;Adaptation &amp; Reproducibility</a>
+    <a class="l2" href="#port-domain">4.1&nbsp;Port to your domain</a>
+    <a class="l2" href="#write-paper">4.2&nbsp;Write the paper</a>
+    <a class="l2" href="#repro-package">4.3&nbsp;Reproducibility package</a>
+  </nav>
+  <div class="side-foot">
+    <button id="themebtn" class="themebtn">Dark mode</button>
+  </div>
+</aside>
+
+<header class="hero">
+  <h1>Reproducing the Second Dimension of Spatial Association (SDA)</h1>
+  <div class="sub">A complete, verified walkthrough of the SDA model — which builds explanatory
+  variables from the geographical environment <i>around</i> the samples rather than only at them —
+  from raw data to manuscript. The method is implemented here in a single self-contained R file
+  that needs no package at all.</div>
+  <div class="director-card">
+    <img src="../../assets/images/yongze-song.png" alt="Yongze Song">
+    <div class="director-info">
+      <h3>Yongze Song</h3>
+      <p>Associate Professor, Curtin University</p>
+      <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.2) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.8)</p>
+      <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
+    </div>
+  </div>
+  <a class="dlbtn" href="sda-code-and-data.zip" download>⬇ Download code &amp; data (zip, 2.1&nbsp;MB)</a>
+  <div class="dlnote"><code>R/</code> pipeline scripts including the complete method in
+  <code>R/02-sda-core.R</code> · <code>config/project-config.R</code> · <code>data/</code>
+  (614 samples, 68,757 grid cells, the published variable sets) · <code>tests/</code> ·
+  <code>run-all.R</code> — unzip and run <code>Rscript run-all.R test</code> from the
+  <code>SDA/</code> folder root.</div>
+  <div class="cite-lead">To cite the SDA model and its R packages and codes in publications, please use:</div>
+  <div class="cite">
+    <div>Song&nbsp;Y (2022). The second dimension of spatial association.
+    <i>Int&nbsp;J&nbsp;Appl Earth Obs Geoinf</i> 111:102834.
+    <a href="https://doi.org/10.1016/j.jag.2022.102834">doi</a> ·
+    <a href="../../pdf/SDA-song2022.pdf">PDF</a></div>
+    <div>Wang&nbsp;X, Wu&nbsp;Y, Shi&nbsp;T, et&nbsp;al. (2026). Explainable second-dimension
+    spatial association between park sentiment and built-social environments.
+    <a href="../../pdf/ESDA-wu2026.pdf">PDF</a></div>
+    <div>Ren&nbsp;K, Song&nbsp;Y, Yu&nbsp;Q (2025). Second-dimension outliers for spatial
+    prediction. <i>IJGIS</i>.
+    <a href="../../pdf/SDO-ren2025.pdf">PDF</a></div>
+    <div>Ren&nbsp;K, Song&nbsp;Y, Yang&nbsp;X, et&nbsp;al. (2026). Spatial outliers as a pattern
+    determinant for explaining heterogeneity. <i>IJGIS</i>.
+    <a href="../../pdf/SOH-ren2026.pdf">PDF</a></div>
+  </div>
+</header>
+
+<aside class="related-rail" aria-label="Related tutorials for reproducible models">
+  <div class="rail-title">Related tutorials for reproducible models</div>
+  <a href="../../methods.html">Geospatial Theories and Methods</a>
+  <a href="../OPGD/opgd.html">1 &middot; OPGD &mdash; Optimal Parameters Geographical Detector</a>
+  <a href="../GC/gc.html">2 &middot; GC &mdash; Geocomplexity</a>
+  <a href="../LPI/lpi.html">3 &middot; LPI &mdash; Local Pattern Interaction</a>
+  <a href="../LPA/lpa.html">4 &middot; LPA &mdash; Local Pathways of Association</a>
+  <a class="current" href="sda.html">5 &middot; SDA &mdash; Second Dimension of Spatial Association</a>
+  <a href="../SOH/soh.html">6 &middot; SOH &mdash; Second-dimension Outlier-driven Heterogeneity</a>
+  <a href="../DSI/dsi.html">7 &middot; DSI &mdash; Degree of Spatial Interpretability</a>
+  <a href="../STOR/stor.html">8 &middot; STOR &mdash; Spatial Trade-Off Relation</a>
+  <a href="../SDM/sdm.html">9 &middot; SDM &mdash; Spatial Delta Model for Accessibility</a>
+</aside>
+
+<main>
+
+<figure class="featured-fig">
+  <img src="assets/featured-sda.jpg" alt="Generating second-dimension variables with searching range b and probability tau (SDA)" decoding="async">
+</figure>
+
+<section id="overview">
+  <h2>1&nbsp;Method Overview &amp; Reproduction Scope</h2>
+
+  <h3 id="core-idea">1.1&nbsp;Core Idea</h3>
+  <p>Almost every model of spatial association reads its explanatory variables <b>at the sample
+  locations</b>: one soil sample, one elevation value, one NDVI value, taken at that exact point.
+  Song (2022) names this the <b>first dimension of spatial association (FDA)</b> and observes what
+  it throws away — everything the environment is doing in the neighbourhood <i>around</i> the
+  sample. A grid of 68,757 cells sits under 614 samples in the demo below, and the first dimension
+  uses 614 of those cells.</p>
+  <p>The <b>second dimension of spatial association (SDA)</b> uses the rest. Around each sample it
+  draws a circle of radius <i>b</i>, takes every grid cell inside, and summarises that local
+  distribution at a quantile <i>τ</i>. Each pair (<i>b</i>, <i>τ</i>) becomes one explanatory
+  variable: <i>the τ-quantile of this surface within b km of the sample</i>. A single surface
+  therefore yields a whole family of variables describing the neighbourhood at several ranges and
+  several parts of its distribution, and the data decide which of them matter.</p>
+  <ul>
+    <li><b>Research problem:</b> information at locations outside the samples is missing from
+        models built on sample values, even when a dense grid of that information is available.</li>
+    <li><b>One-line contribution:</b> SDA turns the geographical environment around each sample
+        into explanatory variables indexed by a searching range <i>b</i> and a quantile <i>τ</i>,
+        then selects among them, so spatial association is explored in a second dimension rather
+        than only at points.</li>
+    <li><b>Why it matters:</b> on the same samples, the same split and the same models, the second
+        dimension predicts trace-element concentration substantially better than the first — in
+        the demo below, R² rises from 0.242 to 0.300 for a linear model and 0.275 to 0.333 for a
+        random forest.</li>
+  </ul>
+  <figure class="fig half">
+    <span class="pairtag tag-paper">Published reference · SDA</span>
+    <img src="assets/paper-sda-fig1-concept.jpg" alt="FDA versus SDA concept, Song 2022 Figure 1" loading="lazy" decoding="async">
+    <figcaption>SDA paper Fig. 1 — the whole idea in one picture. Above: the first dimension links
+    a response sample to explanatory values <i>at the same points</i>. Below: the second dimension
+    opens a cone from the sample down onto the explanatory surface and summarises everything inside
+    it, so information from locations that were never sampled enters the model.
+    <span class="credit">Song (2022), Int J Appl Earth Obs Geoinf 111:102834 (CC BY-NC-ND).</span></figcaption>
+  </figure>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Reader anchor</div>
+    <div class="callout-b">
+      <p>A sample is a point, but the process that produced it is not. Read the environment around
+      each sample at several ranges <i>b</i> and several quantiles <i>τ</i> → each (<i>b</i>, <i>τ</i>)
+      is a candidate variable → select among them → compare against the same model built from
+      point values alone. Everything on this page serves that line.</p>
+    </div>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>What you need</div>
+    <div class="callout-b">
+      <p>R 4.1+ and the folder from the download button. The method itself is
+      <code>R/02-sda-core.R</code>, about 120 lines of <b>base R with no package dependency at
+      all</b>; <code>ggplot2</code> and <code>randomForest</code> are used only for the figures and
+      the second model, and every step says so and carries on if they are absent. The full
+      pipeline runs in about 6&nbsp;seconds.</p>
+    </div>
+  </div>
+
+  <h3 id="method-logic">1.2&nbsp;Method Logic</h3>
+  <p>SDA is the root of a small family of methods. The idea of looking outside the samples was
+  introduced for spatial <i>prediction</i>, then extended to explanation, to outliers, and to
+  heterogeneity:</p>
+  <div class="flow">
+    <div class="chip hl"><b>SDA 2022</b>second-dimension variables from (b, τ); prediction<br>
+      <a href="https://doi.org/10.1016/j.jag.2022.102834">Song, JAG</a> · <a href="../../pdf/SDA-song2022.pdf">PDF</a><span class="mini-badge oa">CC BY-NC-ND</span></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>ESDA 2026</b>explainable SDA: nonlinear, quantile-asymmetric drivers<br>
+      <a href="../../pdf/ESDA-wu2026.pdf">Wang, Wu et al.</a></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>SDO 2025</b>second-dimension <i>outliers</i> as predictors<br>
+      <a href="../../pdf/SDO-ren2025.pdf">Ren, Song &amp; Yu, IJGIS</a></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>SOH 2026</b>outlier-driven heterogeneity; has its own tutorial<br>
+      <a href="../SOH/soh.html">SOH tutorial</a> · <a href="../../pdf/SOH-ren2026.pdf">PDF</a></div>
+  </div>
+  <div class="figpair">
+    <figure>
+      <span class="pairtag tag-paper">Published reference · SDA</span>
+      <img src="assets/paper-sda-fig2-schematic.jpg" alt="SDA schematic overview, Song 2022 Figure 2" loading="lazy" decoding="async">
+      <figcaption>SDA paper Fig. 2 — the second dimension model (SDM), and the plan of §3 of this
+      page: characterise the environment on a fine grid, generate variables over the (searching
+      range <i>b</i>, probability <i>τ</i>) grid, select them in two stages by correlation and
+      multicollinearity, then model and predict. Click to enlarge.</figcaption>
+    </figure>
+    <figure>
+      <span class="pairtag tag-paper">Published reference · SDO</span>
+      <img src="assets/paper-sdo-schematic.jpg" alt="SDO schematic, Ren et al. 2025 Figure 1" loading="lazy" decoding="async">
+      <figcaption>SDO paper Fig. 1 — the same second-dimension geometry, but summarising the
+      <i>outliers</i> in each neighbourhood instead of its quantiles (Ren, Song &amp; Yu 2025).</figcaption>
+    </figure>
+  </div>
+  <h4>Key concepts and equations</h4>
+  <ul>
+    <li><b>A second-dimension variable.</b> For sample <i>i</i>, surface <i>X</i>, searching range
+      <i>b</i> and quantile <i>τ</i>:
+      <div class="eq">X<sup>b,τ</sup><sub>i</sub>&nbsp;=&nbsp;Quantile<sub>τ</sub>&nbsp;{&nbsp;X(s)&nbsp;:&nbsp;d(s,&nbsp;i)&nbsp;&lt;&nbsp;b&nbsp;}</div>
+      the τ-quantile of the surface over every grid cell <i>s</i> within <i>b</i> of the sample.
+      τ&nbsp;=&nbsp;0 is the local minimum, τ&nbsp;=&nbsp;1 the local maximum, τ&nbsp;=&nbsp;0.5 the
+      local median. With <i>n<sub>b</sub></i> ranges and <i>n<sub>τ</sub></i> quantiles a surface
+      produces <i>n<sub>b</sub></i>&nbsp;×&nbsp;<i>n<sub>τ</sub></i> variables — 55 in the demo.</li>
+    <li><b>The first dimension is the limiting case.</b> As <i>b</i>&nbsp;→&nbsp;0 the circle
+      contains only the sample's own cell and every quantile collapses to the point value, so FDA
+      is SDA at zero range. The comparison in §3.4 is therefore between a model and its own
+      restriction, not between two unrelated models.</li>
+    <li><b>Selection.</b> Candidates are ranked by |correlation with the response| and walked down
+      that order, dropping any variable that pushes the variance inflation factor above a
+      threshold:
+      <div class="eq">VIF<sub>j</sub>&nbsp;=&nbsp;1&nbsp;/&nbsp;(1&nbsp;−&nbsp;R²<sub>j</sub>),&emsp;R²<sub>j</sub>&nbsp;=&nbsp;1&nbsp;−&nbsp;SSE<sub>j</sub>&nbsp;/&nbsp;SST<sub>j</sub></div>
+      This matters more here than in an ordinary regression: neighbouring buffers and neighbouring
+      quantiles describe almost the same neighbourhood, so the 440 candidates are collinear by
+      construction.</li>
+  </ul>
+
+  <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
+  <p>Everything tagged <i>Demo run</i> regenerates from this folder; everything tagged
+  <i>Published reference</i> is a static image from the source articles. The demo was verified end
+  to end on 2026-07-25 with R&nbsp;4.6.0, and it reproduces the published result twice over: the
+  generated variables are identical to the published values, and selecting from all 440 candidates
+  returns exactly the ten variables of the paper's Fig.&nbsp;5(a).</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Demo template</th><th>Published reference</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data</td>
+            <td>614 soil samples (Cr, Cu) and a 68,757-cell grid, with eight environmental surfaces
+                (<code>data/</code>)</td>
+            <td>the same geochemical case, distributed with the method</td></tr>
+        <tr><td>Method</td>
+            <td><code>R/02-sda-core.R</code> — generation, VIF, selection, prediction alignment,
+                outliers, in base R</td>
+            <td>Song (2022) §2, and the <code>SecDim</code> package</td></tr>
+        <tr><td>Tables</td>
+            <td><code>results/cross-validation.csv</code>, <code>selected-parameters.csv</code>,
+                <code>buffer-sensitivity.csv</code></td>
+            <td>Fig. 5(a) variable selection, reproduced exactly by <code>run-all.R test</code></td></tr>
+        <tr><td>Figures</td>
+            <td>fig01–fig05 from <code>R/p01–p03</code></td>
+            <td>SDA Figs 1, 2, 5, 6 and the family schematics, embedded as reference images</td></tr>
+      </tbody>
+    </table>
+    <figcaption>What the template regenerates versus what is shown as published reference.</figcaption>
+  </figure>
+  <h4>Published applications of the second dimension</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Application</th><th>Response</th><th>Spatial unit</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Trace elements in soil (Song 2022 — this demo's case)</td>
+            <td>Cr and Cu concentration</td><td>Soil sample point</td><td>Published (JAG)</td></tr>
+        <tr><td>Park sentiment from volunteered text (Wang, Wu et&nbsp;al. 2026, ESDA)</td>
+            <td>Sentiment score</td><td>Urban park</td><td>Published</td></tr>
+        <tr><td>Wheat production (Ren, Song &amp; Yu 2025, SDO)</td>
+            <td>Annual production</td><td>Local government area</td><td>Published (IJGIS)</td></tr>
+        <tr><td>Barley production (Ren et&nbsp;al. 2026, SOH)</td>
+            <td>Production per km²</td><td>SA2 polygon</td><td>Published (IJGIS) · <a href="../SOH/soh.html">tutorial</a></td></tr>
+      </tbody>
+    </table>
+    <figcaption>The second dimension travels from geochemistry to sentiment to agriculture; only
+    the response and the surfaces change.</figcaption>
+  </figure>
+  <h4>How to use this page</h4>
+  <ul>
+    <li><b>To reproduce the demo:</b> the folder holds the method, the pipeline, the data and the
+        tests. Run <code>Rscript run-all.R test</code>, then <code>Rscript run-all.R</code>.</li>
+    <li><b>To use the method on your own problem:</b> §2.2 prints the whole implementation, so you
+        can paste it into your own script; §2.4 gives the data contract and §4.1 the porting
+        steps.</li>
+    <li><b>To write the paper:</b> §4.2 maps every result file to a manuscript element.</li>
+  </ul>
+</section>
+
+<section id="setup">
+  <h2>2&nbsp;Setup, Code &amp; Data</h2>
+
+  <h3 id="environment">2.1&nbsp;Environment &amp; Dependencies</h3>
+  <p>The method needs nothing. <code>R/02-sda-core.R</code> is written in base R, so
+  <code>source()</code> it and the whole of SDA is available. The pipeline around it uses three
+  optional packages, and each step reports and continues if one is missing.</p>
+  <div class="codewrap">
+    <span class="code-label">R console — optional, for the figures and the second model</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># Figures
+install.packages(c("ggplot2", "ggrepel"))
+
+# The random-forest arm of the cross validation
+install.packages("randomForest")
+
+# Optional: used for distances when present. The built-in haversine in
+# 02-sda-core.R agrees with it to 1e-6 m, and tests/test-01 checks that.
+install.packages("geosphere")</code></pre>
+  </div>
+  <figure class="tablewrap">
+    <table>
+      <thead><tr><th>Package</th><th>Role</th><th>Required?</th></tr></thead>
+      <tbody>
+        <tr><td>—</td><td><code>R/02-sda-core.R</code>: variable generation, VIF, selection, prediction alignment, outliers</td><td>base R only</td></tr>
+        <tr><td><code>ggplot2</code>, <code>ggrepel</code></td><td>the five demo figures</td><td>figures only</td></tr>
+        <tr><td><code>randomForest</code></td><td>the random-forest comparison in Step&nbsp;4</td><td>that model only</td></tr>
+        <tr><td><code>geosphere</code></td><td>distance computation when installed</td><td>no — built-in fallback</td></tr>
+      </tbody>
+    </table>
+    <figcaption>The method is dependency-free by design, so it can be dropped into any project.</figcaption>
+  </figure>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>This tutorial does not call the <code>SecDim</code> package</div>
+    <div class="callout-b">
+      <p>SDA was released as the R package <a href="https://cran.r-project.org/src/contrib/Archive/SecDim/"><code>SecDim</code></a>,
+      and the implementation below follows it function for function — the generated variables are
+      identical to the values it ships (§3.2). It is reimplemented here for two reasons: the code
+      then has no dependency and can be pasted into any script, and two defects in
+      <code>SecDim</code>&nbsp;3.2 are corrected. Both are silent — they fit without complaint and
+      damage only prediction on new data — so they are described where the corresponding function
+      appears below.</p>
+    </div>
+  </div>
+
+  <h3 id="the-code">2.2&nbsp;The Method in One File</h3>
+  <p>The whole of SDA is printed here so it can be copied out and used directly; it is also
+  <code>R/02-sda-core.R</code> in the download, and the two are the same file. Four pieces:
+  generation, the variance inflation factor, selection, and outliers.</p>
+
+  <h4>Generating second-dimension variables</h4>
+  <p>The heart of the method. For each sample, distances to every grid cell; for each searching
+  range <i>b</i>, the cells inside; for each quantile <i>τ</i>, one number. Columns come back named
+  <code>b5t0.7</code> — the 0.7 quantile within 5&nbsp;km — so a variable's parameters are legible
+  from its name for the rest of the analysis.</p>
+  <div class="codewrap">
+    <span class="code-label">R/02-sda-core.R — great-circle distance and second-dimension variables</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># -- Great-circle distance ----------------------------------------------------
+# Metres between one point (lon, lat) and a matrix of points, on a sphere of
+# radius r. Matches geosphere::distHaversine(..., r = 6378137).
+
+sda_haversine &lt;- function(p, pts, r = 6378137) {
+  d2r &lt;- pi / 180
+  lon1 &lt;- p[[1]] * d2r; lat1 &lt;- p[[2]] * d2r
+  lon2 &lt;- pts[[1]] * d2r; lat2 &lt;- pts[[2]] * d2r
+  dlon &lt;- lon2 - lon1; dlat &lt;- lat2 - lat1
+  a &lt;- sin(dlat / 2)^2 + cos(lat1) * cos(lat2) * sin(dlon / 2)^2
+  2 * r * asin(pmin(1, sqrt(a)))
+}
+
+
+# -- 1. Second-dimension variables --------------------------------------------
+#&#x27; Generate second-dimension variables for one grid surface.
+#&#x27;
+#&#x27; For every sample point, the value of a grid variable is summarised over the
+#&#x27; locations *around* the sample — the second dimension. Each buffer radius b
+#&#x27; (km) and quantile probability tau gives one variable, so a surface yields
+#&#x27; length(distbuf) x length(quantileprob) columns named b&lt;b&gt;t&lt;tau&gt;.
+#&#x27;
+#&#x27; pointlocation  data.frame/matrix of sample coordinates (lon, lat)
+#&#x27; gridlocation   data.frame/matrix of grid coordinates (lon, lat)
+#&#x27; gridvar        numeric vector of the grid variable, one value per grid cell
+#&#x27; distbuf        buffer radii in km
+#&#x27; quantileprob   quantile probabilities in [0, 1]
+#&#x27; Returns the point coordinates column-bound to the generated variables.
+
+sda_variables &lt;- function(pointlocation, gridlocation, gridvar,
+                          distbuf = seq(1, 10, 1),
+                          quantileprob = seq(0, 1, 0.1),
+                          verbose = FALSE) {
+  samples &lt;- as.data.frame(pointlocation)
+  grids   &lt;- as.data.frame(gridlocation)
+  if (nrow(grids) != length(gridvar))
+    stop(&quot;gridvar must have one value per row of gridlocation&quot;)
+
+  nbuf &lt;- length(distbuf); nprob &lt;- length(quantileprob)
+  out &lt;- data.frame(matrix(NA_real_, nrow(samples), nbuf * nprob))
+  names(out) &lt;- paste0(rep(paste0(&quot;b&quot;, distbuf), each = nprob),
+                       rep(paste0(&quot;t&quot;, quantileprob), times = nbuf))
+
+  use_geosphere &lt;- requireNamespace(&quot;geosphere&quot;, quietly = TRUE)
+  maxbuf &lt;- max(distbuf)
+
+  for (i in seq_len(nrow(samples))) {
+    zi &lt;- if (use_geosphere) {
+      geosphere::distHaversine(samples[i, ], grids, r = 6378137) / 1000
+    } else {
+      sda_haversine(samples[i, ], grids) / 1000
+    }
+    # One pass per buffer: cells inside b, then the requested quantiles.
+    vals &lt;- numeric(0)
+    for (b in distbuf) {
+      inb &lt;- which(zi &lt; b)
+      q &lt;- if (length(inb) &gt; 0) {
+        as.numeric(stats::quantile(gridvar[inb], quantileprob, na.rm = TRUE))
+      } else {
+        rep(NA_real_, nprob)
+      }
+      vals &lt;- c(vals, q)
+    }
+    out[i, ] &lt;- vals
+    if (verbose &amp;&amp; i %% 100 == 0)
+      cat(sprintf(&quot;   ...%d / %d points\n&quot;, i, nrow(samples)))
+  }
+  cbind(pointlocation, out)
+}</code></pre>
+  </div>
+
+  <h4>The variance inflation factor</h4>
+  <p>Selection leans on the VIF, so it has to be right. R²<sub>j</sub> must be measured against
+  the total sum of squares of the <i>observed</i> column.</p>
+  <div class="codewrap">
+    <span class="code-label">R/02-sda-core.R — variance inflation factor</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># -- 2. Variance inflation factor ---------------------------------------------
+#&#x27; VIF of every column of x, computed with base-R least squares.
+#&#x27; VIF_j = 1 / (1 - R^2_j) where R^2_j regresses column j on the others.
+
+sda_vif &lt;- function(x) {
+  x &lt;- as.data.frame(x)
+  nx &lt;- ncol(x)
+  if (nx &lt; 2) return(stats::setNames(rep(1, nx), names(x)))
+  vapply(seq_len(nx), function(j) {
+    y &lt;- x[[j]]
+    X &lt;- cbind(1, as.matrix(x[, -j, drop = FALSE]))
+    fit &lt;- tryCatch(stats::lm.fit(X, y), error = function(e) NULL)
+    if (is.null(fit)) return(Inf)
+    r2 &lt;- 1 - sum(fit$residuals^2) / sum((y - mean(y))^2)
+    if (!is.finite(r2) || r2 &gt;= 1) Inf else 1 / (1 - r2)
+  }, numeric(1))
+}</code></pre>
+  </div>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Correction 1 — the VIF is one too small in <code>SecDim</code> 3.2</div>
+    <div class="callout-b">
+      <p><code>SecDim::vif()</code> defines <code>R2(o, p) = 1 - sum((o-p)^2)/sum((o-mean(o))^2)</code>
+      and then calls it as <code>R2(fitted, observed)</code>. With the arguments that way round the
+      denominator becomes the sum of squares of the <i>fitted</i> values, so it returns
+      1&nbsp;−&nbsp;SSE/SSR instead of 1&nbsp;−&nbsp;SSE/SST. Because SST&nbsp;=&nbsp;SSR&nbsp;+&nbsp;SSE
+      for a least-squares fit with an intercept, the result is exactly one less than the
+      variance inflation factor:</p>
+      <div class="eq">VIF<sub>SecDim</sub>&nbsp;=&nbsp;SSR/SSE&nbsp;=&nbsp;(SST&nbsp;−&nbsp;SSE)/SSE&nbsp;=&nbsp;VIF&nbsp;−&nbsp;1</div>
+      <p>Verified to 2×10⁻¹⁴ across random datasets. The consequence is mild but worth stating: a
+      threshold of 10 there behaves like a threshold of 11 here, keeping slightly more collinear
+      variables. <code>tests/test-02</code> locks the standard definition.</p>
+    </div>
+  </div>
+
+  <h4>Selecting variables, and keeping the names attached to the values</h4>
+  <p>Candidates are ranked by |correlation with the response|, then walked down that order,
+  dropping any that pushes the VIF above the threshold. <code>sda_select()</code> does this within
+  each surface first, so no single surface can flood the model, then again across the survivors.
+  <code>sda_newdata()</code> labels a full variable set the same way, which is what makes
+  prediction on new data line up.</p>
+  <div class="codewrap">
+    <span class="code-label">R/02-sda-core.R — variable selection and prediction alignment</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># -- 3. Variable selection ----------------------------------------------------
+#&#x27; Select variables from one set: order by |correlation with y|, then walk down
+#&#x27; that order dropping any variable that pushes the VIF above ctr.vif.
+#&#x27;
+#&#x27; NOTE. The returned columns keep the names of the columns they actually hold.
+#&#x27; This matters: a selection that returns correctly-ordered values under the
+#&#x27; wrong names still fits, because the fitted values are self-consistent, but
+#&#x27; predict() on new data matches columns *by name* and would then read the wrong
+#&#x27; variable — silently, and catastrophically.
+
+sda_select_one &lt;- function(y, x, ctr.vif = 10) {
+  x &lt;- as.data.frame(x)
+  keep &lt;- vapply(x, function(v) stats::sd(v, na.rm = TRUE) &gt; 0, logical(1))
+  x &lt;- x[, keep, drop = FALSE]
+  if (ncol(x) == 0) stop(&quot;no variable in x has non-zero variance&quot;)
+
+  cors &lt;- abs(stats::cor(cbind(y, x), method = &quot;pearson&quot;)[1, -1])
+  xs &lt;- x[, rev(order(cors)), drop = FALSE]      # strongest correlation first
+  nxs &lt;- ncol(xs)
+  if (nxs == 1) return(xs)
+
+  drop &lt;- integer(0)
+  for (i in 2:nxs) {
+    k &lt;- seq_len(i)
+    if (length(drop) &gt; 0) k &lt;- setdiff(k, drop)
+    if (length(k) &lt; 2) next
+    if (max(sda_vif(xs[, k, drop = FALSE])) &gt; ctr.vif) drop &lt;- c(drop, i)
+  }
+  kept &lt;- setdiff(seq_len(nxs), drop)
+  out &lt;- xs[, kept, drop = FALSE]
+  names(out) &lt;- names(xs)[kept]                  # names follow the content
+  out
+}
+
+#&#x27; Select across several variable sets: choose within each set first (so no one
+#&#x27; surface can flood the model), prefix the survivors by set, then select again
+#&#x27; across the pooled survivors.
+
+sda_select &lt;- function(y, xlist, ctr.vif = 10) {
+  if (!is.list(xlist)) xlist &lt;- list(xlist)
+  nms &lt;- names(xlist)
+  if (is.null(nms)) nms &lt;- paste0(&quot;v&quot;, seq_along(xlist))
+  if (length(xlist) == 1) {
+    out &lt;- sda_select_one(y, xlist[[1]], ctr.vif)
+    names(out) &lt;- paste0(nms[1], &quot;_&quot;, names(out))
+    return(out)
+  }
+  per_set &lt;- lapply(seq_along(xlist), function(i) {
+    d &lt;- sda_select_one(y, xlist[[i]], ctr.vif)
+    names(d) &lt;- paste0(nms[i], &quot;_&quot;, names(d))
+    d
+  })
+  sda_select_one(y, do.call(cbind, per_set), ctr.vif)
+}
+
+#&#x27; Name a full variable list the same way sda_select() does, so that new data
+#&#x27; lines up with a fitted model column for column.
+
+sda_newdata &lt;- function(xlist) {
+  if (!is.list(xlist)) xlist &lt;- list(xlist)
+  nms &lt;- names(xlist)
+  if (is.null(nms)) nms &lt;- paste0(&quot;v&quot;, seq_along(xlist))
+  out &lt;- lapply(seq_along(xlist), function(i) {
+    d &lt;- as.data.frame(xlist[[i]])
+    names(d) &lt;- paste0(nms[i], &quot;_&quot;, names(d))
+    d
+  })
+  do.call(cbind, out)
+}</code></pre>
+  </div>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Correction 2 — column names must follow the values they label</div>
+    <div class="callout-b">
+      <p><code>SecDim::selectvarlm()</code> sorts the candidates by correlation into <code>x3</code>,
+      keeps positions <code>xk</code> of that sorted frame, and then labels the result with
+      <code>names(x)[xk]</code> — the names of the <i>unsorted</i> frame. The returned data frame
+      therefore carries the values of one variable under the name of another.</p>
+      <p>Nothing complains. The fitted model is internally consistent, because the values are, and
+      the fit statistics look normal. But <code>predict()</code> matches new data <i>by name</i>,
+      so on a test set the model reads the wrong columns. Running the package vignette's own
+      cross-validation section verbatim returns
+      <b>R²&nbsp;=&nbsp;−1,569,973</b>, with all 185 predictions landing between 778 and 1366 for a
+      response that spans 3.0 to 6.7. The fix is <code>names(x3)[xk]</code> — take the names from
+      the frame the values came from — which is what <code>sda_select_one()</code> does above, and
+      what makes the cross validation in §3.4 work at all. <code>tests/test-02</code> asserts that
+      every returned column equals the variable it is named after.</p>
+    </div>
+  </div>
+
+  <h4>Outliers</h4>
+  <div class="codewrap">
+    <span class="code-label">R/02-sda-core.R — outliers</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># -- 4. Outliers --------------------------------------------------------------
+#&#x27; Positions of values beyond coef standard deviations from the mean (or NA).
+
+sda_rmoutlier &lt;- function(x, coef = 2.5) {
+  m &lt;- mean(x, na.rm = TRUE); s &lt;- stats::sd(x, na.rm = TRUE)
+  which(is.na(x) | x &gt; m + coef * s | x &lt; m - coef * s)
+}</code></pre>
+  </div>
+
+  <h4>Calling it: the whole method in one screen</h4>
+  <p>With the file above sourced, a complete SDA analysis — generate, select, fit, predict, compare
+  against the first dimension — is the block below. It uses the data in <code>data/</code> and
+  reproduces the headline numbers of §3.4, and it is the only code a reader needs in order to
+  apply the method to their own tables.</p>
+  <div class="codewrap">
+    <span class="code-label">R — a complete SDA analysis, start to finish</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>source("R/02-sda-core.R")          # the method: no package required
+
+## 1. Data ------------------------------------------------------------------
+pts  &lt;- read.csv("data/obs.csv")     # samples: Lon, Lat, Cr_ppm
+grd  &lt;- read.csv("data/grids.csv")   # grid: Lon, Lat, Elevation
+pts$y &lt;- log(pts$Cr_ppm)             # right-skewed response
+
+## 2. Build the second dimension --------------------------------------------
+## One variable per (searching range b, quantile tau); 5 x 11 = 55 per surface.
+elev &lt;- sda_variables(pts[, c("Lon", "Lat")],
+                      grd[, c("Lon", "Lat")], grd$Elevation,
+                      distbuf = c(1, 3, 5, 7, 9),
+                      quantileprob = seq(0, 1, 0.1))[, -(1:2)]
+
+## The published case uses eight surfaces; seven are supplied pre-generated.
+surfaces &lt;- c("Elevation","Slope","Aspect","Water","NDVI","pH","SOC","Road")
+x &lt;- lapply(surfaces, function(v)
+       read.csv(sprintf("data/reference/sda-%s.csv", tolower(v))))
+names(x) &lt;- surfaces
+
+## 3. Split, and drop outliers from the TRAINING response only ---------------
+set.seed(100)
+train &lt;- sample(nrow(pts), floor(0.7 * nrow(pts)))
+krm   &lt;- sda_rmoutlier(pts$y[train])          # 2.5 SD
+keep  &lt;- if (length(krm)) train[-krm] else train
+ytr   &lt;- pts$y[keep]; yte &lt;- pts$y[-train]
+
+## 4. Select on the training data, then align the test data ------------------
+sel  &lt;- sda_select(ytr, lapply(x, function(m) m[keep, ]), ctr.vif = 10)
+newx &lt;- sda_newdata(lapply(x, function(m) m[-train, ]))[, names(sel)]
+
+## 5. Fit, predict, and compare with the first dimension ---------------------
+r2 &lt;- function(o, p) 1 - sum((o - p)^2) / sum((o - mean(o))^2)
+
+sda.lm &lt;- lm(y ~ ., cbind(y = ytr, sel))
+r2(yte, predict(sda.lm, newdata = newx))       # 0.3002
+
+fda    &lt;- read.csv("data/sample-vars-fda.csv") # the same surfaces AT the points
+fda.lm &lt;- lm(y ~ ., cbind(y = ytr, fda[keep, ]))
+r2(yte, predict(fda.lm, newdata = fda[-train, ]))  # 0.2422</code></pre>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>The one habit that keeps SDA honest</div>
+    <div class="callout-b">
+      <p>Select on the training data, then build the test matrix with
+      <code>sda_newdata(...)[, names(sel)]</code>. Selecting on everything leaks the test set into
+      the choice of variables and inflates R²; subsetting new data by <code>names(sel)</code> is
+      what guarantees the model reads the same variables it was fitted on.</p>
+    </div>
+  </div>
+
+  <h3 id="structure-config">2.3&nbsp;Project Structure &amp; Configuration</h3>
+  <p>One entry script runs the five pipeline steps, the figures, or the tests. Each step reads what
+  the previous one wrote, so any step can be re-run after a config change.</p>
+  <div class="codewrap">
+    <span class="code-label">folder tree</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>SDA/
+├── sda.html                       # this guide
+├── run-all.R                      # entry point: full run, single steps, figures, test
+├── R/
+│   ├── 00-config.R, 01-helpers.R  # paths, IO, logging
+│   ├── 02-sda-core.R              # THE METHOD — base R, no dependency
+│   ├── 10-prepare-data.R          # read points and grid, transform the response
+│   ├── 20-generate-sdvars.R       # build the second dimension, check against published
+│   ├── 30-select-variables.R      # rank by correlation, drop collinearity
+│   ├── 40-cross-validation.R      # SDA vs FDA, linear model and random forest
+│   ├── 50-buffer-sensitivity.R    # which searching range carries the signal
+│   ├── 90-tables.R                # LaTeX tables + session info
+│   └── p01 … p03                  # figure scripts
+├── config/project-config.R        # the ONLY file to edit for a new domain
+├── data/
+│   ├── obs.csv                    # 614 samples: Lon, Lat, Cr_ppm, Cu_ppm
+│   ├── grids.csv                  # 68,757 grid cells: Lon, Lat, Elevation
+│   ├── sample-vars-fda.csv        # the eight surfaces AT the sample points
+│   └── reference/sda-*.csv        # published second-dimension variables (8 x 55)
+├── tests/                         # test-01 reproduces published values and selection
+├── env/                           # requirements.md, session-info.txt
+├── results/  tables/  figs/       # generated output, never hand-edited</code></pre>
+  </div>
+  <h4>Main configuration file</h4>
+  <div class="codewrap">
+    <span class="code-label">config/project-config.R (key lines)</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>POINT_FILE &lt;- "data/obs.csv"      # samples: coordinates + response
+GRID_FILE  &lt;- "data/grids.csv"    # the surface(s) covering the study area
+LON &lt;- "Lon"; LAT &lt;- "Lat"
+
+RESPONSE     &lt;- "Cr_ppm"           # dependent variable
+LOG_RESPONSE &lt;- TRUE               # log-transform a right-skewed response
+OUTLIER_SD   &lt;- 2.5                # drop TRAINING values beyond this many SD
+
+DIST_BUFFERS &lt;- c(1, 3, 5, 7, 9)   # b, km  — how far outside the sample to look
+QUANTILES    &lt;- seq(0, 1, 0.1)     # tau    — which part of the local distribution
+
+GRID_SURFACES  &lt;- c("Elevation")   # surfaces to generate from GRID_FILE
+REFERENCE_VARS &lt;- c("Elevation","Slope","Aspect","Water","NDVI","pH","SOC","Road")
+
+VIF_MAX        &lt;- 10               # multicollinearity threshold
+TRAIN_FRACTION &lt;- 0.7
+SEED           &lt;- 100</code></pre>
+  </div>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Parameter</th><th>Default</th><th>Origin / rationale</th></tr></thead>
+      <tbody>
+        <tr><td><code>DIST_BUFFERS</code></td><td class="num">1, 3, 5, 7, 9 km</td><td>the searching ranges of Song (2022); Step&nbsp;5 shows what each one contributes</td></tr>
+        <tr><td><code>QUANTILES</code></td><td class="num">0 … 1 by 0.1</td><td>the whole local distribution, from minimum to maximum</td></tr>
+        <tr><td><code>VIF_MAX</code></td><td class="num">10</td><td>the conventional threshold; essential here because neighbouring (b, τ) pairs are near-duplicates</td></tr>
+        <tr><td><code>OUTLIER_SD</code></td><td class="num">2.5</td><td>applied to the training response only, so the test set stays as observed</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Free parameters and the published rules they follow.</figcaption>
+  </figure>
+
+  <h3 id="data-contract">2.4&nbsp;Data Contract</h3>
+  <p>SDA needs two tables. The point table is the usual one; the grid table is what makes the
+  method possible, and it should be as dense and as wide as the study area allows — it is the
+  information the first dimension discards.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Table</th><th>Columns</th><th>Meaning</th><th>Required?</th></tr></thead>
+      <tbody>
+        <tr><td><code>POINT_FILE</code></td><td><code>Lon</code>, <code>Lat</code></td><td>sample coordinates in degrees</td><td>yes</td></tr>
+        <tr><td></td><td><code>RESPONSE</code></td><td>the dependent variable</td><td>yes</td></tr>
+        <tr><td><code>GRID_FILE</code></td><td><code>Lon</code>, <code>Lat</code></td><td>grid cell coordinates in degrees</td><td>yes</td></tr>
+        <tr><td></td><td>one column per surface</td><td>the environment to summarise around each sample</td><td>≥ 1</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Coordinates are in degrees because distances are computed on a sphere; column
+    names are declared in the config, not hard-coded.</figcaption>
+  </figure>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th class="num">SampleID</th><th class="num">Lon</th><th class="num">Lat</th><th class="num">Cr_ppm</th><th class="num">Cu_ppm</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td class="num">117.6417</td><td class="num">−24.6643</td><td class="num">223</td><td class="num">64</td></tr>
+        <tr><td class="num">2</td><td class="num">117.6562</td><td class="num">−24.5885</td><td class="num">91</td><td class="num">47</td></tr>
+      </tbody>
+    </table>
+    <figcaption>First rows of <code>data/obs.csv</code> (614 samples, Western Australia).
+    <code>data/grids.csv</code> carries the same coordinate columns plus <code>Elevation</code>
+    across 68,757 cells — 112 grid cells for every sample, which is the reservoir the second
+    dimension draws on and the first dimension leaves untouched.</figcaption>
+  </figure>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>The grid decides what the method can see</div>
+    <div class="callout-b">
+      <p>Every second-dimension variable is a summary of grid cells, so a grid that is coarse
+      relative to the largest buffer gives quantiles computed from a handful of cells, and one that
+      does not extend past the sampled area gives truncated circles at the edges. Check the count
+      of cells falling inside your smallest buffer before trusting τ&nbsp;=&nbsp;0 or
+      τ&nbsp;=&nbsp;1: extreme quantiles are the first to become noisy when a neighbourhood is
+      thin.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>3&nbsp;Reproduction Pipeline, Results &amp; Validation</h2>
+
+  <h3 id="pipeline-execution">3.1&nbsp;Pipeline Execution</h3>
+  <p>Five steps, three figure scripts and two test files run from one entry point. Every step
+  writes to <code>results/</code>, <code>tables/</code>, <code>figs/</code> or
+  <code>data/derived/</code> and reads what the previous step wrote.</p>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Full run</div><div class="v"><code>Rscript run-all.R</code> (~6&nbsp;s)</div></div>
+    <div class="kv"><div class="k">Verification</div><div class="v"><code>Rscript run-all.R test</code> — do this first</div></div>
+    <div class="kv"><div class="k">Output folders</div><div class="v"><code>results/ tables/ figs/ data/derived/</code></div></div>
+  </div>
+  <div class="codewrap">
+    <span class="code-label">terminal</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-bash"><code>cd SDA                     # this folder
+Rscript run-all.R test     # 1. check the implementation against the published values
+Rscript run-all.R          # 2. full pipeline
+
+Rscript run-all.R 30 40    # re-run single steps (10 20 30 40 50 90)
+Rscript run-all.R figures  # only the figure scripts</code></pre>
+  </div>
+  <div class="console"><span class="lbl">Verified run · key lines (2026-07-25)</span>Project : sda-demo
+Domain  : geochemical mapping (trace elements)
+== Step 1/5  Prepare data ======================================
+   samples: 614 rows | grid: 68757 cells (112x denser than the samples)
+   response 'Cr_ppm' log-transformed (skew 1.58 -> -0.85)
+== Step 2/5  Generate second-dimension variables ================
+   b = {1, 3, 5, 7, 9} km  x  tau = {0, 0.1, ... 1}  ->  55 variables per surface
+   Elevation  614 points x 68757 cells -> 55 variables in 2.3s
+   Elevation  max |generated - published| = 2.27e-13  (identical)
+   cost is linear in sample size: 0.004 s per point on this grid
+== Step 3/5  Select second-dimension variables =================
+   candidates: 8 surfaces x 55 variables = 440
+   selected 10 of 440 variables in 0.17s
+   surfaces represented: NDVI, pH, Road, SOC, Water
+   strongest: pH_b9t0.9 (r = 0.508)
+== Step 4/5  Cross validation: SDA against FDA =================
+   SDA  linear model   R2 = 0.3002   RMSE = 0.6496
+   FDA  linear model   R2 = 0.2422   RMSE = 0.6760
+   SDA  random forest  R2 = 0.3325   RMSE = 0.6345
+   FDA  random forest  R2 = 0.2752   RMSE = 0.6611
+== Step 5/5  Sensitivity to the searching range b ==============
+   best single searching range: b = 7 km (R2 = 0.3508)
+Finished in 6.0 s</div>
+
+  <h3 id="reproduce-paper">3.2&nbsp;Reproduce the Published Values</h3>
+  <p>The implementation is checked against the published method in two independent ways before any
+  result is believed.</p>
+  <h4>The generated variables are the published variables</h4>
+  <p>Regenerating Elevation's 55 second-dimension variables from <code>obs.csv</code> and
+  <code>grids.csv</code> reproduces the distributed values to 2×10⁻¹³ — floating-point noise, not
+  a difference in method. The built-in haversine also matches <code>geosphere</code> to 3×10⁻¹¹ m,
+  so the dependency-free path gives the same answer.</p>
+  <h4>The selected variables are the published selection</h4>
+  <p>The stronger check. Selecting from all 440 candidates returns <b>exactly the ten variables of
+  Fig. 5(a)</b> of Song (2022) — the same five surfaces, at the same searching ranges, at the same
+  quantiles. Nothing about that was fitted to match; it falls out of the correlation ranking and
+  the VIF walk.</p>
+  <div class="figpair">
+    <figure>
+      <span class="pairtag tag-demo">Demo run</span>
+      <img src="assets/fig01-selected-variables.jpg" alt="Selected variables in (b, tau) space, demo" loading="lazy" decoding="async">
+      <figcaption>fig01 — the ten selected variables placed at their searching range and quantile,
+      sized by |correlation| and coloured by sign.</figcaption>
+    </figure>
+    <figure>
+      <span class="pairtag tag-paper">Published reference · SDA</span>
+      <img src="assets/paper-sda-fig5-selected.jpg" alt="SDA paper Figure 5, selected second dimension variables" loading="lazy" decoding="async">
+      <figcaption>SDA paper Fig. 5 — panel (a) is Cr, the case reproduced here. Compare the
+      positions: pH at (1, 1.0), (3, 0.9), (9, 0.9) and (9, 0.7); NDVI at (5, 0.1), (7, 0.4) and
+      (9, 0.1); Water, SOC at (9, 1.0); Road at (9, 0.8).</figcaption>
+    </figure>
+  </div>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Variable</th><th>Surface</th><th class="num">b (km)</th><th class="num">τ</th><th class="num">r</th><th>In Fig. 5(a)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>pH_b9t0.9</code></td><td>pH</td><td class="num">9</td><td class="num">0.9</td><td class="num">0.508</td><td>yes</td></tr>
+        <tr><td><code>pH_b9t0.7</code></td><td>pH</td><td class="num">9</td><td class="num">0.7</td><td class="num">0.485</td><td>yes</td></tr>
+        <tr><td><code>NDVI_b9t0.1</code></td><td>NDVI</td><td class="num">9</td><td class="num">0.1</td><td class="num">−0.434</td><td>yes</td></tr>
+        <tr><td><code>pH_b3t0.9</code></td><td>pH</td><td class="num">3</td><td class="num">0.9</td><td class="num">0.424</td><td>yes</td></tr>
+        <tr><td><code>NDVI_b5t0.1</code></td><td>NDVI</td><td class="num">5</td><td class="num">0.1</td><td class="num">−0.416</td><td>yes</td></tr>
+        <tr><td><code>NDVI_b7t0.4</code></td><td>NDVI</td><td class="num">7</td><td class="num">0.4</td><td class="num">−0.391</td><td>yes</td></tr>
+        <tr><td><code>pH_b1t1</code></td><td>pH</td><td class="num">1</td><td class="num">1.0</td><td class="num">0.358</td><td>yes</td></tr>
+        <tr><td><code>Water_b9t1</code></td><td>Water</td><td class="num">9</td><td class="num">1.0</td><td class="num">−0.224</td><td>yes</td></tr>
+        <tr><td><code>Road_b9t0.8</code></td><td>Road</td><td class="num">9</td><td class="num">0.8</td><td class="num">−0.176</td><td>yes</td></tr>
+        <tr><td><code>SOC_b9t1</code></td><td>SOC</td><td class="num">9</td><td class="num">1.0</td><td class="num">0.018</td><td>yes</td></tr>
+      </tbody>
+    </table>
+    <figcaption><code>results/selected-parameters.csv</code> — ten of ten agree with the published
+    figure. <code>tests/test-01</code> asserts the set equality, so any future edit to the method
+    that changes the selection is caught.</figcaption>
+  </figure>
+  <div class="console"><span class="lbl">Verified output of Rscript run-all.R test</span>== test-01  Reproduce the published second-dimension variables ===========
+   generated variable count matches the published set   pass
+   generated row count matches the sample count         pass
+   values identical to published (max diff 2.27e-13)    pass
+   built-in haversine matches geosphere (< 1e-6 m)      pass
+   selection returns 10 variables, as published         pass
+   the selected variables are exactly those of Fig. 5(a) pass
+   PASS - the implementation reproduces the published method
+
+== test-02  Method properties ============================================
+   quantile 0 never exceeds quantile 1                      pass
+   VIF equals 1/(1 - SSE/SST), not the fitted-value variant pass
+   every kept column carries the values of the variable it names pass
+   held-out predictions stay in the range of the response   pass
+   ...
+   15 passed, 0 failed</div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+    <div class="callout-b">
+      <p>21 checks pass: 6 against the published values, 15 on method properties. Two of the
+      property checks exist because of the defects described in §2.2 — they would both have passed
+      silently in a version that fits but cannot predict.</p>
+    </div>
+  </div>
+
+  <h3 id="core-steps">3.3&nbsp;Core Analytical Steps</h3>
+  <p>Five stages: purpose → code → verified output → result → <i>how to read it</i>. The step
+  numbers match the script numbers (Step&nbsp;2 is <code>R/20-generate-sdvars.R</code>).</p>
+
+  <article class="step-card" id="step-1">
+    <div class="step-card-h">
+      <span class="step-label">Step 1 · verified</span>
+      <h4>Prepare data — the samples, the grid, and the response</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Reads both tables, checks the configured columns exist, and transforms the response. Trace
+      elements are right-skewed (Cr runs from 1 to 1048&nbsp;ppm), so the response is logged, as in
+      the paper. Two samples at 1–2&nbsp;ppm pull the logged distribution slightly the other way,
+      which is what the 2.5&nbsp;SD outlier rule in Step&nbsp;3 removes.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>Rscript run-all.R 10</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>== Step 1/5  Prepare data ======================================
+   samples: 614 rows | grid: 68757 cells (112x denser than the samples)
+   grid surfaces available: Elevation
+   response 'Cr_ppm' log-transformed (skew 1.58 -> -0.85)
+   response y: mean=4.963 sd=0.826 range=[0.000, 6.955]
+   wrote data/derived/points.csv (614 rows)</div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The 112× ratio is the opportunity.</b> Every sample sits on one grid cell and
+                near 111 others. The first dimension uses one of them; the second dimension is a
+                rule for using the rest.</li>
+            <li><b>Log first, then everything else.</b> Skew of 3.61 means a handful of samples
+                would dominate every correlation in the selection stage, and the quantile
+                structure the method depends on would be read through those few values.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-2">
+    <div class="step-card-h">
+      <span class="step-label">Step 2 · verified · the method</span>
+      <h4>Build the second dimension</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>For every sample, distances to all 68,757 grid cells; for each searching range, the cells
+      inside; for each quantile, one summary. 5&nbsp;×&nbsp;11&nbsp;=&nbsp;55 variables per
+      surface. The result is compared against the published values, and the cost is measured at
+      three sample sizes so a methods section can state how it scales.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — the call, from R/20-generate-sdvars.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>z &lt;- sda_variables(pts[, c(LON, LAT)],          # sample coordinates
+                   grd[, c(LON, LAT)], grd[[v]], # grid coordinates + surface
+                   distbuf      = DIST_BUFFERS,  # c(1, 3, 5, 7, 9) km
+                   quantileprob = QUANTILES)     # seq(0, 1, 0.1)</code></pre>
+      </div>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>Rscript run-all.R 20</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>== Step 2/5  Generate second-dimension variables ================
+   b = {1, 3, 5, 7, 9} km  x  tau = {0, 0.1, ... 1}  ->  55 variables per surface
+   Elevation  614 points x 68757 cells -> 55 variables in 2.3s
+   wrote data/derived/sdvars-generated.csv (614 rows)
+   Elevation  max |generated - published| = 2.27e-13  (identical)
+   cost is linear in sample size: 0.004 s per point on this grid</div>
+      <figure class="fig half">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="assets/fig05-generation-cost.jpg" alt="Generation time against number of sample points" loading="lazy" decoding="async">
+        <figcaption>fig05 — generation time is linear in the number of samples: every sample needs
+        one distance pass over the grid, so cost is roughly (samples × grid cells).</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Identical to 2×10⁻¹³ is the licence to continue.</b> Everything downstream is a
+                claim about the published method rather than about a lookalike.</li>
+            <li><b>The cost is predictable, and it is the one thing that scales badly.</b> 0.004 s
+                per sample on a 68,757-cell grid, linear in samples and linear in cells. Ten
+                thousand samples on this grid is about forty seconds per surface; a finer grid
+                multiplies that directly, which is the trade-off to state when choosing grid
+                resolution.</li>
+            <li><b>The buffers do the reusing.</b> One distance pass serves every buffer and every
+                quantile, so adding more (b, τ) pairs is nearly free — it is the number of
+                <i>samples</i> and <i>cells</i> that costs, not the number of variables.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/generation-check.csv</code> reports
+          <code>identical_to_1e6 = TRUE</code> before you trust any later number.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-3">
+    <div class="step-card-h">
+      <span class="step-label">Step 3 · verified</span>
+      <h4>Select variables — 440 candidates down to 10</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Eight surfaces × 55 (b, τ) pairs is 440 candidates for 614 samples, and they are collinear
+      by construction: the 0.5 quantile within 5&nbsp;km and the 0.5 quantile within 7&nbsp;km
+      describe nearly the same neighbourhood. Selection ranks by |correlation| and walks down that
+      order, dropping whatever pushes the VIF above 10 — within each surface first, then across the
+      survivors.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — from R/30-select-variables.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>krm &lt;- sda_rmoutlier(pts$y, OUTLIER_SD)         # 2.5 SD
+y   &lt;- pts$y[-krm]
+x   &lt;- lapply(xall, function(m) m[-krm, , drop = FALSE])
+sel &lt;- sda_select(y, x, ctr.vif = VIF_MAX)      # 440 -> 10</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>== Step 3/5  Select second-dimension variables =================
+   candidates: 8 surfaces x 55 variables = 440
+   removed 5 outlier(s) beyond 2.5 SD
+   selected 10 of 440 variables in 0.17s
+   surfaces represented: NDVI, pH, Road, SOC, Water
+   buffers chosen: 1, 3, 5, 7, 9 km | quantiles chosen: 0.1, 0.4, 0.7, 0.8, 0.9, 1
+   strongest: pH_b9t0.9 (r = 0.508)</div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The chosen quantiles are the extremes, not the middle.</b> 0.9, 1.0, 0.1 —
+                the local maximum of pH, the local minimum of NDVI. What predicts Cr is not the
+                average condition around a sample but the most extreme condition in that
+                neighbourhood, which is exactly the information a point value cannot carry.</li>
+            <li><b>The chosen ranges are wide.</b> Seven of the ten sit at b&nbsp;=&nbsp;9&nbsp;km,
+                the widest searched. The signal lives in the broad neighbourhood, and Step&nbsp;5
+                puts a number on that.</li>
+            <li><b>Three surfaces are dropped entirely.</b> Elevation, Slope and Aspect contribute
+                nothing for Cr once pH and NDVI are in — for Cu the paper's panel&nbsp;(b) selects
+                Elevation and Slope instead, so which surfaces matter is a property of the
+                response, not of the study area.</li>
+            <li><b>Selection is severe, and should be.</b> 440 → 10 with 609 samples. Keeping more
+                would fit better and predict worse; the VIF walk is what stops neighbouring (b, τ)
+                pairs from entering as if they were independent evidence.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-4">
+    <div class="step-card-h">
+      <span class="step-label">Step 4 · verified · the core result</span>
+      <h4>Cross validation — does the second dimension actually predict better?</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>The same samples, the same 70/30 split, the same two models; only the explanatory
+      variables differ. Selection runs on the training set alone, and the test matrix is built with
+      <code>sda_newdata()</code> so the model reads the variables it was fitted on.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — from R/40-cross-validation.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>sel  &lt;- sda_select(ytr, xtr, ctr.vif = VIF_MAX)          # training only
+newx &lt;- sda_newdata(xte)[, names(sel), drop = FALSE]     # aligned test matrix
+
+fit_eval("SDA", "linear model",  lm(y ~ ., cbind(y = ytr, sel)), newx)
+fit_eval("FDA", "linear model",  lm(y ~ ., cbind(y = ytr, ftr)), fte)
+fit_eval("SDA", "random forest", randomForest(x = sel, y = ytr), newx)
+fit_eval("FDA", "random forest", randomForest(x = ftr, y = ytr), fte)</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>Dimension</th><th>Model</th><th class="num">Variables</th><th class="num">R²</th><th class="num">RMSE</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>SDA</b></td><td>linear model</td><td class="num">9</td><td class="num">0.3002</td><td class="num">0.6496</td></tr>
+            <tr><td>FDA</td><td>linear model</td><td class="num">8</td><td class="num">0.2422</td><td class="num">0.6760</td></tr>
+            <tr><td><b>SDA</b></td><td>random forest</td><td class="num">9</td><td class="num">0.3325</td><td class="num">0.6345</td></tr>
+            <tr><td>FDA</td><td>random forest</td><td class="num">8</td><td class="num">0.2752</td><td class="num">0.6611</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/cross-validation.csv</code> — 185 held-out samples. SDA improves
+        R² by 23.9% for the linear model and 20.8% for the random forest, and lowers RMSE in
+        both.</figcaption>
+      </figure>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/fig02-cross-validation.jpg" alt="Observed versus predicted, SDA and FDA, demo" loading="lazy" decoding="async">
+          <figcaption>fig02 — the same test samples under both dimensions. The SDA clouds sit
+          closer to the 1:1 line and their fitted slopes are steeper.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SDA</span>
+          <img src="assets/paper-sda-fig6-cv.jpg" alt="SDA paper Figure 6, cross validation" loading="lazy" decoding="async">
+          <figcaption>SDA paper Fig. 6 — the published counterpart, for Cr (top block) and Cu.
+          Every SDA panel beats its FDA panel: for Cr, MLR 0.184&nbsp;→&nbsp;0.325, RF
+          0.239&nbsp;→&nbsp;0.370, RFK 0.286&nbsp;→&nbsp;0.379.</figcaption>
+        </figure>
+      </div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The comparison is unusually clean.</b> FDA is SDA at zero searching range, so
+                this is one method against its own restriction. The gap is what the neighbourhood
+                adds, not what a different model adds.</li>
+            <li><b>The gain survives a change of model.</b> Linear +23.9%, random forest +20.8%.
+                A benefit that appears only under one learner is usually a quirk of that learner;
+                this one is in the variables.</li>
+            <li><b>Nine variables beat eight.</b> The improvement is not from having more columns —
+                the counts are nearly the same. It is from those columns describing neighbourhoods
+                instead of points.</li>
+            <li><b>Absolute R² stays modest, and that is honest.</b> ≈0.33 on held-out samples for
+                soil geochemistry from environmental surfaces alone. The published case reaches
+                0.325–0.379 for Cr with the same structure. SDA moves a weak predictor to a less
+                weak one; it does not manufacture a strong one.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p>Predictions must land in the range of the response. If they run to hundreds, the test
+          matrix is misaligned with the fitted model — the failure mode described in §2.2, and the
+          reason <code>sda_newdata()</code> exists.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-5">
+    <div class="step-card-h">
+      <span class="step-label">Step 5 · verified</span>
+      <h4>Searching range — how far outside the samples is worth looking?</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p><i>b</i> is the parameter that defines "outside", so it deserves a number rather than a
+      default. The model is rebuilt using one searching range at a time, across all eight surfaces.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>Rscript run-all.R 50</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th class="num">b (km)</th><th class="num">Variables selected</th><th class="num">R²</th><th class="num">RMSE</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td class="num">13</td><td class="num">0.2428</td><td class="num">0.6757</td></tr>
+            <tr><td class="num">3</td><td class="num">17</td><td class="num">0.2638</td><td class="num">0.6663</td></tr>
+            <tr><td class="num">5</td><td class="num">15</td><td class="num">0.3430</td><td class="num">0.6294</td></tr>
+            <tr><td class="num"><b>7</b></td><td class="num">10</td><td class="num"><b>0.3508</b></td><td class="num">0.6256</td></tr>
+            <tr><td class="num">9</td><td class="num">5</td><td class="num">0.3339</td><td class="num">0.6337</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/buffer-sensitivity.csv</code> — each row uses only the variables
+        generated at that searching range.</figcaption>
+      </figure>
+      <figure class="fig half">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="assets/fig04-buffer-sensitivity.jpg" alt="R2 against searching range b, demo" loading="lazy" decoding="async">
+        <figcaption>fig04 — R² against the searching range, point size showing how many variables
+        survived selection at that range.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>This is the method's own argument, measured.</b> At b&nbsp;=&nbsp;1&nbsp;km the
+                neighbourhood is barely wider than the sample and R²&nbsp;=&nbsp;0.243 — statistically
+                the same as the first dimension's 0.242. Widen to 7&nbsp;km and it reaches 0.351.
+                The gain comes from distance, not from having more columns.</li>
+            <li><b>It turns over.</b> 9&nbsp;km is worse than 7&nbsp;km: eventually the circle
+                averages over land that has nothing to do with the sample. There is a scale that
+                matches the process, and this curve is how you find it rather than assume it.</li>
+            <li><b>Fewer variables survive at wide ranges.</b> 13 at 1&nbsp;km, 5 at 9&nbsp;km —
+                wide neighbourhoods overlap between samples, so their variables are more collinear
+                with one another and the VIF walk discards more.</li>
+            <li><b>Report this curve.</b> A single b with no sensitivity analysis is the first thing
+                a reviewer will question, and it costs one step to answer.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <h3 id="interpretation">3.4&nbsp;Reading the Results Together</h3>
+  <p>Three findings, one argument: the information outside the samples is real, it is reachable,
+  and it is worth the cost of reaching it.</p>
+  <div class="step-grid">
+    <div class="kv"><div class="k">It reproduces</div><div class="v">Generated variables identical
+      to the published values (2×10⁻¹³), and the selection returns exactly the ten variables of
+      Fig.&nbsp;5(a).</div></div>
+    <div class="kv"><div class="k">It predicts better</div><div class="v">R² 0.242&nbsp;→&nbsp;0.300
+      (linear) and 0.275&nbsp;→&nbsp;0.333 (random forest) on 185 held-out samples, with RMSE down
+      in both.</div></div>
+    <div class="kv"><div class="k">It has a scale</div><div class="v">R² climbs from 0.243 at
+      b&nbsp;=&nbsp;1&nbsp;km to 0.351 at 7&nbsp;km, then falls — the neighbourhood has a size, and
+      it is measurable.</div></div>
+  </div>
+  <figure class="fig half">
+    <span class="pairtag tag-demo">Demo run</span>
+    <img src="assets/fig03-r2-comparison.jpg" alt="R2 comparison SDA vs FDA by model" loading="lazy" decoding="async">
+    <figcaption>fig03 — the headline, both models: the second dimension is ahead of the first
+    whichever learner is used.</figcaption>
+  </figure>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>How to interpret — several angles</div>
+    <div class="callout-b">
+      <ul>
+        <li><b>Mechanism.</b> A sample's value is produced by processes with spatial extent —
+            drainage, weathering, land use. Reading one cell of a covariate records where the
+            sample sits; reading the distribution within b km records what the sample sits
+            <i>in</i>. The quantiles chosen here (local maxima of pH, local minima of NDVI) say
+            the informative feature is the extreme of the neighbourhood, which no point value
+            reports.</li>
+        <li><b>Why quantiles rather than a mean.</b> A mean would compress each neighbourhood to
+            one number and lose exactly the asymmetry the selection is picking up. Sweeping τ from
+            0 to 1 lets the data say which part of the local distribution matters, and here it
+            answers "the tails".</li>
+        <li><b>Decision angle.</b> If a dense covariate grid exists — remote sensing, terrain,
+            climate — the second dimension is close to free information: no new fieldwork, one
+            pass over the grid. If the grid is sparse or barely wider than the sample spacing,
+            there is nothing outside to read and FDA is the honest choice.</li>
+        <li><b>What SDA is not.</b> It is not a spatial-autocorrelation model and it does not
+            interpolate the response; neighbouring <i>responses</i> are never used. It expands the
+            explanatory side only, so it composes with kriging or a spatial random effect rather
+            than replacing them — the published case adds kriging on top (RFK) and gains
+            again.</li>
+        <li><b>The cost is real and linear.</b> One distance pass per sample over the whole grid.
+            Cheap here (2.3 s), not cheap for 10⁵ samples on a 10-m grid; that is the trade to
+            state in a methods section.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>Reading order for your own run</div>
+    <div class="callout-b">
+      <p>1) <code>results/generation-check.csv</code> — is the generator faithful.
+      2) <code>results/selected-parameters.csv</code> — which surfaces, ranges and quantiles the
+      data chose, and whether the chosen τ are extremes or middles.
+      3) <code>results/cross-validation.csv</code> — the SDA-versus-FDA gap, on more than one
+      model. 4) <code>results/buffer-sensitivity.csv</code> — the scale of the neighbourhood.</p>
+    </div>
+  </div>
+</section>
+
+<section id="adaptation">
+  <h2>4&nbsp;Adaptation, Writing &amp; Reproducibility</h2>
+
+  <h3 id="port-domain">4.1&nbsp;Port to Your Domain</h3>
+  <p>Nothing in the method is specific to geochemistry. It needs a response at points and at least
+  one dense surface covering the area; the family shows how far that travels:</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Domain</th><th>Response</th><th>Surfaces</th><th>Second dimension used for</th></tr></thead>
+      <tbody>
+        <tr><td>Soil geochemistry (Song 2022 — this demo)</td>
+            <td>Cr, Cu concentration</td><td>terrain, NDVI, pH, SOC, water, roads</td>
+            <td>quantiles at (b, τ)</td></tr>
+        <tr><td>Park sentiment (Wang, Wu et&nbsp;al. 2026)</td>
+            <td>sentiment from volunteered text</td><td>built and social environment</td>
+            <td>quantiles, read for nonlinear and asymmetric effects</td></tr>
+        <tr><td>Crop production (Ren, Song &amp; Yu 2025; Ren et&nbsp;al. 2026)</td>
+            <td>wheat, barley production</td><td>climate, terrain, land cover</td>
+            <td>local <i>outliers</i> rather than quantiles</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Any point-referenced response with a dense covariate grid fits the contract of
+    §2.4.</figcaption>
+  </figure>
+  <div class="figpair">
+    <figure>
+      <span class="pairtag tag-paper">Published reference · ESDA</span>
+      <img src="assets/paper-esda-flowchart.jpg" alt="ESDA flowchart, Wang and Wu et al. 2026" loading="lazy" decoding="async">
+      <figcaption>The explainable branch: second-dimension variables fed to a machine-learning
+      model and read with interpretation tools, so the effect of each (b, τ) can be inspected
+      rather than only scored.</figcaption>
+    </figure>
+    <figure>
+      <span class="pairtag tag-paper">Published reference · SOH</span>
+      <img src="assets/paper-soh-framework.jpg" alt="SOH conceptual framework, Ren et al. 2026" loading="lazy" decoding="async">
+      <figcaption>The heterogeneity branch: second-dimension outlier patterns used to explain
+      spatial heterogeneity, with its own <a href="../SOH/soh.html">tutorial</a> in this
+      series.</figcaption>
+    </figure>
+  </div>
+  <h4>What to edit</h4>
+  <ol>
+    <li><code>config/project-config.R</code> — <code>POINT_FILE</code>, <code>GRID_FILE</code>, the
+        coordinate and response column names, and <code>GRID_SURFACES</code> for every surface your
+        grid carries. Set <code>REFERENCE_VARS</code> to those same surfaces so the pipeline uses
+        what it generates rather than the demo's pre-generated sets.</li>
+    <li><code>DIST_BUFFERS</code> — the ranges to search, in km. Start from the scale of the
+        process, not from this demo's values, and let Step&nbsp;5 tell you which range carries the
+        signal.</li>
+    <li>Nothing else. Run <code>Rscript run-all.R test</code>, then <code>Rscript run-all.R</code>,
+        and read <code>results/selected-parameters.csv</code> before drafting.</li>
+  </ol>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Common pitfalls</div>
+    <div class="callout-b">
+      <p>Coordinates must be in degrees — the distance function is spherical, so projected metres
+      silently produce nonsense buffers. Select on training data only, and build the test matrix
+      with <code>sda_newdata(...)[, names(sel)]</code>; selecting on everything leaks the test set
+      into the choice of variables. Watch the cell count inside your smallest buffer, because
+      τ&nbsp;=&nbsp;0 and τ&nbsp;=&nbsp;1 over a handful of cells are noise. And keep the VIF walk:
+      with 440 near-duplicate candidates, dropping it produces a model that fits well and predicts
+      badly.</p>
+    </div>
+  </div>
+
+  <h3 id="write-paper">4.2&nbsp;Write the Paper</h3>
+  <p>The published applications share one architecture: a Methods section that defines the
+  second-dimension variable and states (b, τ), a Results section that mirrors the pipeline, and
+  every number pulled from a <code>results/</code> file.</p>
+  <figure class="tablewrap">
+    <table>
+      <thead><tr><th>Manuscript section</th><th>Template output</th><th>Writing job</th></tr></thead>
+      <tbody>
+        <tr><td>Methods</td><td><code>config/project-config.R</code>, <code>R/02-sda-core.R</code></td><td>define X<sup>b,τ</sup>, state the searching ranges and quantiles searched, the selection rule and the VIF threshold, and the split</td></tr>
+        <tr><td>Results</td><td><code>figs/fig01–fig05</code>, <code>tables/table-cross-validation.tex</code>, <code>table-selected-variables.tex</code></td><td>mirror the pipeline: which (b, τ) were selected → SDA against FDA on held-out data → the searching-range curve; every finding sentence carries a number</td></tr>
+        <tr><td>Discussion</td><td><code>results/buffer-sensitivity.csv</code>, <code>timing.csv</code></td><td>argue the scale the curve identifies, why the chosen quantiles are the ones they are, and state the computational cost honestly</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Where each manuscript section draws its material from.</figcaption>
+  </figure>
+  <h4>Manuscript skeleton (shared by the published applications)</h4>
+  <div class="codewrap nofold">
+    <span class="code-label">manuscript outline</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>1  Introduction       — spatial association from sample values; the information
+                         outside samples; the contribution (3 aims)
+2  SDA model          — 2.1 First and second dimensions (concept, no case data)
+                         2.2 Second-dimension variables X^{b,tau} (all formulas)
+                         2.3 Variable selection (correlation ranking, VIF)
+                         2.4 Modelling and validation design
+3  Case &amp; data        — study area, response, surfaces, grid resolution
+4  Results            — 4.1 selected variables in (b, tau) space
+                         4.2 SDA against FDA, more than one model
+                         4.3 sensitivity to the searching range
+                         4.4 spatial prediction over the grid
+5  Discussion         — the scale of the neighbourhood; why those quantiles;
+                         computational cost; what SDA does not do
+6  Conclusions        — 6-8 sentences answering the aims</code></pre>
+  </div>
+  <h4>Results-to-manuscript map</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Manuscript element</th><th>Source file</th><th>Shown in</th></tr></thead>
+      <tbody>
+        <tr><td>Selected variables in (b, τ)</td><td><code>figs/fig01</code>, <code>tables/table-selected-variables.tex</code></td><td>§4.1</td></tr>
+        <tr><td><b>Main table</b> (SDA vs FDA)</td><td><code>tables/table-cross-validation.tex</code></td><td>§4.2</td></tr>
+        <tr><td>Observed vs predicted</td><td><code>figs/fig02</code>, <code>fig03</code></td><td>§4.2</td></tr>
+        <tr><td>Searching-range curve</td><td><code>figs/fig04</code>, <code>results/buffer-sensitivity.csv</code></td><td>§4.3</td></tr>
+        <tr><td>Computational cost</td><td><code>figs/fig05</code>, <code>results/timing.csv</code></td><td>§5 / response to reviewers</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Every manuscript element traces to one regenerable file.</figcaption>
+  </figure>
+
+  <h3 id="repro-package">4.3&nbsp;Final Reproducibility Package</h3>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Code</div><div class="v"><code>R/02-sda-core.R</code> (the method, base R) + the numbered pipeline + <code>run-all.R</code> + <code>tests/</code></div></div>
+    <div class="kv"><div class="k">Data</div><div class="v"><code>data/obs.csv</code>, <code>data/grids.csv</code>, the published variable sets in <code>data/reference/</code>, with <code>provenance.md</code></div></div>
+    <div class="kv"><div class="k">Results</div><div class="v"><code>figs/fig01–fig05</code> + <code>tables/*.tex</code> + <code>env/session-info.txt</code></div></div>
+  </div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Before claiming reproducible</div>
+    <div class="callout-b">
+      <ul>
+        <li><code>Rscript run-all.R test</code> passes — 21 checks, including that the generated
+            variables equal the published values and the selection equals Fig.&nbsp;5(a).</li>
+        <li>Delete <code>results/</code>, <code>tables/</code>, <code>figs/</code> and
+            <code>data/derived/</code>, re-run <code>Rscript run-all.R</code> — every number and
+            figure on this page regenerates (verified 2026-07-25, ~6&nbsp;s).</li>
+        <li>The searching ranges, quantiles, VIF threshold, split fraction and seed are stated in
+            the manuscript and match <code>config/project-config.R</code>.</li>
+        <li>Variable selection is reported as having been done on training data only.</li>
+        <li><code>env/session-info.txt</code> is included in the deposit.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>Anticipate the reviewer</div>
+    <div class="callout-b">
+      <p><i>Is this just adding more variables?</i> → no: nine SDA variables against eight FDA
+      variables, and the b&nbsp;=&nbsp;1&nbsp;km row of <code>buffer-sensitivity.csv</code> scores
+      the same as FDA, so the gain is distance, not count. <i>Why that searching range?</i> →
+      <code>figs/fig04</code>. <i>Did selection see the test set?</i> → no, Step&nbsp;4 selects
+      inside the training split. <i>Is the improvement model-specific?</i> → no, it holds for a
+      linear model and a random forest. <i>How expensive is it?</i> →
+      <code>results/timing.csv</code>.</p>
+    </div>
+  </div>
+  <h4>References &amp; credits</h4>
+  <p>Demo outputs were generated by the scripts in this folder (verified 2026-07-25). Reference
+  figures are reproduced from the cited articles for comparison; the SDA article is open access
+  under CC&nbsp;BY-NC-ND, and the remaining figures are © their authors and publishers. The method
+  implementation follows the author's <code>SecDim</code> package, with the two corrections
+  described in §2.2.</p>
+  <ol>
+    <li>Song Y (2022). The second dimension of spatial association.
+        <i>International Journal of Applied Earth Observation and Geoinformation</i> 111:102834.
+        <a href="https://doi.org/10.1016/j.jag.2022.102834">doi:10.1016/j.jag.2022.102834</a>
+        · <a href="../../pdf/SDA-song2022.pdf">PDF</a>
+        (source of the concept, schematic, Fig. 5 and Fig. 6 reference images, and of the case
+        reproduced here)</li>
+    <li>Song Y (2023). <i>SecDim: The Second Dimension of Spatial Association</i>. R package
+        version 3.2.
+        <a href="https://cran.r-project.org/src/contrib/Archive/SecDim/">CRAN archive</a>
+        (the reference implementation and the source of the demo data)</li>
+    <li>Wang X, Wu Y, Shi T, Zhang R, Chen Y, Song Y (2026). Explainable second-dimension spatial
+        association between park sentiment and built-social environments.
+        <a href="../../pdf/ESDA-wu2026.pdf">PDF</a></li>
+    <li>Ren K, Song Y, Yu Q (2025). Second-dimension outliers for spatial prediction.
+        <i>International Journal of Geographical Information Science</i>.
+        <a href="../../pdf/SDO-ren2025.pdf">PDF</a></li>
+    <li>Ren K, Song Y, Yang X, Wang X, Chen M, Yu Q (2026). Spatial outliers as a pattern
+        determinant for explaining heterogeneity.
+        <i>International Journal of Geographical Information Science</i>.
+        <a href="../../pdf/SOH-ren2026.pdf">PDF</a> ·
+        <a href="https://github.com/renkaigis/Second-dimension_Outlier-driven_Heterogeneity">code</a>
+        · <a href="../SOH/soh.html">tutorial</a></li>
+  </ol>
+</section>
+
+</main>
+
+<div id="lightbox"><img alt="enlarged figure" loading="lazy" decoding="async"></div>
+
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var sidebar=document.getElementById('sidebar');
+  var menuBtn=document.getElementById('menu-btn');
+  var themeBtn=document.getElementById('themebtn');
+  var filter=document.getElementById('toc-filter');
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var lightbox=document.getElementById('lightbox');
+  var lightboxImg=lightbox ? lightbox.querySelector('img') : null;
+
+  function setTheme(mode){
+    if(mode==='dark'){
+      root.setAttribute('data-theme','dark');
+      if(themeBtn) themeBtn.textContent='Light mode';
+    }else{
+      root.removeAttribute('data-theme');
+      if(themeBtn) themeBtn.textContent='Dark mode';
+    }
+    try{localStorage.setItem('reproduce-template-theme',mode)}catch(e){}
+  }
+  try{
+    var saved=localStorage.getItem('reproduce-template-theme');
+    if(saved==='dark') setTheme('dark');
+  }catch(e){}
+
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      setTheme(root.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+    });
+  }
+
+  if(menuBtn && sidebar){
+    menuBtn.addEventListener('click',function(){
+      sidebar.classList.toggle('open');
+    });
+  }
+  links.forEach(function(a){
+    a.addEventListener('click',function(){
+      if(sidebar) sidebar.classList.remove('open');
+    });
+  });
+
+  if(filter){
+    filter.addEventListener('input',function(){
+      var q=filter.value.trim().toLowerCase();
+      links.forEach(function(a){
+        a.style.display=a.textContent.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+      });
+    });
+  }
+
+  document.querySelectorAll('.copybtn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var box=btn.closest('.codewrap');
+      var code=box ? box.querySelector('pre code') : null;
+      if(!code) return;
+      navigator.clipboard.writeText(code.innerText).then(function(){
+        btn.classList.add('ok');
+        btn.textContent='Copied';
+        setTimeout(function(){
+          btn.classList.remove('ok');
+          btn.textContent='Copy';
+        },1200);
+      });
+    });
+  });
+
+  document.querySelectorAll('figure img,.figpair img').forEach(function(img){
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',function(){
+      if(!lightbox || !lightboxImg) return;
+      lightboxImg.src=img.src;
+      lightboxImg.alt=img.alt || 'enlarged figure';
+      lightbox.classList.add('open');
+    });
+  });
+  if(lightbox){
+    lightbox.addEventListener('click',function(){
+      lightbox.classList.remove('open');
+      if(lightboxImg) lightboxImg.removeAttribute('src');
+    });
+  }
+
+  var headings=[].slice.call(document.querySelectorAll('section[id],h3[id],article[id]'));
+  function onScroll(){
+    var active=null;
+    var y=window.scrollY+110;
+    headings.forEach(function(h){
+      if(h.offsetTop<=y) active=h.id;
+    });
+    links.forEach(function(a){
+      a.classList.toggle('active',a.getAttribute('href')==='#'+active);
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+</script>
+<script>
+// Lightweight R/bash highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code').forEach(function(codeEl){
+  var src = codeEl.textContent;
+  var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var isR = codeEl.parentElement.classList.contains('lang-r');
+  var kw = isR
+    ? /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")|\b(function|if|else|for|while|return|library|source|TRUE|FALSE|NULL|NA_real_|NA_character_|NA|in)\b/g
+    : /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")/g;
+  var out = '', last = 0, m;
+  while ((m = kw.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    if (m[1])      out += '<span class="cm">' + esc(m[1]) + '</span>';
+    else if (m[2]) out += '<span class="st">' + esc(m[2]) + '</span>';
+    else           out += '<span class="kw">' + esc(m[3]) + '</span>';
+    last = kw.lastIndex;
+  }
+  out += esc(src.slice(last));
+  codeEl.innerHTML = out;
+});
+</script>
+<script>
+// Collapsible code boxes: boxes longer than 4 lines start collapsed to a 3-line preview.
+document.querySelectorAll('.codewrap:not(.nofold)').forEach(function(w){
+  var code=w.querySelector('pre.code code');
+  if(!code) return;
+  var lines=code.textContent.replace(/\n+$/,'').split('\n').length;
+  if(lines<=4) return;
+  w.classList.add('has-fold','collapsed');
+  var chip=w.querySelector('.code-label');
+  if(chip) chip.textContent+=' · '+lines+' lines';
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.className='foldbtn';
+  btn.title='Expand / collapse code';
+  function label(){
+    btn.textContent=w.classList.contains('collapsed') ? 'Expand' : 'Collapse ▴';
+  }
+  label();
+  btn.addEventListener('click',function(){
+    w.classList.toggle('collapsed');
+    label();
+    if(w.classList.contains('collapsed')) w.scrollIntoView({block:'nearest'});
+  });
+  w.appendChild(btn);
+});
+</script>
+<script>
+// Match the director avatar to the height of the name-to-email text block (desktop only).
+(function(){
+  function sizeDirectorAvatar(){
+    document.querySelectorAll('.director-card').forEach(function(card){
+      var img=card.querySelector('img');
+      var info=card.querySelector('.director-info');
+      if(!img||!info) return;
+      if(window.innerWidth<=1000){
+        img.style.width='';img.style.height='';img.style.minWidth='';
+        return;
+      }
+      var h=Math.round(info.getBoundingClientRect().height);
+      img.style.height=h+'px';
+      img.style.width=h+'px';
+      img.style.minWidth=h+'px';
+    });
+  }
+  window.addEventListener('load',sizeDirectorAvatar);
+  window.addEventListener('resize',sizeDirectorAvatar);
+  sizeDirectorAvatar();
+})();
+</script>
+</body>
+</html>

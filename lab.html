@@ -8,7 +8,23 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
     <title>Geospatial Intelligence Lab - Yongze Song</title>
+    <link rel="canonical" href="https://yongzesong.com/lab.html">
     <meta name="description" content="Geospatial Intelligence Lab - Advancing geospatial analysis and AI for sustainable development in infrastructure and industry.">
+    <!-- Open Graph / Twitter Card -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Yongze Song">
+    <meta property="og:locale" content="en_AU">
+    <meta property="og:title" content="Geospatial Intelligence Lab - Yongze Song">
+    <meta property="og:description" content="Geospatial Intelligence Lab - Advancing geospatial analysis and AI for sustainable development in infrastructure and industry.">
+    <meta property="og:url" content="https://yongzesong.com/lab.html">
+    <meta property="og:image" content="https://yongzesong.com/assets/images/card-lab.jpg">
+    <meta property="og:image:alt" content="Geospatial Intelligence Lab team">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@YongzeSong">
+    <meta name="twitter:creator" content="@YongzeSong">
+    <meta name="twitter:title" content="Geospatial Intelligence Lab - Yongze Song">
+    <meta name="twitter:description" content="Geospatial Intelligence Lab - Advancing geospatial analysis and AI for sustainable development in infrastructure and industry.">
+    <meta name="twitter:image" content="https://yongzesong.com/assets/images/card-lab.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -128,7 +144,7 @@
             .team-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
         }
         @media (max-width: 768px) {
-            html, body { font-size: 15px; }
+            html, body { font-size: 16px; }
             h1 { font-size: 2rem; }
             .hero { padding: 20px 20px 10px; }
             .hero-text h1 { font-size: 1.8rem; }
@@ -143,9 +159,22 @@
                 max-height: 50vh; overflow-y: auto;
             }
         }
+    
+        /* Mobile readability: keep primary reading text at 15px or above */
+        @media (max-width: 768px) {
+            .member-name { font-size: 0.8rem; }
+            .member-affil { font-size: 0.7rem; }
+            .member-detail .detail-role,
+            .member-detail .detail-research { font-size: 0.85rem; }
+            .member-detail .detail-email,
+            .member-detail .detail-link { font-size: 0.8rem; }
+            .event-card .card-title { font-size: 0.9rem; }
+            .event-card .card-desc { font-size: 0.82rem; }
+        }
     </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <!-- ========== HEADER ========== -->
 <header class="site-header">
@@ -164,6 +193,8 @@
     </div>
 </header>
 
+<main id="main">
+
 <!-- ========== HERO ========== -->
 <section class="hero">
     <div class="hero-text">
@@ -175,7 +206,7 @@
         </p>
     </div>
     <div class="hero-image">
-        <img src="assets/images/isprs-perth-2024.jpg" alt="ISPRS TC IV Symposium 2024">
+        <img src="assets/images/isprs-perth-2024.jpg" alt="ISPRS TC IV Symposium 2024" loading="lazy" decoding="async">
     </div>
 </section>
 
@@ -186,11 +217,11 @@
     <!-- Director -->
     <div class="team-group-title">Lab Director</div>
     <div class="director-card">
-        <img src="assets/images/yongze-song.png" alt="Yongze Song">
+        <img src="assets/images/yongze-song.png" alt="Yongze Song" loading="lazy" decoding="async">
         <div class="director-info">
             <h3>Yongze Song</h3>
             <p>Associate Professor, Curtin University</p>
-            <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.6) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.9)</p>
+            <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.2) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.8)</p>
             <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
         </div>
     </div>
@@ -208,7 +239,7 @@
                 <div class="detail-role">PostDoc, Curtin University</div>
                 <div class="detail-research">GIScience, spatial statistics, population geography, optimisation</div>
                 <div class="detail-email">Zehua.Zhang@curtin.edu.au</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Zehua-Zhang-25" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Zehua-Zhang-25" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -221,7 +252,7 @@
                 <div class="detail-role">PostDoc</div>
                 <div class="detail-research">InSAR, LiDAR, Machine Learning, Deep Learning</div>
                 <div class="detail-email">buikhacluyen@humg.edu.vn</div>
-                <a class="detail-link" href="https://scholar.google.com/citations?user=y8YGr1kAAAAJ&hl=en" target="_blank">Google Scholar &rarr;</a>
+                <a class="detail-link" href="https://scholar.google.com/citations?user=y8YGr1kAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Google Scholar &rarr;</a>
             </div>
         </div>
 
@@ -235,7 +266,7 @@
                 <div class="detail-role">Student, University of Western Australia</div>
                 <div class="detail-research">Machine Learning, Anomaly Detection, Semi-supervised Learning, Geospatial analysis</div>
                 <div class="detail-email">omriyram@gmail.com</div>
-                <a class="detail-link" href="https://www.linkedin.com/in/omri-y-ram/" target="_blank">LinkedIn &rarr;</a>
+                <a class="detail-link" href="https://www.linkedin.com/in/omri-y-ram/" target="_blank" rel="noopener noreferrer">LinkedIn &rarr;</a>
             </div>
         </div>
 
@@ -246,22 +277,22 @@
             <div class="member-detail">
                 <div class="detail-name">Kai Ren</div>
                 <div class="detail-role">Postdoc Researcher, Nanjing Normal University</div>
-                <div class="detail-research">Geospatial analysis, Geospatial intelligence, Spatial prediction, GIS modeling, Climate change</div>
+                <div class="detail-research">Geospatial analysis, Geospatial intelligence, Spatial prediction, GIS modelling, Climate change</div>
                 <div class="detail-email">kai@njnu.edu.cn</div>
-                <a class="detail-link" href="https://renkaigis.cn/" target="_blank">Homepage &rarr;</a>
+                <a class="detail-link" href="https://renkaigis.cn/" target="_blank" rel="noopener noreferrer">Homepage &rarr;</a>
             </div>
         </div>
 
-        <!-- 5. Jiao Hu - PhD -->
+        <!-- 5. Jiao Hu - Research Associate -->
         <div class="member-item" onclick="toggleMember(this)">
             <img class="member-avatar" src="assets/images/jiao-hu.png" alt="Jiao Hu" loading="lazy">
             <span class="member-name">Jiao Hu</span>
             <div class="member-detail">
                 <div class="detail-name">Jiao Hu</div>
-                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-role">Research Associate, Curtin University</div>
                 <div class="detail-research">Remote sensing, Climate change, Glaciers, Deep Learning</div>
                 <div class="detail-email">jiao.hu@curtin.edu.au</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Jiao-Hu-8" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Jiao-Hu-8" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -284,10 +315,10 @@
             <span class="member-affil">U Iowa</span>
             <div class="member-detail">
                 <div class="detail-name">Peng Luo</div>
-                <div class="detail-role">Assistant Professor, <a href="https://sees.uiowa.edu/" target="_blank">University of Iowa</a> &amp; <a href="https://senseable.mit.edu/" target="_blank">MIT</a></div>
+                <div class="detail-role">Assistant Professor, <a href="https://sees.uiowa.edu/" target="_blank" rel="noopener noreferrer">University of Iowa</a> &amp; <a href="https://senseable.mit.edu/" target="_blank" rel="noopener noreferrer">MIT</a></div>
                 <div class="detail-research">Spatial association, GeoAI, Computational urban science</div>
                 <div class="detail-email">peng-luo@uiowa.edu</div>
-                <a class="detail-link" href="https://peng-luo.com/" target="_blank">Homepage &rarr;</a>
+                <a class="detail-link" href="https://peng-luo.com/" target="_blank" rel="noopener noreferrer">Homepage &rarr;</a>
             </div>
         </div>
 
@@ -301,7 +332,7 @@
                 <div class="detail-role">PhD, Slovak University of Technology</div>
                 <div class="detail-research">GIS, fractal dimension, fractal interpolation, digital elevation model</div>
                 <div class="detail-email">tomas.ic@stuba.sk</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Tomas_Ic" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Tomas_Ic" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -314,7 +345,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Spatial Analysis, Remote Sensing, Machine Learning</div>
                 <div class="detail-email">zhengyuan.chai@postgrad.curtin.edu.au</div>
-                <a class="detail-link" href="https://smartsatcrc.com/students/zhengyuan-chai/" target="_blank">SmartSat CRC &rarr;</a>
+                <a class="detail-link" href="https://smartsatcrc.com/students/zhengyuan-chai/" target="_blank" rel="noopener noreferrer">SmartSat CRC &rarr;</a>
             </div>
         </div>
 
@@ -366,7 +397,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Geospatial theories, Spatial statistics, Spatial modelling, Spatial epidemiology</div>
                 <div class="detail-email">weitao.hou@postgrad.curtin.edu.au</div>
-                <a class="detail-link" href="https://github.com/RossiHou" target="_blank">GitHub &rarr;</a>
+                <a class="detail-link" href="https://github.com/RossiHou" target="_blank" rel="noopener noreferrer">GitHub &rarr;</a>
             </div>
         </div>
 
@@ -379,17 +410,17 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Built-Environment, Transportation, Road-Safety, Sustainable mobility</div>
                 <div class="detail-email">Shariful.malik@postgrad.curtin.edu.au</div>
-                <a class="detail-link" href="https://www.linkedin.com/in/m-shariful-malik-fieb-peng-mtas-pmp%C2%AE-fieaust-prince2p%C2%AE-cpeng-ner-rpeq-942a2823/" target="_blank">LinkedIn &rarr;</a>
+                <a class="detail-link" href="https://www.linkedin.com/in/m-shariful-malik-fieb-peng-mtas-pmp%C2%AE-fieaust-prince2p%C2%AE-cpeng-ner-rpeq-942a2823/" target="_blank" rel="noopener noreferrer">LinkedIn &rarr;</a>
             </div>
         </div>
 
-        <!-- 15. Rui Qu - PhD -->
+        <!-- 15. Rui Qu - Research Associate -->
         <div class="member-item" onclick="toggleMember(this)">
             <img class="member-avatar" src="assets/images/rui-qu.png" alt="Rui Qu" loading="lazy">
             <span class="member-name">Rui Qu</span>
             <div class="member-detail">
                 <div class="detail-name">Rui Qu</div>
-                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-role">Research Associate, Curtin University</div>
                 <div class="detail-research">Carbon cycle, Carbon source/sink, Carbon storage, Remote Sensing, Alpine grassland</div>
                 <div class="detail-email">rui.qu@curtin.edu.au</div>
             </div>
@@ -404,7 +435,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Road infrastructure, machine learning, road deterioration</div>
                 <div class="detail-email">Chunjiang.chen@postgrad.curtin.edu.au</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Chunjiang-Chen-2" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Chunjiang-Chen-2" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -417,7 +448,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Remote sensing, GIS, Geospatial, Artificial intelligence, Mapping</div>
                 <div class="detail-email">r.andriamb@postgrad.curtin.edu.au</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Robert-Andriambololona" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Robert-Andriambololona" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -430,7 +461,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Spatial-temporal data analysis, GIS, sustainable development, urban green space</div>
                 <div class="detail-email">zhuoyao.xiao@postgrad.curtin.edu.au</div>
-                <a class="detail-link" href="https://storymaps.arcgis.com/stories/864cb13c61234b0886b0103a48d42f9a" target="_blank">ArcGIS StoryMap &rarr;</a>
+                <a class="detail-link" href="https://storymaps.arcgis.com/stories/864cb13c61234b0886b0103a48d42f9a" target="_blank" rel="noopener noreferrer">ArcGIS StoryMap &rarr;</a>
             </div>
         </div>
 
@@ -478,7 +509,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Urban heat island, Urban land use, Environment management, Urban vitality</div>
                 <div class="detail-email">yujia.ming@curtin.edu.au</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Yujia_Ming/research" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Yujia_Ming/research" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -491,7 +522,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Ecological effect, Nighttime light data, CO2 emission, POI</div>
                 <div class="detail-email">xueyuan.zhang@curtin.edu.au</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Xueyuan-Zhang-7" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Xueyuan-Zhang-7" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -516,7 +547,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">GIS, sustainable development, urban planning</div>
                 <div class="detail-email">md.ashikuzzaman@curtin.edu.au</div>
-                <a class="detail-link" href="https://www.linkedin.com/in/md-ashikuzzaman-50233b96/" target="_blank">LinkedIn &rarr;</a>
+                <a class="detail-link" href="https://www.linkedin.com/in/md-ashikuzzaman-50233b96/" target="_blank" rel="noopener noreferrer">LinkedIn &rarr;</a>
             </div>
         </div>
 
@@ -554,7 +585,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Construction materials, 3D printed concrete, Machine learning, Sustainability</div>
                 <div class="detail-email">yufei.wang1@postgrad.curtin.edu.au</div>
-                <a class="detail-link" href="https://scholar.google.com/citations?user=HK_PalMAAAAJ" target="_blank">Google Scholar &rarr;</a>
+                <a class="detail-link" href="https://scholar.google.com/citations?user=HK_PalMAAAAJ" target="_blank" rel="noopener noreferrer">Google Scholar &rarr;</a>
             </div>
         </div>
 
@@ -567,7 +598,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Geospatial new theory</div>
                 <div class="detail-email">xinyue.yang2@postgrad.curtin.edu.au</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Xinyue-Yang-28" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Xinyue-Yang-28" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -594,7 +625,7 @@
                 <div class="detail-role">Associate Professor, Nanjing Agricultural University; Adjunct Professor, Michigan State University</div>
                 <div class="detail-research">GeoAI, food system resilience, multiple shock, urban inequality, metacoupling</div>
                 <div class="detail-email">ninjaone@njau.edu.cn; jianan2@msu.edu</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Nan-Jia-12?ev=hdr_xprf" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Nan-Jia-12?ev=hdr_xprf" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -608,7 +639,7 @@
                 <div class="detail-role">PhD, University of Tasmania</div>
                 <div class="detail-research">Natural Disaster and Machine Learning</div>
                 <div class="detail-email">liu.zhao@utas.edu.au</div>
-                <a class="detail-link" href="https://github.com/sadassimov" target="_blank">GitHub &rarr;</a>
+                <a class="detail-link" href="https://github.com/sadassimov" target="_blank" rel="noopener noreferrer">GitHub &rarr;</a>
             </div>
         </div>
 
@@ -622,7 +653,7 @@
                 <div class="detail-role">PostDoc, Beihang University</div>
                 <div class="detail-research">Remote sensing, Spatial association, GeoAI</div>
                 <div class="detail-email">isliyang@buaa.edu.cn</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Yang-Li-373" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Yang-Li-373" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -636,7 +667,7 @@
                 <div class="detail-role">PhD, Hokkaido University, Japan</div>
                 <div class="detail-research">Landscape Ecology, Ecosystem Assessment, Spatial Theory and Methods</div>
                 <div class="detail-email">haiyang.liu.q6@elms.hokudai.ac.jp</div>
-                <a class="detail-link" href="https://kevinoceanliu.github.io/" target="_blank">Homepage &rarr;</a>
+                <a class="detail-link" href="https://kevinoceanliu.github.io/" target="_blank" rel="noopener noreferrer">Homepage &rarr;</a>
             </div>
         </div>
 
@@ -650,7 +681,7 @@
                 <div class="detail-role">Undergraduate, UC Riverside</div>
                 <div class="detail-research">GIS, remote sensing, foundation model, machine learning</div>
                 <div class="detail-email">dlin092@ucr.edu</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Daniel-Lin-30" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Daniel-Lin-30" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -663,7 +694,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Green hydrogen solutions, climate change mitigation, hydrogen infrastructure</div>
                 <div class="detail-email">ayesha.kaleem@postgrad.curtin.edu.au</div>
-                <a class="detail-link" href="https://www.linkedin.com/in/ayesha-k-19a55a203/" target="_blank">LinkedIn &rarr;</a>
+                <a class="detail-link" href="https://www.linkedin.com/in/ayesha-k-19a55a203/" target="_blank" rel="noopener noreferrer">LinkedIn &rarr;</a>
             </div>
         </div>
 
@@ -677,7 +708,7 @@
                 <div class="detail-role">PhD, Polytechnic Univ. of Turin, Italy</div>
                 <div class="detail-research">Landscape management, digital twin, 3D modelling</div>
                 <div class="detail-email">yogender105@gmail.com</div>
-                <a class="detail-link" href="https://yogiiverse.com/" target="_blank">Homepage &rarr;</a>
+                <a class="detail-link" href="https://yogiiverse.com/" target="_blank" rel="noopener noreferrer">Homepage &rarr;</a>
             </div>
         </div>
 
@@ -690,7 +721,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Hydrology, Remote sensing, Spatial analysis, Machine learning</div>
                 <div class="detail-email">xiaoyan.cao@curtin.edu.au</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Xiaoyan-Cao-7" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Xiaoyan-Cao-7" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -716,7 +747,7 @@
                 <div class="detail-role">PhD, Curtin University</div>
                 <div class="detail-research">Spatial Statistics, Social Media, GeoAI, LLM, Computational Urban science, Flooding</div>
                 <div class="detail-email">yilong.wu@student.curtin.edu.au</div>
-                <a class="detail-link" href="http://yilongwu.top/" target="_blank">Homepage &rarr;</a>
+                <a class="detail-link" href="http://yilongwu.top/" target="_blank" rel="noopener noreferrer">Homepage &rarr;</a>
             </div>
         </div>
 
@@ -754,7 +785,7 @@
                 <div class="detail-role">Graduate, UW-Madison, US</div>
                 <div class="detail-research">Sustainability, Energy, GIS</div>
                 <div class="detail-email">ochan3@wisc.edu</div>
-                <a class="detail-link" href="http://www.linkedin.com/in/olivia-chan-63870329a" target="_blank">LinkedIn &rarr;</a>
+                <a class="detail-link" href="http://www.linkedin.com/in/olivia-chan-63870329a" target="_blank" rel="noopener noreferrer">LinkedIn &rarr;</a>
             </div>
         </div>
 
@@ -768,22 +799,22 @@
                 <div class="detail-role">Research Associate, Monash University</div>
                 <div class="detail-research">GeoAI, Environmental hazards &amp; disaster risk reduction, Climate change adaptation, Remote sensing &amp; GIS</div>
                 <div class="detail-email">abdulwaheed.tella@monash.edu</div>
-                <a class="detail-link" href="http://abdulwaheedtella.com/" target="_blank">Homepage &rarr;</a>
+                <a class="detail-link" href="http://abdulwaheedtella.com/" target="_blank" rel="noopener noreferrer">Homepage &rarr;</a>
             </div>
         </div>
 
-        <!-- 45. Wenbo Lv - Research Associate -->
+        <!-- 45. Wenbo Lyu - Research Associate -->
         <div class="member-item" onclick="toggleMember(this)">
-            <img class="member-avatar" src="assets/images/wenbo-lv.png" alt="Wenbo Lv" loading="lazy">
-            <span class="member-name">Wenbo Lv</span>
+            <img class="member-avatar" src="assets/images/wenbo-lv.png" alt="Wenbo Lyu" loading="lazy">
+            <span class="member-name">Wenbo Lyu</span>
             <span class="member-affil">PolyU</span>
             <div class="member-detail">
-                <div class="detail-name">Wenbo Lv</div>
+                <div class="detail-name">Wenbo Lyu</div>
                 <div class="detail-role">Research Associate, HK PolyU</div>
                 <div class="detail-research">Spatial Causal Inference, Open Source Software Development</div>
-                <div class="detail-research"><strong>Selected paper:</strong> <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2026.2687121" target="_blank">Measuring causal strengths from spatial cross-sectional data with geographical cross mapping cardinality (GCMC)</a>. <em>International Journal of Geographical Information Science</em>. R package: <a class="detail-link" style="display:inline;margin-top:0;" href="https://cloud.r-project.org/package=spEDM" target="_blank">spEDM</a></div>
+                <div class="detail-research"><strong>Selected paper:</strong> <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2026.2687121" target="_blank" rel="noopener noreferrer">Measuring causal strengths from spatial cross-sectional data with geographical cross mapping cardinality (GCMC)</a>. <em>International Journal of Geographical Information Science</em>. R package: <a class="detail-link" style="display:inline;margin-top:0;" href="https://cloud.r-project.org/package=spEDM" target="_blank" rel="noopener noreferrer">spEDM</a></div>
                 <div class="detail-email">lyu.geosocial@gmail.com</div>
-                <a class="detail-link" href="https://github.com/spatlyu" target="_blank">GitHub &rarr;</a>
+                <a class="detail-link" href="https://github.com/spatlyu" target="_blank" rel="noopener noreferrer">GitHub &rarr;</a>
             </div>
         </div>
 
@@ -800,7 +831,33 @@
             </div>
         </div>
 
-        <!-- 47. Matthew Lertsmitivanta -->
+        <!-- 47. Huili Xie - PhD -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/huili-xie.jpg" alt="Huili Xie" loading="lazy">
+            <span class="member-name">Huili Xie</span>
+            <div class="member-detail">
+                <div class="detail-name">Huili Xie</div>
+                <div class="detail-role">PhD, Curtin University</div>
+                <div class="detail-research">Sustainable construction, Sustainable urban planning, Life cycle assessment, Environmental justice, Spatial analysis</div>
+                <div class="detail-email">huili.xie@postgrad.curtin.edu.au</div>
+                <a class="detail-link" href="https://www.linkedin.com/in/huili-xie-19969632b/" target="_blank" rel="noopener noreferrer">LinkedIn &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 48. Xi Wang -->
+        <div class="member-item" onclick="toggleMember(this)">
+            <img class="member-avatar" src="assets/images/xi-wang.jpg" alt="Xi Wang" loading="lazy">
+            <span class="member-name">Xi Wang</span>
+            <span class="member-affil">NUS</span>
+            <div class="member-detail">
+                <div class="detail-name">Xi Wang</div>
+                <div class="detail-role">National University of Singapore &amp; Lanzhou Jiaotong University</div>
+                <div class="detail-research">Urban green space, Urban sustainability, Grey-green infrastructure, Urban perception, GIS &amp; RS</div>
+                <a class="detail-link" href="https://wangxgeo.github.io/" target="_blank" rel="noopener noreferrer">Homepage &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 49. Matthew Lertsmitivanta -->
         <div class="member-item" onclick="toggleMember(this)">
             <img class="member-avatar" src="assets/images/matthew-lertsmitivanta.jpg" alt="Matthew Lertsmitivanta" loading="lazy">
             <span class="member-name">Matthew Lertsmitivanta</span>
@@ -810,11 +867,11 @@
                 <div class="detail-role">University of Oregon</div>
                 <div class="detail-research">Geospatial Machine Learning, Radiative Transfer Emulation, Hyperspectral Remote Sensing</div>
                 <div class="detail-email">matthewlertsmitivanta@gmail.com</div>
-                <a class="detail-link" href="https://www.linkedin.com/in/mattlerts/" target="_blank">LinkedIn &rarr;</a>
+                <a class="detail-link" href="https://www.linkedin.com/in/mattlerts/" target="_blank" rel="noopener noreferrer">LinkedIn &rarr;</a>
             </div>
         </div>
 
-        <!-- 48. Shuvojit Nath - PhD -->
+        <!-- 50. Shuvojit Nath - PhD -->
         <div class="member-item" onclick="toggleMember(this)">
             <img class="member-avatar" src="assets/images/shuvojit-nath.jpg" alt="Shuvojit Nath" loading="lazy">
             <span class="member-name">Shuvojit Nath</span>
@@ -824,8 +881,8 @@
                 <div class="detail-role">PhD, Monash University, Melbourne, Australia</div>
                 <div class="detail-research">Remote Sensing and GIS, Machine Learning, Precipitation, Water Monitoring, Spatial Analysis</div>
                 <div class="detail-email">shuvojit.nath@monash.edu</div>
-                <a class="detail-link" href="https://www.linkedin.com/in/shuvojitnath/?locale=en-US" target="_blank">LinkedIn &rarr;</a>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Shuvojit-Nath?ev=hdr_xprf" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.linkedin.com/in/shuvojitnath/?locale=en-US" target="_blank" rel="noopener noreferrer">LinkedIn &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Shuvojit-Nath?ev=hdr_xprf" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
 
@@ -842,7 +899,7 @@
                 <div class="detail-role">Alumni</div>
                 <div class="detail-research">Remote Sensing, Stable isotope ecology, Global Climate Change, Carbon-water cycle</div>
                 <div class="detail-email">xiangwang.geoscience@gmail.com</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Xiang-Wang-173" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Xiang-Wang-173" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
         <div class="member-item" onclick="toggleMember(this)">
@@ -853,7 +910,7 @@
                 <div class="detail-role">Lecturer (Alumni)</div>
                 <div class="detail-research">Urban planning, optimal transport, decision making</div>
                 <div class="detail-email">Adamganglin@outlook.com</div>
-                <a class="detail-link" href="https://www.researchgate.net/profile/Gang-Lin-3" target="_blank">ResearchGate &rarr;</a>
+                <a class="detail-link" href="https://www.researchgate.net/profile/Gang-Lin-3" target="_blank" rel="noopener noreferrer">ResearchGate &rarr;</a>
             </div>
         </div>
         <div class="member-item" onclick="toggleMember(this)">
@@ -864,7 +921,7 @@
                 <div class="detail-role">Senior Geospatial Analyst, EPA Victoria (Alumni)</div>
                 <div class="detail-research">Spatial Data Science, GeoAI, ML, Environmental Public Health</div>
                 <div class="detail-email">xiaochi.liu@epa.vic.gov.au</div>
-                <a class="detail-link" href="http://www.linkedin.com/in/xiaochi-liu/" target="_blank">LinkedIn &rarr;</a>
+                <a class="detail-link" href="http://www.linkedin.com/in/xiaochi-liu/" target="_blank" rel="noopener noreferrer">LinkedIn &rarr;</a>
             </div>
         </div>
     </div>
@@ -875,7 +932,7 @@
     <h2>Events</h2>
     <div class="events-grid">
         <!-- Event 1: ISPRS 2024 -->
-        <a href="https://www.isprs.org/tc4-symposium2024/index.html" class="event-card" target="_blank">
+        <a href="https://www.isprs.org/tc4-symposium2024/index.html" class="event-card" target="_blank" rel="noopener noreferrer">
             <div class="card-img">
                 <img src="assets/images/isprs-perth-2024.jpg" alt="ISPRS 2024" loading="lazy">
             </div>
@@ -885,7 +942,7 @@
             </div>
         </a>
         <!-- Event 2: IPC 2024 -->
-        <a href="http://www.icipc2024.com/" class="event-card" target="_blank">
+        <div class="event-card">
             <div class="card-img">
                 <img src="assets/images/ipc-2024.jpg" alt="IPC 2024" loading="lazy">
             </div>
@@ -893,19 +950,19 @@
                 <div class="card-title">IPC 2024</div>
                 <div class="card-desc">The 10th International Conference on Innovative Production and Construction. Jul 11-12, 2024, Curtin University</div>
             </div>
-        </a>
+        </div>
         <!-- Event 3: City+2023 -->
-        <a href="https://yongzesong.com/cityplus-2023/" class="event-card" target="_blank">
+        <div class="event-card">
             <div class="card-img">
-                <img src="assets/images/cityplus-2023.png" alt="City+2023" loading="lazy">
+                <img src="assets/images/cityplus-2023.jpg" alt="City+2023" loading="lazy">
             </div>
             <div class="card-body">
                 <div class="card-title">City+2023@Perth</div>
                 <div class="card-desc">300+ attendees from 29 countries. Sept 8-10, 2023, Perth, Australia</div>
             </div>
-        </a>
+        </div>
         <!-- News 1: Harvard Lectures -->
-        <a href="https://www.youtube.com/watch?v=ze00xTmUCAo" class="event-card" target="_blank">
+        <a href="https://www.youtube.com/watch?v=ze00xTmUCAo" class="event-card" target="_blank" rel="noopener noreferrer">
             <div class="card-img">
                 <img src="assets/images/harvard-lectures.jpg" alt="Harvard Lectures" loading="lazy">
             </div>
@@ -915,7 +972,7 @@
             </div>
         </a>
         <!-- News 2: Aurora Australis -->
-        <a href="https://www.youtube.com/watch?v=nxZLtSUOvMU" class="event-card" target="_blank">
+        <a href="https://www.youtube.com/watch?v=nxZLtSUOvMU" class="event-card" target="_blank" rel="noopener noreferrer">
             <div class="card-img">
                 <img src="assets/images/aurora-australis.jpg" alt="Aurora Australis" loading="lazy">
             </div>
@@ -937,7 +994,7 @@
         <!-- News 4: Slovakia Researcher -->
         <div class="event-card">
             <div class="card-img">
-                <img src="assets/images/slovakia-researcher.png" alt="Researcher from Slovakia" loading="lazy">
+                <img src="assets/images/slovakia-researcher.jpg" alt="Researcher from Slovakia" loading="lazy">
             </div>
             <div class="card-body">
                 <div class="card-title">Researcher from Slovakia Joined Us</div>
@@ -955,7 +1012,7 @@
             </div>
         </div>
         <!-- News 6: Rio Tinto -->
-        <a href="https://www.riotinto.com/en/operations/australia" class="event-card" target="_blank">
+        <a href="https://www.riotinto.com/en/operations/australia" class="event-card" target="_blank" rel="noopener noreferrer">
             <div class="card-img">
                 <img src="assets/images/rio-tinto.jpg" alt="Rio Tinto" loading="lazy">
             </div>
@@ -985,7 +1042,7 @@
             </div>
         </div>
         <!-- News 9: HK PolyU -->
-        <a href="https://www.polyu.edu.hk/en/lsgi/people/academic-staff/prof-weng-qihao/" class="event-card" target="_blank">
+        <a href="https://www.polyu.edu.hk/en/lsgi/people/academic-staff/prof-weng-qihao/" class="event-card" target="_blank" rel="noopener noreferrer">
             <div class="card-img">
                 <img src="assets/images/visit-hk-polyu.jpg" alt="HK PolyU" loading="lazy">
             </div>
@@ -995,7 +1052,7 @@
             </div>
         </a>
         <!-- News 10: USS Conference (Yale) -->
-        <a href="https://www.ussconference.net/ussc/en" class="event-card" target="_blank">
+        <div class="event-card">
             <div class="card-img">
                 <img src="assets/images/uss-conference-yale.jpg" alt="USS Conference" loading="lazy">
             </div>
@@ -1003,9 +1060,9 @@
                 <div class="card-title">USS Conference</div>
                 <div class="card-desc">Photo with Prof Karen C. Seto (Yale). Chaired by Prof Weiqiang Chen (CAS). Dec 2023</div>
             </div>
-        </a>
+        </div>
         <!-- News 11: USS Conference (MIT) -->
-        <a href="https://www.ussconference.net/ussc/en" class="event-card" target="_blank">
+        <div class="event-card">
             <div class="card-img">
                 <img src="assets/images/uss-conference-mit.jpg" alt="USS Conference MIT" loading="lazy">
             </div>
@@ -1013,7 +1070,7 @@
                 <div class="card-title">USS Conference</div>
                 <div class="card-desc">Photo with Prof Carlo Ratti (MIT Senseable City Lab). Dec 2023</div>
             </div>
-        </a>
+        </div>
         <!-- News 12: Canada/Hungary professors -->
         <div class="event-card">
             <div class="card-img">
@@ -1035,7 +1092,7 @@
             </div>
         </div>
         <!-- News 14: University of Hong Kong -->
-        <a href="https://fuselab.hku.hk/pi/" class="event-card" target="_blank">
+        <a href="https://fuselab.hku.hk/pi/" class="event-card" target="_blank" rel="noopener noreferrer">
             <div class="card-img">
                 <img src="assets/images/visit-hku.jpg" alt="HKU Visit" loading="lazy">
             </div>
@@ -1045,7 +1102,7 @@
             </div>
         </a>
         <!-- News 16: NUS Singapore -->
-        <a href="https://ual.sg/authors/filip/" class="event-card" target="_blank">
+        <a href="https://ual.sg/author/filip-biljecki/" class="event-card" target="_blank" rel="noopener noreferrer">
             <div class="card-img">
                 <img src="assets/images/visit-nus.jpg" alt="NUS Visit" loading="lazy">
             </div>
@@ -1065,7 +1122,7 @@
             </div>
         </div>
         <!-- News 18: SMEC -->
-        <a href="https://www.smec.com/au/" class="event-card" target="_blank">
+        <a href="https://www.smec.com/au/" class="event-card" target="_blank" rel="noopener noreferrer">
             <div class="card-img">
                 <img src="assets/images/visit-smec.jpg" alt="SMEC Visit" loading="lazy">
             </div>
@@ -1076,6 +1133,8 @@
         </a>
     </div>
 </section>
+
+</main>
 
 <!-- ========== FOOTER ========== -->
 <footer class="site-footer">
@@ -1109,17 +1168,17 @@
         <div class="footer-left">
             <span class="footer-copyright">&copy; 2026 Yongze Song</span>
             <div class="footer-social">
-                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
-                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
-                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
-                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
-                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar" loading="lazy" decoding="async"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate" loading="lazy" decoding="async"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID" loading="lazy" decoding="async"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn" loading="lazy" decoding="async"></a>
+                <a href="https://x.com/YongzeSong" title="X (formerly Twitter)"><img src="assets/images/x-logo.svg" alt="X" loading="lazy" decoding="async"></a>
             </div>
             <a href="cn.html" class="footer-lang">中文</a>
         </div>
         <div class="footer-right">
-            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods"></a>
-            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods" loading="lazy" decoding="async"></a>
+            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab" loading="lazy" decoding="async"></a>
         </div>
     </div>
 </footer>

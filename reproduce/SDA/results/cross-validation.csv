@@ -1,0 +1,5 @@
+"dimension","model","n_variables","R2","RMSE"
+"SDA","linear model",9,0.3002,0.6496
+"FDA","linear model",8,0.2422,0.676
+"SDA","random forest",9,0.3325,0.6345
+"FDA","random forest",8,0.2752,0.6611

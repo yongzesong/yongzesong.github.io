@@ -1,0 +1,8 @@
+"variable","role","n_unique","min","max"
+"NDVIchange","response",700,-0.026,0.527
+"Climatezone","categorical",5,NA,NA
+"Mining","categorical",5,NA,NA
+"Tempchange","continuous",713,-0.393,3.221
+"Precipitation","continuous",710,42.51,672.45
+"GDP","continuous",536,0,16589.09
+"Popdensity","continuous",688,0,970.868

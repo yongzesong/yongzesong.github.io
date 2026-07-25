@@ -1,0 +1,28 @@
+Project: opgd-demo
+Seed: 42
+
+R version 4.6.0 (2026-04-24)
+Platform: aarch64-apple-darwin23
+Running under: macOS Tahoe 26.5.2
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_AU/en_AU/en_AU/C/en_AU/en_AU
+
+time zone: Australia/Perth
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] GD_10.9
+
+loaded via a namespace (and not attached):
+ [1] compiler_4.6.0     gplots_3.3.0       parallel_4.6.0     tools_4.6.0       
+ [5] Rcpp_1.1.1-1.1     KernSmooth_2.23-26 nlme_3.1-169       ape_5.8-1         
+ [9] grid_4.6.0         BAMMtools_2.1.12   caTools_1.18.4     digest_0.6.39     
+[13] bitops_1.0-9       gtools_3.9.5       lattice_0.22-9    

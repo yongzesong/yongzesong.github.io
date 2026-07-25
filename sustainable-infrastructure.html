@@ -7,8 +7,24 @@
     <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
-    <meta name="description" content="Sustainable infrastructure research by Dr. Yongze Song - factors, performance, and environmental impacts of infrastructure systems.">
+    <meta name="description" content="Sustainable infrastructure research by Yongze Song - factors, performance, and environmental impacts of infrastructure systems.">
+    <!-- Open Graph / Twitter Card -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Yongze Song">
+    <meta property="og:locale" content="en_AU">
+    <meta property="og:title" content="Sustainable Infrastructure - Yongze Song">
+    <meta property="og:description" content="Sustainable infrastructure research by Yongze Song - factors, performance, and environmental impacts of infrastructure systems.">
+    <meta property="og:url" content="https://yongzesong.com/sustainable-infrastructure.html">
+    <meta property="og:image" content="https://yongzesong.com/assets/images/eosi.png">
+    <meta property="og:image:alt" content="Earth observation for sustainable infrastructure">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@YongzeSong">
+    <meta name="twitter:creator" content="@YongzeSong">
+    <meta name="twitter:title" content="Sustainable Infrastructure - Yongze Song">
+    <meta name="twitter:description" content="Sustainable infrastructure research by Yongze Song - factors, performance, and environmental impacts of infrastructure systems.">
+    <meta name="twitter:image" content="https://yongzesong.com/assets/images/eosi.png">
     <title>Sustainable Infrastructure - Yongze Song</title>
+    <link rel="canonical" href="https://yongzesong.com/sustainable-infrastructure.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -164,7 +180,7 @@
             .card-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 768px) {
-            html, body { font-size: 15px; }
+            html, body { font-size: 16px; }
             .card-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
             .footer-inner { grid-template-columns: 1fr; gap: 16px; }
             .footer-bottom { flex-direction: column; gap: 8px; }
@@ -172,9 +188,25 @@
         @media (max-width: 480px) {
             .card-grid { grid-template-columns: 1fr; }
         }
+    
+        /* Mobile readability: keep primary reading text at 15px or above */
+        @media (max-width: 768px) {
+            .intro-text p, .quote-block .citation, .article-list li { font-size: 0.95rem; }
+            p, li, .citation { font-size: 0.95rem; }
+        }
+    
+        /* === PAGE HEADER === */
+        .page-header {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 30px 20px 0;
+        }
+        .page-header h1 { margin: 0 0 6px 0; }
+        .page-header h2 { font-size: 1.3rem; margin: 0; }
     </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
     <header class="site-header">
         <div class="header-inner">
             <a href="index.html" class="site-title">
@@ -191,7 +223,13 @@
         </div>
     </header>
 
-    <main>
+    <!-- ========== PAGE HEADER ========== -->
+<div class="page-header">
+    <h1>Sustainable Infrastructure</h1>
+    <h2>Geospatial intelligence for resilient infrastructure</h2>
+</div>
+
+<main id="main">
         <!-- Intro: two-column layout -->
         <div class="intro-section">
             <div class="intro-text">
@@ -200,7 +238,7 @@
                 <p>"Earth observation has great potential for sustainable infrastructure development. EOSI benefits about 85% of infrastructure influenced SDGs and 61% of all 169 SDG targets, but Earth observation is only implemented in 15% of infrastructure influenced SDG targets, and 70% of infrastructure influenced targets that can be directly or indirectly derived from Earth observation data have not been included in current SDG indicators."</p>
             </div>
             <div class="intro-figure">
-                <img src="assets/images/eosi-sdg.png" alt="Earth Observation for Sustainable Infrastructure - SDG mapping">
+                <img src="assets/images/eosi-sdg.png" alt="Earth Observation for Sustainable Infrastructure - SDG mapping" loading="lazy" decoding="async">
             </div>
         </div>
 
@@ -213,19 +251,19 @@
             <h2>Factors</h2>
             <div class="card-grid">
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/rs.png" alt="Geographical, traffic, and pavement factors"></div>
+                    <div class="card-img"><img src="assets/images/rs.png" alt="Geographical, traffic, and pavement factors" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Exploring geographical, traffic, and pavement factors of deterioration using remote sensing data</a></div>
                 </div>
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/opgd.png" alt="OPGD model"></div>
+                    <div class="card-img"><img src="assets/images/opgd.png" alt="OPGD model" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Exploring factors affecting road deterioration using an optimal parameters-based geographical detectors (OPGD) model</a></div>
                 </div>
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/idsa.png" alt="IDSA interactive detector"></div>
+                    <div class="card-img"><img src="assets/images/idsa.png" alt="IDSA interactive detector" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Identifying interactions of multiple factors using an interactive detector for spatial associations (IDSA)</a></div>
                 </div>
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/srk.png" alt="SRK traffic burden"></div>
+                    <div class="card-img"><img src="assets/images/srk.png" alt="SRK traffic burden" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Estimating traffic burden on road infrastructure and maintenance using a segment-based regression kriging (SRK)</a></div>
                 </div>
             </div>
@@ -236,20 +274,20 @@
             <h2>Performance</h2>
             <div class="card-grid">
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/jag.png" alt="STOR model"></div>
+                    <div class="card-img"><img src="assets/images/jag.png" alt="STOR model" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Assessing block-level sustainable transport infrastructure development using a spatial trade-off relation (STOR) model</a></div>
                 </div>
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/mfsd.png" alt="MFSD method"></div>
+                    <div class="card-img"><img src="assets/images/mfsd.png" alt="MFSD method" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Developing sustainable road infrastructure performance indicators using a model-driven fuzzy spatial multi-criteria decision making (MFSD) method</a></div>
                 </div>
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/shs.png" alt="SHS model"></div>
+                    <div class="card-img"><img src="assets/images/shs.png" alt="SHS model" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Identifying multi-scale road infrastructure performance using a spatial heterogeneity-based segmentation (SHS) model</a></div>
                 </div>
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/age.png" alt="Hybrid nonlinear and ML methods"></div>
-                    <div class="card-title"><a href="#">Analyzing temporally varied factors influencing transport infrastructure performance using hybrid nonlinear and machine learning methods</a></div>
+                    <div class="card-img"><img src="assets/images/age.png" alt="Hybrid nonlinear and ML methods" loading="lazy" decoding="async"></div>
+                    <div class="card-title"><a href="#">Analysing temporally varied factors influencing transport infrastructure performance using hybrid nonlinear and machine learning methods</a></div>
                 </div>
             </div>
         </div>
@@ -259,19 +297,19 @@
             <h2>Impacts</h2>
             <div class="card-grid">
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/grs1.png" alt="Spatial disparities trade-offs"></div>
+                    <div class="card-img"><img src="assets/images/grs1.png" alt="Spatial disparities trade-offs" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Identifying spatial disparities in trade-offs between economic and environmental impacts of road infrastructure on continental level</a></div>
                 </div>
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/grs2.png" alt="MKD2SFCA accessibility model"></div>
+                    <div class="card-img"><img src="assets/images/grs2.png" alt="MKD2SFCA accessibility model" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Assessing spatial population accessibility to public facilities using a nationwide travel time-based modified kernel density two-step floating catchment area (MKD2SFCA) model</a></div>
                 </div>
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/eosi.png" alt="Earth observation contributions"></div>
+                    <div class="card-img"><img src="assets/images/eosi.png" alt="Earth observation contributions" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Assessing contributions of Earth observation for sustainable infrastructure development</a></div>
                 </div>
                 <div class="card-item">
-                    <div class="card-img"><img src="assets/images/ijgis.png" alt="Natural cities boundaries"></div>
+                    <div class="card-img"><img src="assets/images/ijgis.png" alt="Natural cities boundaries" loading="lazy" decoding="async"></div>
                     <div class="card-title"><a href="#">Redefining boundaries of natural cities using spatial big data of infrastructure facilities</a></div>
                 </div>
             </div>
@@ -329,17 +367,17 @@
         <div class="footer-left">
             <span class="footer-copyright">&copy; 2026 Yongze Song</span>
             <div class="footer-social">
-                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
-                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
-                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
-                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
-                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar" loading="lazy" decoding="async"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate" loading="lazy" decoding="async"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID" loading="lazy" decoding="async"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn" loading="lazy" decoding="async"></a>
+                <a href="https://x.com/YongzeSong" title="X (formerly Twitter)"><img src="assets/images/x-logo.svg" alt="X" loading="lazy" decoding="async"></a>
             </div>
             <a href="cn.html" class="footer-lang">中文</a>
         </div>
         <div class="footer-right">
-            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods"></a>
-            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods" loading="lazy" decoding="async"></a>
+            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab" loading="lazy" decoding="async"></a>
         </div>
     </div>
 </footer>

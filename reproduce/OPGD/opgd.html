@@ -1,0 +1,2167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reproducing the OPGD Model — Step-by-Step Guide</title>
+<meta name="description" content="Step-by-step, verified guide to reproducing the optimal parameters-based geographical detector (OPGD) model in R using the GD package.">
+<link rel="canonical" href="https://yongzesong.com/reproduce/OPGD/opgd.html">
+<link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../../assets/images/apple-touch-icon.png">
+<style>
+:root{
+  --accent:#B2182B;
+  --accent-2:#2166AC;
+  --accent-soft:#f7e9ea;
+  --bg:#ffffff;
+  --fg:#1a1d21;
+  --muted:#5a626b;
+  --line:#e6e8eb;
+  --side-bg:#fbfcfd;
+  --code-bg:#f6f8fa;
+  --code-fg:#24292e;
+  --nav-fg:#495057;
+  --nav-l2:#6c757d;
+  --nav-active:#2761e3;
+  --nav-active-bg:#eef4ff;
+  --nav-hover:#eef0f2;
+  --sidew:290px;
+  --rightw:var(--sidew);
+  --maxw:880px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+[data-theme=dark]{
+  --bg:#0f1216;
+  --fg:#e6e8eb;
+  --muted:#9aa4af;
+  --line:#242a31;
+  --side-bg:#0c1014;
+  --code-bg:#161b22;
+  --code-fg:#d1d7de;
+  --accent-soft:#2a1416;
+  --nav-fg:#b4bcc4;
+  --nav-l2:#8b939c;
+  --nav-active:#6ea8fe;
+  --nav-active-bg:#15202f;
+  --nav-hover:#171c22;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:var(--mono);
+  font-size:.88em;
+  background:var(--code-bg);
+  color:var(--code-fg);
+  padding:.1em .35em;
+  border-radius:4px;
+}
+
+/* Sidebar: LISP-GC navigation pattern, SOH dark-mode behavior. */
+#menu-btn{
+  display:none;
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:60;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 11px;
+  font-size:1.05rem;
+  cursor:pointer;
+  color:var(--fg);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+#sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:var(--sidew);
+  overflow-y:auto;
+  background:var(--side-bg);
+  border-right:1px solid var(--line);
+  padding:22px 18px 40px;
+  z-index:50;
+}
+#sidebar .back-to-site{
+  display:inline-block;
+  font-size:.78rem;
+  color:var(--muted);
+  text-decoration:none;
+  margin-bottom:10px;
+  padding:3px 8px;
+  border:1px solid var(--line);
+  border-radius:5px;
+}
+#sidebar .back-to-site:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+}
+#sidebar .brand{
+  font-size:1.06rem;
+  font-weight:700;
+  color:var(--fg);
+  line-height:1.35;
+  margin-bottom:4px;
+}
+#sidebar .brand-sub{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+#toc-filter{
+  width:100%;
+  padding:6px 10px;
+  font-size:.85rem;
+  border:1px solid var(--line);
+  border-radius:6px;
+  margin-bottom:14px;
+  outline:none;
+  background:var(--bg);
+  color:var(--fg);
+}
+#toc-filter:focus{border-color:var(--nav-active)}
+#toc a{
+  display:block;
+  padding:4px 8px;
+  font-size:.88rem;
+  color:var(--nav-fg);
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  line-height:1.35;
+  margin:1px 0;
+}
+#toc a.l2{
+  padding-left:22px;
+  font-size:.82rem;
+  color:var(--nav-l2);
+}
+#toc a:hover{
+  background:var(--nav-hover);
+  text-decoration:none;
+}
+#toc a.active{
+  color:var(--nav-active);
+  border-left-color:var(--nav-active);
+  background:var(--nav-active-bg);
+  font-weight:600;
+}
+.side-foot{
+  padding:16px 8px 0;
+  margin-top:14px;
+  border-top:1px solid var(--line);
+}
+.themebtn{
+  font:inherit;
+  font-size:.82rem;
+  cursor:pointer;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:5px 10px;
+  color:var(--muted);
+}
+.themebtn:hover{color:var(--fg)}
+
+/* Hero and content. */
+.hero{
+  border-bottom:1px solid var(--line);
+  padding:34px 40px 26px;
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  background:var(--bg);
+}
+.hero h1{
+  margin:0 0 6px;
+  font-size:1.9rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  color:var(--fg);
+}
+.hero .sub{
+  color:var(--muted);
+  font-size:1.05rem;
+}
+.cite-lead{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--fg);
+  margin-top:16px;
+}
+.cite{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:12px;
+}
+.cite div+div{margin-top:4px}
+.dlbtn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding:9px 18px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  font-size:.92rem;
+  border-radius:8px;
+}
+.dlbtn:hover{filter:brightness(1.12);text-decoration:none}
+.dlnote{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* Lab director card adapted from lab.html, with template typography and colours. */
+.director-card{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  margin:18px 0 4px;
+  padding:16px;
+  background:var(--side-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+.director-card img{
+  width:110px;
+  min-width:110px;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:50%;
+  background:#fff;
+}
+.director-info h3{
+  font-size:1.16rem;
+  line-height:1.25;
+  margin:0 0 4px;
+}
+.director-info p{
+  font-size:.82rem;
+  line-height:1.5;
+  margin:2px 0;
+  color:var(--muted);
+}
+.director-info a{
+  font-size:.82rem;
+  font-weight:600;
+}
+
+/* Fixed right rail for related reproducible-model tutorials. */
+.related-rail{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  width:var(--rightw);
+  overflow-y:auto;
+  z-index:40;
+  padding:22px 18px 40px;
+  border-left:1px solid var(--line);
+  background:var(--side-bg);
+}
+.related-rail .rail-title{
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1.35;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.related-rail a{
+  display:block;
+  padding:4px 8px;
+  margin:1px 0;
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  color:var(--nav-fg);
+  font-size:.88rem;
+  line-height:1.35;
+}
+.related-rail a:hover{
+  text-decoration:none;
+  background:var(--nav-hover);
+}
+.related-rail a.current{
+  color:var(--nav-active);
+  background:var(--nav-active-bg);
+  border-left-color:var(--nav-active);
+  font-weight:600;
+}
+.related-rail .rail-note{
+  color:var(--muted);
+  font-size:.76rem;
+  line-height:1.45;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+main{
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  padding:26px 40px 90px;
+}
+section{padding-top:4px}
+h2{
+  font-size:1.5rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  margin:48px 0 14px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+  color:var(--fg);
+}
+section:first-of-type h2{margin-top:20px}
+h3{
+  font-size:1.16rem;
+  font-weight:600;
+  margin:30px 0 10px;
+  letter-spacing:-.005em;
+  color:var(--fg);
+}
+h4{
+  font-size:1rem;
+  font-weight:600;
+  margin:20px 0 8px;
+  color:var(--fg);
+}
+p{margin:.7em 0}
+ul,ol{
+  margin:.6em 0;
+  padding-left:1.3em;
+}
+li{margin:.28em 0}
+
+/* Reusable content blocks. */
+.callout{
+  border:1px solid var(--line);
+  border-left-width:4px;
+  border-radius:8px;
+  padding:12px 16px;
+  margin:1.2em 0;
+  background:var(--side-bg);
+}
+.callout-h{
+  font-weight:700;
+  font-size:.92rem;
+  margin-bottom:2px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.callout-i{font-size:1rem}
+.callout-b p{margin:.4em 0}
+.callout-b ul{margin:.4em 0}
+.c-interpret{border-left-color:var(--accent);background:var(--accent-soft)}
+.c-tip{border-left-color:#178a3c}
+.c-warn{border-left-color:#d98a00}
+.c-repro{border-left-color:var(--accent-2)}
+.c-note{border-left-color:#8b939c}
+
+.codewrap{
+  position:relative;
+  margin:1.1em 0;
+}
+.code-label{
+  position:absolute;
+  top:-9px;
+  left:12px;
+  font-size:.7rem;
+  font-family:var(--mono);
+  background:var(--accent);
+  color:#fff;
+  padding:1px 8px;
+  border-radius:4px;
+  letter-spacing:.02em;
+}
+.copybtn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  font:inherit;
+  font-size:.74rem;
+  cursor:pointer;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:3px 9px;
+  color:var(--muted);
+  opacity:.85;
+  transition:.15s;
+}
+.copybtn:hover{
+  color:var(--fg);
+  opacity:1;
+  border-color:var(--accent);
+}
+.copybtn.ok{
+  color:#178a3c;
+  border-color:#178a3c;
+}
+pre.code{
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px;
+  overflow-x:auto;
+  margin:0;
+  font-family:var(--mono);
+  font-size:.83rem;
+  line-height:1.5;
+}
+pre.code code{
+  background:none;
+  padding:0;
+  color:var(--code-fg);
+  white-space:pre;
+}
+.console{
+  background:#22262b;
+  color:#d8dee4;
+  border-radius:8px;
+  padding:12px 15px;
+  margin:14px 0;
+  font-family:var(--mono);
+  font-size:.78rem;
+  line-height:1.5;
+  overflow:auto;
+  max-height:320px;
+  white-space:pre;
+}
+.console .lbl{
+  display:block;
+  color:#8b949e;
+  font-size:.72rem;
+  margin-bottom:6px;
+  font-family:inherit;
+}
+
+.tablewrap{
+  margin:1.2em 0;
+  overflow-x:auto;
+}
+.tablewrap table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:.86rem;
+}
+.tablewrap th{
+  text-align:left;
+  border-bottom:2px solid var(--fg);
+  padding:7px 10px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.tablewrap td{
+  border-bottom:1px solid var(--line);
+  padding:6px 10px;
+  vertical-align:top;
+}
+.tablewrap tbody tr:hover{background:rgba(127,127,127,.05)}
+.tablewrap figcaption{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:8px;
+}
+.tablewrap.compact td,
+.tablewrap.compact th{
+  padding:4px 8px;
+  font-size:.8rem;
+}
+table code{font-size:.82em}
+
+figure.fig{
+  margin:1.2em 0;
+  text-align:center;
+}
+figure.fig img{
+  max-width:100%;
+  height:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+figure.fig figcaption{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:8px;
+  text-align:left;
+}
+.credit{
+  display:block;
+  font-style:italic;
+  margin-top:2px;
+}
+.figpair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin:1.2em 0;
+}
+.figpair figure{margin:0}
+.figpair img{
+  max-width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+.figpair figcaption{
+  font-size:.78rem;
+  color:var(--muted);
+  margin-top:6px;
+  text-align:left;
+}
+.pairtag{
+  font-size:.72rem;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:5px;
+  margin-bottom:6px;
+  display:inline-block;
+}
+.tag-demo{
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+.tag-paper{
+  background:#eef3f8;
+  color:var(--accent-2);
+}
+[data-theme=dark] .tag-paper{background:#14202e}
+.pairnote{
+  font-size:.82rem;
+  color:var(--muted);
+  border-left:3px solid var(--line);
+  padding-left:12px;
+  margin:.2em 0 1em;
+}
+
+.flow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:8px;
+  margin:16px 0;
+}
+.flow .chip{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 12px;
+  background:var(--side-bg);
+  font-size:.8rem;
+  line-height:1.4;
+  flex:1;
+  min-width:135px;
+}
+.flow .chip b{
+  display:block;
+  font-size:.9rem;
+  color:var(--fg);
+}
+.flow .chip.hl{
+  border-color:var(--nav-active);
+  background:var(--nav-active-bg);
+}
+.flow .arrow{
+  align-self:center;
+  color:var(--muted);
+  font-size:1.1rem;
+}
+.mini-badge{
+  display:inline-block;
+  font-size:.68rem;
+  font-weight:600;
+  border-radius:4px;
+  padding:1px 6px;
+  margin-left:4px;
+  vertical-align:1px;
+  background:#eceff1;
+  color:#6c757d;
+}
+.mini-badge.oa{
+  background:#d8f3e1;
+  color:#1c7a43;
+}
+
+.step-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:1.4em 0 1.8em;
+  overflow:hidden;
+  background:var(--bg);
+}
+.step-card-h{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  background:var(--side-bg);
+}
+.step-label{
+  display:inline-block;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+.step-card-h h4{
+  margin:0;
+  font-size:1.05rem;
+}
+.step-card-b{padding:14px 16px 16px}
+.step-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+.kv{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  background:var(--side-bg);
+}
+.kv .k{
+  font-size:.72rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+.kv .v{
+  font-size:.9rem;
+  color:var(--fg);
+}
+
+#lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(15,18,22,.88);
+  display:none;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  cursor:zoom-out;
+  padding:30px;
+}
+#lightbox img{
+  max-width:96%;
+  max-height:96%;
+  background:#fff;
+  border-radius:6px;
+  padding:10px;
+}
+#lightbox.open{display:flex}
+
+@media (max-width:1000px){
+  #sidebar{
+    transform:translateX(-100%);
+    transition:transform .2s;
+  }
+  #sidebar.open{
+    transform:none;
+    box-shadow:0 0 30px rgba(0,0,0,.2);
+  }
+  #menu-btn{display:block}
+  .hero,
+  main{
+    margin-left:0;
+    margin-right:0;
+  }
+  .hero{padding:60px 20px 22px}
+  main{
+    padding:20px 20px 70px;
+    max-width:none;
+  }
+  .director-card{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+  .director-card img{
+    width:90px;
+    height:90px;
+    align-self:center;
+  }
+  .figpair{grid-template-columns:1fr}
+  .related-rail{display:none}
+}
+@media print{
+  #sidebar,
+  #menu-btn,
+  .copybtn,
+  #lightbox{display:none}
+  .hero,
+  main{margin-left:0}
+}
+
+/* --- Page additions shared with the LPI tutorial --- */
+.figpair.triple{grid-template-columns:1fr 1fr 1fr}
+.tag-lisp{background:#e9f7f4;color:#0f766e}
+[data-theme=dark] .tag-lisp{background:#0e2320}
+.tablewrap td.num,.tablewrap th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre.code .cm{color:#7f8896;font-style:italic}
+pre.code .st{color:#20794d}
+pre.code .kw{color:#8f3faf;font-weight:600}
+[data-theme=dark] pre.code .cm{color:#8b949e}
+[data-theme=dark] pre.code .st{color:#7ee2a8}
+[data-theme=dark] pre.code .kw{color:#d2a8ff}
+@media (max-width:1000px){.figpair.triple{grid-template-columns:1fr}}
+
+/* Half-width figures (method flowchart, single-map demo panels). */
+figure.fig.half img{max-width:50%}
+@media (max-width:1000px){figure.fig.half img{max-width:100%}}
+
+/* Equation display blocks (DSI page): serif-style formula rows. */
+.eq{
+  font-size:1.02rem;
+  margin:.6em 0;
+  padding:10px 14px;
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+
+/* Collapsible code boxes: long blocks start collapsed to a ~3-line preview.
+   The expand/collapse control is a full-height accent strip on the LEFT edge of
+   the box — clickable at any scroll position. */
+.codewrap.collapsed pre.code{max-height:78px;overflow:hidden}
+.codewrap.has-fold pre.code{padding-left:46px}
+.codewrap.has-fold .code-label{left:44px}
+.foldbtn{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  width:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:none;
+  border-left:1px solid var(--line);   /* rotated 180deg: renders on the visual right, against the code */
+  border-radius:0 10px 10px 0;         /* rotated 180deg: rounds the visual left corners */
+  background:var(--code-bg);
+  color:var(--muted);
+  font:inherit;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  cursor:pointer;
+}
+.foldbtn:hover{color:var(--fg);background:var(--nav-hover)}
+@media print{
+  .foldbtn{display:none}
+  .codewrap.collapsed pre.code{max-height:none}
+  .codewrap.has-fold pre.code{padding-left:16px}
+}
+
+/* featured figure above section 1 */
+figure.featured-fig{width:50%;margin:0 auto 1.6em;text-align:center;}
+figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff;}
+@media (max-width:1000px){figure.featured-fig{width:100%;}}
+</style>
+</head>
+<body>
+
+<button id="menu-btn" aria-label="Menu">☰</button>
+
+<aside id="sidebar">
+  <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
+  <div class="brand">Reproducing the OPGD Model</div>
+  <div class="brand-sub">Optimal parameters-based geographical detector · verified template</div>
+  <input id="toc-filter" type="text" placeholder="Filter sections...">
+  <nav id="toc">
+    <a href="#overview">1&nbsp;Overview &amp; Scope</a>
+    <a class="l2" href="#core-idea">1.1&nbsp;Core idea</a>
+    <a class="l2" href="#method-logic">1.2&nbsp;Method logic</a>
+    <a class="l2" href="#reproduction-scope">1.3&nbsp;Reproduction scope</a>
+    <a href="#setup">2&nbsp;Setup &amp; Data</a>
+    <a class="l2" href="#environment">2.1&nbsp;Environment</a>
+    <a class="l2" href="#structure-config">2.2&nbsp;Structure &amp; config</a>
+    <a class="l2" href="#data-contract">2.3&nbsp;Data contract</a>
+    <a href="#pipeline">3&nbsp;Pipeline &amp; Results</a>
+    <a class="l2" href="#pipeline-execution">3.1&nbsp;Pipeline execution</a>
+    <a class="l2" href="#reproduce-paper">3.2&nbsp;Reproduce the published values</a>
+    <a class="l2" href="#core-steps">3.3&nbsp;Core analytical steps</a>
+    <a class="l2" href="#step-1">·&ensp;Step&nbsp;1&nbsp;Prepare data</a>
+    <a class="l2" href="#step-2">·&ensp;Step&nbsp;2&nbsp;Optimal discretisation</a>
+    <a class="l2" href="#step-3">·&ensp;Step&nbsp;3&nbsp;Factor detector</a>
+    <a class="l2" href="#step-4">·&ensp;Step&nbsp;4&nbsp;Interaction detector</a>
+    <a class="l2" href="#step-5">·&ensp;Step&nbsp;5&nbsp;Risk detector</a>
+    <a class="l2" href="#step-6">·&ensp;Step&nbsp;6&nbsp;Ecological detector</a>
+    <a class="l2" href="#step-7">·&ensp;Step&nbsp;7&nbsp;Spatial scale (SESU)</a>
+    <a class="l2" href="#interpretation">3.4&nbsp;Reading the results</a>
+    <a href="#adaptation">4&nbsp;Adaptation &amp; Reproducibility</a>
+    <a class="l2" href="#port-domain">4.1&nbsp;Port to your domain</a>
+    <a class="l2" href="#write-paper">4.2&nbsp;Write the paper</a>
+    <a class="l2" href="#repro-package">4.3&nbsp;Reproducibility package</a>
+  </nav>
+  <div class="side-foot">
+    <button id="themebtn" class="themebtn">Dark mode</button>
+  </div>
+</aside>
+
+<header class="hero">
+  <h1>Reproducing the Optimal Parameters-based Geographical Detector (OPGD)</h1>
+  <div class="sub">A complete, verified walkthrough of the OPGD model — the geographical
+  detector of spatial stratified heterogeneity, enhanced by searching the optimal spatial
+  discretisation and spatial scale for every continuous variable — from raw data to manuscript,
+  built on the CRAN <code>GD</code> package.</div>
+  <div class="director-card">
+    <img src="../../assets/images/yongze-song.png" alt="Yongze Song">
+    <div class="director-info">
+      <h3>Yongze Song</h3>
+      <p>Associate Professor, Curtin University</p>
+      <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.2) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.8)</p>
+      <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
+    </div>
+  </div>
+  <a class="dlbtn" href="opgd-code-and-data.zip" download>⬇ Download code &amp; config (zip, 24&nbsp;KB)</a>
+  <div class="dlnote"><code>R/</code> pipeline scripts · <code>config/project-config.R</code> ·
+  <code>tests/</code> verification · <code>run-all.R</code> — the demo data ship inside the
+  <code>GD</code> package, so unzip and run <code>Rscript run-all.R test</code> from the
+  <code>OPGD/</code> folder root.</div>
+  <div class="cite-lead">To cite the OPGD model and its R packages and codes in publications, please use:</div>
+  <div class="cite">
+    <div>Song&nbsp;Y, Wang&nbsp;J, Ge&nbsp;Y, Xu&nbsp;C (2020). An optimal parameters-based
+    geographical detector model enhances geographic characteristics of explanatory variables for
+    spatial heterogeneity analysis. <i>GIScience &amp; Remote Sensing</i> 57(5):593–610.
+    <a href="https://doi.org/10.1080/15481603.2020.1760434">doi</a> ·
+    <a href="../../pdf/OPGD-song2020.pdf">PDF</a></div>
+    <div>Wang&nbsp;J-F, Li&nbsp;X-H, Christakos&nbsp;G, et&nbsp;al. (2010). Geographical
+    detectors-based health risk assessment and its application in the neural tube defects study of
+    the Heshun region, China. <i>IJGIS</i> 24(1):107–127.
+    <a href="https://doi.org/10.1080/13658810802443457">doi</a></div>
+    <div>Song&nbsp;Y, Wright&nbsp;G, Wu&nbsp;P, et&nbsp;al. (2018). Segment-based spatial analysis for
+    assessing road infrastructure performance using monitoring observations and remote sensing
+    data. <i>Remote Sensing</i> 10(11):1696.
+    <a href="https://doi.org/10.3390/rs10111696">doi</a></div>
+    <div>Reference implementation: the <a href="https://cran.r-project.org/package=GD">GD</a> R
+    package (CRAN) and its
+    <a href="https://cran.r-project.org/web/packages/GD/vignettes/GD.html">vignette</a>.</div>
+  </div>
+</header>
+
+<aside class="related-rail" aria-label="Related tutorials for reproducible models">
+  <div class="rail-title">Related tutorials for reproducible models</div>
+  <a href="../../methods.html">Geospatial Theories and Methods</a>
+  <a class="current" href="opgd.html">1 &middot; OPGD &mdash; Optimal Parameters Geographical Detector</a>
+  <a href="../GC/gc.html">2 &middot; GC &mdash; Geocomplexity</a>
+  <a href="../LPI/lpi.html">3 &middot; LPI &mdash; Local Pattern Interaction</a>
+  <a href="../LPA/lpa.html">4 &middot; LPA &mdash; Local Pathways of Association</a>
+  <a href="../SDA/sda.html">5 &middot; SDA &mdash; Second Dimension of Spatial Association</a>
+  <a href="../SOH/soh.html">6 &middot; SOH &mdash; Second-dimension Outlier-driven Heterogeneity</a>
+  <a href="../DSI/dsi.html">7 &middot; DSI &mdash; Degree of Spatial Interpretability</a>
+  <a href="../STOR/stor.html">8 &middot; STOR &mdash; Spatial Trade-Off Relation</a>
+  <a href="../SDM/sdm.html">9 &middot; SDM &mdash; Spatial Delta Model for Accessibility</a>
+</aside>
+
+<main>
+
+<figure class="featured-fig">
+  <img src="assets/paper-road-interaction.jpg" alt="Interaction Q values and ranks of variable pairs (OPGD)" decoding="async">
+</figure>
+
+<section id="overview">
+  <h2>1&nbsp;Method Overview &amp; Reproduction Scope</h2>
+
+  <h3 id="core-idea">1.1&nbsp;Core Idea</h3>
+  <p>The <b>geographical detector</b> measures <b>spatial stratified heterogeneity (SSH)</b>: the
+  tendency for a response to be more alike within strata of an explanatory variable than between
+  them. Its core statistic, the <b>Q value</b> (q&nbsp;=&nbsp;1&nbsp;−&nbsp;SSW/SST), reads as the
+  share of the response's variance that a variable's spatial strata explain — 0 when the strata
+  carry no signal, 1 when they explain it entirely. Unlike a regression coefficient it needs no
+  linearity assumption and works on categorical and stratified continuous variables alike.</p>
+  <p>The catch is that a continuous variable has no natural strata: it must be
+  <i>discretised</i> first, and the Q value depends heavily on how — which breaking method
+  (equal, natural, quantile, geometric, standard-deviation) and how many intervals. Choose badly
+  and a genuinely important variable looks weak. The <b>optimal parameters-based geographical
+  detector (OPGD)</b> removes that arbitrariness: for every continuous variable it searches the
+  grid of (method&nbsp;×&nbsp;break-number) and keeps the combination that maximises the Q value,
+  then runs the detectors on those optimal strata.</p>
+  <ul>
+    <li><b>Research problem:</b> the plain geographical detector's result is an artefact of the
+        analyst's discretisation choice, so two studies of the same data can disagree on which
+        driver matters.</li>
+    <li><b>One-line contribution:</b> OPGD selects the discretisation (and the spatial unit size)
+        that best expresses each variable's spatial stratified heterogeneity, making the four
+        detectors — factor, interaction, risk and ecological — reproducible and comparable.</li>
+    <li><b>Why it matters:</b> a single optimised run answers four questions at once — which
+        variables drive the response, which pairs interact, which zones are high-risk, and whether
+        two drivers differ significantly — with no model tuning and no linearity assumption.</li>
+  </ul>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Reader anchor</div>
+    <div class="callout-b">
+      <p>The Q value only means something once each continuous variable is discretised the way that
+      shows its spatial signal most clearly. OPGD makes that choice by search, not by habit → the
+      factor detector then ranks drivers, the interaction detector finds pairs that amplify each
+      other, the risk detector names the high/low strata, and the ecological detector says which
+      drivers differ. Everything on this page serves that line.</p>
+    </div>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>What you need</div>
+    <div class="callout-b">
+      <p>R 4.1+ with two packages (<code>GD</code>, <code>ggplot2</code>), the folder from the
+      download button above, and about five minutes. The demo data ship inside <code>GD</code> —
+      no external download, no API keys. The full pipeline runs in ~2–3&nbsp;seconds.</p>
+    </div>
+  </div>
+
+  <h3 id="method-logic">1.2&nbsp;Method Logic</h3>
+  <p>OPGD wraps the classical geographical detector (Wang&nbsp;et&nbsp;al. 2010) in two parameter
+  optimisations — spatial discretisation and spatial scale — and then exposes the four detectors.
+  The schematic below is the whole method on one page:</p>
+  <figure class="fig half">
+    <span class="pairtag tag-paper">Published reference · OPGD</span>
+    <img src="assets/paper-opgd-schematic.jpg" alt="OPGD schematic overview from Song et al. 2020 Figure 2" loading="lazy" decoding="async">
+    <figcaption>OPGD paper Fig. 2 — the model. Left: for each continuous variable, a grid of
+    discretisation methods × break numbers is scored by the factor detector and the highest-Q
+    combination is kept. Right: the same idea over spatial unit sizes. The optimal parameters feed
+    the discretised variables into the four detectors (factor, interaction, risk, ecological).
+    <span class="credit">Song, Wang, Ge &amp; Xu (2020), GIScience &amp; Remote Sensing.</span></figcaption>
+  </figure>
+  <h4>Key concepts and equations</h4>
+  <ul>
+    <li><b>Q value — the factor detector (Wang et al. 2010):</b>
+      <div class="eq">q&nbsp;=&nbsp;1&nbsp;−&nbsp;SSW&nbsp;/&nbsp;SST&nbsp;=&nbsp;1&nbsp;−&nbsp;(1/Nσ²)&nbsp;Σ<sub>h</sub>&nbsp;N<sub>h</sub>σ<sub>h</sub>²</div>
+      SST is the total variance of the response; SSW is the variance that remains within the strata
+      of a variable. q&nbsp;∈&nbsp;[0,1] is the share the strata explain, with an F/non-central test
+      of significance — Wang&nbsp;et&nbsp;al. (2010)
+      <a href="https://doi.org/10.1080/13658810802443457">doi</a>.</li>
+    <li><b>Optimal discretisation (the OPGD enhancement):</b> for a continuous variable, compute q
+      for every (method,&nbsp;n-intervals) pair over the methods {equal, natural, quantile,
+      geometric, sd} and a break-number range, and keep the pair with the highest q. The variable
+      is then cut at those breaks before any detector runs — Song&nbsp;et&nbsp;al. (2020)
+      <a href="../../pdf/OPGD-song2020.pdf">PDF</a>.</li>
+    <li><b>Optimal spatial scale (SESU):</b> re-run the model across a series of spatial unit sizes
+      and adopt the scale where the Q values stabilise, so the finding is not an artefact of the
+      grid resolution.</li>
+    <li><b>The four detectors, all off the same optimal strata:</b> the <b>factor</b> detector
+      ranks variables by q; the <b>interaction</b> detector compares q(x₁∩x₂) against q(x₁) and
+      q(x₂) and types the pair into five classes; the <b>risk</b> detector t-tests the response
+      means between strata to name high/low zones; the <b>ecological</b> detector F-tests whether
+      two variables differ significantly in their impact.</li>
+  </ul>
+
+  <h4>The whole analysis in one call</h4>
+  <p>The <code>GD</code> package's <code>gdm()</code> function does everything above in a single
+  call — optimal discretisation of the continuous variables, then all four detectors, plus the
+  plots. The block below is the vignette's quick-start (<a
+  href="https://cran.r-project.org/web/packages/GD/vignettes/GD.html">GD vignette</a>, §1.3);
+  paste it into R to run the entire NDVI analysis at once. The rest of this page unpacks that one
+  call into transparent, config-driven steps that write one CSV per detector.</p>
+  <div class="codewrap">
+    <span class="code-label">R — gdm(): the entire OPGD analysis + visualisation in one call</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>## install and library the package
+install.packages("GD", dep = TRUE)
+library(GD)
+
+## Example 1 — NDVI: ndvi_40
+## optional discretisation methods: equal, natural, quantile, geometric, sd, manual
+discmethod &lt;- c("equal", "natural", "quantile")
+discitv    &lt;- c(4:6)
+
+## "gdm" runs optimal discretisation + all four detectors + plots in one step.
+## Here Climatezone and Mining are categorical; Tempchange and GDP are continuous.
+ndvigdm &lt;- gdm(NDVIchange ~ Climatezone + Mining + Tempchange + GDP,
+               continuous_variable = c("Tempchange", "GDP"),
+               data = ndvi_40,
+               discmethod = discmethod, discitv = discitv)   # ~3 s
+ndvigdm        # printed summary: factor, interaction, risk, ecological
+plot(ndvigdm)  # all detector figures</code></pre>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>One call vs the step-by-step pipeline</div>
+    <div class="callout-b">
+      <p><code>gdm()</code> is the fastest way to get every result; this tutorial's numbered
+      scripts (§3) call the same GD functions one detector at a time so each result lands in its
+      own CSV — the transparency a manuscript's reproducibility section needs. Same method, same
+      numbers; choose the one call to explore, the steps to publish.</p>
+    </div>
+  </div>
+
+  <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
+  <p>Everything tagged <i>Demo run</i> on this page regenerates from the scripts in this folder;
+  everything tagged <i>Published reference</i> is a static comparison image from the source
+  article. The demo was last verified end to end on 2026-07-25 with R&nbsp;4.6.0 and
+  <code>GD</code>&nbsp;10.9, and the built-in test reproduces the published NDVI ranking (Song
+  et&nbsp;al. 2020): Precipitation and Climate zone are the dominant drivers of vegetation
+  change.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Demo template</th><th>Published reference</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data</td>
+            <td>the <code>GD</code> package's <code>ndvi_40</code> (713 grid cells, Inner Mongolia
+                NDVI change; 2 categorical + 4 continuous variables) and the multi-scale
+                <code>ndvi_20…50</code> series</td>
+            <td>Song et&nbsp;al. (2020): the same NDVI case at 10&nbsp;km cells, plus an H1N1 and a
+                road-damage case</td></tr>
+        <tr><td>Tables</td>
+            <td><code>results/optimal-discretization.csv</code>, <code>factor-detector.csv</code>,
+                <code>interaction-detector.csv</code>, … regenerated by the scripts</td>
+            <td>the paper's factor/interaction/ecological results, whose ranking
+                <code>run-all.R test</code> reproduces</td></tr>
+        <tr><td>Figures</td>
+            <td>fig01–fig05 (optimisation, factor, interaction, risk, SESU) from <code>R/p01–p05</code></td>
+            <td>OPGD paper Figs&nbsp;2, 5, 8 embedded as static reference images</td></tr>
+      </tbody>
+    </table>
+    <figcaption>What the template regenerates versus what is shown as published reference.</figcaption>
+  </figure>
+
+  <h4>Published applications of the OPGD model</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Application</th><th>Spatial unit</th><th>Response</th><th>Explanatory variables</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Vegetation (NDVI) change, Inner Mongolia (Song et&nbsp;al. 2020 — this demo's data)</td>
+            <td>Grid cell (10–50&nbsp;km)</td><td>NDVI change 2010–2014</td>
+            <td>Climate zone, mining, temperature, precipitation, GDP, population</td>
+            <td>Published (GISci&nbsp;RS)</td></tr>
+        <tr><td>Road pavement deformation, Western Australia (Song et&nbsp;al. 2018 — the GD road case)</td>
+            <td>1&nbsp;km road segment</td><td>Deflection / damage</td>
+            <td>24 climate, traffic and road-characteristic variables</td>
+            <td>Published (Remote Sensing)</td></tr>
+        <tr><td>H1N1 flu incidence (GD built-in <code>h1n1_*</code>)</td>
+            <td>Region</td><td>Incidence</td><td>10 environmental / socioeconomic variables</td>
+            <td>Built-in alternative case</td></tr>
+      </tbody>
+    </table>
+    <figcaption>The OPGD model spans environment, infrastructure and public health; the NDVI case
+    is reproduced here without any external data.</figcaption>
+  </figure>
+
+  <h4>How to use this page</h4>
+  <ul>
+    <li><b>To reproduce the demo:</b> this folder ships the R scripts (<code>R/</code>), the
+        configuration (<code>config/project-config.R</code>) and the tests (<code>tests/</code>);
+        the data live inside the <code>GD</code> package. Run <code>Rscript run-all.R test</code>,
+        then <code>Rscript run-all.R</code>; every output on this page regenerates.</li>
+    <li><b>To apply OPGD to your own problem:</b> read §2.3 (data contract), point
+        <code>INPUT_FILE</code> at your CSV and name the response, categorical and continuous
+        columns in the §2.2 config, then run the same scripts (§4.1).</li>
+    <li><b>To write the paper:</b> §4.2 maps every result file to a manuscript element and gives
+        the section skeleton the published applications share.</li>
+  </ul>
+</section>
+
+<section id="setup">
+  <h2>2&nbsp;Setup, Structure &amp; Data Contract</h2>
+
+  <h3 id="environment">2.1&nbsp;Environment &amp; Dependencies</h3>
+  <p>The pipeline is pure R and wraps the CRAN <code>GD</code> package — the reference
+  implementation of the geographical detector and OPGD. Two packages cover everything; the demo
+  datasets ship inside <code>GD</code> itself, so a fresh machine needs no external download.</p>
+  <div class="codewrap">
+    <span class="code-label">R console</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># Required — the OPGD reference implementation (ships the demo data)
+install.packages("GD")
+
+# Required for the figures
+install.packages("ggplot2")</code></pre>
+  </div>
+  <figure class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Package</th><th>Role in the pipeline</th><th>Required?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>GD</code></td><td><code>optidisc()</code> optimal discretisation; <code>gd()</code>, <code>gdinteract()</code>, <code>gdrisk()</code>, <code>riskmean()</code>, <code>gdeco()</code> the four detectors; <code>gdm()</code> one-call wrapper; the <code>ndvi_*</code> / <code>h1n1_*</code> demo data</td><td>yes</td></tr>
+        <tr><td><code>ggplot2</code></td><td>the five demo figures (<code>R/p01–p05</code>)</td><td>figures only</td></tr>
+      </tbody>
+    </table>
+    <figcaption>The whole method lives in one package; the environment of the verified run is in
+    <code>env/session-info.txt</code>.</figcaption>
+  </figure>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>Why the GD package</div>
+    <div class="callout-b">
+      <p>Rather than re-implement the geographical detector, this template calls the authors' own
+      CRAN package, so the numbers are the reference numbers by construction. The tutorial adds a
+      config-driven, step-by-step wrapper around it that writes one CSV per detector — the
+      transparency a manuscript's reproducibility section needs.</p>
+    </div>
+  </div>
+
+  <h3 id="structure-config">2.2&nbsp;Project Structure &amp; Configuration</h3>
+  <p>One entry script drives everything: <code>run-all.R</code> runs the seven pipeline steps, the
+  five figure scripts, or the two tests, and every step writes to <code>data/derived/</code>,
+  <code>results/</code>, <code>tables/</code> or <code>figs/</code>. Each step reads what the
+  previous one wrote, so a single step can be re-run after a config change without repeating the
+  whole pipeline.</p>
+  <div class="codewrap">
+    <span class="code-label">folder tree</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>OPGD/
+├── opgd.html                      # this guide
+├── run-all.R                      # entry point: full run, single steps, figures, test
+├── assets/                        # figures shown in this guide (web copies)
+├── config/project-config.R        # the ONLY file to edit for a new domain
+├── R/
+│   ├── 00-config.R, 01-helpers.R  # library layer: paths, IO, GD guard
+│   ├── 10-prepare-data.R          # load the analysis table, report roles
+│   ├── 20-optimal-discretization.R# the OPGD enhancement (optidisc)
+│   ├── 30-factor-detector.R       # relative importance (gd)
+│   ├── 40-interaction-detector.R  # pairwise interaction (gdinteract)
+│   ├── 50-risk-detector.R         # sub-region means + t-test (gdrisk, riskmean)
+│   ├── 60-ecological-detector.R   # F-test between variables (gdeco)
+│   ├── 70-sesu-scale.R            # spatial-scale effects (gdm over ndvi_*)
+│   ├── 90-tables.R                # LaTeX tables + session info
+│   └── p01 … p05                  # figure scripts
+├── data/reference/                # provenance of the built-in GD data
+├── tests/                         # test-01 reproduces the paper; test-02 properties
+├── env/                           # requirements.md, session-info.txt
+├── results/  tables/  figs/       # generated output, never hand-edited</code></pre>
+  </div>
+  <h4>Main configuration file</h4>
+  <div class="codewrap">
+    <span class="code-label">config/project-config.R (key lines)</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>DATASET     &lt;- "ndvi_40"                     # a GD built-in table (or set INPUT_FILE)
+INPUT_FILE  &lt;- NULL                          # e.g. "data/raw/your.csv" to use your own data
+
+RESPONSE    &lt;- "NDVIchange"                   # the dependent variable
+CATEGORICAL &lt;- c("Climatezone", "Mining")    # already-discrete explanatory vars
+CONTINUOUS  &lt;- c("Tempchange", "Precipitation",
+                 "GDP", "Popdensity")        # these get optimal discretisation
+
+DISC_METHODS   &lt;- c("equal","natural","quantile","geometric","sd")
+DISC_INTERVALS &lt;- 3:7                        # break numbers to search
+
+SESU_DATASETS &lt;- c("ndvi_20","ndvi_30","ndvi_40","ndvi_50")  # spatial-scale series
+SESU_SIZES    &lt;- c(20, 30, 40, 50)</code></pre>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>Single adaptation point</div>
+    <div class="callout-b">
+      <p>The config is the only file you edit to port the pipeline: name your response and which
+      columns are categorical versus continuous, and choose the discretisation search grid. No R
+      script hard-codes a variable name. When writing the manuscript, quote the search grid and the
+      chosen breaks from this file, never from memory.</p>
+    </div>
+  </div>
+  <h4>Key parameters and where they come from</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Parameter</th><th>Default</th><th>Origin / rationale</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>DISC_METHODS</code></td><td class="num">5 methods</td><td>the supervised + unsupervised breaks of Song et&nbsp;al. (2020): equal, natural (Jenks), quantile, geometric, standard-deviation</td></tr>
+        <tr><td><code>DISC_INTERVALS</code></td><td class="num">3:7</td><td>break-number range searched per method; wider covers more choices at the cost of runtime</td></tr>
+        <tr><td><code>CATEGORICAL</code> / <code>CONTINUOUS</code></td><td class="num">2 / 4</td><td>categorical variables are used as-is; only continuous ones are optimally discretised</td></tr>
+        <tr><td><code>SESU_SIZES</code></td><td class="num">20–50&nbsp;km</td><td>spatial unit sizes re-run to read where the Q values stabilise (the optimal scale)</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Free parameters, their defaults, and the published rules they follow.</figcaption>
+  </figure>
+
+  <h3 id="data-contract">2.3&nbsp;Data Contract</h3>
+  <p>The pipeline consumes one table, one row per spatial unit: a numeric response, a set of
+  categorical explanatory variables, and a set of continuous ones. Units can be anything
+  area-referenced — grid cells (this demo), road segments, counties, regions.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Column</th><th>Config key</th><th>Type</th><th>Meaning</th><th>Required?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>response</td><td><code>RESPONSE</code></td><td>numeric</td><td>the dependent variable (e.g. NDVIchange)</td><td>yes</td></tr>
+        <tr><td>categorical</td><td><code>CATEGORICAL</code></td><td>factor / integer</td><td>already-discrete drivers, used as strata directly</td><td>≥ 0</td></tr>
+        <tr><td>continuous</td><td><code>CONTINUOUS</code></td><td>numeric</td><td>drivers that OPGD discretises optimally before detecting</td><td>≥ 1</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Required schema. Column names are free — declared in the config, not hard-coded.
+    The geographical detector needs no coordinates: strata come from the variables, not from
+    space directly.</figcaption>
+  </figure>
+  <h4>Example analysis-ready table</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th class="num">NDVIchange</th><th>Climatezone</th><th>Mining</th>
+        <th class="num">Tempchange</th><th class="num">Precipitation</th><th class="num">GDP</th><th class="num">Popdensity</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num">0.116</td><td>Bwk</td><td>low</td><td class="num">0.256</td><td class="num">236.5</td><td class="num">12.55</td><td class="num">1.45</td></tr>
+        <tr><td class="num">0.018</td><td>Bwk</td><td>low</td><td class="num">0.273</td><td class="num">213.6</td><td class="num">2.69</td><td class="num">0.80</td></tr>
+        <tr><td class="num">0.138</td><td>Bsk</td><td>low</td><td class="num">0.302</td><td class="num">448.9</td><td class="num">20.06</td><td class="num">11.49</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Representative rows of <code>ndvi_40</code> (713 total). <code>Climatezone</code>
+    and <code>Mining</code> are categorical; the other four are continuous and get optimal
+    discretisation in Step&nbsp;2. Your own data takes exactly this shape.</figcaption>
+  </figure>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Continuous vs categorical is your call, and it matters</div>
+    <div class="callout-b">
+      <p>List a variable under <code>CONTINUOUS</code> and OPGD searches for its best strata; list
+      it under <code>CATEGORICAL</code> and its existing values become the strata unchanged. Put an
+      ordinal code (a climate zone, a soil class) in the wrong list and you either discretise a
+      label that should be kept, or freeze a continuous gradient at whatever coding it arrived in.
+      A related trap: a near-constant or heavily skewed continuous variable (like <code>GDP</code>
+      here) can yield <code>NA</code> Q at fine break numbers — the search simply skips those and
+      keeps a valid combination.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>3&nbsp;Reproduction Pipeline, Results &amp; Validation</h2>
+
+  <h3 id="pipeline-execution">3.1&nbsp;Pipeline Execution</h3>
+  <p>Seven pipeline steps, five figure scripts and two verification tests run from one entry point.
+  Each step writes to <code>results/</code>, <code>tables/</code>, <code>figs/</code> or
+  <code>data/derived/</code> and reads what the previous step wrote, so any step can be re-run in
+  isolation after a config change.</p>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Full run</div><div class="v"><code>Rscript run-all.R</code> (~2–3&nbsp;s)</div></div>
+    <div class="kv"><div class="k">Verification</div><div class="v"><code>Rscript run-all.R test</code> — do this first</div></div>
+    <div class="kv"><div class="k">Output folders</div><div class="v"><code>results/ tables/ figs/ data/derived/</code></div></div>
+  </div>
+  <div class="codewrap">
+    <span class="code-label">terminal</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-bash"><code>cd OPGD                    # this folder
+Rscript run-all.R test     # 1. verify the code reproduces the published ranking
+Rscript run-all.R          # 2. full pipeline on the built-in ndvi_40 data
+
+Rscript run-all.R 20 30    # re-run single steps (10 20 30 40 50 60 70 90)
+Rscript run-all.R figures  # only the figure scripts</code></pre>
+  </div>
+  <div class="console"><span class="lbl">Verified run · key lines (2026-07-25)</span>Project : opgd-demo
+Domain  : vegetation change (NDVI)
+== Step 1/7  Prepare data ======================================
+   713 rows, 7 columns; 2 categorical + 4 continuous
+== Step 2/7  Optimal parameter discretisation ==================
+   Precipitation  best: equal     x 7 intervals  -> Q = 0.8694
+   Tempchange     best: sd        x 7 intervals  -> Q = 0.3266
+== Step 3/7  Factor detector ===================================
+   dominant variable: Precipitation (Q = 0.869); weakest: GDP (Q = 0.099)
+== Step 4/7  Interaction detector ==============================
+   strongest interaction: Tempchange n Precipitation -> Q = 0.916 (Enhance, bi-)
+== Step 5/7  Risk detector =====================================
+   104 stratum pairs tested; 82 significantly different (t-test)
+== Step 6/7  Ecological detector ===============================
+   14 of 15 variable pairs differ significantly in their impact
+== Step 7/7  Spatial-scale effects (SESU) ======================
+   unit size 40: mean Q = 0.401 across 6 variables
+Finished in 2.3 s</div>
+
+  <h3 id="reproduce-paper">3.2&nbsp;Reproduce the Published Values</h3>
+  <p>Before trusting any number on your own data, confirm the code reproduces the published method.
+  <code>run-all.R test</code> runs the OPGD optimisation and factor detector on the paper's own
+  <code>ndvi_40</code> data and checks the published ranking — Precipitation and Climate zone are
+  the dominant drivers of NDVI change (Song et&nbsp;al. 2020).</p>
+  <div class="console"><span class="lbl">Verified output of Rscript run-all.R test (abridged)</span>== test-01  Reproduce Song et al. (2020) ndvi_40 factor detector ==========
+   Precipitation dominates (Q > 0.80)            pass
+   Climate zone strong (Q > 0.80)                pass
+   Precipitation ranks above Climate zone        pass
+   GDP is the weakest driver (Q < 0.15)          pass
+   every Q is a valid fraction in [0,1]          pass
+   Q: Precip=0.869  Climate=0.822  Temp=0.327  Pop=0.196  GDP=0.099
+   PASS — the template reproduces the published OPGD ranking
+
+== test-02  Geographical-detector properties ============================
+   perfectly separated strata give Q near 1             pass
+   random strata give Q near 0                          pass
+   Q is invariant to a linear rescale of the response   pass
+   ...
+   6 passed, 0 failed</div>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>The Q value is only reproducible once discretisation is fixed</div>
+    <div class="callout-b">
+      <p>Run the plain geographical detector with an arbitrary binning and Precipitation's Q can
+      land anywhere from 0.37 (geometric, 3 bins) to 0.87 (equal, 7 bins) — see the spread in the
+      optimisation figure below. That is exactly the arbitrariness OPGD removes: the test locks the
+      <i>optimised</i> value, so editing the search grid or the detector code and re-running
+      immediately shows whether the ranking still holds.</p>
+    </div>
+  </div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+    <div class="callout-b">
+      <p><code>run-all.R test</code> prints <b>PASS</b> with 6 property checks and the published
+      NDVI ranking reproduced. The implementation is the reference method — proceed to your own
+      analysis.</p>
+    </div>
+  </div>
+
+  <h3 id="core-steps">3.3&nbsp;Core Analytical Steps</h3>
+  <p>Seven stages, each with the same anatomy: purpose → code → verified output → result →
+  <i>how to read it</i>. Steps are numbered 1–7 on this page and the script files share those
+  numbers (Step&nbsp;2 runs <code>R/20-optimal-discretization.R</code>, and so on).</p>
+
+  <article class="step-card" id="step-1">
+    <div class="step-card-h">
+      <span class="step-label">Step 1 · verified</span>
+      <h4>Prepare data — load the table and label the variable roles</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Loads the analysis table (a built-in <code>GD</code> dataset, or your CSV via
+      <code>INPUT_FILE</code>), keeps the response plus the configured categorical and continuous
+      variables, and records each column's role and range. Everything downstream reads only this
+      derived table.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>Rscript run-all.R 10</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>== Step 1/7  Prepare data ======================================
+   loaded built-in GD dataset 'ndvi_40'
+   713 rows, 7 columns
+   response: NDVIchange
+   2 categorical: Climatezone, Mining
+   4 continuous: Tempchange, Precipitation, GDP, Popdensity
+   wrote results/variable-summary.csv (7 rows)
+   analysis set: 713 units, 6 explanatory variables</div>
+      <h4>Paper reference</h4>
+      <p>In Song et&nbsp;al. (2020) this is the NDVI case: annual mean NDVI change (2010–2014) over
+      Inner Mongolia at 10&nbsp;km cells, with climate, mining and socioeconomic drivers. The
+      built-in <code>ndvi_40</code> is the same case at 40&nbsp;km cells
+      (<a href="../../pdf/OPGD-song2020.pdf">PDF</a>).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The split between categorical and continuous is the one decision that shapes
+                everything.</b> Only continuous variables enter the Step&nbsp;2 search; categorical
+                ones (climate zone, mining level) are used as strata as they stand.</li>
+            <li><b>No coordinates needed.</b> The geographical detector reads spatial pattern
+                through the strata of the variables, not through a distance matrix — so any
+                area-referenced table fits, with or without lon/lat.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/variable-summary.csv</code> lists 7 columns with the right role
+          (1 response, 2 categorical, 4 continuous) before you move on.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-2">
+    <div class="step-card-h">
+      <span class="step-label">Step 2 · verified · the OPGD enhancement</span>
+      <h4>Optimal discretisation — the best strata for each continuous variable</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>For every continuous variable it computes the factor-detector Q across the grid of five
+      methods × break numbers 3–7, keeps the combination with the highest Q, and cuts the variable
+      at those breaks. This is the step that makes the whole analysis reproducible — the discretised
+      table it writes feeds every detector.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/20-optimal-discretization.R — the search (via GD::optidisc)</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>for (v in CONTINUOUS) {
+  od &lt;- optidisc(as.formula(paste(RESPONSE, "~", v)), data = d,
+                 discmethod = DISC_METHODS, discitv = DISC_INTERVALS)[[1]]
+  bestq &lt;- max(od$qv.matrix, na.rm = TRUE)   # highest Q over method x n-intervals
+  d[[v]] &lt;- cut(d[[v]], unique(od$itv), include.lowest = TRUE)  # optimal strata
+}</code></pre>
+      </div>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>Rscript run-all.R 20</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>Variable</th><th>Best method</th><th class="num">Intervals</th><th class="num">Q value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Precipitation</b></td><td>equal</td><td class="num">7</td><td class="num">0.869</td></tr>
+            <tr><td>Tempchange</td><td>sd</td><td class="num">7</td><td class="num">0.327</td></tr>
+            <tr><td>Popdensity</td><td>quantile</td><td class="num">7</td><td class="num">0.196</td></tr>
+            <tr><td>GDP</td><td>quantile</td><td class="num">7</td><td class="num">0.099</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/optimal-discretization.csv</code> — the chosen method, break
+        number and resulting Q for each continuous variable.</figcaption>
+      </figure>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/fig01-optimization.jpg" alt="Q value vs number of intervals per method, demo" loading="lazy" decoding="async">
+          <figcaption>fig01 — Q value against the number of intervals, one line per method, faceted
+          by variable. The circled point is the maximum (the chosen combination). Precipitation is
+          high and stable; GDP stays low whatever the binning.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · OPGD</span>
+          <img src="assets/paper-opgd-optimization.jpg" alt="OPGD paper Fig 5 optimization" loading="lazy" decoding="async">
+          <figcaption>OPGD paper Fig. 5 — the same optimisation panel in Song et&nbsp;al. (2020):
+          (a) Q against intervals per method, (b) the histograms with the optimal breaks. The demo
+          reproduces the shape, including geometric's slow climb on Precipitation.</figcaption>
+        </figure>
+      </div>
+      <div class="callout c-warn">
+        <div class="callout-h"><span class="callout-i">!</span>The choice is not neutral — report it</div>
+        <div class="callout-b">
+          <p>Precipitation's Q ranges from 0.37 (geometric, 3 intervals) to 0.87 (equal, 7) across
+          the grid — a factor of more than two, from the binning alone. State the search grid and
+          the chosen method/breaks in the Methods section; that is what makes a geographical-detector
+          result comparable across studies.</p>
+        </div>
+      </div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The optimal method differs per variable.</b> Precipitation prefers equal breaks,
+                temperature standard-deviation breaks, the skewed GDP and population quantile breaks
+                — one global rule would have mis-scored at least one of them.</li>
+            <li><b>Higher break numbers usually help, but not always.</b> Most curves rise toward
+                7 intervals; where a curve dips (temperature under equal breaks at n=4) the search
+                simply avoids it. Cap the range by sample size — too many strata leave too few
+                observations each.</li>
+            <li><b>A flat, low curve is a real finding.</b> GDP never exceeds Q≈0.10 under any
+                binning: it is genuinely a weak driver of NDVI change here, not a victim of bad
+                discretisation.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/optimal-discretization.csv</code> holds one row per continuous variable,
+          and <code>data/derived/discretized-data.csv</code> (713 rows) carries the optimal strata
+          for Steps 3–6.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-3">
+    <div class="step-card-h">
+      <span class="step-label">Step 3 · verified · the core result</span>
+      <h4>Factor detector — relative importance of every variable</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Runs the factor detector on the optimally discretised table: the Q value of every variable,
+      with a significance test, ranked. This is the headline of most geographical-detector papers —
+      which drivers explain the spatial pattern of the response.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/30-factor-detector.R — via GD::gd</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>dcz &lt;- read.csv("data/derived/discretized-data.csv")   # optimal strata from Step 2
+g   &lt;- gd(NDVIchange ~ ., data = dcz)                   # factor detector
+g$Factor                                                # variable, qv, sig</code></pre>
+      </div>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>Rscript run-all.R 30</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="fig half">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="assets/fig02-factor.jpg" alt="Factor detector Q per variable, demo" loading="lazy" decoding="async">
+        <figcaption>fig02 — relative importance (Q) per variable. Precipitation (0.869) and
+        Climate zone (0.822) dominate; GDP (0.099) is weakest.</figcaption>
+      </figure>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>Variable</th><th class="num">Q value</th><th class="num">Significance (p)</th><th class="num">Rank</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Precipitation</b></td><td class="num">0.869</td><td class="num">2.6e−10</td><td class="num">1</td></tr>
+            <tr><td>Climatezone</td><td class="num">0.822</td><td class="num">7.3e−10</td><td class="num">2</td></tr>
+            <tr><td>Tempchange</td><td class="num">0.327</td><td class="num">3.1e−10</td><td class="num">3</td></tr>
+            <tr><td>Popdensity</td><td class="num">0.196</td><td class="num">2.2e−10</td><td class="num">4</td></tr>
+            <tr><td>Mining</td><td class="num">0.141</td><td class="num">6.7e−10</td><td class="num">5</td></tr>
+            <tr><td>GDP</td><td class="num">0.099</td><td class="num">9.6e−10</td><td class="num">6</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/factor-detector.csv</code> — every variable is significant
+        (p&nbsp;&lt;&nbsp;1e-9); the Q value is what separates them.</figcaption>
+      </figure>
+      <h4>Paper reference</h4>
+      <p>Song et&nbsp;al. (2020) report Precipitation and Climate zone as the leading drivers of
+      NDVI change in this region, with the socioeconomic variables (GDP, population) weak — the
+      ranking this demo reproduces (<a href="../../pdf/OPGD-song2020.pdf">PDF</a>).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Q is a share of variance explained, not a correlation.</b> Precipitation's 0.869
+                means its (optimal) strata account for 87% of the spatial stratified heterogeneity
+                of NDVI change — no sign, no linearity, just explained structure.</li>
+            <li><b>Significance and magnitude are different questions.</b> Every variable here is
+                statistically significant, yet GDP's Q is only 0.10. A significant but small Q means
+                "real but minor"; read the number, not just the star.</li>
+            <li><b>Climate leads, economy trails — the physical reading.</b> That precipitation and
+                climate zone tower over GDP and population says vegetation change in this arid region
+                is climate-driven; the socioeconomic drivers matter only locally (they resurface in
+                the interaction detector, Step&nbsp;4).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/factor-detector.csv</code> holds 6 ranked rows; the console names
+          Precipitation as dominant (Q&nbsp;=&nbsp;0.869) and GDP as weakest (0.099).</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-4">
+    <div class="step-card-h">
+      <span class="step-label">Step 4 · verified</span>
+      <h4>Interaction detector — which pairs of variables amplify each other</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>For every pair it computes the joint Q of the two variables overlaid and compares it with
+      the two single Q values, classifying the pair into one of five types (bi-enhance,
+      nonlinear-enhance, uni-weaken, nonlinear-weaken, independent). Interactions routinely exceed
+      the strongest single driver.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>Rscript run-all.R 40</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/fig03-interaction.jpg" alt="Interaction bubble matrix, demo" loading="lazy" decoding="async">
+          <figcaption>fig03 — bubble size is the joint Q of a pair; colour is the interaction type.
+          Precipitation ∩ Temperature (0.92) is the strongest; the two Mining pairs with GDP /
+          population (red) are nonlinear-enhance.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · OPGD</span>
+          <img src="assets/paper-opgd-interaction-eco.jpg" alt="OPGD paper Fig 8 interaction and ecological" loading="lazy" decoding="async">
+          <figcaption>OPGD paper Fig. 8 — (a) interaction bubble matrix, (b) ecological detector.
+          The demo reproduces the pattern: Precipitation ∩ Temperature strongest (paper labels
+          0.9148; demo 0.916), and mining pairs turning nonlinear-enhance.</figcaption>
+        </figure>
+      </div>
+      <figure class="fig half">
+        <span class="pairtag tag-paper">Published reference · road case</span>
+        <img src="assets/paper-road-interaction.jpg" alt="Road paper Figure 8 — interaction detector bubble matrix across 23 variables" loading="lazy" decoding="async">
+        <figcaption>Song et&nbsp;al. (2018) Fig. 8 — the same interaction bubble matrix at scale:
+        the pavement-deformation case runs the interaction detector over 23 variables, sized by
+        joint Q, ranked, and coloured by which of four category groups (C1–C4) the two variables
+        belong to. It shows the demo's small 15-pair matrix is exactly how a full geographical-detector
+        study reports interactions.
+        <span class="credit">Remote Sensing 10(11):1696.</span></figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Every pair enhances — the general rule of this method.</b> The joint Q of two
+                variables is almost always higher than either alone, so a pair explains more than a
+                sum of parts would suggest. The question is <i>how</i>, not <i>whether</i>.</li>
+            <li><b>Bi-enhance vs nonlinear-enhance is the key distinction.</b> 13 pairs are
+                bi-enhance (joint Q above both singles but below their sum); two — Mining ∩ GDP
+                (0.248) and Mining ∩ Population (0.359) — are nonlinear-enhance (joint above the
+                sum), meaning mining's effect on NDVI only emerges alongside the socioeconomic
+                variables.</li>
+            <li><b>Weak singles can matter jointly.</b> GDP alone is the weakest driver (0.099), yet
+                Precipitation ∩ GDP reaches 0.900 — the socioeconomic signal is real but conditional
+                on climate, exactly the kind of finding a single-variable ranking hides.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/interaction-detector.csv</code> holds all 15 pairs; the strongest is
+          Temperature ∩ Precipitation (Q&nbsp;=&nbsp;0.916), and 2 of 15 are nonlinear-enhance.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-5">
+    <div class="step-card-h">
+      <span class="step-label">Step 5 · verified</span>
+      <h4>Risk detector — which zones are high vs low, and is the difference real</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p><code>riskmean()</code> gives the mean response within each stratum of every variable;
+      <code>gdrisk()</code> t-tests every pair of strata and flags the significant differences.
+      Together they turn a Q value into an actionable map of where the response is high.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>Rscript run-all.R 50</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="fig half">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="assets/fig04-risk-means.jpg" alt="Risk-detector mean response per stratum, demo" loading="lazy" decoding="async">
+        <figcaption>fig04 — mean NDVI change per stratum, one panel per variable. Climate zone
+        rises from Bwk (0.005) to Dwc (0.445); precipitation rises with rainfall then plateaus
+        around 0.45; the socioeconomic variables are flatter.</figcaption>
+      </figure>
+      <div class="console"><span class="lbl">Verified console output</span>== Step 5/7  Risk detector =====================================
+   wrote results/risk-means.csv (38 rows)
+   wrote results/risk-detector.csv (104 rows)
+   104 stratum pairs tested; 82 significantly different (t-test)</div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Read the direction, not just the magnitude.</b> Climate zone's Q says it matters;
+                the risk means say <i>how</i> — the humid Dwc zone has the highest NDVI gain (0.445),
+                the arid Bwk the lowest (0.005). That ordering is the actionable output.</li>
+            <li><b>The plateau is a signal.</b> NDVI gain rises with precipitation up to ~500&nbsp;mm
+                then stops climbing — beyond that, water stops being the limiting factor. A monotone
+                Q value cannot show this; the risk means can.</li>
+            <li><b>Significance guards against reading noise.</b> 82 of 104 stratum pairs differ
+                significantly; the 22 that do not (mostly among the socioeconomic strata) are
+                differences you should not report as real.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/risk-means.csv</code> (38 stratum means) and
+          <code>results/risk-detector.csv</code> (104 t-tests) are written; 82 pairs are
+          significant.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-6">
+    <div class="step-card-h">
+      <span class="step-label">Step 6 · verified</span>
+      <h4>Ecological detector — do two variables differ significantly in impact</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>An F-test between every pair of variables asks whether their contributions to spatial
+      stratified heterogeneity differ significantly (Y) or are statistically indistinguishable (N).
+      It turns the factor-detector ranking into pairwise significance.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>Rscript run-all.R 60</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>== Step 6/7  Ecological detector ===============================
+   wrote results/ecological-detector.csv (15 rows)
+   14 of 15 variable pairs differ significantly in their impact</div>
+      <p>The paper's Fig. 8b (shown beside Step 4) is the published version of this Y/N matrix. The
+      single <b>N</b> in the demo is Climate zone vs Precipitation — the two dominant drivers are
+      statistically indistinguishable in impact, while every other pair differs.</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The one "N" is the most informative cell.</b> Climate zone and Precipitation both
+                score Q≈0.82–0.87 and the F-test cannot separate them — they are co-dominant, and a
+                paper should say so rather than crown a single winner on a 0.05 Q gap.</li>
+            <li><b>Everything else is "Y".</b> The dominant drivers are significantly stronger than
+                the socioeconomic ones, so the climate-over-economy reading of Step&nbsp;3 is not an
+                artefact of where the ranking happened to fall.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/ecological-detector.csv</code> holds 15 pairs; exactly one (Climate zone
+          vs Precipitation) is not significant.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-7">
+    <div class="step-card-h">
+      <span class="step-label">Step 7 · verified</span>
+      <h4>Spatial scale (SESU) — is the result robust to the unit size</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Re-runs the model on the same case aggregated to a series of spatial unit sizes
+      (20–50&nbsp;km, the built-in <code>ndvi_*</code> series) and reads where the Q values
+      stabilise. The scale where the curves flatten is the recommended analysis unit.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>Rscript run-all.R 70</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="fig half">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="assets/fig05-sesu.jpg" alt="SESU Q value vs spatial unit size, demo" loading="lazy" decoding="async">
+        <figcaption>fig05 — Q value against spatial unit size, one line per variable. The rankings
+        are stable across scales; Precipitation and Climate zone stay on top and the curves flatten
+        from ~40&nbsp;km, the recommended unit.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Stability of the ranking is the robustness claim.</b> The order of variables does
+                not change from 20 to 50&nbsp;km, so the factor-detector conclusion is not an
+                artefact of one grid resolution — the reassurance a reviewer asks for.</li>
+            <li><b>Slightly rising Q with coarser units is the modifiable areal unit effect.</b>
+                Aggregation smooths within-unit variance, nudging Q up; report the scale you chose
+                and why, not just the single-scale number.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/sesu-scale.csv</code> holds Q for 6 variables × 4 unit sizes; the mean Q
+          settles near 0.40 from 40&nbsp;km.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <h3 id="interpretation">3.4&nbsp;Reading the Results Together</h3>
+  <p>The four detectors are one story told from four angles: <i>who</i> matters (factor),
+  <i>with whom</i> (interaction), <i>where</i> (risk), and <i>how confidently</i> (ecological).
+  Read alone, each can mislead; read together, they are hard to argue with.</p>
+  <div class="step-grid">
+    <div class="kv"><div class="k">The demo finding</div><div class="v">NDVI change in this arid
+      region is climate-driven: Precipitation (Q 0.869) and Climate zone (0.822) dominate and are
+      statistically co-dominant (ecological N), with a strong bi-enhance interaction
+      (0.90).</div></div>
+    <div class="kv"><div class="k">The hidden socioeconomic signal</div><div class="v">GDP and
+      population are weak singles (0.099, 0.196) but their interactions with mining are
+      nonlinear-enhance — a conditional human effect the factor ranking alone would discard.</div></div>
+  </div>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>How to interpret — several angles</div>
+    <div class="callout-b">
+      <ul>
+        <li><b>Mechanism (why OPGD changes the answer).</b> The Q value is a function of the strata;
+            the plain detector lets the analyst pick them, so the "importance" of a variable is
+            partly a choice. Optimising the discretisation removes that degree of freedom, so the
+            ranking reflects the data, not the binning.</li>
+        <li><b>Decision angle (what to do with it).</b> The factor detector chooses <i>which</i>
+            variables to keep; the risk detector says <i>which zones</i> to target; the interaction
+            detector warns which drivers must be modelled together. For a management map, the risk
+            means are the deliverable; for a causal argument, the ecological detector is.</li>
+        <li><b>What OPGD is <i>not</i>.</b> It is not a predictive model and returns no coefficients
+            or forecasts — it quantifies and localises spatial stratified heterogeneity. Pair it
+            with a predictive method when you need a map of values, not a map of drivers.</li>
+        <li><b>Case reading.</b> That climate co-dominates while the economy only enhances
+            conditionally is the substantive result — and it is stable across spatial scales
+            (Step&nbsp;7), so it survives the reviewer's first question.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>Reading order for your own run</div>
+    <div class="callout-b">
+      <p>1) <code>results/optimal-discretization.csv</code> — confirm each variable's search found a
+      valid, non-trivial Q. 2) <code>results/factor-detector.csv</code> — the ranking and its
+      significance. 3) <code>results/ecological-detector.csv</code> — which gaps in the ranking are
+      real. 4) <code>results/interaction-detector.csv</code> and <code>risk-means.csv</code> — the
+      pairs and zones that carry the story. 5) <code>results/sesu-scale.csv</code> — whether it
+      holds across scales.</p>
+    </div>
+  </div>
+</section>
+
+<section id="adaptation">
+  <h2>4&nbsp;Adaptation, Writing &amp; Reproducibility</h2>
+
+  <h3 id="port-domain">4.1&nbsp;Port to Your Domain</h3>
+  <p>The geographical detector moves between domains without touching the analytical scripts: the
+  config declares the table and the variable roles, and every detector is generic. The published
+  applications span the range:</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Domain</th><th>Response</th><th>Spatial unit</th><th>Key adaptation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Vegetation change (Song et&nbsp;al. 2020)</td>
+            <td>NDVI change</td><td>Grid cell</td>
+            <td>4 continuous + 2 categorical drivers; the demo here</td></tr>
+        <tr><td>Road pavement deformation (Song et&nbsp;al. 2018)</td>
+            <td>Deflection / damage</td><td>1&nbsp;km segment</td>
+            <td>24 variables; segment-length scale optimisation via SESU</td></tr>
+        <tr><td>H1N1 flu incidence (GD built-in)</td>
+            <td>Incidence</td><td>Region</td>
+            <td>environmental + socioeconomic drivers; set <code>DATASET &lt;- "h1n1_100"</code></td></tr>
+      </tbody>
+    </table>
+    <figcaption>Any area-referenced table with one response and a mix of categorical and
+    continuous drivers fits the data contract of §2.3.</figcaption>
+  </figure>
+  <figure class="fig half">
+    <span class="pairtag tag-paper">Published reference · road case</span>
+    <img src="assets/paper-road-studyarea.jpg" alt="Road pavement deflection study area, Song et al. 2018" loading="lazy" decoding="async">
+    <figcaption>Song et&nbsp;al. (2018) Fig. 1 — the road-deformation application: pavement
+    deflection across the Western Australia road network, analysed with the same OPGD detectors on
+    line-segment units. The GD package's road case comes from this study.
+    <span class="credit">Remote Sensing 10(11):1696.</span></figcaption>
+  </figure>
+  <h4>What to edit</h4>
+  <ol>
+    <li><code>config/project-config.R</code> — point <code>INPUT_FILE</code> at your CSV (or name a
+        built-in <code>DATASET</code>), set <code>RESPONSE</code>, and split the drivers into
+        <code>CATEGORICAL</code> and <code>CONTINUOUS</code>. Choose the <code>DISC_METHODS</code>
+        and <code>DISC_INTERVALS</code> search grid. The single adaptation point of §2.2.</li>
+    <li>For spatial-scale optimisation, either supply your own multi-scale tables or set
+        <code>RUN_SESU&nbsp;&lt;-&nbsp;FALSE</code>; SESU needs the aggregated series, which for a
+        custom <code>INPUT_FILE</code> you build yourself.</li>
+    <li>Nothing else: run <code>Rscript run-all.R test</code> once (a sanity check on the built-in
+        case), then <code>Rscript run-all.R</code>, and read
+        <code>results/factor-detector.csv</code> before drafting.</li>
+  </ol>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Common pitfalls</div>
+    <div class="callout-b">
+      <p>Never compare Q values across different discretisation settings — finer strata mechanically
+      explain more variance, so a bigger Q from more intervals is not a stronger driver. Keep the
+      search grid fixed and let OPGD pick within it. Watch for <code>NA</code> Q on skewed
+      variables (the search skips those combinations, which is correct). And remember the detector
+      needs enough observations per stratum — with a small sample, cap <code>DISC_INTERVALS</code>
+      so strata do not empty out.</p>
+    </div>
+  </div>
+
+  <h3 id="write-paper">4.2&nbsp;Write the Paper</h3>
+  <p>The published OPGD applications share one manuscript architecture: a Methods section that
+  states the discretisation search grid and the four detectors, a Results section that mirrors the
+  pipeline steps, and every number pulled from a <code>results/</code> file so nothing is retyped.
+  The download ships the code-and-config layer; the tables regenerate from
+  <code>R/90-tables.R</code>.</p>
+  <figure class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Manuscript section</th><th>Template output</th><th>Writing job</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Methods</td><td><code>config/project-config.R</code>, <code>results/optimal-discretization.csv</code></td><td>state the geographical-detector Q, the OPGD search grid (methods × break numbers), and the chosen breaks per variable; define the four detectors</td></tr>
+        <tr><td>Results</td><td><code>figs/fig01–fig05</code>, <code>tables/table-factor.tex</code>, <code>table-interaction.tex</code></td><td>mirror the pipeline: optimisation → factor ranking → interactions → risk zones → ecological significance → scale robustness; one takeaway per subsection, every finding sentence carries a Q</td></tr>
+        <tr><td>Discussion</td><td><code>results/ecological-detector.csv</code>, <code>sesu-scale.csv</code></td><td>argue which drivers are co-dominant and which differ, and that the ranking is stable across scales; name the mechanism behind the leading interaction</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Where each manuscript section draws its material from.</figcaption>
+  </figure>
+  <h4>Manuscript skeleton (shared by the published applications)</h4>
+  <div class="codewrap nofold">
+    <span class="code-label">manuscript outline</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>1  Introduction        — spatial stratified heterogeneity; the discretisation
+                          problem; the OPGD contribution (3 aims)
+2  OPGD model          — 2.1 Q value (factor detector; no case data)
+                          2.2 Parameter optimisation (discretisation grid; SESU)
+                          2.3 Interaction, risk and ecological detectors
+3  Case &amp; data         — study area, response, explanatory variables, unit
+4  Results             — 4.1 optimal discretisation (Fig: Q vs intervals)
+                          4.2 factor detector (ranking + significance)
+                          4.3 interaction detector (bubble matrix)
+                          4.4 risk detector (zone means)
+                          4.5 ecological detector + scale robustness
+5  Discussion          — co-dominance, conditional drivers, mechanism, limits
+6  Conclusions         — 6-8 sentences mapping to the aims</code></pre>
+  </div>
+  <h4>Results-to-manuscript map</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Manuscript element</th><th>Source file</th><th>Shown in</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Optimisation figure</td><td><code>figs/fig01-optimization</code>, <code>tables/table-optimal-discretization.tex</code></td><td>§4.1</td></tr>
+        <tr><td><b>Main table</b> (factor ranking)</td><td><code>tables/table-factor.tex</code></td><td>§4.2</td></tr>
+        <tr><td>Interaction matrix</td><td><code>figs/fig03-interaction</code>, <code>tables/table-interaction.tex</code></td><td>§4.3</td></tr>
+        <tr><td>Risk zone figure</td><td><code>figs/fig04-risk-means</code>, <code>results/risk-detector.csv</code></td><td>§4.4</td></tr>
+        <tr><td>Ecological significance</td><td><code>results/ecological-detector.csv</code></td><td>§4.5</td></tr>
+        <tr><td>Scale robustness</td><td><code>figs/fig05-sesu</code>, <code>results/sesu-scale.csv</code></td><td>§4.5 / response to reviewers</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Every manuscript element traces to one regenerable file.</figcaption>
+  </figure>
+
+  <h3 id="repro-package">4.3&nbsp;Final Reproducibility Package</h3>
+  <p>Everything an editor, reviewer, or reader needs sits in this folder; the three blocks below are
+  what a submission's data-and-code availability statement should point to.</p>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Code</div><div class="v">numbered scripts in <code>R/</code> + <code>run-all.R</code> + <code>config/project-config.R</code> + <code>tests/</code></div></div>
+    <div class="kv"><div class="k">Data</div><div class="v">the <code>GD</code> built-in <code>ndvi_*</code> series (cited in <code>data/reference/provenance.md</code>) — or your CSV in <code>data/raw/</code></div></div>
+    <div class="kv"><div class="k">Results</div><div class="v"><code>figs/fig01–fig05</code> (PDF+PNG) + <code>tables/*.tex</code> + <code>env/session-info.txt</code></div></div>
+  </div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Before claiming reproducible</div>
+    <div class="callout-b">
+      <ul>
+        <li><code>Rscript run-all.R test</code> passes — the code still reproduces the published
+            ranking and the detector properties.</li>
+        <li>Delete <code>results/</code>, <code>tables/</code>, <code>figs/</code> and
+            <code>data/derived/</code>, re-run <code>Rscript run-all.R</code> — every number and
+            figure on this page regenerates (verified 2026-07-25, ~2–3&nbsp;s).</li>
+        <li>The discretisation search grid and the chosen method/breaks per variable are stated in
+            the Methods and match <code>config/project-config.R</code>.</li>
+        <li>Every finding sentence traces to a file in <code>results/</code> or
+            <code>tables/</code> — none retyped; Q values are reported with their significance.</li>
+        <li><code>env/session-info.txt</code> (R and <code>GD</code> versions) is included in the
+            deposit.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>Anticipate the reviewer</div>
+    <div class="callout-b">
+      <p>Have the answer pre-computed: <i>Why this discretisation?</i> → the optimisation figure and
+      <code>optimal-discretization.csv</code>. <i>Is the top driver really stronger than the
+      second?</i> → <code>ecological-detector.csv</code> (in this demo, Precipitation and Climate
+      zone are co-dominant — say so). <i>Would a different unit size change the ranking?</i> →
+      <code>sesu-scale.csv</code>. <i>Do weak variables matter at all?</i> → their interaction rows.</p>
+    </div>
+  </div>
+  <h4>References &amp; credits</h4>
+  <p>Demo outputs were generated by the scripts in this folder (verified 2026-07-25) using the CRAN
+  <code>GD</code> package. Reference figures are reproduced from the cited articles for comparison
+  and are © their authors and publishers.</p>
+  <ol>
+    <li>Wang J-F, Li X-H, Christakos G, et al. (2010). Geographical detectors-based health risk
+        assessment and its application in the neural tube defects study of the Heshun region, China.
+        <i>IJGIS</i> 24(1):107–127.
+        <a href="https://doi.org/10.1080/13658810802443457">doi:10.1080/13658810802443457</a></li>
+    <li>Song Y, Wright G, Wu P, et al. (2018). Segment-based spatial analysis for assessing road
+        infrastructure performance using monitoring observations and remote sensing data.
+        <i>Remote Sensing</i> 10(11):1696.
+        <a href="https://doi.org/10.3390/rs10111696">doi:10.3390/rs10111696</a>
+        (source of the GD road case and the study-area figure on this page)</li>
+    <li>Song Y, Wang J, Ge Y, Xu C (2020). An optimal parameters-based geographical detector model
+        enhances geographic characteristics of explanatory variables for spatial heterogeneity
+        analysis. <i>GIScience &amp; Remote Sensing</i> 57(5):593–610.
+        <a href="https://doi.org/10.1080/15481603.2020.1760434">doi:10.1080/15481603.2020.1760434</a>
+        · <a href="../../pdf/OPGD-song2020.pdf">PDF</a>
+        (source of Figs 2, 5, 8 and the NDVI ranking reproduced on this page)</li>
+    <li>The GD package (CRAN):
+        <a href="https://cran.r-project.org/package=GD">cran.r-project.org/package=GD</a> ·
+        <a href="https://cran.r-project.org/web/packages/GD/vignettes/GD.html">vignette</a>
+        (the reference implementation this template wraps)</li>
+  </ol>
+</section>
+
+</main>
+
+<div id="lightbox"><img alt="enlarged figure" loading="lazy" decoding="async"></div>
+
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var sidebar=document.getElementById('sidebar');
+  var menuBtn=document.getElementById('menu-btn');
+  var themeBtn=document.getElementById('themebtn');
+  var filter=document.getElementById('toc-filter');
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var lightbox=document.getElementById('lightbox');
+  var lightboxImg=lightbox ? lightbox.querySelector('img') : null;
+
+  function setTheme(mode){
+    if(mode==='dark'){
+      root.setAttribute('data-theme','dark');
+      if(themeBtn) themeBtn.textContent='Light mode';
+    }else{
+      root.removeAttribute('data-theme');
+      if(themeBtn) themeBtn.textContent='Dark mode';
+    }
+    try{localStorage.setItem('reproduce-template-theme',mode)}catch(e){}
+  }
+  try{
+    var saved=localStorage.getItem('reproduce-template-theme');
+    if(saved==='dark') setTheme('dark');
+  }catch(e){}
+
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      setTheme(root.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+    });
+  }
+
+  if(menuBtn && sidebar){
+    menuBtn.addEventListener('click',function(){
+      sidebar.classList.toggle('open');
+    });
+  }
+  links.forEach(function(a){
+    a.addEventListener('click',function(){
+      if(sidebar) sidebar.classList.remove('open');
+    });
+  });
+
+  if(filter){
+    filter.addEventListener('input',function(){
+      var q=filter.value.trim().toLowerCase();
+      links.forEach(function(a){
+        a.style.display=a.textContent.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+      });
+    });
+  }
+
+  document.querySelectorAll('.copybtn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var box=btn.closest('.codewrap');
+      var code=box ? box.querySelector('pre code') : null;
+      if(!code) return;
+      navigator.clipboard.writeText(code.innerText).then(function(){
+        btn.classList.add('ok');
+        btn.textContent='Copied';
+        setTimeout(function(){
+          btn.classList.remove('ok');
+          btn.textContent='Copy';
+        },1200);
+      });
+    });
+  });
+
+  document.querySelectorAll('figure img,.figpair img').forEach(function(img){
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',function(){
+      if(!lightbox || !lightboxImg) return;
+      lightboxImg.src=img.src;
+      lightboxImg.alt=img.alt || 'enlarged figure';
+      lightbox.classList.add('open');
+    });
+  });
+  if(lightbox){
+    lightbox.addEventListener('click',function(){
+      lightbox.classList.remove('open');
+      if(lightboxImg) lightboxImg.removeAttribute('src');
+    });
+  }
+
+  var headings=[].slice.call(document.querySelectorAll('section[id],h3[id],article[id]'));
+  function onScroll(){
+    var active=null;
+    var y=window.scrollY+110;
+    headings.forEach(function(h){
+      if(h.offsetTop<=y) active=h.id;
+    });
+    links.forEach(function(a){
+      a.classList.toggle('active',a.getAttribute('href')==='#'+active);
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+</script>
+<script>
+// Lightweight R/bash highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code').forEach(function(codeEl){
+  var src = codeEl.textContent;
+  var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var isR = codeEl.parentElement.classList.contains('lang-r');
+  var kw = isR
+    ? /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")|\b(function|if|else|for|while|return|library|source|TRUE|FALSE|NULL|NA_real_|NA_character_|NA|in)\b/g
+    : /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")/g;
+  var out = '', last = 0, m;
+  while ((m = kw.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    if (m[1])      out += '<span class="cm">' + esc(m[1]) + '</span>';
+    else if (m[2]) out += '<span class="st">' + esc(m[2]) + '</span>';
+    else           out += '<span class="kw">' + esc(m[3]) + '</span>';
+    last = kw.lastIndex;
+  }
+  out += esc(src.slice(last));
+  codeEl.innerHTML = out;
+});
+</script>
+<script>
+// Collapsible code boxes: boxes longer than 4 lines start collapsed to a 3-line preview.
+document.querySelectorAll('.codewrap:not(.nofold)').forEach(function(w){
+  var code=w.querySelector('pre.code code');
+  if(!code) return;
+  var lines=code.textContent.replace(/\n+$/,'').split('\n').length;
+  if(lines<=4) return;
+  w.classList.add('has-fold','collapsed');
+  var chip=w.querySelector('.code-label');
+  if(chip) chip.textContent+=' · '+lines+' lines';
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.className='foldbtn';
+  btn.title='Expand / collapse code';
+  function label(){
+    btn.textContent=w.classList.contains('collapsed') ? 'Expand' : 'Collapse ▴';
+  }
+  label();
+  btn.addEventListener('click',function(){
+    w.classList.toggle('collapsed');
+    label();
+    if(w.classList.contains('collapsed')) w.scrollIntoView({block:'nearest'});
+  });
+  w.appendChild(btn);
+});
+</script>
+<script>
+// Match the director avatar to the height of the name-to-email text block (desktop only).
+(function(){
+  function sizeDirectorAvatar(){
+    document.querySelectorAll('.director-card').forEach(function(card){
+      var img=card.querySelector('img');
+      var info=card.querySelector('.director-info');
+      if(!img||!info) return;
+      if(window.innerWidth<=1000){
+        img.style.width='';img.style.height='';img.style.minWidth='';
+        return;
+      }
+      var h=Math.round(info.getBoundingClientRect().height);
+      img.style.height=h+'px';
+      img.style.width=h+'px';
+      img.style.minWidth=h+'px';
+    });
+  }
+  window.addEventListener('load',sizeDirectorAvatar);
+  window.addEventListener('resize',sizeDirectorAvatar);
+  sizeDirectorAvatar();
+})();
+</script>
+</body>
+</html>

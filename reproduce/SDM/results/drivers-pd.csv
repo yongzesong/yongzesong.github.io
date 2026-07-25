@@ -1,0 +1,51 @@
+"walk_minutes","variable","type","PD","sig"
+3,"Region","region",0.0106,1.84e-11
+3,"Population density","raw",0.0461,3.75e-10
+3,"Dwelling density","raw",0.0234,8.69e-10
+3,"Distance to near greenspace","raw",0.1161,5.91e-11
+3,"Contextualised population density","contextualised",0.049,1.72e-10
+3,"Contextualised dwelling density","contextualised",0.0344,3.38e-11
+3,"Contextualised distance to near greenspace","contextualised",0.0565,1.14e-10
+5,"Region","region",0.0129,4.82e-11
+5,"Population density","raw",0.0265,2.66e-10
+5,"Dwelling density","raw",0.0238,4.9e-11
+5,"Distance to near greenspace","raw",0.0957,1.52e-10
+5,"Area of near greenspace","raw",0.0391,7.39e-10
+5,"Contextualised population density","contextualised",0.0721,8.48e-10
+5,"Contextualised dwelling density","contextualised",0.083,9.44e-10
+5,"Contextualised shape factor","contextualised",0.0524,4.62e-10
+5,"Contextualised distance to near greenspace","contextualised",0.1157,9.99e-10
+5,"Contextualised area of near greenspace","contextualised",0.0664,5.12e-10
+10,"Region","region",0.037,3.86e-10
+10,"Population density","raw",0.0382,5.55e-10
+10,"Dwelling density","raw",0.0262,2.7e-10
+10,"Distance to near greenspace","raw",0.0147,3.81e-10
+10,"Area of near greenspace","raw",0.0553,2.24e-10
+10,"Contextualised population density","contextualised",0.0275,9.44e-11
+10,"Contextualised dwelling density","contextualised",0.0458,1.34e-10
+10,"Contextualised distance to near greenspace","contextualised",0.0202,7.93e-11
+10,"Contextualised area of near greenspace","contextualised",0.055,4.17e-10
+15,"Region","region",0.0538,1.23e-10
+15,"Population density","raw",0.0248,4.09e-10
+15,"Area of near greenspace","raw",0.0449,2.23e-10
+15,"Contextualised population density","contextualised",0.0301,7.12e-10
+15,"Contextualised dwelling density","contextualised",0.0158,2.66e-10
+15,"Contextualised distance to near greenspace","contextualised",0.0391,5.28e-10
+15,"Contextualised area of near greenspace","contextualised",0.0737,9.03e-10
+20,"Region","region",0.0861,2.45e-10
+20,"Population density","raw",0.0165,4.17e-10
+20,"Dwelling density","raw",0.015,9.45e-11
+20,"Area of near greenspace","raw",0.1368,6.87e-10
+20,"Contextualised population density","contextualised",0.0428,5.37e-10
+20,"Contextualised dwelling density","contextualised",0.0407,6.32e-11
+20,"Contextualised distance to near greenspace","contextualised",0.0957,8.67e-10
+20,"Contextualised area of near greenspace","contextualised",0.0421,2.99e-10
+30,"Region","region",0.2161,6.45e-10
+30,"Population density","raw",0.0735,1.86e-10
+30,"Dwelling density","raw",0.085,3.47e-10
+30,"Distance to near greenspace","raw",0.0151,6.98e-12
+30,"Area of near greenspace","raw",0.0631,7.01e-10
+30,"Contextualised population density","contextualised",0.0902,1.63e-10
+30,"Contextualised dwelling density","contextualised",0.1007,9.57e-10
+30,"Contextualised distance to near greenspace","contextualised",0.0642,4.68e-10
+30,"Contextualised area of near greenspace","contextualised",0.0685,9.19e-10

@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering
+\caption{Degree of spatial interpretability for multiple spatial characteristics.}
+\label{tab:theta}
+\begin{tabular}{lrrr}
+\hline
+\textbf{Model} & \textbf{$\theta_{min}$} & \textbf{$\theta_{probable}$} & \textbf{$\theta_{max}$} \\
+\hline
+xgbTree & 0.337 & 0.601 & 0.735 \\
+rpart & 0.197 & 0.423 & 0.537 \\
+knn & 0.163 & 0.433 & 0.526 \\
+rf & 0.126 & 0.445 & 0.515 \\
+cubist & 0.097 & 0.416 & 0.473 \\
+\hline
+\end{tabular}
+\\[2pt]\footnotesize $\theta_{min}$ is the shared contribution, $\theta_{probable}$ the dominant characteristic, and $\theta_{max}$ the value under independent contributions.
+\end{table}

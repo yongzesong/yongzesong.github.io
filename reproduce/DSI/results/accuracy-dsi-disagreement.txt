@@ -1,0 +1,3 @@
+Spearman rho between R2 and theta_probable: 0.800
+Highest R2: rf (0.366), theta_probable = 0.445
+Highest theta_probable: xgbTree (0.601), R2 = 0.318

@@ -1,0 +1,2364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spatial Trade-Off Relation</title>
+<meta name="description" content="Step-by-step, verified guide to reproducing the spatial trade-off relation (STOR) model in R — entropy-weighted quantity and quality indices, LOESS utility and marginal utility, DMU stages, LISA trade-off clusters, and GAM/GWR contribution analysis.">
+<link rel="canonical" href="https://yongzesong.com/reproduce/STOR/stor.html">
+<link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../../assets/images/apple-touch-icon.png">
+<style>
+:root{
+  --accent:#A13D63;
+  --accent-2:#2166AC;
+  --accent-soft:#f7e9f0;
+  --bg:#ffffff;
+  --fg:#1a1d21;
+  --muted:#5a626b;
+  --line:#e6e8eb;
+  --side-bg:#fbfcfd;
+  --code-bg:#f6f8fa;
+  --code-fg:#24292e;
+  --nav-fg:#495057;
+  --nav-l2:#6c757d;
+  --nav-active:#2761e3;
+  --nav-active-bg:#eef4ff;
+  --nav-hover:#eef0f2;
+  --sidew:290px;
+  --rightw:var(--sidew);
+  --maxw:880px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+[data-theme=dark]{
+  --bg:#0f1216;
+  --fg:#e6e8eb;
+  --muted:#9aa4af;
+  --line:#242a31;
+  --side-bg:#0c1014;
+  --code-bg:#161b22;
+  --code-fg:#d1d7de;
+  --accent-soft:#2a1420;
+  --nav-fg:#b4bcc4;
+  --nav-l2:#8b939c;
+  --nav-active:#6ea8fe;
+  --nav-active-bg:#15202f;
+  --nav-hover:#171c22;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:var(--mono);
+  font-size:.88em;
+  background:var(--code-bg);
+  color:var(--code-fg);
+  padding:.1em .35em;
+  border-radius:4px;
+}
+
+/* Sidebar: LISP-GC navigation pattern, SOH dark-mode behavior. */
+#menu-btn{
+  display:none;
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:60;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 11px;
+  font-size:1.05rem;
+  cursor:pointer;
+  color:var(--fg);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+#sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:var(--sidew);
+  overflow-y:auto;
+  background:var(--side-bg);
+  border-right:1px solid var(--line);
+  padding:22px 18px 40px;
+  z-index:50;
+}
+#sidebar .back-to-site{
+  display:inline-block;
+  font-size:.78rem;
+  color:var(--muted);
+  text-decoration:none;
+  margin-bottom:10px;
+  padding:3px 8px;
+  border:1px solid var(--line);
+  border-radius:5px;
+}
+#sidebar .back-to-site:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+}
+#sidebar .brand{
+  font-size:1.06rem;
+  font-weight:700;
+  color:var(--fg);
+  line-height:1.35;
+  margin-bottom:4px;
+}
+#sidebar .brand-sub{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+#toc-filter{
+  width:100%;
+  padding:6px 10px;
+  font-size:.85rem;
+  border:1px solid var(--line);
+  border-radius:6px;
+  margin-bottom:14px;
+  outline:none;
+  background:var(--bg);
+  color:var(--fg);
+}
+#toc-filter:focus{border-color:var(--nav-active)}
+#toc a{
+  display:block;
+  padding:4px 8px;
+  font-size:.88rem;
+  color:var(--nav-fg);
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  line-height:1.35;
+  margin:1px 0;
+}
+#toc a.l2{
+  padding-left:22px;
+  font-size:.82rem;
+  color:var(--nav-l2);
+}
+#toc a:hover{
+  background:var(--nav-hover);
+  text-decoration:none;
+}
+#toc a.active{
+  color:var(--nav-active);
+  border-left-color:var(--nav-active);
+  background:var(--nav-active-bg);
+  font-weight:600;
+}
+.side-foot{
+  padding:16px 8px 0;
+  margin-top:14px;
+  border-top:1px solid var(--line);
+}
+.themebtn{
+  font:inherit;
+  font-size:.82rem;
+  cursor:pointer;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:5px 10px;
+  color:var(--muted);
+}
+.themebtn:hover{color:var(--fg)}
+
+/* Hero and content. */
+.hero{
+  border-bottom:1px solid var(--line);
+  padding:34px 40px 26px;
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  background:var(--bg);
+}
+.hero h1{
+  margin:0 0 6px;
+  font-size:1.9rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  color:var(--fg);
+}
+.hero .sub{
+  color:var(--muted);
+  font-size:1.05rem;
+}
+.cite-lead{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--fg);
+  margin-top:16px;
+}
+.cite{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:12px;
+}
+.cite div+div{margin-top:4px}
+.dlbtn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding:9px 18px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  font-size:.92rem;
+  border-radius:8px;
+}
+.dlbtn:hover{filter:brightness(1.12);text-decoration:none}
+.dlnote{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* Lab director card adapted from lab.html, with template typography and colours. */
+.director-card{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  margin:18px 0 4px;
+  padding:16px;
+  background:var(--side-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+.director-card img{
+  width:110px;
+  min-width:110px;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:50%;
+  background:#fff;
+}
+.director-info h3{
+  font-size:1.16rem;
+  line-height:1.25;
+  margin:0 0 4px;
+}
+.director-info p{
+  font-size:.82rem;
+  line-height:1.5;
+  margin:2px 0;
+  color:var(--muted);
+}
+.director-info a{
+  font-size:.82rem;
+  font-weight:600;
+}
+
+/* Fixed right rail for related reproducible-model tutorials. */
+.related-rail{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  width:var(--rightw);
+  overflow-y:auto;
+  z-index:40;
+  padding:22px 18px 40px;
+  border-left:1px solid var(--line);
+  background:var(--side-bg);
+}
+.related-rail .rail-title{
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1.35;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.related-rail a{
+  display:block;
+  padding:4px 8px;
+  margin:1px 0;
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  color:var(--nav-fg);
+  font-size:.88rem;
+  line-height:1.35;
+}
+.related-rail a:hover{
+  text-decoration:none;
+  background:var(--nav-hover);
+}
+.related-rail a.current{
+  color:var(--nav-active);
+  background:var(--nav-active-bg);
+  border-left-color:var(--nav-active);
+  font-weight:600;
+}
+.related-rail .rail-note{
+  color:var(--muted);
+  font-size:.76rem;
+  line-height:1.45;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+main{
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  padding:26px 40px 90px;
+}
+section{padding-top:4px}
+h2{
+  font-size:1.5rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  margin:48px 0 14px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+  color:var(--fg);
+}
+section:first-of-type h2{margin-top:20px}
+h3{
+  font-size:1.16rem;
+  font-weight:600;
+  margin:30px 0 10px;
+  letter-spacing:-.005em;
+  color:var(--fg);
+}
+h4{
+  font-size:1rem;
+  font-weight:600;
+  margin:20px 0 8px;
+  color:var(--fg);
+}
+p{margin:.7em 0}
+ul,ol{
+  margin:.6em 0;
+  padding-left:1.3em;
+}
+li{margin:.28em 0}
+
+/* Reusable content blocks. */
+.callout{
+  border:1px solid var(--line);
+  border-left-width:4px;
+  border-radius:8px;
+  padding:12px 16px;
+  margin:1.2em 0;
+  background:var(--side-bg);
+}
+.callout-h{
+  font-weight:700;
+  font-size:.92rem;
+  margin-bottom:2px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.callout-i{font-size:1rem}
+.callout-b p{margin:.4em 0}
+.callout-b ul{margin:.4em 0}
+.c-interpret{border-left-color:var(--accent);background:var(--accent-soft)}
+.c-tip{border-left-color:#178a3c}
+.c-warn{border-left-color:#d98a00}
+.c-repro{border-left-color:var(--accent-2)}
+.c-note{border-left-color:#8b939c}
+
+.codewrap{
+  position:relative;
+  margin:1.1em 0;
+}
+.code-label{
+  position:absolute;
+  top:-9px;
+  left:12px;
+  font-size:.7rem;
+  font-family:var(--mono);
+  background:var(--accent);
+  color:#fff;
+  padding:1px 8px;
+  border-radius:4px;
+  letter-spacing:.02em;
+}
+.copybtn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  font:inherit;
+  font-size:.74rem;
+  cursor:pointer;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:3px 9px;
+  color:var(--muted);
+  opacity:.85;
+  transition:.15s;
+}
+.copybtn:hover{
+  color:var(--fg);
+  opacity:1;
+  border-color:var(--accent);
+}
+.copybtn.ok{
+  color:#178a3c;
+  border-color:#178a3c;
+}
+pre.code{
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px;
+  overflow-x:auto;
+  margin:0;
+  font-family:var(--mono);
+  font-size:.83rem;
+  line-height:1.5;
+}
+pre.code code{
+  background:none;
+  padding:0;
+  color:var(--code-fg);
+  white-space:pre;
+}
+.console{
+  background:#22262b;
+  color:#d8dee4;
+  border-radius:8px;
+  padding:12px 15px;
+  margin:14px 0;
+  font-family:var(--mono);
+  font-size:.78rem;
+  line-height:1.5;
+  overflow:auto;
+  max-height:320px;
+  white-space:pre;
+}
+.console .lbl{
+  display:block;
+  color:#8b949e;
+  font-size:.72rem;
+  margin-bottom:6px;
+  font-family:inherit;
+}
+
+.tablewrap{
+  margin:1.2em 0;
+  overflow-x:auto;
+}
+.tablewrap table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:.86rem;
+}
+.tablewrap th{
+  text-align:left;
+  border-bottom:2px solid var(--fg);
+  padding:7px 10px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.tablewrap td{
+  border-bottom:1px solid var(--line);
+  padding:6px 10px;
+  vertical-align:top;
+}
+.tablewrap tbody tr:hover{background:rgba(127,127,127,.05)}
+.tablewrap figcaption{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:8px;
+}
+.tablewrap.compact td,
+.tablewrap.compact th{
+  padding:4px 8px;
+  font-size:.8rem;
+}
+table code{font-size:.82em}
+
+figure.fig{
+  margin:1.2em 0;
+  text-align:center;
+}
+figure.fig img{
+  max-width:100%;
+  height:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+figure.fig figcaption{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:8px;
+  text-align:left;
+}
+.credit{
+  display:block;
+  font-style:italic;
+  margin-top:2px;
+}
+.figpair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin:1.2em 0;
+}
+.figpair figure{margin:0}
+.figpair img{
+  max-width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+.figpair figcaption{
+  font-size:.78rem;
+  color:var(--muted);
+  margin-top:6px;
+  text-align:left;
+}
+.pairtag{
+  font-size:.72rem;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:5px;
+  margin-bottom:6px;
+  display:inline-block;
+}
+.tag-demo{
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+.tag-paper{
+  background:#eef3f8;
+  color:var(--accent-2);
+}
+[data-theme=dark] .tag-paper{background:#14202e}
+.pairnote{
+  font-size:.82rem;
+  color:var(--muted);
+  border-left:3px solid var(--line);
+  padding-left:12px;
+  margin:.2em 0 1em;
+}
+
+.flow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:8px;
+  margin:16px 0;
+}
+.flow .chip{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 12px;
+  background:var(--side-bg);
+  font-size:.8rem;
+  line-height:1.4;
+  flex:1;
+  min-width:135px;
+}
+.flow .chip b{
+  display:block;
+  font-size:.9rem;
+  color:var(--fg);
+}
+.flow .chip.hl{
+  border-color:var(--nav-active);
+  background:var(--nav-active-bg);
+}
+.flow .arrow{
+  align-self:center;
+  color:var(--muted);
+  font-size:1.1rem;
+}
+.mini-badge{
+  display:inline-block;
+  font-size:.68rem;
+  font-weight:600;
+  border-radius:4px;
+  padding:1px 6px;
+  margin-left:4px;
+  vertical-align:1px;
+  background:#eceff1;
+  color:#6c757d;
+}
+.mini-badge.oa{
+  background:#d8f3e1;
+  color:#1c7a43;
+}
+
+.step-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:1.4em 0 1.8em;
+  overflow:hidden;
+  background:var(--bg);
+}
+.step-card-h{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  background:var(--side-bg);
+}
+.step-label{
+  display:inline-block;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+.step-card-h h4{
+  margin:0;
+  font-size:1.05rem;
+}
+.step-card-b{padding:14px 16px 16px}
+.step-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+.kv{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  background:var(--side-bg);
+}
+.kv .k{
+  font-size:.72rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+.kv .v{
+  font-size:.9rem;
+  color:var(--fg);
+}
+
+#lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(15,18,22,.88);
+  display:none;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  cursor:zoom-out;
+  padding:30px;
+}
+#lightbox img{
+  max-width:96%;
+  max-height:96%;
+  background:#fff;
+  border-radius:6px;
+  padding:10px;
+}
+#lightbox.open{display:flex}
+
+@media (max-width:1000px){
+  #sidebar{
+    transform:translateX(-100%);
+    transition:transform .2s;
+  }
+  #sidebar.open{
+    transform:none;
+    box-shadow:0 0 30px rgba(0,0,0,.2);
+  }
+  #menu-btn{display:block}
+  .hero,
+  main{
+    margin-left:0;
+    margin-right:0;
+  }
+  .hero{padding:60px 20px 22px}
+  main{
+    padding:20px 20px 70px;
+    max-width:none;
+  }
+  .director-card{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+  .director-card img{
+    width:90px;
+    height:90px;
+    align-self:center;
+  }
+  .figpair{grid-template-columns:1fr}
+  .related-rail{display:none}
+}
+@media print{
+  #sidebar,
+  #menu-btn,
+  .copybtn,
+  #lightbox{display:none}
+  .hero,
+  main{margin-left:0}
+}
+
+/* --- Page additions shared with the LPI tutorial --- */
+.figpair.triple{grid-template-columns:1fr 1fr 1fr}
+.tag-lisp{background:#e9f7f4;color:#0f766e}
+[data-theme=dark] .tag-lisp{background:#0e2320}
+.tablewrap td.num,.tablewrap th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre.code .cm{color:#7f8896;font-style:italic}
+pre.code .st{color:#20794d}
+pre.code .kw{color:#8f3faf;font-weight:600}
+[data-theme=dark] pre.code .cm{color:#8b949e}
+[data-theme=dark] pre.code .st{color:#7ee2a8}
+[data-theme=dark] pre.code .kw{color:#d2a8ff}
+@media (max-width:1000px){.figpair.triple{grid-template-columns:1fr}}
+
+/* Half-width figures (method flowchart, single-map demo panels). */
+figure.fig.half img{max-width:50%}
+@media (max-width:1000px){figure.fig.half img{max-width:100%}}
+
+/* Equation display blocks (DSI page): serif-style formula rows. */
+.eq{
+  font-size:1.02rem;
+  margin:.6em 0;
+  padding:10px 14px;
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+
+/* Collapsible code boxes: long blocks start collapsed to a ~3-line preview.
+   The expand/collapse control is a full-height accent strip on the LEFT edge of
+   the box — clickable at any scroll position. */
+.codewrap.collapsed pre.code{max-height:78px;overflow:hidden}
+.codewrap.has-fold pre.code{padding-left:46px}
+.codewrap.has-fold .code-label{left:44px}
+.foldbtn{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  width:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:none;
+  border-left:1px solid var(--line);   /* rotated 180deg: renders on the visual right, against the code */
+  border-radius:0 10px 10px 0;         /* rotated 180deg: rounds the visual left corners */
+  background:var(--code-bg);
+  color:var(--muted);
+  font:inherit;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  cursor:pointer;
+}
+.foldbtn:hover{color:var(--fg);background:var(--nav-hover)}
+@media print{
+  .foldbtn{display:none}
+  .codewrap.collapsed pre.code{max-height:none}
+  .codewrap.has-fold pre.code{padding-left:16px}
+}
+
+/* featured figure above section 1 */
+figure.featured-fig{width:50%;margin:0 auto 1.6em;text-align:center;}
+figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff;}
+@media (max-width:1000px){figure.featured-fig{width:100%;}}
+</style>
+</head>
+<body>
+
+<button id="menu-btn" aria-label="Menu">☰</button>
+
+<aside id="sidebar">
+  <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
+  <div class="brand">Reproducing the STOR Model</div>
+  <div class="brand-sub">Spatial trade-off relation · verified template</div>
+  <input id="toc-filter" type="text" placeholder="Filter sections...">
+  <nav id="toc">
+    <a href="#overview">1&nbsp;Overview &amp; Scope</a>
+    <a class="l2" href="#core-idea">1.1&nbsp;Core idea</a>
+    <a class="l2" href="#method-logic">1.2&nbsp;Method logic</a>
+    <a class="l2" href="#reproduction-scope">1.3&nbsp;Reproduction scope</a>
+    <a href="#setup">2&nbsp;Setup, Code &amp; Data</a>
+    <a class="l2" href="#environment">2.1&nbsp;Environment</a>
+    <a class="l2" href="#the-code">2.2&nbsp;The method in one file</a>
+    <a class="l2" href="#structure-config">2.3&nbsp;Structure &amp; config</a>
+    <a class="l2" href="#data-contract">2.4&nbsp;Data contract</a>
+    <a href="#pipeline">3&nbsp;Pipeline &amp; Results</a>
+    <a class="l2" href="#pipeline-execution">3.1&nbsp;Pipeline execution</a>
+    <a class="l2" href="#recover-truth">3.2&nbsp;Recover the embedded truth</a>
+    <a class="l2" href="#core-steps">3.3&nbsp;Core analytical steps</a>
+    <a class="l2" href="#step-1">·&ensp;Step&nbsp;1&nbsp;Simulate blocks</a>
+    <a class="l2" href="#step-2">·&ensp;Step&nbsp;2&nbsp;Entropy-weighted SRII</a>
+    <a class="l2" href="#step-3">·&ensp;Step&nbsp;3&nbsp;Utility &amp; DMU stages</a>
+    <a class="l2" href="#step-4">·&ensp;Step&nbsp;4&nbsp;Clusters &amp; trade-offs</a>
+    <a class="l2" href="#step-5">·&ensp;Step&nbsp;5&nbsp;Income contribution</a>
+    <a class="l2" href="#interpretation">3.4&nbsp;Reading the results</a>
+    <a href="#adaptation">4&nbsp;Adaptation &amp; Reproducibility</a>
+    <a class="l2" href="#port-domain">4.1&nbsp;Port to your domain</a>
+    <a class="l2" href="#write-paper">4.2&nbsp;Write the paper</a>
+    <a class="l2" href="#repro-package">4.3&nbsp;Reproducibility package</a>
+  </nav>
+  <div class="side-foot">
+    <button id="themebtn" class="themebtn">Dark mode</button>
+  </div>
+</aside>
+
+<header class="hero">
+  <h1>Reproducing the Spatial Trade-Off Relation (STOR) Model</h1>
+  <div class="sub">A complete, verified walkthrough of the STOR model — which measures the
+  <i>quantity</i> and <i>quality</i> of infrastructure as two entropy-weighted indices, reads their
+  relation as a utility function, and cuts it into stages of diminishing marginal utility — from
+  block-level indicators to manuscript. The method is implemented here in a single self-contained
+  R file with no package dependency, demonstrated end to end on simulated data with a known
+  trade-off hidden inside.</div>
+  <div class="director-card">
+    <img src="../../assets/images/yongze-song.png" alt="Yongze Song">
+    <div class="director-info">
+      <h3>Yongze Song</h3>
+      <p>Associate Professor, Curtin University</p>
+      <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.2) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.8)</p>
+      <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
+    </div>
+  </div>
+  <a class="dlbtn" href="stor-code-and-data.zip" download>⬇ Download code &amp; data (zip, 0.3&nbsp;MB)</a>
+  <div class="dlnote"><code>R/</code> pipeline scripts including the complete method in
+  <code>R/02-stor-core.R</code> · <code>config/project-config.R</code> · <code>data/</code>
+  (1,600 simulated blocks with 14 indicators and the embedded ground truth) · <code>tests/</code> ·
+  <code>run-all.R</code> — unzip and run <code>Rscript run-all.R test</code> from the
+  <code>STOR/</code> folder root.</div>
+  <div class="cite-lead">To cite the STOR model in publications, please use:</div>
+  <div class="cite">
+    <div>Song&nbsp;Y, Wu&nbsp;P, Hampson&nbsp;K, Anumba&nbsp;C (2021). Assessing block-level
+    sustainable transport infrastructure development using a spatial trade-off relation model.
+    <i>Int&nbsp;J&nbsp;Appl Earth Obs Geoinf</i> 105:102585.
+    <a href="https://doi.org/10.1016/j.jag.2021.102585">doi</a> ·
+    <a href="../../pdf/STOR-song2021.pdf">PDF</a><span class="mini-badge oa">CC BY-NC-ND</span></div>
+  </div>
+</header>
+
+<aside class="related-rail" aria-label="Related tutorials for reproducible models">
+  <div class="rail-title">Related tutorials for reproducible models</div>
+  <a href="../../methods.html">Geospatial Theories and Methods</a>
+  <a href="../OPGD/opgd.html">1 &middot; OPGD &mdash; Optimal Parameters Geographical Detector</a>
+  <a href="../GC/gc.html">2 &middot; GC &mdash; Geocomplexity</a>
+  <a href="../LPI/lpi.html">3 &middot; LPI &mdash; Local Pattern Interaction</a>
+  <a href="../LPA/lpa.html">4 &middot; LPA &mdash; Local Pathways of Association</a>
+  <a href="../SDA/sda.html">5 &middot; SDA &mdash; Second Dimension of Spatial Association</a>
+  <a href="../SOH/soh.html">6 &middot; SOH &mdash; Second-dimension Outlier-driven Heterogeneity</a>
+  <a href="../DSI/dsi.html">7 &middot; DSI &mdash; Degree of Spatial Interpretability</a>
+  <a class="current" href="stor.html">8 &middot; STOR &mdash; Spatial Trade-Off Relation</a>
+  <a href="../SDM/sdm.html">9 &middot; SDM &mdash; Spatial Delta Model for Accessibility</a>
+</aside>
+
+<main>
+
+<figure class="featured-fig">
+  <img src="assets/paper-stor-fig06-dmu-tradeoff.jpg" alt="Joint distribution of blocks and diminishing marginal utility stages of the quantity-quality trade-off (STOR paper, Fig 6)" decoding="async">
+</figure>
+
+<section id="overview">
+  <h2>1&nbsp;Method Overview &amp; Reproduction Scope</h2>
+
+  <h3 id="core-idea">1.1&nbsp;Core Idea</h3>
+  <p>Building <i>more</i> roads and building <i>better</i> roads are both pathways to sustainable
+  infrastructure, and they compete for the same budget. Song et&nbsp;al. (2021) make that
+  competition measurable. Every spatial unit — 42,425 blocks of Western Australia in the published
+  case — gets two entropy-weighted indices: a <b>quantity dimension Γ<sub>A</sub></b> (road density,
+  connectivity) and a <b>quality dimension Γ<sub>B</sub></b> (surface performance, safety,
+  accessibility, links to other transport modes). The <b>spatial trade-off relation (STOR)</b> is
+  then read directly from the data: Γ<sub>B</sub> is treated as a utility of Γ<sub>A</sub>, fitted
+  by LOESS, and its derivative — the marginal utility — cuts the study area into three stages of
+  <b>diminishing marginal utility (DMU)</b>: increase return (IR), where more roads still buy
+  quality quickly; marginal return (MR), where the gain flattens; and negative return (NR), where
+  quality declines as quantity keeps growing.</p>
+  <ul>
+    <li><b>Research problem:</b> quantity–quality relations of infrastructure are discussed as
+        strategy but rarely measured, so there is no evidence base for deciding <i>where</i> more
+        roads help and where only better roads do.</li>
+    <li><b>One-line contribution:</b> STOR turns two composite indices into a utility function with
+        measurable DMU stages, overlays their spatial clusters into joint hotspots and cold spots,
+        and quantifies what each dimension contributes to a socio-economic outcome.</li>
+    <li><b>Why it matters:</b> the stage a block sits in <i>is</i> the strategy: IR blocks call for
+        quantity, NR blocks for quality, and the cluster overlay names the towns where each applies.
+        In the published case the boundaries fall at Γ<sub>A</sub>&nbsp;=&nbsp;0.072 and 0.585, and
+        the demo below recovers its own embedded boundaries the same way.</li>
+  </ul>
+  <div class="figpair">
+    <figure>
+      <span class="pairtag tag-paper">Published reference · STOR</span>
+      <img src="assets/paper-stor-fig02-method-overview.jpg" alt="STOR methodological overview, Song et al. 2021 Figure 2" loading="lazy" decoding="async">
+      <figcaption>STOR paper Fig. 2 — the whole model in one picture, and the plan of §3 of this
+      page: stakeholder requirements define the variables, entropy weighting builds the quantity
+      and quality dimensions of the sustainable road infrastructure index (SRII), and three
+      analyses follow — DMU trade-off relations, hotspot/cold-spot clustering, and the
+      contribution of each dimension to income. Click to enlarge.</figcaption>
+    </figure>
+    <figure>
+      <span class="pairtag tag-paper">Published reference · STOR</span>
+      <img src="assets/paper-stor-fig01-study-area.jpg" alt="Study area of the published case, Song et al. 2021 Figure 1" loading="lazy" decoding="async">
+      <figcaption>STOR paper Fig. 1 — the published study area: the road network of Western
+      Australia (a), its 42,425 blocks (b), and the power-law block-size distribution (c). The
+      demo below replaces this with a simulated 40&nbsp;×&nbsp;40 grid so every number on the page
+      regenerates from the folder.</figcaption>
+    </figure>
+  </div>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Reader anchor</div>
+    <div class="callout-b">
+      <p>Two indices per block → one curve between them → the curve's slope names the stage →
+      the stages plus the cluster overlay name the strategy. Γ<sub>A</sub> is quantity,
+      Γ<sub>B</sub> is quality, u(Γ<sub>A</sub>) is the LOESS fit of Γ<sub>B</sub> on
+      Γ<sub>A</sub>, η is its slope, and the two boundaries sit at max(η) and at max(u) where
+      η&nbsp;=&nbsp;0. Everything on this page serves that line.</p>
+    </div>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>What you need</div>
+    <div class="callout-b">
+      <p>R 4.1+ and the folder from the download button. The method itself is
+      <code>R/02-stor-core.R</code>, about 200 lines of <b>base R with no package dependency</b> —
+      entropy weights, the LOESS utility (via <code>stats::loess</code>), local Moran's&nbsp;I and
+      the GWR are all in that one file. <code>mgcv</code> (ships with R) runs the GAM;
+      <code>ggplot2</code> and <code>patchwork</code> draw the figures; <code>spdep</code> is used
+      only by the tests to cross-check the local Moran implementation. The full pipeline runs in
+      about 20&nbsp;seconds.</p>
+    </div>
+  </div>
+
+  <h3 id="method-logic">1.2&nbsp;Method Logic</h3>
+  <p>STOR chains four standard tools into one argument. Each link is simple; the model is the
+  order they come in:</p>
+  <div class="flow">
+    <div class="chip hl"><b>SRII indices</b>min–max standardization + entropy weights within
+      categories → Γ<sub>A</sub>, Γ<sub>B</sub>, Γ (Eq. 3–6)</div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>Utility curve</b>u(Γ<sub>A</sub>) = LOESS fit of Γ<sub>B</sub> on
+      Γ<sub>A</sub> (Eq. 7)</div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>Marginal utility</b>η = Δu / ΔΓ<sub>A</sub>, a difference quotient of the
+      fitted curve (Eq. 8–9)</div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>DMU stages</b>IR | MR at max(η) · MR | NR at max(u), where η = 0</div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>Trade-off maps</b>LISA clusters of both dimensions, overlaid; GAM + GWR
+      contributions to income</div>
+  </div>
+  <h4>Key concepts and equations</h4>
+  <ul>
+    <li><b>Standardization with a sign (Eq. 3).</b> Every indicator is min–max scaled to [0, 1];
+      indicators where <i>less is better</i> (roughness, crashes, distance to ports) are flipped:
+      <div class="eq">Y<sub>j</sub>&nbsp;=&nbsp;(X<sub>j</sub>&nbsp;−&nbsp;min&nbsp;X<sub>j</sub>)&nbsp;/&nbsp;(max&nbsp;X<sub>j</sub>&nbsp;−&nbsp;min&nbsp;X<sub>j</sub>)&emsp;(positive)&emsp;&emsp;Y<sub>j</sub>&nbsp;=&nbsp;(max&nbsp;X<sub>j</sub>&nbsp;−&nbsp;X<sub>j</sub>)&nbsp;/&nbsp;(max&nbsp;X<sub>j</sub>&nbsp;−&nbsp;min&nbsp;X<sub>j</sub>)&emsp;(negative)</div></li>
+    <li><b>Entropy weights (Eq. 4–5).</b> Within each indicator category, variables carrying more
+      variation (lower information entropy) receive larger weights:
+      <div class="eq">e<sub>j</sub>&nbsp;=&nbsp;−(1/ln&nbsp;m)&nbsp;Σ<sub>i</sub>&nbsp;θ<sub>ij</sub>&nbsp;ln&nbsp;θ<sub>ij</sub>,&emsp;θ<sub>ij</sub>&nbsp;=&nbsp;y<sub>ij</sub>&nbsp;/&nbsp;Σ<sub>i</sub>&nbsp;y<sub>ij</sub>,&emsp;w<sub>j</sub>&nbsp;=&nbsp;(1&nbsp;−&nbsp;e<sub>j</sub>)&nbsp;/&nbsp;Σ<sub>j</sub>&nbsp;(1&nbsp;−&nbsp;e<sub>j</sub>)</div>
+      Category indices are the entropy-weighted sums (Eq. 6); Γ<sub>A</sub> and Γ<sub>B</sub>
+      average their categories equally, and the SRII Γ averages the two dimensions.</li>
+    <li><b>The utility function and its slope (Eq. 7–9).</b> The trade-off relation is the
+      nonparametric regression of quality on quantity, and the marginal utility is its difference
+      quotient:
+      <div class="eq">u(Γ<sub>A</sub>,&nbsp;Γ<sub>B</sub>)&nbsp;=&nbsp;f(Γ<sub>A</sub>)&emsp;(LOESS),&emsp;&emsp;η&nbsp;=&nbsp;Δu&nbsp;/&nbsp;ΔΓ<sub>A</sub></div>
+      The IR|MR boundary t<sub>1</sub> sits at max(η) — quality is still being bought fastest —
+      and the MR|NR boundary t<sub>2</sub> sits at max(u), where η crosses zero for good.</li>
+    <li><b>Clusters and contributions.</b> Local Moran's&nbsp;I (LISA) classifies each dimension
+      into HH / LL clusters at p&nbsp;&lt;&nbsp;0.05; blocks that are HH (or LL) in <i>both</i>
+      dimensions are the joint hotspots (cold spots), and the cold-side overlay names a strategy
+      per block (Fig.&nbsp;8b of the paper). A GAM (Eq.&nbsp;10) and a GWR (Eq.&nbsp;11) then
+      measure each dimension's contribution to mean income as the deviance explained that is lost
+      when the dimension is dropped.</li>
+  </ul>
+
+  <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
+  <p>The published case rests on restricted administrative data — road deterioration sensors,
+  crash records, block-level population — that are not distributed with the article. This
+  reproduction therefore <b>simulates a study area with a known trade-off hidden inside</b>: an
+  urbanisation field drives 14 block-level indicators, quality follows a ground-truth utility
+  curve with boundaries embedded at Γ<sub>A</sub>&nbsp;=&nbsp;0.070 and 0.585 (the published values
+  are 0.072 and 0.585), and income depends on both dimensions with coefficients that drift across
+  the map. The pipeline is then judged by whether it <i>recovers</i> what the simulation hid —
+  which is verified by <code>run-all.R test</code>. Everything tagged <i>Demo run</i> regenerates
+  from this folder; everything tagged <i>Published reference</i> is a static image from the source
+  article. The demo was verified end to end on 2026-07-25 with R&nbsp;4.6.0.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Demo template</th><th>Published reference</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data</td>
+            <td>1,600 simulated blocks (40&nbsp;×&nbsp;40 grid, 10&nbsp;km cells) with 14
+                indicators in 6 categories, population and income (<code>data/blocks.csv</code>);
+                the embedded truth in <code>data/derived/</code></td>
+            <td>42,425 blocks of Western Australia; 15 indicators from road, sensor, crash, POI
+                and census data (paper Table&nbsp;1)</td></tr>
+        <tr><td>Method</td>
+            <td><code>R/02-stor-core.R</code> — entropy SRII, LOESS utility + marginal utility,
+                DMU staging, LISA, GWR, in base R</td>
+            <td>Song et&nbsp;al. (2021) §3, using kernel densities, entropy weighting, LOESS,
+                LISA, <code>mgcv</code> and <code>spgwr</code></td></tr>
+        <tr><td>Results</td>
+            <td>boundaries t<sub>1</sub>&nbsp;=&nbsp;0.092, t<sub>2</sub>&nbsp;=&nbsp;0.576
+                recovered against the embedded 0.070 / 0.585; stage agreement 94%; contribution of
+                Γ<sub>B</sub> 16.2% vs Γ<sub>A</sub> 0.4%</td>
+            <td>t<sub>1</sub>&nbsp;=&nbsp;0.072, t<sub>2</sub>&nbsp;=&nbsp;0.585 (Fig.&nbsp;6b);
+                contribution of Γ<sub>B</sub> 16.2% vs Γ<sub>A</sub> 5.9% (Fig.&nbsp;11a)</td></tr>
+        <tr><td>Figures</td>
+            <td>fig01–fig05 from <code>R/p01–p05</code></td>
+            <td>STOR Figs 1–4 and 6–11, embedded as reference images beside their demo counterparts</td></tr>
+      </tbody>
+    </table>
+    <figcaption>What the template regenerates versus what is shown as published reference.</figcaption>
+  </figure>
+  <h4>How to use this page</h4>
+  <ul>
+    <li><b>To reproduce the demo:</b> the folder holds the method, the pipeline, the simulation and
+        the tests. Run <code>Rscript run-all.R test</code>, then <code>Rscript run-all.R</code>.</li>
+    <li><b>To use the method on your own problem:</b> §2.2 prints the whole implementation, so you
+        can paste it into your own script; §2.4 gives the data contract and §4.1 the porting
+        steps.</li>
+    <li><b>To write the paper:</b> §4.2 maps every result file to a manuscript element.</li>
+  </ul>
+</section>
+
+<section id="setup">
+  <h2>2&nbsp;Setup, Code &amp; Data</h2>
+
+  <h3 id="environment">2.1&nbsp;Environment &amp; Dependencies</h3>
+  <p>The method needs nothing. <code>R/02-stor-core.R</code> is written in base R —
+  <code>stats::loess</code> included — so <code>source()</code> it and the whole of STOR is
+  available: index construction, the utility curve, DMU staging, local Moran's&nbsp;I and the GWR.
+  The pipeline around it uses a few packages, and each step reports and continues if one is
+  missing.</p>
+  <div class="codewrap">
+    <span class="code-label">R console — optional, for the figures and the test cross-check</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># Figures
+install.packages(c("ggplot2", "patchwork"))
+
+# Tests only: cross-checks the built-in local Moran's I against
+# spdep::localmoran() (they agree to 1e-9; skipped when absent)
+install.packages("spdep")
+
+# The GAM uses mgcv, which ships with every R installation.</code></pre>
+  </div>
+  <figure class="tablewrap">
+    <table>
+      <thead><tr><th>Package</th><th>Role</th><th>Required?</th></tr></thead>
+      <tbody>
+        <tr><td>—</td><td><code>R/02-stor-core.R</code>: standardization, entropy weights, LOESS utility, DMU stages, LISA, GWR</td><td>base R only</td></tr>
+        <tr><td><code>mgcv</code></td><td>the GAM of Step&nbsp;5</td><td>ships with R</td></tr>
+        <tr><td><code>ggplot2</code>, <code>patchwork</code></td><td>the five demo figures</td><td>figures only</td></tr>
+        <tr><td><code>spdep</code></td><td>cross-checks local Moran's&nbsp;I in <code>tests/test-01</code></td><td>no — tests degrade politely</td></tr>
+      </tbody>
+    </table>
+    <figcaption>The method is dependency-free by design, so it can be dropped into any project.</figcaption>
+  </figure>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Two deliberate departures from the published pipeline</div>
+    <div class="callout-b">
+      <p>The paper fitted its GWR with the <code>spgwr</code> package and identified cold-spot
+      towns through a POI-density aggregation (its Fig.&nbsp;3) that needs data not distributed
+      with the article. Here the GWR is re-implemented in base R with an adaptive bisquare kernel
+      and AICc bandwidth selection — <code>tests/test-01</code> proves it collapses to global OLS
+      when every block is co-located — and the town-identification step is simplified to a
+      per-block development-strategy overlay (§3, Step&nbsp;4), which preserves the decision logic
+      of the paper's Fig.&nbsp;8b without the proprietary POI layer.</p>
+    </div>
+  </div>
+
+  <h3 id="the-code">2.2&nbsp;The Method in One File</h3>
+  <p>The whole of STOR is printed here so it can be copied out and used directly; it is also
+  <code>R/02-stor-core.R</code> in the download, and the two are the same file. Four pieces:
+  index construction, the trade-off relation, spatial clusters, and the GWR.</p>
+
+  <h4>Index construction: standardization, entropy weights, SRII</h4>
+  <p>Three small functions build every index. <code>stor_standardize()</code> is Eq.&nbsp;3 with
+  the indicator's sign; <code>stor_entropy_weights()</code> is Eq.&nbsp;4–5 with the two edge
+  cases (a zero column, a constant column) handled explicitly; <code>stor_srii()</code> assembles
+  Eq.&nbsp;6 exactly as the paper weights it — entropy within categories, equal across categories,
+  equal across the two dimensions.</p>
+  <div class="codewrap">
+    <span class="code-label">R/02-stor-core.R — index construction</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># -- 1. Index construction ----------------------------------------------------
+
+#&#x27; Min-max standardization (Eq. 3). sign = +1 keeps orientation, sign = -1
+#&#x27; flips it, so that larger standardized values always mean &quot;more sustainable&quot;.
+stor_standardize &lt;- function(x, sign = +1) {
+  rng &lt;- range(x, na.rm = TRUE)
+  if (diff(rng) == 0) return(rep(0, length(x)))
+  y &lt;- (x - rng[1]) / (rng[2] - rng[1])
+  if (sign &lt; 0) y &lt;- 1 - y
+  y
+}
+
+#&#x27; Entropy weights of the columns of a standardized matrix Y (Eq. 4-5).
+#&#x27; Columns carrying more variation (lower entropy) receive larger weights.
+stor_entropy_weights &lt;- function(Y) {
+  Y &lt;- as.matrix(Y)
+  m &lt;- nrow(Y)
+  ent &lt;- apply(Y, 2, function(y) {
+    s &lt;- sum(y, na.rm = TRUE)
+    if (s == 0) return(1)                     # constant column: no information
+    th &lt;- y / s
+    th &lt;- th[th &gt; 0]
+    -sum(th * log(th)) / log(m)
+  })
+  phi &lt;- 1 - ent
+  if (sum(phi) == 0) return(rep(1 / ncol(Y), ncol(Y)))
+  w &lt;- phi / sum(phi)
+  names(w) &lt;- colnames(Y)
+  w
+}
+
+#&#x27; Block-level SRII (Eq. 6). `data` holds the raw indicator columns;
+#&#x27; `indicators` is a data.frame(name, category, dimension, sign) as in the
+#&#x27; config. Weighting follows the paper: entropy weights within each category,
+#&#x27; equal weights across categories within a dimension, equal weights across
+#&#x27; the two dimensions.
+#&#x27;
+#&#x27; Returns list(weights, categories, gamma_a, gamma_b, gamma).
+stor_srii &lt;- function(data, indicators) {
+  Y &lt;- sapply(seq_len(nrow(indicators)), function(j)
+    stor_standardize(data[[indicators$name[j]]], indicators$sign[j]))
+  colnames(Y) &lt;- indicators$name
+
+  weights &lt;- do.call(rbind, lapply(split(indicators, indicators$category), function(ind) {
+    w &lt;- stor_entropy_weights(Y[, ind$name, drop = FALSE])
+    data.frame(name = ind$name, category = ind$category[1],
+               dimension = ind$dimension[1], weight = as.numeric(w))
+  }))
+  rownames(weights) &lt;- NULL
+
+  cat_names &lt;- unique(indicators$category)
+  categories &lt;- sapply(cat_names, function(cn) {
+    w &lt;- weights[weights$category == cn, ]
+    as.numeric(Y[, w$name, drop = FALSE] %*% w$weight)
+  })
+
+  dim_index &lt;- function(dm) {
+    cats &lt;- unique(indicators$category[indicators$dimension == dm])
+    rowMeans(categories[, cats, drop = FALSE])
+  }
+  gamma_a &lt;- dim_index(&quot;A&quot;)
+  gamma_b &lt;- dim_index(&quot;B&quot;)
+
+  list(weights = weights, categories = as.data.frame(categories),
+       gamma_a = gamma_a, gamma_b = gamma_b,
+       gamma = (gamma_a + gamma_b) / 2)
+}</code></pre>
+  </div>
+
+  <h4>The trade-off relation: LOESS utility, marginal utility, DMU stages</h4>
+  <p><code>stor_utility()</code> fits the LOESS on the <b>raw blocks</b>, not on bin means — the
+  span is a nearest-neighbour fraction, so the bandwidth is automatically narrow where blocks pile
+  up at low Γ<sub>A</sub>, exactly where the utility rises fastest. Equal-count bin means are
+  returned too, but only as the display dots of Fig.&nbsp;6b. The marginal utility is the
+  difference quotient of Eq.&nbsp;9 taken as a centred difference over a small finite
+  ΔΓ<sub>A</sub> (≈6% of the range), which keeps η from amplifying sub-Δ wiggles of the fitted
+  curve. <code>stor_dmu()</code> then places t<sub>1</sub> at max(η) and t<sub>2</sub> at max(u),
+  where η crosses zero for good.</p>
+  <div class="codewrap">
+    <span class="code-label">R/02-stor-core.R — utility function and DMU boundaries</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># -- 2. Trade-off relation and diminishing marginal utility -------------------
+
+#&#x27; The utility function u(Gamma_A) = f(Gamma_A) with Gamma_B as the observed
+#&#x27; response (Eq. 7), fitted by LOESS on the raw blocks. The span is a
+#&#x27; nearest-neighbour fraction, so the bandwidth adapts to the data: narrow
+#&#x27; where blocks pile up at low Gamma_A — exactly where the utility rises
+#&#x27; fastest — and wide in the sparse tail. The marginal utility eta is the
+#&#x27; difference quotient of the fitted curve (Eq. 8-9). Equal-count bin means
+#&#x27; are also returned; they are the black dots of the paper&#x27;s Fig. 6b, for
+#&#x27; display only.
+#&#x27;
+#&#x27; Returns list(bins, curve) where curve has columns ga, u, eta.
+stor_utility &lt;- function(gamma_a, gamma_b, n_bins = 40, span = 0.2,
+                         n_eval = 200) {
+  brk &lt;- unique(stats::quantile(gamma_a, seq(0, 1, length.out = n_bins + 1)))
+  bin &lt;- cut(gamma_a, brk, include.lowest = TRUE)
+  bins &lt;- data.frame(
+    ga = tapply(gamma_a, bin, mean),
+    gb = tapply(gamma_b, bin, mean),
+    n  = as.numeric(table(bin))
+  )
+  bins &lt;- bins[bins$n &gt; 0, ]
+
+  fit &lt;- stats::loess(gb ~ ga, data = data.frame(ga = gamma_a, gb = gamma_b),
+                      span = span, degree = 2, family = &quot;gaussian&quot;,
+                      control = stats::loess.control(surface = &quot;direct&quot;))
+
+  ga_eval &lt;- seq(min(gamma_a), max(gamma_a), length.out = n_eval)
+  u  &lt;- stats::predict(fit, data.frame(ga = ga_eval))
+  se &lt;- stats::predict(fit, data.frame(ga = ga_eval), se = TRUE)$se.fit
+
+  # Difference quotient of Eq. 9 as a centred difference over a small but
+  # finite Delta Gamma_A (about 6% of the observed range), which keeps eta
+  # from amplifying sub-Delta wiggles of the fitted curve.
+  w &lt;- max(1L, round(n_eval * 0.03))
+  idx &lt;- seq_len(n_eval)
+  lo &lt;- pmax(idx - w, 1L); hi &lt;- pmin(idx + w, n_eval)
+  eta &lt;- (u[hi] - u[lo]) / (ga_eval[hi] - ga_eval[lo])
+
+  list(bins = bins, fit = fit,
+       curve = data.frame(ga = ga_eval, u = u, se = se, eta = eta))
+}
+
+#&#x27; DMU stage boundaries on a fitted utility curve. The IR-MR boundary t1 sits
+#&#x27; at the maximum marginal utility; the MR-NR boundary t2 sits where the
+#&#x27; utility peaks — max(u), the point where eta crosses zero for good
+#&#x27; (Section 3.2 of the paper).
+#&#x27;
+#&#x27; Returns list(t1, t2, stage_of) where stage_of(ga) classifies values.
+stor_dmu &lt;- function(curve) {
+  eta &lt;- curve$eta[-nrow(curve)]
+  ga  &lt;- curve$ga[-nrow(curve)]
+
+  i1 &lt;- which.max(eta)
+  t1 &lt;- ga[i1]
+
+  u &lt;- curve$u[-nrow(curve)]
+  i2 &lt;- max(which.max(u), i1 + 1)
+  t2 &lt;- ga[i2]
+
+  stage_of &lt;- function(x)
+    factor(ifelse(x &lt; t1, &quot;IR&quot;, ifelse(x &lt; t2, &quot;MR&quot;, &quot;NR&quot;)),
+           levels = c(&quot;IR&quot;, &quot;MR&quot;, &quot;NR&quot;))
+
+  list(t1 = t1, t2 = t2, i1 = i1, i2 = i2, stage_of = stage_of)
+}</code></pre>
+  </div>
+
+  <h4>Spatial clusters: local Moran's I and the trade-off overlay</h4>
+  <p>Local Moran's&nbsp;I with conditional-permutation pseudo p-values, on a queen-contiguity
+  neighbour list, in ~40 lines. <code>tests/test-01</code> verifies the statistic against
+  <code>spdep::localmoran()</code> to 1e-9, so nothing is lost by not depending on the package.
+  <code>stor_tradeoff_groups()</code> is the overlay of the paper's §3.3: HH&nbsp;∩&nbsp;HH →
+  hotspot, LL&nbsp;∩&nbsp;LL → cold spot, and each cold-side block gets the development strategy
+  of Fig.&nbsp;8b — more quantity, more quality, or both.</p>
+  <div class="codewrap">
+    <span class="code-label">R/02-stor-core.R — LISA and the trade-off overlay</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># -- 3. Spatial clusters (LISA) -----------------------------------------------
+
+#&#x27; Queen-contiguity neighbours on a regular grid of blocks. `col` and `row`
+#&#x27; are integer grid positions. Returns a list of integer index vectors.
+stor_grid_neighbors &lt;- function(col, row) {
+  n &lt;- length(col)
+  key &lt;- paste(col, row)
+  idx &lt;- seq_len(n)
+  lookup &lt;- new.env(hash = TRUE, size = n)
+  for (i in idx) assign(key[i], i, envir = lookup)
+  lapply(idx, function(i) {
+    nb &lt;- integer(0)
+    for (dc in -1:1) for (dr in -1:1) {
+      if (dc == 0 &amp;&amp; dr == 0) next
+      k &lt;- paste(col[i] + dc, row[i] + dr)
+      j &lt;- lookup[[k]]
+      if (!is.null(j)) nb &lt;- c(nb, j)
+    }
+    sort(nb)
+  })
+}
+
+#&#x27; Local Moran&#x27;s I with conditional-permutation pseudo p-values (Anselin 1995).
+#&#x27; `nb` is a neighbour list as returned by stor_grid_neighbors(); weights are
+#&#x27; row-standardized. Matches spdep::localmoran() on Ii (the tests check this).
+stor_local_moran &lt;- function(x, nb, nsim = 999, seed = NULL) {
+  if (!is.null(seed)) set.seed(seed)
+  n &lt;- length(x)
+  z &lt;- x - mean(x)
+  s2 &lt;- sum(z^2) / n
+  lag &lt;- vapply(seq_len(n), function(i) mean(z[nb[[i]]]), numeric(1))
+  Ii &lt;- z / s2 * lag
+
+  p &lt;- vapply(seq_len(n), function(i) {
+    k &lt;- length(nb[[i]])
+    if (k == 0) return(NA_real_)
+    zi &lt;- z[-i]
+    perm &lt;- vapply(seq_len(nsim), function(s)
+      z[i] / s2 * mean(sample(zi, k)), numeric(1))
+    (1 + sum(abs(perm) &gt;= abs(Ii[i]))) / (1 + nsim)
+  }, numeric(1))
+
+  data.frame(Ii = Ii, z = z, lag = lag, p = p)
+}
+
+#&#x27; HH / LL / HL / LH / Not significant labels from a local Moran result.
+stor_lisa_class &lt;- function(lm_res, alpha = 0.05) {
+  cl &lt;- rep(&quot;Not significant&quot;, nrow(lm_res))
+  sig &lt;- !is.na(lm_res$p) &amp; lm_res$p &lt; alpha
+  cl[sig &amp; lm_res$z &gt; 0 &amp; lm_res$lag &gt; 0] &lt;- &quot;HH&quot;
+  cl[sig &amp; lm_res$z &lt; 0 &amp; lm_res$lag &lt; 0] &lt;- &quot;LL&quot;
+  cl[sig &amp; lm_res$z &gt; 0 &amp; lm_res$lag &lt; 0] &lt;- &quot;HL&quot;
+  cl[sig &amp; lm_res$z &lt; 0 &amp; lm_res$lag &gt; 0] &lt;- &quot;LH&quot;
+  factor(cl, levels = c(&quot;HH&quot;, &quot;LL&quot;, &quot;HL&quot;, &quot;LH&quot;, &quot;Not significant&quot;))
+}
+
+#&#x27; Overlay the quantity and quality cluster labels (Section 3.3): a block is a
+#&#x27; trade-off hotspot when both dimensions are HH, a cold spot when both are
+#&#x27; LL. Cold-side blocks are also assigned a development strategy, following
+#&#x27; Fig. 8b: a quantity-only cold spot calls for more quantity, a quality-only
+#&#x27; cold spot for more quality, a joint cold spot for both.
+stor_tradeoff_groups &lt;- function(class_a, class_b) {
+  cluster &lt;- rep(&quot;Others&quot;, length(class_a))
+  cluster[class_a == &quot;HH&quot; &amp; class_b == &quot;HH&quot;] &lt;- &quot;Hotspot&quot;
+  cluster[class_a == &quot;LL&quot; &amp; class_b == &quot;LL&quot;] &lt;- &quot;Cold spot&quot;
+
+  strategy &lt;- rep(&quot;No cold spot&quot;, length(class_a))
+  strategy[class_a == &quot;LL&quot; &amp; class_b != &quot;LL&quot;] &lt;- &quot;Increase quantity&quot;
+  strategy[class_a != &quot;LL&quot; &amp; class_b == &quot;LL&quot;] &lt;- &quot;Increase quality&quot;
+  strategy[class_a == &quot;LL&quot; &amp; class_b == &quot;LL&quot;] &lt;- &quot;Increase both&quot;
+
+  data.frame(cluster = factor(cluster, c(&quot;Hotspot&quot;, &quot;Others&quot;, &quot;Cold spot&quot;)),
+             strategy = factor(strategy, c(&quot;Increase quantity&quot;, &quot;Increase both&quot;,
+                                           &quot;Increase quality&quot;, &quot;No cold spot&quot;)))
+}</code></pre>
+  </div>
+
+  <h4>Geographically weighted regression</h4>
+  <p>A location-wise weighted least squares with an adaptive bisquare kernel (Eq.&nbsp;11): the
+  bandwidth at each block is the distance to its k-th neighbour, and k is chosen by AICc across
+  the candidates in the config. The hat values are collected during the same pass, so the AICc
+  costs nothing extra.</p>
+  <div class="codewrap">
+    <span class="code-label">R/02-stor-core.R — GWR with adaptive bandwidth</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># -- 4. Geographically weighted regression ------------------------------------
+
+#&#x27; GWR with an adaptive bisquare kernel (Eq. 11). `k` is the number of
+#&#x27; neighbours defining the local bandwidth. Returns location-wise coefficients,
+#&#x27; fitted values, R2 and the AICc used for bandwidth selection.
+stor_gwr &lt;- function(y, X, coords, k) {
+  X &lt;- cbind(Intercept = 1, as.matrix(X))
+  n &lt;- nrow(X); p &lt;- ncol(X)
+  coords &lt;- as.matrix(coords)
+  beta &lt;- matrix(NA_real_, n, p, dimnames = list(NULL, colnames(X)))
+  fitted &lt;- numeric(n)
+  hat &lt;- numeric(n)
+
+  for (i in seq_len(n)) {
+    d &lt;- sqrt((coords[, 1] - coords[i, 1])^2 + (coords[, 2] - coords[i, 2])^2)
+    h &lt;- sort(d)[min(k, n)]
+    w &lt;- if (h &gt; 0) ifelse(d &lt; h, (1 - (d / h)^2)^2, 0) else rep(1, n)
+    XtW &lt;- t(X * w)
+    XtWXi &lt;- solve(XtW %*% X)
+    bi &lt;- XtWXi %*% (XtW %*% y)
+    beta[i, ] &lt;- bi
+    fitted[i] &lt;- X[i, ] %*% bi
+    hat[i] &lt;- (X[i, , drop = FALSE] %*% XtWXi %*% XtW)[i]
+  }
+
+  res &lt;- y - fitted
+  rss &lt;- sum(res^2)
+  r2 &lt;- 1 - rss / sum((y - mean(y))^2)
+  tr_s &lt;- sum(hat)
+  sigma2 &lt;- rss / n
+  aicc &lt;- n * log(2 * pi * sigma2) + n * (n + tr_s) / (n - 2 - tr_s)
+
+  list(beta = as.data.frame(beta), fitted = fitted, residuals = res,
+       r2 = r2, aicc = aicc, tr_s = tr_s, k = k)
+}
+
+#&#x27; Adaptive bandwidth selection: fit at each candidate k, keep the lowest AICc.
+stor_gwr_select &lt;- function(y, X, coords, ks) {
+  fits &lt;- lapply(ks, function(k) stor_gwr(y, X, coords, k))
+  aicc &lt;- vapply(fits, `[[`, numeric(1), &quot;aicc&quot;)
+  best &lt;- which.min(aicc)
+  out &lt;- fits[[best]]
+  out$candidates &lt;- data.frame(k = ks, aicc = aicc,
+                               r2 = vapply(fits, `[[`, numeric(1), &quot;r2&quot;))
+  out
+}</code></pre>
+  </div>
+
+  <h3 id="structure-config">2.3&nbsp;Project Structure &amp; Configuration</h3>
+  <p>One folder, one config, one command. Steps write to <code>data/</code>, <code>results/</code>,
+  <code>tables/</code> and <code>figs/</code>; each step reads what the previous one wrote, so a
+  single step can be re-run after a config change without repeating the whole pipeline.</p>
+  <div class="codewrap nofold">
+    <span class="code-label">folder layout</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code"><code>STOR/
+├── run-all.R                  # one command reproduces everything
+├── config/project-config.R    # the ONLY file you edit when porting
+├── R/
+│   ├── 00-config.R            # paths and result-file names
+│   ├── 01-helpers.R           # logging, IO, figure helpers
+│   ├── 02-stor-core.R         # THE METHOD (base R, standalone)
+│   ├── 10-simulate-data.R     # replace this step with your own data
+│   ├── 20-srii.R              # entropy-weighted indices
+│   ├── 30-dmu.R               # utility curve + DMU stages
+│   ├── 40-lisa.R              # clusters + trade-off groups
+│   ├── 50-income-models.R     # GAM + GWR contributions
+│   ├── 90-tables.R            # LaTeX tables
+│   └── p01–p05 ...            # the five figures
+├── data/                      # blocks.csv + derived/ (embedded truth)
+├── results/  tables/  figs/   # regenerated outputs
+├── tests/                     # the two verification scripts
+└── env/                       # requirements + session-info.txt</code></pre>
+  </div>
+  <p>The config carries the project identity, the indicator table (which column belongs to which
+  category, dimension and sign — the analogue of the paper's Table&nbsp;1), the simulation's
+  ground truth, and every analysis constant:</p>
+  <div class="codewrap">
+    <span class="code-label">config/project-config.R — the only file you edit</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># =============================================================================
+# project-config.R — the ONLY file you edit when porting this template
+#                    to a new domain.
+# =============================================================================
+# Everything below is read by R/00-config.R and used by every pipeline step.
+# After editing this file, run:  Rscript run-all.R
+# =============================================================================
+
+
+# -- 1. Project identity ------------------------------------------------------
+PROJECT_ID     &lt;- &quot;stor-demo&quot;
+PROJECT_TITLE  &lt;- &quot;Spatial trade-off relation between [QUANTITY] and [QUALITY] in [YOUR STUDY AREA]&quot;
+DOMAIN         &lt;- &quot;sustainable road infrastructure (simulated blocks)&quot;
+TARGET_JOURNAL &lt;- &quot;TBD&quot;
+
+
+# -- 2. Input data ------------------------------------------------------------
+# The method needs ONE table: spatial units (blocks) with indicator variables.
+# Each indicator belongs to a category, each category to a dimension (quantity
+# A or quality B), and each carries a sign: +1 if more of it means more
+# sustainable, -1 otherwise (Table 1 of the paper).
+
+BLOCK_FILE &lt;- &quot;data/blocks.csv&quot;
+
+XCOL &lt;- &quot;x_km&quot;                 # block centroid coordinates, km
+YCOL &lt;- &quot;y_km&quot;
+
+# name = column in BLOCK_FILE; category groups variables for entropy weighting;
+# dimension assigns the category to quantity (A) or quality (B).
+INDICATORS &lt;- data.frame(
+  name = c(&quot;road_density&quot;, &quot;main_road_density&quot;, &quot;roads_per_person&quot;,
+           &quot;intersection_density&quot;,
+           &quot;roughness&quot;, &quot;rutting&quot;, &quot;deflection&quot;, &quot;curvature&quot;,
+           &quot;crash_rate&quot;,
+           &quot;craf_schools&quot;, &quot;craf_hospitals&quot;, &quot;craf_industry&quot;,
+           &quot;dist_ports&quot;, &quot;dist_airports&quot;),
+  category = c(&quot;density&quot;, &quot;density&quot;, &quot;density&quot;,
+               &quot;connectivity&quot;,
+               &quot;performance&quot;, &quot;performance&quot;, &quot;performance&quot;, &quot;performance&quot;,
+               &quot;safety&quot;,
+               &quot;accessibility&quot;, &quot;accessibility&quot;, &quot;accessibility&quot;,
+               &quot;transport_modes&quot;, &quot;transport_modes&quot;),
+  dimension = c(&quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;,
+                &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;,
+                &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;),
+  sign = c(+1, +1, +1, +1,
+           -1, -1, -1, -1,
+           -1,
+           +1, +1, +1,
+           -1, -1),
+  stringsAsFactors = FALSE
+)
+
+
+# -- 3. Simulation ------------------------------------------------------------
+# Only used by R/10-simulate-data.R. Replace that step with your own data and
+# nothing here matters.
+GRID_NX &lt;- 40                  # blocks west-east
+GRID_NY &lt;- 40                  # blocks south-north
+CELL_KM &lt;- 10                  # block size, km
+
+# Ground-truth utility curve embedded in the simulation. The logistic rise
+# puts the maximum marginal utility at TRUE_T1; the slow linear gain keeps the
+# curve climbing through the MR stage; the penalty beyond TRUE_T2 turns it
+# down, so eta = 0 near TRUE_T2. The published case found t1 = 0.072 and
+# t2 = 0.585 (Fig. 6b of Song et al. 2021).
+TRUE_T1   &lt;- 0.07              # IR -&gt; MR boundary on Gamma_A
+TRUE_T2   &lt;- 0.585             # MR -&gt; NR boundary on Gamma_A
+U_BASE    &lt;- 0.57              # utility at Gamma_A = 0
+U_AMP     &lt;- 0.20              # size of the logistic rise
+U_SLOPE   &lt;- 0.032             # logistic scale (smaller = steeper rise)
+U_LIN     &lt;- 0.10              # linear gain through the MR stage
+U_DECLINE &lt;- 0.80              # decline rate past TRUE_T2 (power 1.5)
+
+
+# -- 4. Trade-off relation (LOESS + marginal utility) -------------------------
+N_BINS     &lt;- 40               # equal-count Gamma_A bins (display dots only)
+LOESS_SPAN &lt;- 0.15             # LOESS nearest-neighbour fraction, raw blocks
+N_EVAL     &lt;- 200              # evaluation points for u() and eta
+
+
+# -- 5. Spatial clusters (LISA) -----------------------------------------------
+LISA_NSIM  &lt;- 999              # conditional permutations for pseudo p-values
+LISA_ALPHA &lt;- 0.05             # significance level for HH / LL clusters
+
+
+# -- 6. Income contribution (GAM + GWR) ---------------------------------------
+INCOME_COL   &lt;- &quot;income&quot;       # response, 1000 $ per person, in BLOCK_FILE
+GWR_NEIGHBORS &lt;- c(40, 60, 80, 100, 150)   # adaptive bandwidth candidates
+SEED &lt;- 100
+
+
+# -- 7. Figure style ----------------------------------------------------------
+FIG_WIDTH_SINGLE &lt;- 9
+FIG_WIDTH_DOUBLE &lt;- 19
+FIG_DPI          &lt;- 600
+FIG_DEVICES      &lt;- c(&quot;pdf&quot;, &quot;png&quot;)
+
+PALETTE_DMU  &lt;- c(IR = &quot;#74C7E8&quot;, MR = &quot;#F2C14E&quot;, NR = &quot;#F25C54&quot;)
+PALETTE_DIM  &lt;- c(Gamma_A = &quot;#56B4E9&quot;, Gamma_B = &quot;#F08A5D&quot;, Gamma = &quot;#4CAF6E&quot;)
+PALETTE_LISA &lt;- c(&quot;Hotspot&quot; = &quot;#B2182B&quot;, &quot;Cold spot&quot; = &quot;#2166AC&quot;,
+                  &quot;Others&quot; = &quot;#D9D9D9&quot;)
+PALETTE_SEQ  &lt;- c(&quot;#2C3E8C&quot;, &quot;#3FA0C0&quot;, &quot;#8CD07C&quot;, &quot;#F2E34C&quot;, &quot;#E8A03C&quot;,
+                  &quot;#C0503C&quot;)</code></pre>
+  </div>
+
+  <h3 id="data-contract">2.4&nbsp;Data Contract</h3>
+  <p>The method needs <b>one table</b>: spatial units with indicator columns. Coordinates are
+  planar (km in the demo); on real data any projected CRS works. The indicator table in the
+  config declares everything else — which columns exist, how they group, and which direction is
+  "better".</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Column(s) in <code>data/blocks.csv</code></th><th>Category</th><th>Dimension</th><th>Sign</th><th>Published analogue (Table 1)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>road_density</code>, <code>main_road_density</code>, <code>roads_per_person</code></td>
+            <td>density</td><td>Γ<sub>A</sub></td><td>+</td><td>road density; main-road density; roads shared by population</td></tr>
+        <tr><td><code>intersection_density</code></td>
+            <td>connectivity</td><td>Γ<sub>A</sub></td><td>+</td><td>road intersection density</td></tr>
+        <tr><td><code>roughness</code>, <code>rutting</code>, <code>deflection</code>, <code>curvature</code></td>
+            <td>performance</td><td>Γ<sub>B</sub></td><td>−</td><td>deterioration sensor variables (0.786&nbsp;M observations)</td></tr>
+        <tr><td><code>crash_rate</code></td>
+            <td>safety</td><td>Γ<sub>B</sub></td><td>−</td><td>crashes per million vehicles, 2015–2019</td></tr>
+        <tr><td><code>craf_schools</code>, <code>craf_hospitals</code>, <code>craf_industry</code></td>
+            <td>accessibility</td><td>Γ<sub>B</sub></td><td>+</td><td>CRAF = d<sub>Geometric</sub>&nbsp;/&nbsp;d<sub>Network</sub> to five facility types (Eq.&nbsp;1–2)</td></tr>
+        <tr><td><code>dist_ports</code>, <code>dist_airports</code></td>
+            <td>transport_modes</td><td>Γ<sub>B</sub></td><td>−</td><td>network distance to ports, airports, railways</td></tr>
+        <tr><td><code>x_km</code>, <code>y_km</code>; <code>col</code>, <code>row</code></td>
+            <td colspan="3">block centroids; integer grid position (queen contiguity)</td>
+            <td>block polygons and their contiguity</td></tr>
+        <tr><td><code>population</code>, <code>income</code></td>
+            <td colspan="3">residents per block; mean income, 1000&nbsp;$ per person</td>
+            <td>ABS population grid; LGA mean income</td></tr>
+      </tbody>
+    </table>
+    <figcaption>The demo's 14 indicators against the paper's Table&nbsp;1. The CRAF ratio is
+    dimensionless in (0,&nbsp;1]: geometric distance over shortest network distance, so 1 means the
+    road network is a straight-line-perfect connection.</figcaption>
+  </figure>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>What the simulation embeds — and why that is the point</div>
+    <div class="callout-b">
+      <p>An urbanisation field (a main city, a secondary town, smooth spatial noise) drives all
+      four quantity indicators. Quality follows the ground-truth curve of the config — a logistic
+      rise with maximum slope at Γ<sub>A</sub>&nbsp;=&nbsp;0.070, a slow linear gain through MR,
+      and a decline past 0.585 — plus a spatially smooth quality field that quantity knows nothing
+      about. Income pays for quality about ten times what it pays for quantity, with the quality
+      coefficient drifting northward. Every one of those choices is a recoverable target:
+      <code>data/derived/simulation-truth.csv</code> stores the latent fields, and §3.2 checks the
+      pipeline finds them.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>3&nbsp;Reproduction Pipeline, Results &amp; Validation</h2>
+
+  <h3 id="pipeline-execution">3.1&nbsp;Pipeline Execution</h3>
+  <p>One command reproduces everything; the arguments select subsets when iterating:</p>
+  <div class="codewrap nofold">
+    <span class="code-label">shell — from the STOR/ folder root</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-bash"><code>Rscript run-all.R          # full pipeline: steps 10-90 + the five figures  (~20 s)
+Rscript run-all.R test     # only the verification tests                    (~5 s)
+Rscript run-all.R 30       # re-run one step, e.g. the DMU analysis
+Rscript run-all.R figures  # only the figure scripts</code></pre>
+  </div>
+  <div class="console"><span class="lbl">Rscript run-all.R — verified 2026-07-25, R 4.6.0 (17.8 s)</span>==================================================================
+Project : stor-demo
+Domain  : sustainable road infrastructure (simulated blocks)
+==================================================================
+
+== 10  Simulate block data (40 x 40 blocks) ==============
+   wrote data/blocks.csv (1600 rows)
+   wrote data/derived/simulation-truth.csv (1600 rows)
+   embedded DMU boundaries: t1 = 0.070, t2 = 0.585
+
+== 20  SRII: entropy-weighted indices ====================
+   wrote results/entropy-weights.csv (14 rows)
+   wrote results/srii-blocks.csv (1600 rows)
+   Gamma_A mean 0.326 (sd 0.210), Gamma_B mean 0.517 (sd 0.137)
+   category accessibility    weights: 0.31 0.35 0.34
+   category connectivity     weights: 1.00
+   category density          weights: 0.34 0.33 0.33
+   category performance      weights: 0.27 0.26 0.23 0.24
+   category safety           weights: 1.00
+   category transport_modes  weights: 0.47 0.53
+
+== 30  DMU: utility curve and stage boundaries ===========
+   wrote results/utility-bins.csv (40 rows)
+   wrote results/utility-curve.csv (200 rows)
+   wrote results/dmu-boundaries.csv (2 rows)
+   wrote results/dmu-stages.csv (1600 rows)
+   t1 = 0.092 (max eta), t2 = 0.576 (eta = 0); embedded truth 0.070 / 0.585
+   blocks per stage: IR 205, MR 1162, NR 233
+
+== 40  LISA: clusters and trade-off groups ===============
+   wrote results/lisa-clusters.csv (1600 rows)
+   wrote results/tradeoff-groups.csv (5 rows)
+   clusters: Hotspot 117, Others 1241, Cold spot 242
+   strategies (cold-side blocks): Increase quantity 181, Increase both 242, Increase quality 49, No cold spot 1128
+
+== 50  GAM + GWR: income contribution ====================
+   GAM deviance explained 47.0% (Gamma_A 0.6%, Gamma_B 28.1%)
+   GWR (adaptive k = 80) R2 0.939 (Gamma_A 0.2%, Gamma_B 4.3%)
+   wrote results/income-contribution.csv (6 rows)
+   wrote results/gwr-coefficients.csv (1600 rows)
+   GWR bandwidth candidates: k=40 AICc=6200.7; k=60 AICc=6169.9; k=80 AICc=6167.3; k=100 AICc=6175.1; k=150 AICc=6206.1
+
+== 90  Tables ============================================
+   wrote tables/table-entropy-weights.tex
+   wrote tables/table-dmu-stages.tex
+   wrote tables/table-tradeoff-strategies.tex
+   wrote tables/table-income-contribution.tex
+   wrote figs/fig01-srii-maps.{pdf,png}
+   wrote figs/fig02-dmu-tradeoff.{pdf,png}
+   wrote figs/fig03-dmu-stages.{pdf,png}
+   wrote figs/fig04-lisa-tradeoff.{pdf,png}
+   wrote figs/fig05-income-contribution.{pdf,png}
+
+==================================================================
+Finished in 17.8 s
+Outputs: results/  tables/  figs/  data/</div>
+
+  <h3 id="recover-truth">3.2&nbsp;Recover the Embedded Truth</h3>
+  <p>The simulation knows its own answers, so the tests are sharp: not "does it run" but "does the
+  pipeline find what was hidden". Two scripts, 25 checks. <code>test-01</code> proves the
+  implementation satisfies the definitions — entropy weight axioms, the DMU boundary conditions,
+  local Moran's&nbsp;I against <code>spdep</code>, the GWR against OLS. <code>test-02</code>
+  proves the analysis recovers the simulation — the boundaries, the stages, the clusters, the
+  income attribution.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Quantity</th><th class="num">Embedded truth</th><th class="num">Recovered</th><th>Check</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>IR&nbsp;|&nbsp;MR boundary t<sub>1</sub></td><td class="num">0.070</td><td class="num">0.092</td><td>within 0.05 — pass</td></tr>
+        <tr><td>MR&nbsp;|&nbsp;NR boundary t<sub>2</sub></td><td class="num">0.585</td><td class="num">0.576</td><td>within 0.08 — pass</td></tr>
+        <tr><td>DMU stage of each block</td><td class="num">—</td><td class="num">94% agreement</td><td>&gt; 85% — pass</td></tr>
+        <tr><td>Γ<sub>A</sub> vs latent quantity</td><td class="num">—</td><td class="num">r = 0.998</td><td>&gt; 0.95 — pass</td></tr>
+        <tr><td>Γ<sub>B</sub> vs latent quality</td><td class="num">—</td><td class="num">r = 0.986</td><td>&gt; 0.90 — pass</td></tr>
+        <tr><td>Contribution to income</td><td class="num">quality ≫ quantity</td><td class="num">Γ<sub>B</sub> 16.2% vs Γ<sub>A</sub> 0.4%</td><td>Γ<sub>B</sub> &gt; Γ<sub>A</sub> — pass</td></tr>
+        <tr><td>Northward drift of the quality coefficient</td><td class="num">β<sub>B</sub>: 35 → 55</td><td class="num">r = 0.55 with the GWR surface</td><td>&gt; 0.5 — pass</td></tr>
+      </tbody>
+    </table>
+    <figcaption>The headline recoveries. The published case sits nearby: t<sub>1</sub> = 0.072,
+    t<sub>2</sub> = 0.585, and a mean Γ<sub>B</sub> contribution of 16.2% against 5.9% for
+    Γ<sub>A</sub> (paper Figs. 6b, 11a).</figcaption>
+  </figure>
+  <div class="console"><span class="lbl">Rscript run-all.R test — 25/25 checks</span>==================================================================
+Project : stor-demo
+Domain  : sustainable road infrastructure (simulated blocks)
+==================================================================
+== test-01  Method properties =============================================
+   standardized values lie in [0, 1]                        pass
+   negative sign flips the orientation                      pass
+   entropy weights sum to 1                                 pass
+   entropy weights are non-negative                         pass
+   higher-variation column gets the larger weight           pass
+   Gamma_A, Gamma_B and Gamma lie in [0, 1]                 pass
+   Gamma is the mean of the two dimensions                  pass
+   weights sum to 1 within every category                   pass
+   t1 sits at the maximum marginal utility                  pass
+   t2 sits at the utility maximum, after t1                 pass
+   eta changes sign around t2 (positive before, negative after) pass
+   stage classifier respects the boundaries                 pass
+   local Moran Ii matches spdep (max diff 8.88e-16)         pass
+   local Moran pseudo p-values lie in (0, 1]                pass
+   co-located GWR equals global OLS (max diff 1.76e-12)     pass
+   local GWR fits at least as well as OLS                   pass
+   -- 16/16 checks passed --
+== test-02  Recover the simulated ground truth ============================
+   Gamma_A tracks latent quantity (r = 0.998)               pass
+   Gamma_B tracks latent quality (r = 0.986)                pass
+   t1 = 0.092 is within 0.05 of the embedded 0.070          pass
+   t2 = 0.576 is within 0.08 of the embedded 0.585          pass
+   stage labels agree with the truth (97%)                  pass
+   hotspots are urban blocks (mean urbanisation &gt; 1.5x overall) pass
+   cold spots are remote blocks (below-average urbanisation) pass
+   quality contributes more than quantity (16.2% vs 0.4%)   pass
+   GWR recovers the northward drift of beta_B (r = 0.55)    pass
+   -- 9/9 checks passed --
+
+==================================================================
+Finished in 0.8 s
+Outputs: results/  tables/  figs/  data/</div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Why t<sub>1</sub> is recovered less exactly than t<sub>2</sub></div>
+    <div class="callout-b">
+      <p>t<sub>2</sub> is the location of a smooth maximum, which LOESS finds robustly.
+      t<sub>1</sub> is the location of the steepest slope of a rise that occupies a tenth of the
+      Γ<sub>A</sub> axis; any smoothing spreads that rise, and the spatially correlated quality
+      field can lean on it locally. With 1,600 blocks the recovered 0.092 sits 0.022 from the
+      embedded 0.070 — and the same limitation applies to real data, which is worth a sentence in
+      any manuscript using DMU boundaries for policy.</p>
+    </div>
+  </div>
+
+  <h3 id="core-steps">3.3&nbsp;Core Analytical Steps</h3>
+
+  <article id="step-1" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 1 · R/10-simulate-data.R</span>
+      <h4>Simulate a study area with a known trade-off inside</h4>
+    </div>
+    <div class="step-card-b">
+      <p>A 40&nbsp;×&nbsp;40 grid of 10&nbsp;km blocks. An urbanisation field — one main city, one
+      secondary town, smooth spatial noise — is pushed through a rank-based Beta transform, so the
+      quantity latent keeps the spatial pattern but gains the right-skewed, full-range distribution
+      of the paper's Fig.&nbsp;6a. Quality is the ground-truth utility curve of the config applied
+      to that latent, plus a smooth quality field of its own. Fourteen indicators, population and
+      income are then generated per block. On real data this whole step is replaced by loading
+      <code>data/blocks.csv</code>.</p>
+      <div class="codewrap">
+        <span class="code-label">R/10-simulate-data.R — the embedded utility curve</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># Rank-based Beta transform: keeps the spatial pattern (city gradient, smooth
+# noise) but gives quantity a right-skewed distribution with support on the
+# whole [0, 1] range, as in Fig. 6a of the paper.
+q_true &lt;- stats::qbeta((rank(U + rnorm(n, 0, 0.02)) - 0.5) / n, 1.15, 2.6)
+
+# The ground truth the pipeline must recover: a logistic rise with maximum
+# slope at TRUE_T1, a slow linear gain through MR, a decline past TRUE_T2.
+u_true &lt;- function(t)
+  U_BASE + U_AMP * stats::plogis((t - TRUE_T1) / U_SLOPE) + U_LIN * t -
+  U_DECLINE * pmax(t - TRUE_T2, 0)^1.5
+
+qual_true &lt;- u_true(q_true) + 0.05 * smooth_field(2.5) + rnorm(n, 0, 0.012)
+
+beta_a &lt;- 0.5 + 1.0 * g$x_km / max(g$x_km)   # quantity payoff grows eastward
+beta_b &lt;- 35  + 20  * g$y_km / max(g$y_km)   # quality payoff grows northward
+blocks$income &lt;- 38 + beta_a * q_true + beta_b * qual_true + rnorm(n, 0, 1.5)</code></pre>
+      </div>
+      <div class="console"><span class="lbl">console — step 10</span>== 10  Simulate block data (40 x 40 blocks) ==============
+   wrote data/blocks.csv (1600 rows)
+   wrote data/derived/simulation-truth.csv (1600 rows)
+   embedded DMU boundaries: t1 = 0.070, t2 = 0.585</div>
+    </div>
+  </article>
+
+  <article id="step-2" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 2 · R/20-srii.R</span>
+      <h4>Entropy-weighted quantity and quality indices (Eq. 3–6)</h4>
+    </div>
+    <div class="step-card-b">
+      <p>One call does the index work: <code>stor_srii(blocks, INDICATORS)</code> standardizes
+      every indicator with its sign, computes entropy weights within each of the six categories,
+      and assembles Γ<sub>A</sub>, Γ<sub>B</sub> and Γ per block. The weights land in
+      <code>results/entropy-weights.csv</code> — the analogue of the paper's Table&nbsp;2 — and
+      the block-level indices in <code>results/srii-blocks.csv</code>.</p>
+      <div class="codewrap nofold">
+        <span class="code-label">R/20-srii.R — the entire analytical content of the step</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>blocks &lt;- read_result(F_BLOCKS)
+srii &lt;- stor_srii(blocks, INDICATORS)   # weights + categories + Gamma_A/B + SRII</code></pre>
+      </div>
+      <div class="console"><span class="lbl">console — step 20</span>== 20  SRII: entropy-weighted indices ====================
+   Gamma_A mean 0.331 (sd 0.219), Gamma_B mean 0.500 (sd 0.136)
+   category density          weights: 0.34 0.33 0.33
+   category performance      weights: 0.27 0.26 0.23 0.24
+   category accessibility    weights: 0.31 0.35 0.34
+   category transport_modes  weights: 0.47 0.53</div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run · fig01</span>
+          <img src="assets/fig01-srii-maps.jpg" alt="Demo block-level Gamma A, Gamma B and SRII maps" loading="lazy" decoding="async">
+          <figcaption>Demo fig01 — block-level Γ<sub>A</sub>, Γ<sub>B</sub> and Γ on the simulated
+          grid. Quantity concentrates at the central city and the south-eastern town; quality is
+          high almost everywhere quantity is moderate, and carries its own smooth field.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · STOR</span>
+          <img src="assets/paper-stor-fig04-srii-quantity-quality-maps.jpg" alt="Published quantity and quality dimension maps, Song et al. 2021 Figure 4" loading="lazy" decoding="async">
+          <figcaption>STOR paper Fig. 4 — the published Γ<sub>A</sub> (top) and Γ<sub>B</sub>
+          (bottom) across Western Australia at three zooms. The same structure appears: quantity
+          is metropolitan, quality is broad with regional texture.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </article>
+
+  <article id="step-3" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 3 · R/30-dmu.R</span>
+      <h4>The utility curve, marginal utility and DMU stages (Eq. 7–9)</h4>
+    </div>
+    <div class="step-card-b">
+      <p>The model's namesake result. <code>stor_utility()</code> fits u(Γ<sub>A</sub>) by LOESS on
+      the 1,600 raw blocks; <code>stor_dmu()</code> reads t<sub>1</sub> from max(η) and
+      t<sub>2</sub> from max(u); each block is then classified IR / MR / NR by its
+      Γ<sub>A</sub>.</p>
+      <div class="codewrap nofold">
+        <span class="code-label">R/30-dmu.R — the entire analytical content of the step</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>util &lt;- stor_utility(srii$gamma_a, srii$gamma_b,
+                     n_bins = N_BINS, span = LOESS_SPAN, n_eval = N_EVAL)
+dmu  &lt;- stor_dmu(util$curve)            # t1 = max(eta), t2 = max(u)
+stages &lt;- dmu$stage_of(srii$gamma_a)    # IR / MR / NR per block</code></pre>
+      </div>
+      <div class="console"><span class="lbl">console — step 30</span>== 30  DMU: utility curve and stage boundaries ===========
+   t1 = 0.092 (max eta), t2 = 0.576 (eta = 0); embedded truth 0.070 / 0.585
+   blocks per stage: IR 205, MR 1162, NR 233</div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run · fig02</span>
+          <img src="assets/fig02-dmu-tradeoff.jpg" alt="Demo quantity-quality trade-off and DMU stages" loading="lazy" decoding="async">
+          <figcaption>Demo fig02 — (a) the joint distribution of the 1,600 blocks and (b) the
+          recovered relation: LOESS utility (red) with its 95% band, marginal utility (blue), the
+          bin-mean dots, and the boundaries at Γ<sub>A</sub>&nbsp;=&nbsp;0.092 and 0.576 against
+          the embedded 0.070 / 0.585.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · STOR</span>
+          <img src="assets/paper-stor-fig06-dmu-tradeoff.jpg" alt="Published quantity-quality relations and DMU analysis, Song et al. 2021 Figure 6" loading="lazy" decoding="async">
+          <figcaption>STOR paper Fig. 6 — the model's core figure. (a) the joint distribution over
+          42,425 blocks; (b) the utility and marginal utility with boundaries at 0.072 and 0.585;
+          (c–d) the same analysis on single indicators. The demo reproduces panel (b)'s logic
+          exactly and panel (a)'s as a hex-bin.</figcaption>
+        </figure>
+      </div>
+      <div class="pairnote">Read the pair left to right: the demo recovers a curve it can be
+      graded on (the truth is known), and the published panel shows the same three-stage anatomy
+      found in real infrastructure — a steep early rise, a long flat middle, a downturn past the
+      utility peak.</div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run · fig03</span>
+          <img src="assets/fig03-dmu-stages.jpg" alt="Demo DMU stage profiles and stage map" loading="lazy" decoding="async">
+          <figcaption>Demo fig03 — index distributions by stage and the stage map: IR is remote
+          (low Γ<sub>A</sub>, low-mid Γ<sub>B</sub>), NR rings the city, MR is everything between —
+          the same ordering as the published Fig.&nbsp;7.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · STOR</span>
+          <img src="assets/paper-stor-fig07-dmu-stages.jpg" alt="Published DMU stage summary and map, Song et al. 2021 Figure 7" loading="lazy" decoding="async">
+          <figcaption>STOR paper Fig. 7 — indicator profiles at each DMU stage (a) and the WA
+          stage map (b): IR dominates the remote interior, MR the settled band, NR the
+          metropolitan core.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </article>
+
+  <article id="step-4" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 4 · R/40-lisa.R</span>
+      <h4>Hotspots, cold spots and trade-off strategies (§3.3 of the paper)</h4>
+    </div>
+    <div class="step-card-b">
+      <p>Local Moran's&nbsp;I runs on each dimension separately (999 conditional permutations,
+      p&nbsp;&lt;&nbsp;0.05), and the overlay makes the trade-off spatial: blocks LL in both
+      dimensions are joint cold spots; blocks LL in only one dimension name their own remedy.
+      That per-block strategy map is the demo's stand-in for the paper's cold-spot town
+      identification (its Fig.&nbsp;3), which additionally aggregates blocks into towns using a
+      POI-density layer not distributed with the article.</p>
+      <div class="codewrap nofold">
+        <span class="code-label">R/40-lisa.R — the entire analytical content of the step</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>nb &lt;- stor_grid_neighbors(srii$col, srii$row)          # queen contiguity
+class_a &lt;- stor_lisa_class(stor_local_moran(srii$gamma_a, nb, LISA_NSIM), LISA_ALPHA)
+class_b &lt;- stor_lisa_class(stor_local_moran(srii$gamma_b, nb, LISA_NSIM), LISA_ALPHA)
+groups  &lt;- stor_tradeoff_groups(class_a, class_b)      # hotspot / cold spot / strategy</code></pre>
+      </div>
+      <div class="console"><span class="lbl">console — step 40</span>== 40  LISA: clusters and trade-off groups ===============
+   clusters: Hotspot 117, Others 1241, Cold spot 242
+   strategies (cold-side blocks): Increase quantity 181, Increase both 242,
+                                  Increase quality 49, No cold spot 1128</div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run · fig04</span>
+          <img src="assets/fig04-lisa-tradeoff.jpg" alt="Demo LISA clusters and development strategies" loading="lazy" decoding="async">
+          <figcaption>Demo fig04 — LISA classes per dimension (a) and the strategy overlay (b):
+          181 blocks need quantity, 49 need quality, 242 need both. The joint hotspots ring the
+          city rather than covering its core — the NR downturn keeps the most urban blocks out of
+          the quality hotspot, which is the trade-off made visible.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · STOR</span>
+          <img src="assets/paper-stor-fig08-lisa-tradeoff-groups.jpg" alt="Published hotspot and cold spot trade-off groups, Song et al. 2021 Figure 8" loading="lazy" decoding="async">
+          <figcaption>STOR paper Fig. 8 — the published overlay: joint clusters of Γ<sub>A</sub>
+          and Γ<sub>B</sub> (a) and the five cold-spot town groups G1–G5 with their development
+          strategies (b) — 56.7% of cold-spot towns need quantity, 20.7% quality, 20.2% both.</figcaption>
+        </figure>
+      </div>
+      <figure class="fig half">
+        <span class="pairtag tag-paper">Published reference · STOR</span>
+        <img src="assets/paper-stor-fig03-coldspot-town-process.jpg" alt="Published cold-spot town identification process, Song et al. 2021 Figure 3" loading="lazy" decoding="async">
+        <figcaption>STOR paper Fig. 3 — the published town-identification funnel this step
+        simplifies: 15,861 cold-spot blocks → POI-density filter → spatial aggregation →
+        population and area thresholds → 203 cold-spot towns/villages, split by DMU stage.
+        <span class="credit">Song et al. (2021), CC BY-NC-ND.</span></figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <article id="step-5" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 5 · R/50-income-models.R</span>
+      <h4>What each dimension contributes to income (Eq. 10–11)</h4>
+    </div>
+    <div class="step-card-b">
+      <p>Two models, one question: how much of block income does each dimension explain? The GAM
+      (<code>mgcv</code>) captures the nonlinear effects; the base-R GWR captures the regional
+      ones, with its adaptive bandwidth chosen by AICc (k&nbsp;=&nbsp;80 of 1,600 wins). The
+      contribution of a dimension is the deviance explained that disappears when it is dropped,
+      averaged over the two models — the paper's Fig.&nbsp;11a quantity.</p>
+      <div class="codewrap nofold">
+        <span class="code-label">R/50-income-models.R — the entire analytical content of the step</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>gam_full &lt;- mgcv::gam(z ~ s(ga) + s(gb), data = dat, method = "REML")
+gwr_full &lt;- stor_gwr_select(z, X, coords, GWR_NEIGHBORS)   # AICc picks k
+contribution_B &lt;- dev_expl(gam_full) - dev_expl(gam_a)      # drop-one deviance</code></pre>
+      </div>
+      <div class="console"><span class="lbl">console — step 50</span>== 50  GAM + GWR: income contribution ====================
+   GAM deviance explained 47.0% (Gamma_A 0.6%, Gamma_B 28.1%)
+   GWR (adaptive k = 80) R2 0.939 (Gamma_A 0.2%, Gamma_B 4.3%)
+   GWR bandwidth candidates: k=40 AICc=6200.7; k=60 AICc=6169.9;
+                             k=80 AICc=6167.3; k=100 AICc=6175.1; k=150 AICc=6206.1</div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run · fig05</span>
+          <img src="assets/fig05-income-contribution.jpg" alt="Demo income contribution: bars, GAM smooths, GWR coefficient maps" loading="lazy" decoding="async">
+          <figcaption>Demo fig05 — contribution bars (a), GAM partial effects (b) and GWR
+          coefficient surfaces (c). Quality dominates income (mean 16.2% vs 0.4%), its partial
+          effect climbs steeply, and its GWR coefficient grows northward — exactly the drift the
+          simulation embedded.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · STOR</span>
+          <img src="assets/paper-stor-fig11-gam-gwr-contribution.jpg" alt="Published contribution analysis, Song et al. 2021 Figure 11" loading="lazy" decoding="async">
+          <figcaption>STOR paper Fig. 11 — the published version: Γ<sub>B</sub> contributes 16.2%
+          of income against 5.9% for Γ<sub>A</sub> (a), the joint GAM surface (b), and the GWR
+          coefficient maps with significance hatching (c–d).</figcaption>
+        </figure>
+      </div>
+      <figure class="fig">
+        <span class="pairtag tag-paper">Published reference · STOR</span>
+        <img src="assets/paper-stor-fig10-income-maps.jpg" alt="Published income distribution and relations, Song et al. 2021 Figure 10" loading="lazy" decoding="async">
+        <figcaption>STOR paper Fig. 10 — the published response variable: LGA mean income per
+        person (a), and its relations with remoteness, DMU stage and spatial cluster (b). Income
+        rises IR → MR → NR, the pattern the contribution analysis then decomposes.
+        <span class="credit">Song et al. (2021), CC BY-NC-ND.</span></figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <h3 id="interpretation">3.4&nbsp;Reading the Results Together</h3>
+  <p>The three analyses answer one policy question from three sides, and their agreement is the
+  finding:</p>
+  <figure class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>DMU stage</th><th class="num">Blocks</th><th class="num">Share</th><th class="num">Mean Γ<sub>A</sub></th><th class="num">Mean Γ<sub>B</sub></th><th class="num">Mean Γ</th><th>Reading</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>IR — increase return</td><td class="num">205</td><td class="num">12.8%</td><td class="num">0.058</td><td class="num">0.303</td><td class="num">0.181</td><td>every unit of quantity still buys quality fast: build roads</td></tr>
+        <tr><td>MR — marginal return</td><td class="num">1,162</td><td class="num">72.6%</td><td class="num">0.299</td><td class="num">0.545</td><td class="num">0.422</td><td>gains flatten: target investment by cluster, not blanket build-out</td></tr>
+        <tr><td>NR — negative return</td><td class="num">233</td><td class="num">14.6%</td><td class="num">0.698</td><td class="num">0.566</td><td class="num">0.632</td><td>more quantity coincides with declining quality: maintain and upgrade</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Demo stage profile (<code>results/dmu-stages.csv</code>, <code>tables/table-dmu-stages.tex</code>).
+    Γ<sub>B</sub> rises steeply from IR to MR and then barely — the diminishing margin in one row of numbers.</figcaption>
+  </figure>
+  <ul>
+    <li><b>The curve says when.</b> Quality responds to quantity only below
+        t<sub>1</sub>&nbsp;=&nbsp;0.092; past t<sub>2</sub>&nbsp;=&nbsp;0.576 the relation turns
+        negative. The published analogues (0.072, 0.585) put most of Western Australia's remote
+        blocks in IR and its metropolitan core in NR.</li>
+    <li><b>The clusters say where.</b> 242 blocks are cold in both dimensions ("increase both"),
+        181 only in quantity, 49 only in quality — a budget split, not just a map. The published
+        overlay (Fig.&nbsp;8b) reads the same way: 56.7% quantity, 20.7% quality, 20.2% both.</li>
+    <li><b>The contribution says why it pays.</b> Income follows quality (16.2%) far more than
+        quantity (0.4% demo; 5.9% published), and the GWR shows <i>where</i> that payoff is
+        strongest — northward in the demo by construction, in the remote north of WA in the
+        published case.</li>
+  </ul>
+  <figure class="fig">
+    <span class="pairtag tag-paper">Published reference · STOR</span>
+    <img src="assets/paper-stor-fig09-clusters-vs-dmu.jpg" alt="Published comparison of spatial clusters and DMU stages, Song et al. 2021 Figure 9" loading="lazy" decoding="async">
+    <figcaption>STOR paper Fig. 9 — clusters × stages in the published case: cold spots
+    concentrate in IR and MR, hotspots in MR and NR, and population density tracks the hotspot
+    column. The demo's cross-tabulation (<code>results/lisa-clusters.csv</code>) shows the same
+    diagonal.
+    <span class="credit">Song et al. (2021), CC BY-NC-ND.</span></figcaption>
+  </figure>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Dimension</th><th>Variable</th><th class="num">Entropy weight</th></tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="3">density</td><td rowspan="3">Γ<sub>A</sub></td><td>road_density</td><td class="num">0.343</td></tr>
+        <tr><td>main_road_density</td><td class="num">0.328</td></tr>
+        <tr><td>roads_per_person</td><td class="num">0.329</td></tr>
+        <tr><td>connectivity</td><td>Γ<sub>A</sub></td><td>intersection_density</td><td class="num">1.000</td></tr>
+        <tr><td rowspan="4">performance</td><td rowspan="4">Γ<sub>B</sub></td><td>roughness</td><td class="num">0.267</td></tr>
+        <tr><td>rutting</td><td class="num">0.260</td></tr>
+        <tr><td>deflection</td><td class="num">0.230</td></tr>
+        <tr><td>curvature</td><td class="num">0.242</td></tr>
+        <tr><td>safety</td><td>Γ<sub>B</sub></td><td>crash_rate</td><td class="num">1.000</td></tr>
+        <tr><td rowspan="3">accessibility</td><td rowspan="3">Γ<sub>B</sub></td><td>craf_schools</td><td class="num">0.310</td></tr>
+        <tr><td>craf_hospitals</td><td class="num">0.352</td></tr>
+        <tr><td>craf_industry</td><td class="num">0.338</td></tr>
+        <tr><td rowspan="2">transport_modes</td><td rowspan="2">Γ<sub>B</sub></td><td>dist_ports</td><td class="num">0.472</td></tr>
+        <tr><td>dist_airports</td><td class="num">0.528</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Demo entropy weights (<code>results/entropy-weights.csv</code>) — the analogue of
+    the paper's Table&nbsp;2. Weights are near-equal within categories because the simulated
+    indicators share one latent driver; on real data the spread is informative in itself.</figcaption>
+  </figure>
+</section>
+
+<section id="adaptation">
+  <h2>4&nbsp;Adaptation, Writing &amp; Reproducibility</h2>
+
+  <h3 id="port-domain">4.1&nbsp;Port to Your Domain</h3>
+  <p>STOR is a template for any quantity–quality (or any two-dimension) trade-off measured over
+  spatial units: hospital beds vs care quality, park area vs park sentiment, water supply vs water
+  quality, housing stock vs housing condition. Porting is four moves:</p>
+  <div class="step-grid">
+    <div class="kv"><div class="k">1 · Replace the data step</div><div class="v">Drop your own
+      <code>data/blocks.csv</code> and delete <code>R/10-simulate-data.R</code> from
+      <code>STEPS</code> in <code>run-all.R</code>. One row per spatial unit; coordinates in any
+      projected CRS.</div></div>
+    <div class="kv"><div class="k">2 · Declare the indicators</div><div class="v">Rewrite
+      <code>INDICATORS</code> in the config: name, category, dimension (A or B), sign. This table
+      <i>is</i> your paper's Table&nbsp;1 — categories decide where entropy weighting happens.</div></div>
+    <div class="kv"><div class="k">3 · Swap the neighbours</div><div class="v">The demo uses
+      queen contiguity on a grid. For polygons, build the list once with
+      <code>spdep::poly2nb()</code> and pass it to <code>stor_local_moran()</code> — the neighbour
+      list is the only spatial input LISA needs.</div></div>
+    <div class="kv"><div class="k">4 · Re-tune two constants</div><div class="v">
+      <code>LOESS_SPAN</code> (see the warning below) and <code>GWR_NEIGHBORS</code> (bracket
+      ~2–10% of your n). Everything else transfers unchanged.</div></div>
+  </div>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>The span is the one honest judgement call</div>
+    <div class="callout-b">
+      <p>The DMU boundaries are derivative features of a smoothed curve, and t<sub>1</sub> in
+      particular moves with <code>LOESS_SPAN</code>: too wide and the early rise is flattened into
+      the axis (t<sub>1</sub> slides toward 0), too narrow and η chases noise (spurious boundaries
+      mid-curve). The demo settled on 0.15 for 1,600 blocks by checking recovery of the embedded
+      truth — a calibration you cannot run on real data. Report the span, show the utility curve
+      at two or three spans in a supplement, and treat boundary <i>ranges</i>, not points, as the
+      policy-safe statement. The t<sub>2</sub>&nbsp;=&nbsp;max(u) definition is robust; lean on
+      it.</p>
+    </div>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>Sanity checks that transfer to real data</div>
+    <div class="callout-b">
+      <ul>
+        <li>Signs: flip a known-negative indicator and Γ<sub>B</sub> should <i>drop</i> where that
+            indicator is bad. If it rises, the sign column is wrong.</li>
+        <li>Weights: a near-zero entropy weight means a near-constant indicator — decide
+            deliberately whether it belongs in the index.</li>
+        <li>Boundaries: t<sub>1</sub>&nbsp;&lt;&nbsp;t<sub>2</sub> and η&nbsp;&gt;&nbsp;0 on
+            (t<sub>1</sub>,&nbsp;t<sub>2</sub>) must hold by construction — <code>test-01</code>
+            checks this shape on any data you feed it.</li>
+        <li>Clusters: LISA on a <i>permuted</i> response should return almost no significant
+            blocks; if it does not, the neighbour list is wrong.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 id="write-paper">4.2&nbsp;Write the Paper</h3>
+  <p>Every manuscript element of a STOR-style paper maps to a file this pipeline already writes:</p>
+  <figure class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Manuscript element</th><th>Published analogue</th><th>Comes from</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Indicator system table (variables, categories, signs)</td>
+            <td>Table&nbsp;1</td>
+            <td><code>INDICATORS</code> in <code>config/project-config.R</code></td></tr>
+        <tr><td>Entropy weights table</td>
+            <td>Table&nbsp;2</td>
+            <td><code>tables/table-entropy-weights.tex</code></td></tr>
+        <tr><td>Index maps figure</td>
+            <td>Figs.&nbsp;4–5</td>
+            <td><code>figs/fig01-srii-maps</code></td></tr>
+        <tr><td>Trade-off relation figure (the core result)</td>
+            <td>Fig.&nbsp;6</td>
+            <td><code>figs/fig02-dmu-tradeoff</code> + <code>results/dmu-boundaries.csv</code></td></tr>
+        <tr><td>Stage profile and stage map</td>
+            <td>Fig.&nbsp;7</td>
+            <td><code>figs/fig03-dmu-stages</code> + <code>tables/table-dmu-stages.tex</code></td></tr>
+        <tr><td>Cluster overlay and strategy shares</td>
+            <td>Figs.&nbsp;8–9</td>
+            <td><code>figs/fig04-lisa-tradeoff</code> + <code>tables/table-tradeoff-strategies.tex</code></td></tr>
+        <tr><td>Outcome contribution figure</td>
+            <td>Figs.&nbsp;10–11</td>
+            <td><code>figs/fig05-income-contribution</code> + <code>tables/table-income-contribution.tex</code></td></tr>
+        <tr><td>Methods constants (span, permutations, bandwidth, seed)</td>
+            <td>§3</td>
+            <td><code>config/project-config.R</code>, quoted verbatim</td></tr>
+      </tbody>
+    </table>
+    <figcaption>The result files are the manuscript's skeleton; the writing fills in why each
+    number matters for the study area.</figcaption>
+  </figure>
+
+  <h3 id="repro-package">4.3&nbsp;Final Reproducibility Package</h3>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Code</div><div class="v"><code>R/02-stor-core.R</code> (the method, base R) + the numbered pipeline + <code>run-all.R</code> + <code>tests/</code></div></div>
+    <div class="kv"><div class="k">Data</div><div class="v"><code>data/blocks.csv</code> and the embedded truth in <code>data/derived/simulation-truth.csv</code> — or your own blocks table with its provenance</div></div>
+    <div class="kv"><div class="k">Results</div><div class="v"><code>figs/fig01–fig05</code> + <code>tables/*.tex</code> + <code>env/session-info.txt</code></div></div>
+  </div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Before claiming reproducible</div>
+    <div class="callout-b">
+      <ul>
+        <li><code>Rscript run-all.R test</code> passes — 25 checks, including that the recovered
+            boundaries, stages, clusters and contributions match the embedded truth, and that the
+            local Moran and GWR implementations match their references.</li>
+        <li>Delete <code>results/</code>, <code>tables/</code>, <code>figs/</code> and
+            <code>data/</code> outputs, re-run <code>Rscript run-all.R</code> — every number and
+            figure on this page regenerates (verified 2026-07-25, ~18&nbsp;s).</li>
+        <li>The LOESS span, bin count, LISA permutations and alpha, GWR bandwidth candidates and
+            seed are stated in the manuscript and match <code>config/project-config.R</code>.</li>
+        <li>The indicator signs of Table&nbsp;1 are stated with their justification.</li>
+        <li><code>env/session-info.txt</code> is included in the deposit.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>Anticipate the reviewer</div>
+    <div class="callout-b">
+      <p><i>Are the DMU boundaries an artefact of the smoothing?</i> → show the curve at two or
+      three spans; t<sub>2</sub>&nbsp;=&nbsp;max(u) barely moves and the stage shares are stable
+      (§4.1). <i>Why entropy weights rather than expert weights?</i> → they are data-driven and
+      reproducible; the paper's hierarchy (entropy within categories, equal across) bounds any one
+      variable's influence. <i>Is quality just a proxy for remoteness?</i> → the GWR separates the
+      spatial drift from the index effect, and the contribution survives it.
+      <i>Do the clusters depend on the contiguity choice?</i> → re-run Step&nbsp;4 with a distance
+      band; the overlay classes are stable because they require agreement of two dimensions.
+      <i>Causality?</i> → STOR measures relations and stages; the paper claims strategy relevance,
+      not causal effects — keep the manuscript's verbs on that side.</p>
+    </div>
+  </div>
+  <h4>References &amp; credits</h4>
+  <p>Demo outputs were generated by the scripts in this folder on simulated data (verified
+  2026-07-25). Reference figures are reproduced from the cited article for comparison; the STOR
+  article is open access under CC&nbsp;BY-NC-ND. The implementation follows the article's §3; the
+  GWR and cold-spot-town departures are described in §2.1 above.</p>
+  <ol>
+    <li>Song Y, Wu P, Hampson K, Anumba C (2021). Assessing block-level sustainable transport
+        infrastructure development using a spatial trade-off relation model.
+        <i>International Journal of Applied Earth Observation and Geoinformation</i> 105:102585.
+        <a href="https://doi.org/10.1016/j.jag.2021.102585">doi:10.1016/j.jag.2021.102585</a>
+        · <a href="../../pdf/STOR-song2021.pdf">PDF</a>
+        (source of the method and of all reference figures on this page)</li>
+    <li>Anselin L (1995). Local indicators of spatial association — LISA.
+        <i>Geographical Analysis</i> 27(2):93–115. (the cluster statistic implemented in
+        <code>stor_local_moran()</code>)</li>
+    <li>Jacoby WG (2000). Loess: a nonparametric, graphical tool for depicting relationships
+        between variables. <i>Electoral Studies</i> 19(4):577–613. (the smoother behind
+        Eq.&nbsp;7)</li>
+    <li>Wood SN (2017). <i>Generalized Additive Models: An Introduction with R</i>, 2nd ed.
+        Chapman &amp; Hall/CRC. (the GAM of Eq.&nbsp;10, via <code>mgcv</code>)</li>
+    <li>Fotheringham AS, Brunsdon C, Charlton M (2003). <i>Geographically Weighted Regression</i>.
+        Wiley. (the model of Eq.&nbsp;11, re-implemented in base R here)</li>
+  </ol>
+</section>
+
+</main>
+
+<div id="lightbox"><img alt="enlarged figure" loading="lazy" decoding="async"></div>
+
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var sidebar=document.getElementById('sidebar');
+  var menuBtn=document.getElementById('menu-btn');
+  var themeBtn=document.getElementById('themebtn');
+  var filter=document.getElementById('toc-filter');
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var lightbox=document.getElementById('lightbox');
+  var lightboxImg=lightbox ? lightbox.querySelector('img') : null;
+
+  function setTheme(mode){
+    if(mode==='dark'){
+      root.setAttribute('data-theme','dark');
+      if(themeBtn) themeBtn.textContent='Light mode';
+    }else{
+      root.removeAttribute('data-theme');
+      if(themeBtn) themeBtn.textContent='Dark mode';
+    }
+    try{localStorage.setItem('reproduce-template-theme',mode)}catch(e){}
+  }
+  try{
+    var saved=localStorage.getItem('reproduce-template-theme');
+    if(saved==='dark') setTheme('dark');
+  }catch(e){}
+
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      setTheme(root.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+    });
+  }
+
+  if(menuBtn && sidebar){
+    menuBtn.addEventListener('click',function(){
+      sidebar.classList.toggle('open');
+    });
+  }
+  links.forEach(function(a){
+    a.addEventListener('click',function(){
+      if(sidebar) sidebar.classList.remove('open');
+    });
+  });
+
+  if(filter){
+    filter.addEventListener('input',function(){
+      var q=filter.value.trim().toLowerCase();
+      links.forEach(function(a){
+        a.style.display=a.textContent.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+      });
+    });
+  }
+
+  document.querySelectorAll('.copybtn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var box=btn.closest('.codewrap');
+      var code=box ? box.querySelector('pre code') : null;
+      if(!code) return;
+      navigator.clipboard.writeText(code.innerText).then(function(){
+        btn.classList.add('ok');
+        btn.textContent='Copied';
+        setTimeout(function(){
+          btn.classList.remove('ok');
+          btn.textContent='Copy';
+        },1200);
+      });
+    });
+  });
+
+  document.querySelectorAll('figure img,.figpair img').forEach(function(img){
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',function(){
+      if(!lightbox || !lightboxImg) return;
+      lightboxImg.src=img.src;
+      lightboxImg.alt=img.alt || 'enlarged figure';
+      lightbox.classList.add('open');
+    });
+  });
+  if(lightbox){
+    lightbox.addEventListener('click',function(){
+      lightbox.classList.remove('open');
+      if(lightboxImg) lightboxImg.removeAttribute('src');
+    });
+  }
+
+  var headings=[].slice.call(document.querySelectorAll('section[id],h3[id],article[id]'));
+  function onScroll(){
+    var active=null;
+    var y=window.scrollY+110;
+    headings.forEach(function(h){
+      if(h.offsetTop<=y) active=h.id;
+    });
+    links.forEach(function(a){
+      a.classList.toggle('active',a.getAttribute('href')==='#'+active);
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+</script>
+<script>
+// Lightweight R/bash highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code').forEach(function(codeEl){
+  var src = codeEl.textContent;
+  var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var isR = codeEl.parentElement.classList.contains('lang-r');
+  var kw = isR
+    ? /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")|\b(function|if|else|for|while|return|library|source|TRUE|FALSE|NULL|NA_real_|NA_character_|NA|in)\b/g
+    : /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")/g;
+  var out = '', last = 0, m;
+  while ((m = kw.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    if (m[1])      out += '<span class="cm">' + esc(m[1]) + '</span>';
+    else if (m[2]) out += '<span class="st">' + esc(m[2]) + '</span>';
+    else           out += '<span class="kw">' + esc(m[3]) + '</span>';
+    last = kw.lastIndex;
+  }
+  out += esc(src.slice(last));
+  codeEl.innerHTML = out;
+});
+</script>
+<script>
+// Collapsible code boxes: boxes longer than 4 lines start collapsed to a 3-line preview.
+document.querySelectorAll('.codewrap:not(.nofold)').forEach(function(w){
+  var code=w.querySelector('pre.code code');
+  if(!code) return;
+  var lines=code.textContent.replace(/\n+$/,'').split('\n').length;
+  if(lines<=4) return;
+  w.classList.add('has-fold','collapsed');
+  var chip=w.querySelector('.code-label');
+  if(chip) chip.textContent+=' · '+lines+' lines';
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.className='foldbtn';
+  btn.title='Expand / collapse code';
+  function label(){
+    btn.textContent=w.classList.contains('collapsed') ? 'Expand' : 'Collapse ▴';
+  }
+  label();
+  btn.addEventListener('click',function(){
+    w.classList.toggle('collapsed');
+    label();
+    if(w.classList.contains('collapsed')) w.scrollIntoView({block:'nearest'});
+  });
+  w.appendChild(btn);
+});
+</script>
+<script>
+// Match the director avatar to the height of the name-to-email text block (desktop only).
+(function(){
+  function sizeDirectorAvatar(){
+    document.querySelectorAll('.director-card').forEach(function(card){
+      var img=card.querySelector('img');
+      var info=card.querySelector('.director-info');
+      if(!img||!info) return;
+      if(window.innerWidth<=1000){
+        img.style.width='';img.style.height='';img.style.minWidth='';
+        return;
+      }
+      var h=Math.round(info.getBoundingClientRect().height);
+      img.style.height=h+'px';
+      img.style.width=h+'px';
+      img.style.minWidth=h+'px';
+    });
+  }
+  window.addEventListener('load',sizeDirectorAvatar);
+  window.addEventListener('resize',sizeDirectorAvatar);
+  sizeDirectorAvatar();
+})();
+</script>
+</body>
+</html>

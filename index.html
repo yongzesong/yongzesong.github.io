@@ -8,7 +8,23 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
     <title>Home - Yongze Song</title>
+    <link rel="canonical" href="https://yongzesong.com/">
     <meta name="description" content="Yongze Song - Associate Professor, Curtin University. Geospatial Analysis, Methods, and Sustainable Infrastructure.">
+    <!-- Open Graph / Twitter Card -->
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="Yongze Song">
+    <meta property="og:locale" content="en_AU">
+    <meta property="og:title" content="Home - Yongze Song">
+    <meta property="og:description" content="Yongze Song - Associate Professor, Curtin University. Geospatial Analysis, Methods, and Sustainable Infrastructure.">
+    <meta property="og:url" content="https://yongzesong.com/">
+    <meta property="og:image" content="https://yongzesong.com/assets/images/research-excellence-v2.jpg">
+    <meta property="og:image:alt" content="Yongze Song presenting geospatial research at Curtin University">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@YongzeSong">
+    <meta name="twitter:creator" content="@YongzeSong">
+    <meta name="twitter:title" content="Home - Yongze Song">
+    <meta name="twitter:description" content="Yongze Song - Associate Professor, Curtin University. Geospatial Analysis, Methods, and Sustainable Infrastructure.">
+    <meta name="twitter:image" content="https://yongzesong.com/assets/images/research-excellence-v2.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -99,16 +115,6 @@
             line-height: 1.2;
         }
 
-        /* Top logos */
-        .top-logos {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-        .top-logos img { height: 36px; width: auto; }
-
         /* Quote - uses body font (sans-serif) */
         .quote {
             font-family: var(--font-sans);
@@ -145,36 +151,6 @@
             width: auto;
         }
 
-        /* Methods section */
-        .methods-list {
-            font-size: 0.82rem;
-            margin: 6px 0;
-        }
-        .methods-list .method-item {
-            margin: 3px 0;
-            padding-left: 14px;
-            position: relative;
-        }
-        .methods-list .method-item::before {
-            content: "\2013";
-            position: absolute;
-            left: 0;
-        }
-
-        /* GitHub group */
-        .github-group {
-            font-size: 0.82rem;
-            margin: 8px 0;
-        }
-        .github-group a { font-weight: 500; }
-        .r-badges {
-            margin-top: 6px;
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .r-badges img { height: 20px; width: auto; }
-
         /* Awards */
         .awards-section {
             font-size: 0.82rem;
@@ -203,69 +179,6 @@
         .teams-list a {
             display: block;
             margin: 2px 0;
-        }
-
-        .sustainable-section img {
-            border-radius: 4px;
-            margin: 8px 0;
-        }
-        .sustainable-section .caption {
-            font-size: 0.75rem;
-            color: var(--color-muted);
-            margin: 4px 0;
-        }
-        .dr-label {
-            font-family: var(--font-serif);
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-align: center;
-            margin: 6px 0;
-        }
-        .dr-sublabel {
-            font-family: var(--font-sans);
-            font-size: 0.75rem;
-            color: var(--color-muted);
-            text-align: center;
-        }
-
-        .institution-logos {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            justify-content: center;
-            margin: 10px 0;
-        }
-        .institution-logos img { height: 32px; width: auto; }
-
-        .banner-box {
-            font-family: var(--font-serif);
-            background: linear-gradient(135deg, #1a3a5c, #2d5a8e);
-            color: #fff;
-            padding: 14px;
-            border-radius: 4px;
-            margin: 12px 0;
-            text-align: center;
-            font-size: 0.9rem;
-            font-weight: 600;
-            line-height: 1.5;
-        }
-        .banner-box .subtitle {
-            font-family: var(--font-sans);
-            font-size: 0.65rem;
-            font-weight: 400;
-            color: #ccc;
-            margin-top: 4px;
-            text-transform: none;
-        }
-
-        /* Visitor Map Widget */
-        .visitor-widget {
-            margin-top: 10px;
-        }
-        .visitor-widget script + a img,
-        .visitor-widget img {
-            width: 100% !important;
-            height: auto !important;
         }
 
         /* === FEATURED CARDS SECTION (4-column) === */
@@ -361,38 +274,6 @@
             overflow: hidden;
         }
 
-        /* Column 4: stacked banners - match card image area height (16:9) */
-        .feat-banners {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            aspect-ratio: 16 / 9;
-            align-self: start;
-        }
-        .banner-link {
-            text-decoration: none;
-            color: var(--color-text);
-            display: block;
-            flex: 1;
-            border-radius: 6px;
-            overflow: hidden;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-        .banner-link img {
-            height: 100%;
-            object-fit: cover;
-        }
-        .banner-link:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.14);
-            color: var(--color-text);
-        }
-        .banner-link:hover img {
-            transform: scale(1.03);
-        }
-
         /* === RESPONSIVE === */
         @media (max-width: 1024px) {
             .featured-cards {
@@ -416,11 +297,11 @@
             }
             .profile-photo { width: 120px; min-width: 120px; align-self: auto; object-fit: cover; }
             .social-icons { justify-content: center; }
-            .top-logos { justify-content: center; }
         }
     </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <!-- ========== HEADER ========== -->
 <header class="site-header">
@@ -440,14 +321,15 @@
 </header>
 
 <!-- ========== MAIN CONTENT ========== -->
-<main class="main-content">
+<main id="main">
+<div class="main-content">
 
     <!-- ===== LEFT COLUMN ===== -->
     <div class="left-col">
 
         <!-- Profile Card -->
         <div class="profile-card">
-            <img src="assets/images/yongze-song-202511-03.png" alt="Yongze Song" class="profile-photo">
+            <img src="assets/images/yongze-song-202511-03.jpg" alt="Yongze Song" class="profile-photo">
             <div class="profile-info">
                 <h1>Yongze Song</h1>
                 <p>Associate Professor</p>
@@ -457,12 +339,12 @@
                 <p>Email: <a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a></p>
                 <div class="social-icons">
                     <a href="https://staffportal.curtin.edu.au/staff/profile/view/yongze-song-35491f7e/"><img src="assets/images/curtin_university.png" alt="Curtin University"></a>
-                    <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Google Scholar"></a>
-                    <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
+                    <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Google Scholar" loading="lazy" decoding="async"></a>
+                    <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate" loading="lazy" decoding="async"></a>
                     <a href="https://www.google.com/search?kgmid=/g/11h2jvvq0r&hl=en&q=Yongze+Song" title="Google"><img src="assets/images/google.png" alt="Google"></a>
-                    <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
-                    <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
-                    <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                    <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID" loading="lazy" decoding="async"></a>
+                    <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn" loading="lazy" decoding="async"></a>
+                    <a href="https://x.com/YongzeSong" title="X (formerly Twitter)"><img src="assets/images/x-logo.svg" alt="X" loading="lazy" decoding="async"></a>
                     <a href="cn.html" class="text-icon">中文</a>
                 </div>
             </div>
@@ -481,7 +363,7 @@
             <a href="https://sdl.gis.harvard.edu/fellows" class="harvard-logo"><img src="assets/images/harvard-sdl.png" alt="Harvard Spatial Data Lab"></a>
         </div>
     </div>
-</main><!-- /.main-content (temporary close) -->
+</div><!-- /.main-content -->
 
 <!-- ========== FEATURED CARDS (full-width 4-column) ========== -->
 <section class="featured-cards">
@@ -489,7 +371,7 @@
     <!-- Card 1: Research Excellence (video) -->
     <a href="video/geospatial-intelligence-changing-planet-1080p.mp4" class="feat-card" onclick="openVideo(event)">
         <div class="card-img">
-            <img src="assets/images/research-excellence-v2.jpg" alt="Research Excellence">
+            <img src="assets/images/research-excellence-v2.jpg" alt="Research Excellence" loading="lazy" decoding="async">
             <div class="play-overlay"><div class="play-btn"></div></div>
         </div>
         <div class="card-body">
@@ -500,17 +382,17 @@
     <!-- Card 2: Spatial Methods -->
     <a href="methods.html" class="feat-card">
         <div class="card-img">
-            <img src="assets/images/spatial-methods-card.svg" alt="Spatial Methods">
+            <img src="assets/images/spatial-methods-card.svg" alt="Spatial Methods" loading="lazy" decoding="async">
         </div>
         <div class="card-body">
-            <div class="card-desc">30+ new spatial methods and 12 R packages</div>
+            <div class="card-desc">44 new spatial methods and 12 R packages</div>
         </div>
     </a>
 
     <!-- Card 3: Geospatial Intelligence Lab -->
     <a href="lab.html" class="feat-card">
         <div class="card-img">
-            <img src="assets/images/card-lab.jpg" alt="Geospatial Intelligence Lab">
+            <img src="assets/images/card-lab.jpg" alt="Geospatial Intelligence Lab" loading="lazy" decoding="async">
         </div>
         <div class="card-body">
             <div class="card-desc">Geospatial Intelligence Lab</div>
@@ -520,7 +402,7 @@
     <!-- Card 4: Recent High Impact Articles -->
     <a href="high-impact-articles.html" class="feat-card">
         <div class="card-img">
-            <img src="assets/images/high-impact-card.svg" alt="Recent High Impact Articles">
+            <img src="assets/images/high-impact-card.svg" alt="Recent High Impact Articles" loading="lazy" decoding="async">
         </div>
         <div class="card-body">
             <div class="card-desc">Recent High Impact Articles</div>
@@ -532,7 +414,7 @@
 </section>
 
 <!-- ========== MAIN CONTENT (resumed) ========== -->
-<main class="main-content">
+<div class="main-content">
     <div class="left-col">
 
         <!-- Awards and Professional Services -->
@@ -552,7 +434,7 @@
             <div class="award-item"><a href="https://www.curtin.edu.au/news/media-release/curtin-research-and-engagement-stars-recognised/"><strong>Research Excellence Award</strong></a> &ndash; Early Career Researcher, Curtin University, 2023</div>
             <div class="award-item"><strong>Research Excellence and Impact Award</strong> (Finalist), Curtin University, 2025</div>
             <div class="award-item"><strong>Chair.</strong> <a href="https://www.isprs.org/tc4-symposium2024/index.html">ISPRS Technical Commission IV Symposium</a>, 22-25 Oct 2024, Perth, Australia</div>
-            <div class="award-item"><strong>Chair.</strong> <a href="https://yongzesong.com/cityplus-2023/">City+2023@Perth International Conference</a>, 8-10 Sept 2023, Perth, Australia</div>
+            <div class="award-item"><strong>Chair.</strong> City+2023@Perth International Conference, 8-10 Sept 2023, Perth, Australia</div>
             <div class="award-item"><strong>Tutorial and Education Chair.</strong> <a href="https://2025.ieeeigarss.org/">2025 IEEE International Geoscience and Remote Sensing Symposium (IGARSS)</a>, 3-8 August 2025, Brisbane, Australia</div>
             <div class="award-item"><strong>Logistics Chair.</strong> Australasian Joint Conference on Artificial Intelligence (AJCAI) 2022, 5-8 Dec 2022, Perth, Australia</div>
             <div class="award-item"><strong>Special Issue Editor (SIE), Associate Editor</strong> &ndash; <a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">International Journal of Applied Earth Observation and Geoinformation</a>. IF 8.2. Q1</div>
@@ -599,13 +481,14 @@
         <h2>Trainings and Presentations</h2>
         <div class="trainings-section">
             <p>Lecture series: Geospatial Data Analysis, Prediction, and GeoAI: New Theories, Methods, and Software. 4 Jan 2026. <a href="lecture-202601.html">Lecture materials</a></p>
-            <p>Harvard Spatial Data Lab (SDL) 2025 Monthly Webinars on Spatiotemporal Innovation. <a href="https://yongzesong.com/harvard-sdl-workshop-2025/">Summary and video recordings</a></p>
+            <p>Harvard Spatial Data Lab (SDL) 2025 Monthly Webinars on Spatiotemporal Innovation</p>
             <p>IEEE IGARSS Summer School Training Materials, 31 July &ndash; 8 August 2025, Brisbane, Australia: <a href="https://ausgis.github.io/igarss25ss/">https://ausgis.github.io/igarss25ss/</a></p>
-            <p>Spatiotemporal Innovation Summer School, Harvard University, 16-19 July 2024, Boston, US. <a href="https://yongzesong.com/wp-content/uploads/2024/07/2024_07_prediction_ys.pdf">Spatial Prediction: New Methods and R Packages</a></p>
+            <p>Spatiotemporal Innovation Summer School, Harvard University, 16-19 July 2024, Boston, US. Spatial Prediction: New Methods and R Packages</p>
         </div>
 
     </div>
 
+</div><!-- /.main-content -->
 </main>
 
 <!-- ========== FOOTER ========== -->
@@ -640,17 +523,17 @@
         <div class="footer-left">
             <span class="footer-copyright">&copy; 2026 Yongze Song</span>
             <div class="footer-social">
-                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
-                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
-                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
-                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
-                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar" loading="lazy" decoding="async"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate" loading="lazy" decoding="async"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID" loading="lazy" decoding="async"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn" loading="lazy" decoding="async"></a>
+                <a href="https://x.com/YongzeSong" title="X (formerly Twitter)"><img src="assets/images/x-logo.svg" alt="X" loading="lazy" decoding="async"></a>
             </div>
             <a href="cn.html" class="footer-lang">中文</a>
         </div>
         <div class="footer-right">
-            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods"></a>
-            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods" loading="lazy" decoding="async"></a>
+            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab" loading="lazy" decoding="async"></a>
         </div>
     </div>
 </footer>
@@ -675,7 +558,14 @@
     .video-modal-close:hover { color: var(--color-accent); }
     .video-modal-fs { position: absolute; top: -32px; left: 0; font-size: 0.85rem; line-height: 1; color: #fff; background: none; border: 1px solid rgba(255,255,255,0.5); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
     .video-modal-fs:hover { color: var(--color-accent); border-color: var(--color-accent); }
-</style>
+
+        /* Mobile readability: keep primary reading text at 15px or above */
+        @media (max-width: 768px) {
+            .quote { font-size: 1rem; }
+            .awards-section, .trainings-section, .trainings-section p, .teams-list { font-size: 0.95rem; }
+            .feat-card .card-desc { font-size: 0.85rem; }
+        }
+    </style>
 <script>
     function openVideo(event) {
         if (event) event.preventDefault();

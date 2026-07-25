@@ -1,0 +1,5 @@
+"model","variant","R2","AdjR2"
+"MLR","baseline",0.5846,0.5743
+"GCMLR","geocomplexity",0.6215,0.6024
+"GWR","baseline",0.8024,0.7409
+"GeoCGWR","geocomplexity",0.836,0.8319

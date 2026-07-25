@@ -1,0 +1,2271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reproducing the SOH Model — Step-by-Step Guide</title>
+<meta name="description" content="Step-by-step, verified guide to reproducing the spatial outliers explaining heterogeneity (SOH) model in R.">
+<link rel="canonical" href="https://yongzesong.com/reproduce/SOH/soh.html">
+<link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../../assets/images/apple-touch-icon.png">
+<style>
+:root{
+  --accent:#B2182B;
+  --accent-2:#2166AC;
+  --accent-soft:#f7e9ea;
+  --bg:#ffffff;
+  --fg:#1a1d21;
+  --muted:#5a626b;
+  --line:#e6e8eb;
+  --side-bg:#fbfcfd;
+  --code-bg:#f6f8fa;
+  --code-fg:#24292e;
+  --nav-fg:#495057;
+  --nav-l2:#6c757d;
+  --nav-active:#2761e3;
+  --nav-active-bg:#eef4ff;
+  --nav-hover:#eef0f2;
+  --sidew:290px;
+  --rightw:var(--sidew);
+  --maxw:880px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+[data-theme=dark]{
+  --bg:#0f1216;
+  --fg:#e6e8eb;
+  --muted:#9aa4af;
+  --line:#242a31;
+  --side-bg:#0c1014;
+  --code-bg:#161b22;
+  --code-fg:#d1d7de;
+  --accent-soft:#2a1416;
+  --nav-fg:#b4bcc4;
+  --nav-l2:#8b939c;
+  --nav-active:#6ea8fe;
+  --nav-active-bg:#15202f;
+  --nav-hover:#171c22;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:var(--mono);
+  font-size:.88em;
+  background:var(--code-bg);
+  color:var(--code-fg);
+  padding:.1em .35em;
+  border-radius:4px;
+}
+
+/* Sidebar: LISP-GC navigation pattern, SOH dark-mode behavior. */
+#menu-btn{
+  display:none;
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:60;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 11px;
+  font-size:1.05rem;
+  cursor:pointer;
+  color:var(--fg);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+#sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:var(--sidew);
+  overflow-y:auto;
+  background:var(--side-bg);
+  border-right:1px solid var(--line);
+  padding:22px 18px 40px;
+  z-index:50;
+}
+#sidebar .back-to-site{
+  display:inline-block;
+  font-size:.78rem;
+  color:var(--muted);
+  text-decoration:none;
+  margin-bottom:10px;
+  padding:3px 8px;
+  border:1px solid var(--line);
+  border-radius:5px;
+}
+#sidebar .back-to-site:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+}
+#sidebar .brand{
+  font-size:1.06rem;
+  font-weight:700;
+  color:var(--fg);
+  line-height:1.35;
+  margin-bottom:4px;
+}
+#sidebar .brand-sub{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+#toc-filter{
+  width:100%;
+  padding:6px 10px;
+  font-size:.85rem;
+  border:1px solid var(--line);
+  border-radius:6px;
+  margin-bottom:14px;
+  outline:none;
+  background:var(--bg);
+  color:var(--fg);
+}
+#toc-filter:focus{border-color:var(--nav-active)}
+#toc a{
+  display:block;
+  padding:4px 8px;
+  font-size:.88rem;
+  color:var(--nav-fg);
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  line-height:1.35;
+  margin:1px 0;
+}
+#toc a.l2{
+  padding-left:22px;
+  font-size:.82rem;
+  color:var(--nav-l2);
+}
+#toc a:hover{
+  background:var(--nav-hover);
+  text-decoration:none;
+}
+#toc a.active{
+  color:var(--nav-active);
+  border-left-color:var(--nav-active);
+  background:var(--nav-active-bg);
+  font-weight:600;
+}
+.side-foot{
+  padding:16px 8px 0;
+  margin-top:14px;
+  border-top:1px solid var(--line);
+}
+.themebtn{
+  font:inherit;
+  font-size:.82rem;
+  cursor:pointer;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:5px 10px;
+  color:var(--muted);
+}
+.themebtn:hover{color:var(--fg)}
+
+/* Hero and content. */
+.hero{
+  border-bottom:1px solid var(--line);
+  padding:34px 40px 26px;
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  background:var(--bg);
+}
+.hero h1{
+  margin:0 0 6px;
+  font-size:1.9rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  color:var(--fg);
+}
+.hero .sub{
+  color:var(--muted);
+  font-size:1.05rem;
+}
+.cite-lead{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--fg);
+  margin-top:16px;
+}
+.cite{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:12px;
+}
+.cite div+div{margin-top:4px}
+.dlbtn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding:9px 18px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  font-size:.92rem;
+  border-radius:8px;
+}
+.dlbtn:hover{filter:brightness(1.12);text-decoration:none}
+.dlnote{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* Lab director card adapted from lab.html, with template typography and colours. */
+.director-card{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  margin:18px 0 4px;
+  padding:16px;
+  background:var(--side-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+.director-card img{
+  width:110px;
+  min-width:110px;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:50%;
+  background:#fff;
+}
+.director-info h3{
+  font-size:1.16rem;
+  line-height:1.25;
+  margin:0 0 4px;
+}
+.director-info p{
+  font-size:.82rem;
+  line-height:1.5;
+  margin:2px 0;
+  color:var(--muted);
+}
+.director-info a{
+  font-size:.82rem;
+  font-weight:600;
+}
+
+/* Fixed right rail for future related reproducible-model tutorials. */
+.related-rail{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  width:var(--rightw);
+  overflow-y:auto;
+  z-index:40;
+  padding:22px 18px 40px;
+  border-left:1px solid var(--line);
+  background:var(--side-bg);
+}
+.related-rail .rail-title{
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1.35;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.related-rail a{
+  display:block;
+  padding:4px 8px;
+  margin:1px 0;
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  color:var(--nav-fg);
+  font-size:.88rem;
+  line-height:1.35;
+}
+.related-rail a:hover{
+  text-decoration:none;
+  background:var(--nav-hover);
+}
+.related-rail a.current{
+  color:var(--nav-active);
+  background:var(--nav-active-bg);
+  border-left-color:var(--nav-active);
+  font-weight:600;
+}
+.related-rail .rail-note{
+  color:var(--muted);
+  font-size:.76rem;
+  line-height:1.45;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+main{
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  padding:26px 40px 90px;
+}
+section{padding-top:4px}
+h2{
+  font-size:1.5rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  margin:48px 0 14px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+  color:var(--fg);
+}
+section:first-of-type h2{margin-top:20px}
+h3{
+  font-size:1.16rem;
+  font-weight:600;
+  margin:30px 0 10px;
+  letter-spacing:-.005em;
+  color:var(--fg);
+}
+h4{
+  font-size:1rem;
+  font-weight:600;
+  margin:20px 0 8px;
+  color:var(--fg);
+}
+p{margin:.7em 0}
+ul,ol{
+  margin:.6em 0;
+  padding-left:1.3em;
+}
+li{margin:.28em 0}
+
+/* Reusable content blocks. */
+.callout{
+  border:1px solid var(--line);
+  border-left-width:4px;
+  border-radius:8px;
+  padding:12px 16px;
+  margin:1.2em 0;
+  background:var(--side-bg);
+}
+.callout-h{
+  font-weight:700;
+  font-size:.92rem;
+  margin-bottom:2px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.callout-i{font-size:1rem}
+.callout-b p{margin:.4em 0}
+.callout-b ul{margin:.4em 0}
+.c-interpret{border-left-color:var(--accent);background:var(--accent-soft)}
+.c-tip{border-left-color:#178a3c}
+.c-warn{border-left-color:#d98a00}
+.c-repro{border-left-color:var(--accent-2)}
+.c-note{border-left-color:#8b939c}
+
+.codewrap{
+  position:relative;
+  margin:1.1em 0;
+}
+.code-label{
+  position:absolute;
+  top:-9px;
+  left:12px;
+  font-size:.7rem;
+  font-family:var(--mono);
+  background:var(--accent);
+  color:#fff;
+  padding:1px 8px;
+  border-radius:4px;
+  letter-spacing:.02em;
+}
+.copybtn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  font:inherit;
+  font-size:.74rem;
+  cursor:pointer;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:3px 9px;
+  color:var(--muted);
+  opacity:.85;
+  transition:.15s;
+}
+.copybtn:hover{
+  color:var(--fg);
+  opacity:1;
+  border-color:var(--accent);
+}
+.copybtn.ok{
+  color:#178a3c;
+  border-color:#178a3c;
+}
+pre.code{
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px;
+  overflow-x:auto;
+  margin:0;
+  font-family:var(--mono);
+  font-size:.83rem;
+  line-height:1.5;
+}
+pre.code code{
+  background:none;
+  padding:0;
+  color:var(--code-fg);
+  white-space:pre;
+}
+.console{
+  background:#22262b;
+  color:#d8dee4;
+  border-radius:8px;
+  padding:12px 15px;
+  margin:14px 0;
+  font-family:var(--mono);
+  font-size:.78rem;
+  line-height:1.5;
+  overflow:auto;
+  max-height:320px;
+  white-space:pre;
+}
+.console .lbl{
+  display:block;
+  color:#8b949e;
+  font-size:.72rem;
+  margin-bottom:6px;
+  font-family:inherit;
+}
+
+.tablewrap{
+  margin:1.2em 0;
+  overflow-x:auto;
+}
+.tablewrap table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:.86rem;
+}
+.tablewrap th{
+  text-align:left;
+  border-bottom:2px solid var(--fg);
+  padding:7px 10px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.tablewrap td{
+  border-bottom:1px solid var(--line);
+  padding:6px 10px;
+  vertical-align:top;
+}
+.tablewrap tbody tr:hover{background:rgba(127,127,127,.05)}
+.tablewrap figcaption{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:8px;
+}
+.tablewrap.compact td,
+.tablewrap.compact th{
+  padding:4px 8px;
+  font-size:.8rem;
+}
+table code{font-size:.82em}
+
+figure.fig{
+  margin:1.2em 0;
+  text-align:center;
+}
+figure.fig img{
+  max-width:100%;
+  height:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+figure.fig figcaption{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:8px;
+  text-align:left;
+}
+.credit{
+  display:block;
+  font-style:italic;
+  margin-top:2px;
+}
+.figpair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin:1.2em 0;
+}
+.figpair figure{margin:0}
+.figpair img{
+  max-width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+.figpair figcaption{
+  font-size:.78rem;
+  color:var(--muted);
+  margin-top:6px;
+  text-align:left;
+}
+.pairtag{
+  font-size:.72rem;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:5px;
+  margin-bottom:6px;
+  display:inline-block;
+}
+.tag-demo{
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+.tag-paper{
+  background:#eef3f8;
+  color:var(--accent-2);
+}
+[data-theme=dark] .tag-paper{background:#14202e}
+.pairnote{
+  font-size:.82rem;
+  color:var(--muted);
+  border-left:3px solid var(--line);
+  padding-left:12px;
+  margin:.2em 0 1em;
+}
+
+.flow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:8px;
+  margin:16px 0;
+}
+.flow .chip{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 12px;
+  background:var(--side-bg);
+  font-size:.8rem;
+  line-height:1.4;
+  flex:1;
+  min-width:135px;
+}
+.flow .chip b{
+  display:block;
+  font-size:.9rem;
+  color:var(--fg);
+}
+.flow .chip.hl{
+  border-color:var(--nav-active);
+  background:var(--nav-active-bg);
+}
+.flow .arrow{
+  align-self:center;
+  color:var(--muted);
+  font-size:1.1rem;
+}
+.mini-badge{
+  display:inline-block;
+  font-size:.68rem;
+  font-weight:600;
+  border-radius:4px;
+  padding:1px 6px;
+  margin-left:4px;
+  vertical-align:1px;
+  background:#eceff1;
+  color:#6c757d;
+}
+.mini-badge.oa{
+  background:#d8f3e1;
+  color:#1c7a43;
+}
+
+.step-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:1.4em 0 1.8em;
+  overflow:hidden;
+  background:var(--bg);
+}
+.step-card-h{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  background:var(--side-bg);
+}
+.step-label{
+  display:inline-block;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+.step-card-h h4{
+  margin:0;
+  font-size:1.05rem;
+}
+.step-card-b{padding:14px 16px 16px}
+.step-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+.kv{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  background:var(--side-bg);
+}
+.kv .k{
+  font-size:.72rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+.kv .v{
+  font-size:.9rem;
+  color:var(--fg);
+}
+
+#lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(15,18,22,.88);
+  display:none;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  cursor:zoom-out;
+  padding:30px;
+}
+#lightbox img{
+  max-width:96%;
+  max-height:96%;
+  background:#fff;
+  border-radius:6px;
+  padding:10px;
+}
+#lightbox.open{display:flex}
+
+@media (max-width:1000px){
+  #sidebar{
+    transform:translateX(-100%);
+    transition:transform .2s;
+  }
+  #sidebar.open{
+    transform:none;
+    box-shadow:0 0 30px rgba(0,0,0,.2);
+  }
+  #menu-btn{display:block}
+  .hero,
+  main{
+    margin-left:0;
+    margin-right:0;
+  }
+  .hero{padding:60px 20px 22px}
+  main{
+    padding:20px 20px 70px;
+    max-width:none;
+  }
+  .director-card{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+  .director-card img{
+    width:90px;
+    height:90px;
+    align-self:center;
+  }
+  .figpair{grid-template-columns:1fr}
+  .related-rail{display:none}
+}
+@media print{
+  #sidebar,
+  #menu-btn,
+  .copybtn,
+  #lightbox{display:none}
+  .hero,
+  main{margin-left:0}
+}
+
+/* --- LPI-page additions to the shared template --- */
+.figpair.triple{grid-template-columns:1fr 1fr 1fr}
+.tag-lisp{background:#e9f7f4;color:#0f766e}
+[data-theme=dark] .tag-lisp{background:#0e2320}
+.tablewrap td.num,.tablewrap th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre.code .cm{color:#7f8896;font-style:italic}
+pre.code .st{color:#20794d}
+pre.code .kw{color:#8f3faf;font-weight:600}
+[data-theme=dark] pre.code .cm{color:#8b949e}
+[data-theme=dark] pre.code .st{color:#7ee2a8}
+[data-theme=dark] pre.code .kw{color:#d2a8ff}
+@media (max-width:1000px){.figpair.triple{grid-template-columns:1fr}}
+
+/* Collapsible code boxes: long blocks start collapsed to a ~3-line preview.
+   The expand/collapse control is a full-height accent strip on the LEFT edge of
+   the box — clickable at any scroll position. */
+.codewrap.collapsed pre.code{max-height:78px;overflow:hidden}
+.codewrap.has-fold pre.code{padding-left:46px}
+.codewrap.has-fold .code-label{left:44px}
+.foldbtn{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  width:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:none;
+  border-left:1px solid var(--line);   /* rotated 180deg: renders on the visual right, against the code */
+  border-radius:0 10px 10px 0;         /* rotated 180deg: rounds the visual left corners */
+  background:var(--code-bg);
+  color:var(--muted);
+  font:inherit;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  cursor:pointer;
+}
+.foldbtn:hover{color:var(--fg);background:var(--nav-hover)}
+@media print{
+  .foldbtn{display:none}
+  .codewrap.collapsed pre.code{max-height:none}
+  .codewrap.has-fold pre.code{padding-left:16px}
+}
+
+/* featured figure above section 1 */
+figure.featured-fig{width:50%;margin:0 auto 1.6em;text-align:center;}
+figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff;}
+@media (max-width:1000px){figure.featured-fig{width:100%;}}
+</style>
+</head>
+<body>
+
+<button id="menu-btn" aria-label="Menu">☰</button>
+
+<aside id="sidebar">
+  <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
+  <div class="brand">Reproducing the SOH Model</div>
+  <div class="brand-sub">Second-dimension outlier-driven heterogeneity · verified template</div>
+  <input id="toc-filter" type="text" placeholder="Filter sections...">
+  <nav id="toc">
+    <a href="#overview">1&nbsp;Overview &amp; Scope</a>
+    <a class="l2" href="#core-idea">1.1&nbsp;Core idea</a>
+    <a class="l2" href="#method-logic">1.2&nbsp;Method logic</a>
+    <a class="l2" href="#reproduction-scope">1.3&nbsp;Reproduction scope</a>
+    <a href="#setup">2&nbsp;Setup &amp; Data</a>
+    <a class="l2" href="#environment">2.1&nbsp;Environment</a>
+    <a class="l2" href="#structure-config">2.2&nbsp;Structure &amp; config</a>
+    <a class="l2" href="#data-contract">2.3&nbsp;Data contract</a>
+    <a href="#pipeline">3&nbsp;Pipeline &amp; Results</a>
+    <a class="l2" href="#pipeline-execution">3.1&nbsp;Pipeline execution</a>
+    <a class="l2" href="#core-steps">3.2&nbsp;Core analytical steps</a>
+    <a class="l2" href="#step-1">·&ensp;Step&nbsp;1&nbsp;Data preparation</a>
+    <a class="l2" href="#step-2">·&ensp;Step&nbsp;2&nbsp;Second dimension (SOP)</a>
+    <a class="l2" href="#step-3">·&ensp;Step&nbsp;3&nbsp;Individual PD</a>
+    <a class="l2" href="#step-4">·&ensp;Step&nbsp;4&nbsp;Interactions</a>
+    <a class="l2" href="#validation-interpretation">3.3&nbsp;Validation &amp; interpretation</a>
+    <a class="l2" href="#step-5">·&ensp;Step&nbsp;5&nbsp;Validation &amp; nulls</a>
+    <a class="l2" href="#step-6">·&ensp;Step&nbsp;6&nbsp;Sensitivity</a>
+    <a href="#adaptation">4&nbsp;Adaptation &amp; Reproducibility</a>
+    <a class="l2" href="#port-domain">4.1&nbsp;Port to your domain</a>
+    <a class="l2" href="#write-paper">4.2&nbsp;Write the paper</a>
+    <a class="l2" href="#repro-package">4.3&nbsp;Reproducibility package</a>
+  </nav>
+  <div class="side-foot">
+    <button id="themebtn" class="themebtn">Dark mode</button>
+  </div>
+</aside>
+
+<header class="hero">
+  <h1>Reproducing the Spatial Outliers Explaining Heterogeneity</h1>
+  <div class="sub">A complete, verified walkthrough for applying the SOH model to a spatial
+  explanation problem in any domain: turn local anomalies at unsampled locations into
+  multi-scale explanatory variables, and measure how much heterogeneity they explain beyond
+  the covariates themselves.</div>
+  <div class="director-card">
+    <img src="../../assets/images/yongze-song.png" alt="Yongze Song">
+    <div class="director-info">
+      <h3>Yongze Song</h3>
+      <p>Associate Professor, Curtin University</p>
+      <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.2) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.8)</p>
+      <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
+    </div>
+  </div>
+  <a class="dlbtn" href="soh-code-and-data.zip" download>⬇ Download code &amp; example data (zip, 258&nbsp;KB)</a>
+  <div class="dlnote"><code>code/</code> pipeline scripts · <code>data/demo/</code>
+  (synthetic 300-unit demo) · <code>config/config.R</code> — unzip, then run
+  <code>Rscript code/99_run_all.R</code> from the <code>SOH/</code> folder root.</div>
+  <div class="cite-lead">To cite the SOH model and its R packages and codes in publications, please use:</div>
+  <div class="cite">
+    <div>Ren&nbsp;K, Song&nbsp;Y, Yang&nbsp;X, Wang&nbsp;X, Chen&nbsp;M, Yu&nbsp;Q (2026). Spatial outliers as a
+    pattern determinant for explaining heterogeneity. <i>IJGIS</i>.
+    <a href="https://doi.org/10.1080/13658816.2026.2682957">doi</a> ·
+    <a href="../../pdf/SOH-ren2026.pdf">PDF</a></div>
+    <div>Ren&nbsp;K, Song&nbsp;Y, Yu&nbsp;Q (2025). Second-dimension outliers for spatial prediction.
+    <i>IJGIS</i> 40(6):1915–1942.
+    <a href="https://doi.org/10.1080/13658816.2025.2580414">doi</a> ·
+    <a href="../../pdf/SDO-ren2025.pdf">PDF</a></div>
+    <div>Song&nbsp;Y (2022). The second dimension of spatial association.
+    <i>Int&nbsp;J&nbsp;Appl Earth Obs Geoinf</i> 111:102834.
+    <a href="https://doi.org/10.1016/j.jag.2022.102834">doi</a> ·
+    <a href="../../pdf/SDA-song2022.pdf">PDF</a></div>
+  </div>
+</header>
+
+<aside class="related-rail" aria-label="Related tutorials for reproducible models">
+  <div class="rail-title">Related tutorials for reproducible models</div>
+  <a href="../../methods.html">Geospatial Theories and Methods</a>
+  <a href="../OPGD/opgd.html">1 &middot; OPGD &mdash; Optimal Parameters Geographical Detector</a>
+  <a href="../GC/gc.html">2 &middot; GC &mdash; Geocomplexity</a>
+  <a href="../LPI/lpi.html">3 &middot; LPI &mdash; Local Pattern Interaction</a>
+  <a href="../LPA/lpa.html">4 &middot; LPA &mdash; Local Pathways of Association</a>
+  <a href="../SDA/sda.html">5 &middot; SDA &mdash; Second Dimension of Spatial Association</a>
+  <a class="current" href="soh.html">6 &middot; SOH &mdash; Second-dimension Outlier-driven Heterogeneity</a>
+  <a href="../DSI/dsi.html">7 &middot; DSI &mdash; Degree of Spatial Interpretability</a>
+  <a href="../STOR/stor.html">8 &middot; STOR &mdash; Spatial Trade-Off Relation</a>
+  <a href="../SDM/sdm.html">9 &middot; SDM &mdash; Spatial Delta Model for Accessibility</a>
+</aside>
+
+<main>
+
+<figure class="featured-fig">
+  <img src="assets/paper_figures/paper_fig7.png" alt="Individual power of determinant of covariates and second-dimension spatial outlier patterns (Ren et al. 2026, Fig 7)" decoding="async">
+</figure>
+
+<section id="overview">
+  <h2>1&nbsp;Method Overview &amp; Reproduction Scope</h2>
+
+  <h3 id="core-idea">1.1&nbsp;Core Idea</h3>
+  <p>Most spatial heterogeneity models read a covariate at the analysis unit and ask how much of
+  the response it explains. That reads only the <b>first dimension</b>. The SOH model adds a
+  <b>second dimension</b>: the configuration of local anomalies at nearby locations where the
+  response was never observed. Two units with identical air temperature can sit in entirely
+  different neighbourhoods, one beside an anomalously cold pocket and one in a uniform surround,
+  and SOH claims that difference explains variation the first dimension cannot reach.</p>
+  <p>The model turns those anomalies into multi-scale explanatory variables called <b>spatial
+  outlier patterns (SOPs)</b>, stratifies the analysis units with a regression tree, and scores
+  the stratification with the geographical detector <b>power of determinant (PD)</b>.</p>
+  <ul>
+    <li><b>Research problem:</b> covariate values at the analysis unit ignore the spatial
+        configuration of anomalies in the surroundings, so conventional stratified-heterogeneity
+        models leave second-dimension variation unexplained.</li>
+    <li><b>One-line contribution:</b> SOH converts local anomalies at unsampled grid cells into
+        positive and negative SOP variables across many neighbourhood radii, and shows they
+        out-explain the covariates they were derived from.</li>
+    <li><b>Why it matters:</b> covariates that look weak at the unit (soil carbon in the barley
+        case: PD&nbsp;0.032) can be among the strongest drivers once their anomaly pattern is
+        read (SOP.SOC: 0.415) — a discovery the first dimension cannot make.</li>
+  </ul>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Reader anchor</div>
+    <div class="callout-b">
+      <p>Read each unit's surroundings, not just the unit: accumulate the local anomalies of every
+      covariate field inside neighbourhood buffers of many radii, keep positive and negative
+      patterns separate, and test — against a conditional permutation null — whether those
+      patterns explain response heterogeneity beyond the covariates themselves.</p>
+    </div>
+  </div>
+  <figure class="fig">
+    <img src="assets/paper_figures/paper_fig1.png" alt="The SOH model: first-dimension covariate variation and second-dimension outlier patterns are each turned into strata by a decision tree, scored by the power of determinant" loading="lazy" decoding="async">
+    <figcaption><span class="pairtag tag-paper">Published reference · SOH</span>
+    The SOH model. First-dimension covariate variation (X) and second-dimension outlier patterns
+    (Ψ) are each turned into strata by a decision tree, and the geographical detector measures the
+    power of determinant of every predictor configuration across multiple neighbourhood
+    buffers.<span class="credit">Ren et al. (2026), Figure 1.</span></figcaption>
+  </figure>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>The power of determinant is not prediction</div>
+    <div class="callout-b">
+      <ul>
+        <li>PD measures how well a partition of the units separates the response, <b>on the same
+            data used to build the partition</b>. It is not cross-validated, and it carries no
+            causal claim.</li>
+        <li>If you need predictive accuracy at new locations, the right method is the SDO model of
+            Ren et al. (2025), not this one.</li>
+        <li>Positive spatial autocorrelation inflates PD, which is why Moran's I is reported next
+            to it in Step&nbsp;3.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 id="method-logic">1.2&nbsp;Method Logic</h3>
+  <p>Three papers form one line, and each supplies a piece the next one uses; the geographical
+  detector supplies the scoring statistic underneath all of them.</p>
+  <div class="flow">
+    <div class="chip"><b>SDA 2022</b>the second dimension: association carried by unsampled locations<br>
+      <a href="https://doi.org/10.1016/j.jag.2022.102834">Song, JAG</a> · <a href="../../pdf/SDA-song2022.pdf">PDF</a></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>SDO 2025</b>outliers become signal; prediction R² 0.555&nbsp;→&nbsp;0.671<br>
+      <a href="https://doi.org/10.1080/13658816.2025.2580414">Ren et al., IJGIS</a> · <a href="../../pdf/SDO-ren2025.pdf">PDF</a></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>SOH 2026</b>outlier machinery moved from prediction to explanation<br>
+      <a href="https://doi.org/10.1080/13658816.2026.2682957">Ren et al., IJGIS</a> · <a href="../../pdf/SOH-ren2026.pdf">PDF</a></div>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>Which paper for which question</div>
+    <div class="callout-b">
+      <p>Cite Song (2022) for the second dimension itself, Ren (2025) for the outlier
+      construction, Ren (2026) for the SOH model and PD, and Wang et al. (2010) for the
+      geographical detector. The distinction to hold on to: <b>SDO improves prediction, SOH
+      explains heterogeneity.</b></p>
+    </div>
+  </div>
+  <h4>Key concepts and equations</h4>
+  <p>Four building blocks drive the whole pipeline, one from each reference:</p>
+  <ul>
+    <li><b>Stratified power (PD / <i>q</i>-statistic):</b> q&nbsp;=&nbsp;1&nbsp;−&nbsp;SSW/SST over
+        the strata of a partition, with a non-central F significance test; reimplemented natively
+        in <code>code/R/fn_pd.R</code> — Wang&nbsp;et&nbsp;al. (2010)
+        <a href="https://doi.org/10.1080/13658810802443457">doi</a></li>
+    <li><b>The second dimension:</b> information at locations <i>outside</i> the samples carries
+        spatial association, generated from a searching range plus an operator over the
+        surrounding field — Song (2022)
+        <a href="https://doi.org/10.1016/j.jag.2022.102834">doi</a> ·
+        <a href="../../pdf/SDA-song2022.pdf">PDF</a></li>
+    <li><b>Spatial outlier patterns (Equations 3–4):</b> grid values are standardised
+        <i>locally</i> within each neighbourhood N<sub>r</sub>(u), and z-scores beyond ±s local
+        standard deviations are accumulated into SOP<sup>+</sup> and SOP<sup>−</sup> — outliers
+        treated as signal, not noise — Ren&nbsp;et&nbsp;al. (2025)
+        <a href="https://doi.org/10.1080/13658816.2025.2580414">doi</a> ·
+        <a href="../../pdf/SDO-ren2025.pdf">PDF</a></li>
+    <li><b>The SOH model (Equations 5–6):</b> SOP blocks become explanatory variables, a CART tree
+        stratifies the units, PD scores every configuration, and a conditional permutation null
+        tests whether the second dimension adds anything beyond the first —
+        Ren&nbsp;et&nbsp;al. (2026)
+        <a href="https://doi.org/10.1080/13658816.2026.2682957">doi</a> ·
+        <a href="../../pdf/SOH-ren2026.pdf">PDF</a></li>
+  </ul>
+
+  <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
+  <p>Everything tagged <i>Demo run</i> on this page regenerates from the scripts and data in this
+  folder; everything tagged <i>Published reference</i> is shown as a static comparison image or
+  table from Ren et al. (2026). The demo was last verified end to end on 2026-07-24 with
+  R&nbsp;4.6.0 — all 13 result tables regenerate byte-identically to the copies shipped in
+  <code>expected-results/tables/</code>.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Demo template</th><th>Published reference</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data</td>
+            <td>300 synthetic analysis units + 3,600 grid cells, 6 covariates with planted
+                anomalies (<code>data/demo/</code>)</td>
+            <td>Barley production over the eastern Australian barley belt; 12 covariates in
+                4 categories on ~1&nbsp;km grids</td></tr>
+        <tr><td>Tables</td>
+            <td><code>T01–T13</code> regenerated into <code>03_results/tables/</code>; verified
+                copies in <code>expected-results/tables/</code></td>
+            <td>Values from Ren et al. (2026) Figs&nbsp;7–10 excerpted beside the demo results in
+                §3</td></tr>
+        <tr><td>Figures</td>
+            <td><code>F01–F10</code> regenerated by <code>code/07_figures.R</code> (web copies in
+                <code>assets/demo_figures/</code>)</td>
+            <td>Ren et al. (2026) Figs&nbsp;1, 5–10, embedded as static reference images</td></tr>
+      </tbody>
+    </table>
+    <figcaption>What the template regenerates versus what is shown as published reference.</figcaption>
+  </figure>
+
+  <h4>Published application of this exact pipeline</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Application</th><th>Spatial unit</th><th>Response</th><th>Predictors</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Barley productivity drivers, eastern Australia (Ren&nbsp;et&nbsp;al. 2026 —
+            reference figures on this page)</td>
+            <td>Production unit on ~1&nbsp;km grids</td><td>Barley production (ton/km²)</td>
+            <td>12 covariates (climate / topography / soil / vegetation) + their SOP blocks over
+            ten 20–200&nbsp;km buffers</td><td>Published (IJGIS)</td></tr>
+        <tr><td>Synthetic demonstration (this page — all demo outputs)</td>
+            <td>300 points + 3,600 grid cells</td><td>Response with planted anomaly signal</td>
+            <td>6 covariates + their SOP blocks</td><td>Verified 2026-07-24</td></tr>
+      </tbody>
+    </table>
+    <figcaption>The published application shares the pipeline; the synthetic demo makes it
+    reproducible without external data — and, because the anomaly locations are planted, it
+    doubles as a correctness check.</figcaption>
+  </figure>
+
+  <h4>How to use this page</h4>
+  <ul>
+    <li><b>To reproduce the demo:</b> this folder already contains everything — the R scripts
+        (<code>code/</code>), the configuration (<code>config/</code>), and the synthetic example
+        data (<code>data/demo/</code>). Run <code>Rscript code/99_run_all.R</code> from the folder
+        root; every expected output is shown on this page so you can verify each step.</li>
+    <li><b>To apply SOH to your own problem:</b> read §2.3 (the two-table data contract), edit the
+        §2.2 config and the <code>ADAPT</code> blocks of the preparation script, then run the same
+        scripts unchanged (§4.1).</li>
+    <li><b>To write the paper:</b> §4.2 maps every result table to its manuscript element and
+        settles the application-versus-extension decision first.</li>
+  </ul>
+</section>
+
+<section id="setup">
+  <h2>2&nbsp;Setup, Structure &amp; Data Contract</h2>
+
+  <h3 id="environment">2.1&nbsp;Environment &amp; Dependencies</h3>
+  <p>The template runs on a bare R installation. Only <code>rpart</code> and <code>ggplot2</code>
+  are required; the rest add features and degrade gracefully when absent. The power-of-determinant
+  q statistic is implemented natively, so the <code>GD</code> package is optional. The verified
+  run used R&nbsp;4.6.0; a full run records its own <code>session-info.txt</code> under
+  <code>03_results/logs/</code>.</p>
+  <div class="codewrap">
+    <span class="code-label">R console</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># minimum to run the pipeline
+install.packages(c(&quot;rpart&quot;, &quot;ggplot2&quot;))
+
+# optional, each unlocks one feature
+install.packages(c(
+  &quot;patchwork&quot;,  # multi-panel figures (Moran, augmentation)
+  &quot;spdep&quot;,      # global Moran&#x27;s I of the response
+  &quot;sf&quot;,         # read shapefile study areas in your own data prep
+  &quot;GD&quot;          # cross-check the native q statistic against the published implementation
+))</code></pre>
+  </div>
+  <figure class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Package</th><th>Role</th><th>Required?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>rpart</code></td><td>CART stratification (Equation 5)</td><td>yes</td></tr>
+        <tr><td><code>ggplot2</code></td><td>all figures</td><td>yes</td></tr>
+        <tr><td><code>patchwork</code></td><td>combine multi-panel figures</td><td>optional</td></tr>
+        <tr><td><code>spdep</code></td><td>Moran's I with permutation inference</td><td>optional</td></tr>
+        <tr><td><code>sf</code></td><td>shapefile ingestion in your data prep</td><td>optional</td></tr>
+        <tr><td><code>GD</code></td><td>verify the native PD against <code>GD::gd()</code></td><td>optional</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Verified with R 4.6.0. Missing optional packages print a one-line notice and the
+    affected step is skipped, never failed.</figcaption>
+  </figure>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">i</span>No GD dependency by design</div>
+    <div class="callout-b">
+      <p>The geographical detector q statistic and its non-central F significance test are
+      reimplemented in base R in <code>code/R/fn_pd.R</code>. When <code>GD</code> happens to be
+      installed, <code>soh_pd_verify_against_GD()</code> runs both and returns them side by side
+      so you can confirm they agree.</p>
+    </div>
+  </div>
+
+  <h3 id="structure-config">2.2&nbsp;Project Structure &amp; Configuration</h3>
+  <p>Everything study-specific lives in one file, <code>config/config.R</code>. No path, variable
+  name, buffer radius, or threshold belongs anywhere else. The numbered scripts run in order and
+  each reads from and writes to <code>data/interim/</code>, so any step can be re-run on its own
+  after a configuration change.</p>
+  <div class="codewrap">
+    <span class="code-label">folder tree</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>SOH/
+├── soh.html                     # this guide
+├── assets/                      # figures shown in this guide (demo + paper)
+├── config/config.R              # every study-specific setting, in one file
+├── data/
+│   ├── demo/                    # synthetic example tables (points.csv, grids.csv)
+│   ├── interim/ processed/      # created on first run / your own data
+├── code/
+│   ├── 00_setup.R               # config, libraries, function loading
+│   ├── 01_prepare_data.R        # assemble and validate the two tables
+│   ├── 02_generate_sops.R       # build the second dimension
+│   ├── 03_pd_individual.R       # Moran&#x27;s I and single-factor PD
+│   ├── 04_pd_interactions.R     # SOP-SOP, covariate-SOP, categories
+│   ├── 05_validation.R          # gains, scenarios, permutation nulls
+│   ├── 06_sensitivity.R         # scale and threshold sweeps
+│   ├── 07_figures.R             # all figures
+│   ├── 99_run_all.R             # the whole pipeline
+│   ├── R/                       # fn_utils, fn_sop, fn_pd, fn_experiments, fn_plots
+│   └── gee/                     # Google Earth Engine covariate extraction
+├── expected-results/tables/     # T01–T13 of the verified run
+└── 03_results/                  # tables | figures | logs (auto-generated on run)</code></pre>
+  </div>
+  <h4>Main configuration file</h4>
+  <p>To run the built-in synthetic demo used throughout this page, leave <code>data$mode</code> as
+  <code>"demo"</code>; to run your own study, set it to <code>"user"</code> and give the column
+  names of your two tables.</p>
+  <div class="codewrap">
+    <span class="code-label">config/config.R (excerpt)</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># config/config.R  (excerpt — the full file documents every setting, with the
+# values used by the published barley study recorded beside each one)
+cfg &lt;- list(
+  study = list(id = &quot;demo&quot;, response_label = &quot;Response (unit)&quot;),
+  data  = list(
+    mode = &quot;demo&quot;,                 # &quot;demo&quot; | &quot;user&quot;
+    crs_epsg = 3577,               # projected CRS with metric units
+    dist_unit = &quot;km&quot;               # unit of x/y AND of the buffers below
+  ),
+  variables = list(
+    codes  = c(&quot;V1&quot;,&quot;V2&quot;,&quot;V3&quot;,&quot;V4&quot;,&quot;V5&quot;,&quot;V6&quot;),
+    category = c(V1=&quot;C1&quot;, V2=&quot;C1&quot;, V3=&quot;C2&quot;, V4=&quot;C2&quot;, V5=&quot;C3&quot;, V6=&quot;C3&quot;)
+  ),
+  sop = list(
+    buffers = seq(20, 200, 20),    # neighbourhood radii, in dist_unit
+    sd_threshold = 2,              # outlier threshold, in local SD
+    statistic = &quot;zsum&quot;             # accumulate z-scores beyond the threshold
+  ),
+  pd = list(cart_cp = 0.01)        # rpart complexity parameter
+)</code></pre>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>Copy per study</div>
+    <div class="callout-b">
+      <p>Treat this folder as a template, not a study. When a real project starts, copy the whole
+      folder and edit <code>config/config.R</code> in the copy. That keeps the reference
+      implementation clean and every study self-contained and independently reproducible. When
+      writing the manuscript, quote parameter values from the config, never from memory.</p>
+    </div>
+  </div>
+
+  <h3 id="data-contract">2.3&nbsp;Data Contract</h3>
+  <p>The SOH model needs exactly two tables on a common <b>projected</b> coordinate system with
+  metric units.</p>
+  <p><b><code>points</code></b> — one row per analysis unit, the support of the response. This is
+  what the model explains. Columns: <code>id</code>, <code>x</code>, <code>y</code>,
+  <code>response</code>, and one column per covariate.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>id</th><th>x</th><th>y</th><th>response</th><th>V1</th><th>V2</th><th>V3</th><th>V4</th><th>V5</th><th>V6</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>118.4</td><td>242.1</td><td>0.83</td><td>1.20</td><td>−0.44</td><td>0.07</td><td>1.55</td><td>−0.62</td><td>0.30</td></tr>
+        <tr><td>2</td><td>305.7</td><td>118.9</td><td>−1.14</td><td>−0.88</td><td>0.51</td><td>−1.02</td><td>0.14</td><td>0.77</td><td>−0.19</td></tr>
+        <tr><td>3</td><td>262.0</td><td>401.3</td><td>0.42</td><td>0.33</td><td>1.28</td><td>0.66</td><td>−0.41</td><td>−0.05</td><td>1.11</td></tr>
+        <tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+      </tbody>
+    </table>
+    <figcaption><code>points.csv</code> — analysis units. <code>x</code>/<code>y</code> are
+    projected easting/northing in the same unit as the buffers, <b>not</b>
+    longitude/latitude.</figcaption>
+  </figure>
+  <p><b><code>grids</code></b> — one row per fine grid cell covering the study area <i>and a
+  margin beyond it</i>. These unsampled cells are the second dimension. Same columns as
+  <code>points</code>, minus <code>response</code>.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>id</th><th>x</th><th>y</th><th>V1</th><th>V2</th><th>V3</th><th>V4</th><th>V5</th><th>V6</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>0.0</td><td>0.0</td><td>0.51</td><td>−0.20</td><td>0.88</td><td>1.02</td><td>−0.33</td><td>0.14</td></tr>
+        <tr><td>2</td><td>10.2</td><td>0.0</td><td>0.49</td><td>−0.18</td><td>0.83</td><td>0.97</td><td>−0.30</td><td>0.19</td></tr>
+        <tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+      </tbody>
+    </table>
+    <figcaption><code>grids.csv</code> — the covariate surface. Must be finer than the analysis
+    units and must extend past the study boundary by at least the largest buffer
+    radius.</figcaption>
+  </figure>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>The margin rule</div>
+    <div class="callout-b">
+      <p>Neighbourhoods extend past the outermost units. If the grid is clipped to the study
+      boundary, edge units get truncated neighbourhoods and systematically weaker outlier
+      patterns. Clip your covariates to the study area <b>plus a buffer</b> of at least the
+      largest radius. <code>code/01_prepare_data.R</code> warns when the margin falls below half
+      the largest buffer.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>3&nbsp;Reproduction Pipeline, Results &amp; Validation</h2>
+
+  <h3 id="pipeline-execution">3.1&nbsp;Pipeline Execution</h3>
+  <p>The whole pipeline runs end to end in about fifteen seconds on the demo. Every step reads its
+  input from <code>data/interim/</code> and writes its output there, so any single step can be
+  re-run on its own after a configuration change. Step numbers on this page match the script
+  numbers: Step&nbsp;1 runs <code>code/01_prepare_data.R</code>, and so on.</p>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Full run</div><div class="v"><code>Rscript code/99_run_all.R</code></div></div>
+    <div class="kv"><div class="k">Results folder</div><div class="v"><code>03_results/</code> (tables · figures · logs)</div></div>
+    <div class="kv"><div class="k">Verified outputs</div><div class="v"><code>expected-results/tables/</code></div></div>
+  </div>
+  <div class="codewrap">
+    <span class="code-label">terminal</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>Rscript code/99_run_all.R
+
+# 01 prepare  -&gt; T01, validation
+# 02 sops     -&gt; T02, sopvars.rds
+# 03 indiv    -&gt; T03, T04, F03, F05
+# 04 interact -&gt; T05-T08, F06
+# 05 validate -&gt; T09-T11, F07, F08
+# 06 sens     -&gt; T12, T13, F09, F10
+# 07 figures  -&gt; all figures written to 03_results/figures/</code></pre>
+  </div>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Expected on the demo</th><th>signal on (0.55)</th><th>signal off (0)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>strongest covariate PD</td><td class="num">≈ 0.26</td><td class="num">≈ 0.50</td></tr>
+        <tr><td>strongest SOP block PD</td><td class="num">≈ 0.61</td><td class="num">≈ 0.69</td></tr>
+        <tr><td>overall A1 / A2 / A3</td><td class="num">0.70 / 0.70 / 0.59</td><td class="num">0.75 / 0.82 / 0.82</td></tr>
+        <tr><td>conditional null</td><td>clears, p = 0.02</td><td><b>fails, p = 1.0</b></td></tr>
+      </tbody>
+    </table>
+    <figcaption>The demo is the regression test. The signal-off column is the falsification case —
+    if the conditional null passes there, the pipeline has a leak.</figcaption>
+  </figure>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>Everything is logged</div>
+    <div class="callout-b">
+      <p><code>03_results/logs/run_&lt;date&gt;.log</code> records the full run and
+      <code>session-info.txt</code> captures the exact package versions. Commit
+      <code>config/config.R</code>, the logs, and the deposit DOI together, and anyone can
+      reproduce your numbers exactly.</p>
+    </div>
+  </div>
+
+  <h3 id="core-steps">3.2&nbsp;Core Analytical Steps</h3>
+  <p>Four analytical stages build the model (Steps 1–4), and two validation stages test it
+  (Steps 5–6, in §3.3). Each stage has the same anatomy: purpose → script → result →
+  <i>how to read it</i>, with the demo output on the left of every figure pair and the published
+  counterpart from Ren et al. (2026) on the right.</p>
+
+  <article class="step-card" id="step-1">
+    <div class="step-card-h">
+      <span class="step-label">Step 1 · verified</span>
+      <h4>Data preparation</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Build the two tables (synthetic in demo mode, your ingestion code in user mode), then run
+      validation checks that catch the failures which silently produce meaningless PD values:
+      unprojected coordinates, a grid coarser than the units, a missing margin, constant
+      covariates.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>Rscript code/01_prepare_data.R
+# demo mode injects known local anomalies into half the covariates, so the
+# whole pipeline runs before you have any data of your own.</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output (run log)</span>01 PREPARE DATA
+mode: demo — generating a synthetic dataset with known anomalies
+demo tables written to data/demo/
+validation passed
+table written: 03_results/tables/T01_data_summary.csv  (7 rows)
+analysis units: 300   grid cells: 3600   covariates: 6
+cached: data/interim/data.rds</div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo_figures/F01_response_map.png" alt="Demo response map" loading="lazy" decoding="async">
+          <figcaption>F01 — the demo response over the 300 analysis units: spatially structured
+          (Moran's I = 0.585, Step&nbsp;3), depending on both the smooth covariates and the
+          planted anomaly signal.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo_figures/F02_covariate_maps.png" alt="Demo covariate maps" loading="lazy" decoding="async">
+          <figcaption>F02 — the demo covariate fields on the fine grid: smooth first-dimension
+          surfaces, half of them carrying compact injected anomalies.</figcaption>
+        </figure>
+      </div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><i>(what the demo builds)</i> A smooth autocorrelated covariate field (the first
+                dimension) plus compact injected anomalies (the second dimension), and a response
+                that depends on <b>both</b>. Because the anomaly locations are known, the demo
+                doubles as a correctness check.</li>
+            <li><i>(the knob that matters)</i> <code>cfg$demo$outlier_signal_weight</code> controls
+                how much the response depends on the second dimension. Set it to 0 and the second
+                dimension carries no information — the falsification case the method must be
+                unable to claim (see Step&nbsp;5).</li>
+            <li><i>(what to check first)</i> The buffer diagnostic printed here reports whether
+                your largest radius sits at the recommended 10–20% of the maximum pairwise
+                distance between units. Too large and SOPs stop being local; too small and
+                neighbourhoods hold too few cells for a standard deviation to mean anything.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>T01_data_summary.csv</code> written; the console reports 300 analysis units,
+          3,600 grid cells, 6 covariates, and "validation passed" before you move on.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-2">
+    <div class="step-card-h">
+      <span class="step-label">Step 2 · verified</span>
+      <h4>Build the second dimension (SOP)</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>For each covariate and each neighbourhood radius, standardise the grid values
+      <b>locally</b> and accumulate the anomalies. Positive and negative patterns are kept
+      separate throughout, because a neighbourhood surrounded by unusually high values and one
+      surrounded by unusually low values are different geographic situations.</p>
+      <div class="callout c-note">
+        <div class="callout-h"><span class="callout-i">∑</span>Equations 3–4</div>
+        <div class="callout-b">
+          <p style="font-family:var(--mono);font-size:.86rem;line-height:1.9">z(x<sub>v</sub>) = ( x<sub>v</sub> − mean<sub>N<sub>r</sub>(u)</sub> ) / sd<sub>N<sub>r</sub>(u)</sub><br>SOP<sup>+</sup>(X,r,u) = Σ z(x<sub>v</sub>) for v in N<sub>r</sub>(u) with z(x<sub>v</sub>) &gt; s<br>SOP<sup>−</sup>(X,r,u) = Σ z(x<sub>v</sub>) for v in N<sub>r</sub>(u) with z(x<sub>v</sub>) &lt; −s</p>
+          <p style="font-size:.85rem;color:var(--muted)">Each covariate yields 2 × (number of
+          radii) SOP columns per unit. The standardisation is local to each neighbourhood, not
+          global — that is what makes an SOP a local anomaly rather than a global extreme.
+          s&nbsp;=&nbsp;2 reproduces the published model.</p>
+        </div>
+      </div>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>Rscript code/02_generate_sops.R
+
+# under the hood (code/R/fn_sop.R):
+sopvars &lt;- soh_generate_sop_all(points, grids, cfg)
+# -&gt; named list, one data.frame per covariate, each with 2 * length(buffers) columns
+#    named p_b20, p_b40, ... (positive) and n_b20, n_b40, ... (negative)</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <p>A diagnostic table (<code>T02</code>) reports, per covariate, the share of empty SOP
+      cells. A column that is entirely zero carries no information, usually because the buffer is
+      too small to hold <code>min_cells</code> grid cells, or the threshold is too strict for a
+      smooth covariate.</p>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>variable</th><th class="num">n_columns</th><th class="num">zero_share</th><th class="num">mean_positive</th><th class="num">mean_negative</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>V1</td><td class="num">20</td><td class="num">0.33</td><td class="num">20.3</td><td class="num">−44.9</td></tr>
+            <tr><td>V2</td><td class="num">20</td><td class="num">0.33</td><td class="num">38.1</td><td class="num">−26.6</td></tr>
+            <tr><td>V3</td><td class="num">20</td><td class="num">0.43</td><td class="num">38.3</td><td class="num">−39.4</td></tr>
+            <tr><td>V4</td><td class="num">20</td><td class="num">0.59</td><td class="num">37.9</td><td class="num">−16.7</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>T02_sop_diagnostics.csv</code> (demo). A <code>zero_share</code> above
+        0.9 flags a covariate with no local anomaly structure.</figcaption>
+      </figure>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo_figures/F04_sop_maps.png" alt="Demo SOP maps across four buffer radii" loading="lazy" decoding="async">
+          <figcaption>Demo SOPs for the covariate with the strongest SOP block, positive (red,
+          top) and negative (blue, bottom) across four buffer radii. Anomalies are near-absent at
+          20 km and build as the neighbourhood widens.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SOH</span>
+          <img src="assets/paper_figures/paper_fig6.png" alt="Ren et al. 2026 Fig 6: SOPs of the three highest-PD variables" loading="lazy" decoding="async">
+          <figcaption>Ren et al. (2026) Fig 6: SOPs of the three highest-PD variables (SOP.AT,
+          SOP.VPD, SOP.pHc) across ten buffers, over the eastern Australian barley
+          belt.</figcaption>
+        </figure>
+      </div>
+      <div class="pairnote">Same construct, same behaviour: at small radii almost nothing exceeds
+      two local standard deviations; as the radius grows, coherent positive and negative regions
+      emerge and sharpen. That growth is the signal the scale-sensitivity step in Step&nbsp;6
+      quantifies.</div>
+      <h4>Paper reference</h4>
+      <p>Ren&nbsp;et&nbsp;al. (2026) Fig.&nbsp;6 (<a href="../../pdf/SOH-ren2026.pdf">PDF</a>);
+      the SOP construction follows Ren&nbsp;et&nbsp;al. (2025)
+      (<a href="../../pdf/SDO-ren2025.pdf">PDF</a>) and the second-dimension idea of Song (2022)
+      (<a href="../../pdf/SDA-song2022.pdf">PDF</a>).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><i>(paper reading)</i> The SOP maps show that anomaly structure is
+                scale-dependent: the same covariate is locally unremarkable at 20 km but strongly
+                patterned at 200 km. Positive and negative regions are spatially organised, not
+                scattered — evidence that they encode real geography rather than noise.</li>
+            <li><i>(mechanism)</i> An SOP is high where a unit sits in a neighbourhood whose
+                covariate field departs sharply from its local average. It reads the <i>shape</i>
+                of the surroundings, which a single covariate value at the unit cannot
+                express.</li>
+            <li><i>(case reasoning)</i> In barley, the positive SOP of soil pH concentrates where
+                alkaline pockets interrupt otherwise acidic cropland; in a health study, expect
+                the positive SOP of PM2.5 to light up around point sources embedded in cleaner
+                surroundings. The map is a hypothesis generator for <i>where</i> second-dimension
+                effects will matter.</li>
+            <li><i>(what to check)</i> If your SOP maps are blank at every radius, the covariate
+                is too smooth to have a second dimension. Lower <code>sd_threshold</code>, widen
+                the smallest buffer, or accept it as a null result rather than tuning until
+                something appears.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>T02_sop_diagnostics.csv</code> shows zero_share 0.33–0.59 on the demo (no
+          covariate above 0.9), and <code>data/interim/sopvars.rds</code> is cached.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-3">
+    <div class="step-card-h">
+      <span class="step-label">Step 3 · verified</span>
+      <h4>Individual power of determinant</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Before scoring the SOPs, establish that the response is spatially structured at all, then
+      compare each covariate against its own SOP block. Each covariate and each SOP block is
+      stratified by a CART tree and scored by PD (Equation 6); the core SOH claim is that the SOP
+      block reaches a higher PD than the covariate it was derived from.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal + R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>Rscript code/03_pd_individual.R
+# global Moran&#x27;s I of the response with 999 permutations (spdep)
+
+individual &lt;- soh_exp_individual(points, sopvars, cfg)
+#   label     type      qv     sig       n_strata
+#   SOP.V2    SOP     0.614   3.1e-10       19
+#   SOP.V1    SOP     0.556   7.8e-10       16
+#   ...
+#   V1        variable 0.263  9.5e-10       10   &lt;- strongest raw covariate</code></pre>
+      </div>
+      <h4>Spatial autocorrelation of the response</h4>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo_figures/F03_moran.png" alt="Demo Moran's I scatter and permutation null" loading="lazy" decoding="async">
+          <figcaption>Demo Moran's I = 0.585 (p = 0.001). Left: Moran scatter of standardised
+          response against its spatial lag. Right: the observed statistic (red) far outside the
+          permutation null.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SOH</span>
+          <img src="assets/paper_figures/paper_fig5.png" alt="Ren et al. 2026 Fig 5: barley Moran's I" loading="lazy" decoding="async">
+          <figcaption>Ren et al. (2026) Fig 5: barley production Moran's I = 0.692
+          (pseudo-p = 0.001, 999 permutations).</figcaption>
+        </figure>
+      </div>
+      <div class="pairnote">Both responses are strongly, significantly autocorrelated. This is a
+      prerequisite the SOH claim rests on, and also the caveat attached to every PD value
+      below.</div>
+      <h4>Covariate versus its SOP block</h4>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo_figures/F05_individual_pd.png" alt="Demo individual PD of covariates and SOP blocks" loading="lazy" decoding="async">
+          <figcaption>Demo PD of each covariate (blue) and its SOP block (red). Every SOP block
+          outscores its covariate; the strongest SOP reaches 0.61 against 0.26 for the strongest
+          raw covariate.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SOH</span>
+          <img src="assets/paper_figures/paper_fig7.png" alt="Ren et al. 2026 Fig 7: individual PD of covariates and SOPs" loading="lazy" decoding="async">
+          <figcaption>Ren et al. (2026) Fig 7: individual PD of the 12 covariates (a) and their
+          SOPs (b). SOP.pHc reaches 0.467 against 0.205 for pHc; SOP.SOC 0.415 against 0.032 for
+          SOC.</figcaption>
+        </figure>
+      </div>
+      <div class="pairnote">The rank shift is the headline of this step. Soil variables that are
+      weak on their own (SOC 0.032) become among the strongest once their spatial anomaly pattern
+      is read (SOP.SOC 0.415).</div>
+      <h4>Paper reference</h4>
+      <p>Ren&nbsp;et&nbsp;al. (2026) Figs.&nbsp;5 and 7
+      (<a href="../../pdf/SOH-ren2026.pdf">PDF</a>); the PD statistic follows Wang&nbsp;et&nbsp;al.
+      (2010).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><i>(paper reading)</i> Each SOP block outscoring its covariate is the SOH claim in
+                its simplest form: the <i>configuration</i> of local anomalies explains more
+                heterogeneity than the covariate's own value. In Ren et al. (2026) SOP.pHc (0.467)
+                more than doubles pHc (0.205), and SOP.SOC (0.415) beats SOC (0.032) more than
+                tenfold.</li>
+            <li><i>(mechanism)</i> A high SOP-block PD means units that share a neighbourhood
+                anomaly signature also share response levels — spatial dependence acting through
+                the surroundings, not the site.</li>
+            <li><i>(case reasoning)</i> Rank the SOP-minus-covariate gap per variable. The largest
+                gaps flag drivers that act <i>through spatial context</i>. In barley the soil
+                variables gain most, consistent with patchy soil chemistry that a plot-level
+                average washes out; in an urban port expect amenity and accessibility variables to
+                gain most, because what a neighbourhood is <i>near</i> matters more than what it
+                contains.</li>
+            <li><i>(what to check — and hold your claim)</i> A high SOP-only PD is <b>not yet
+                evidence</b>. SOPs summarise the covariate field around a unit, so they correlate
+                with the covariate at the unit by construction, and there are many of them.
+                Withhold the second-dimension claim until the conditional null in Step&nbsp;5
+                clears. Also confirm <code>n_strata</code> is well below the number of units, so
+                the tree is stratifying rather than memorising.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>T03_moran.csv</code> reports Moran's I = 0.585 (p = 0.001);
+          <code>T04_individual_pd.csv</code> is led by SOP.V2 = 0.614 against 0.263 for the
+          strongest raw covariate on the demo data.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-4">
+    <div class="step-card-h">
+      <span class="step-label">Step 4 · verified</span>
+      <h4>Interactions</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>PD is computed for every pair of factors and classified in geographical-detector terms —
+      whether two factors together explain more than the sum of their parts (enhance, nonlinear),
+      more than the stronger alone (enhance, bivariate), or less (weaken). Interactions run at two
+      levels: individual SOP pairs and thematic category blocks.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal + R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>Rscript code/04_pd_interactions.R
+pairs_ss  &lt;- soh_exp_pairs(points, sopvars, individual, cfg, mode = &quot;sop_sop&quot;)
+pairs_vs  &lt;- soh_exp_pairs(points, sopvars, individual, cfg, mode = &quot;var_sop&quot;)
+categories &lt;- soh_exp_categories(points, sopvars, cfg)
+#   label            qv     q1     q2     interaction
+#   SOP.V1 &amp; SOP.V2  0.695  0.556  0.614  enhance, bivariate</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo_figures/F06a_interaction_sop_sop.png" alt="Demo SOP-by-SOP interaction matrix" loading="lazy" decoding="async">
+          <figcaption>Demo SOP × SOP interaction matrix. Every pair exceeds either SOP alone; the
+          strongest reaches 0.70.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SOH</span>
+          <img src="assets/paper_figures/paper_fig8.png" alt="Ren et al. 2026 Fig 8: interaction PD matrices" loading="lazy" decoding="async">
+          <figcaption>Ren et al. (2026) Fig 8: interaction PD as a dot matrix (a, SOP × SOP),
+          category lollipop (b), covariate × SOP heatmap (c), and category × category (d).</figcaption>
+        </figure>
+      </div>
+      <div class="pairnote">The published matrices are denser (12 covariates, four categories) but
+      tell the same story: interactions lift PD above every individual factor, and the lift is
+      strongest across thematic boundaries.</div>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>Interaction (Ren et al. 2026)</th><th class="num">PD</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>SOP.C1 × SOP.C3  (climate × soil)</td><td class="num">0.686</td></tr>
+            <tr><td>SOP.C3 × SOP.C4  (soil × vegetation)</td><td class="num">0.666</td></tr>
+            <tr><td>SOP.C2 × SOP.C3  (topography × soil)</td><td class="num">0.663</td></tr>
+            <tr><td>Variable.C1 × SOP.C3  (climate value × soil anomaly)</td><td class="num">0.72</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Top category-level interactions reported in the paper. Soil anomaly patterns
+        (SOP.C3) appear in every strongest pair.</figcaption>
+      </figure>
+      <figure class="fig">
+        <img style="max-width:560px" src="assets/demo_figures/F06b_interaction_var_sop.png" alt="Demo covariate-by-SOP interaction heatmap" loading="lazy" decoding="async">
+        <figcaption><span class="pairtag tag-demo">Demo run</span> F06b — covariate × SOP
+        interaction heatmap, the demo counterpart of panel (c) of Ren et al. (2026)
+        Fig&nbsp;8.</figcaption>
+      </figure>
+      <h4>Paper reference</h4>
+      <p>Ren&nbsp;et&nbsp;al. (2026) Fig.&nbsp;8
+      (<a href="../../pdf/SOH-ren2026.pdf">PDF</a>); the interaction typing follows the
+      geographical detector of Wang&nbsp;et&nbsp;al. (2010).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><i>(paper reading)</i> The strongest interactions in Ren et al. (2026) all involve
+                the soil-pH and soil-carbon SOPs crossed with a climate factor. Climate sets the
+                broad envelope of barley productivity; soil anomalies explain the departures
+                within it, so the two together partition the response far better than either alone
+                (SOP.C1 × SOP.C3 = 0.686 against 0.467 for the best single factor).</li>
+            <li><i>(mechanism)</i> An 'enhance, bivariate' or 'enhance, nonlinear' label means the
+                two factors carve the study area along <i>different</i> spatial seams. Stacking
+                them creates finer, more homogeneous strata than either seam alone.</li>
+            <li><i>(case reasoning)</i> Read the interaction table as a map of which driver
+                <i>pairs</i> co-govern the outcome. Cross-category interactions (climate × soil)
+                are more interesting than within-category ones, because they point to a coupled
+                process rather than two facets of one. In a health port, a pollution-SOP ×
+                density-SOP interaction would flag neighbourhoods where an emission anomaly and a
+                crowding anomaly compound.</li>
+            <li><i>(what to check)</i> The interaction-type distribution (<code>T08</code>) is a
+                result in itself. A model where every pair merely 'enhances bivariate' behaves
+                differently from one full of 'enhance nonlinear' pairs — the latter signals
+                genuine synergy that no additive model would find.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>T05_pairs_sop_sop.csv</code> is led by SOP.V1&nbsp;&amp;&nbsp;SOP.V2 = 0.695
+          ('enhance, bivariate') on the demo data; <code>T08_interaction_types.csv</code> holds
+          the type distribution.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <h3 id="validation-interpretation">3.3&nbsp;Results, Validation &amp; Interpretation</h3>
+  <p>Three checks in increasing strength close the pipeline: how much the second dimension adds
+  per variable, which of the three overall models wins, and — decisively — whether the gain
+  survives a null that controls for both dimensionality and the SOP–covariate correlation
+  (Step&nbsp;5); a scale and threshold sweep then shows the conclusions do not hinge on the two
+  free parameters (Step&nbsp;6).</p>
+
+  <article class="step-card" id="step-5">
+    <div class="step-card-h">
+      <span class="step-label">Step 5 · verified</span>
+      <h4>Validation — the headline</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Quantify the gain from the second dimension per covariate (augmentation), compare the
+      three overall scenarios (A1 SOPs only, A2 both dimensions, A3 covariates only), and run the
+      two permutation nulls. The conditional null is an addition to the source study and the
+      single most important part of the reproduction.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal + R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>Rscript code/05_validation.R
+aug &lt;- soh_exp_augmentation(points, sopvars, cfg)   # per variable and per category</code></pre>
+      </div>
+      <h4>Augmentation: gain from adding the SOP</h4>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo_figures/F07a_augmentation_variable.png" alt="Demo augmentation gains per covariate" loading="lazy" decoding="async">
+          <figcaption>Demo: PD of each covariate with and without its SOP (left), and the gain
+          (right). Every covariate gains; the median gain is +0.34.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SOH</span>
+          <img src="assets/paper_figures/paper_fig9.png" alt="Ren et al. 2026 Fig 9: augmentation" loading="lazy" decoding="async">
+          <figcaption>Ren et al. (2026) Fig 9: covariate-level (a,b) and category-level (c,d) PD
+          with and without SOP. Gains range from +0.179 (NPP) to +0.399 (SOC); every category
+          improves.</figcaption>
+        </figure>
+      </div>
+      <div class="pairnote">The demo and the paper produce the same shape — a uniform, sizeable
+      positive gain across all variables — which is exactly what a working SOH reproduction should
+      look like.</div>
+      <figure class="fig">
+        <img style="max-width:560px" src="assets/demo_figures/F07b_augmentation_category.png" alt="Demo category-level augmentation" loading="lazy" decoding="async">
+        <figcaption><span class="pairtag tag-demo">Demo run</span> F07b — category-level
+        augmentation, the demo counterpart of panels (c,d) of Ren et al. (2026)
+        Fig&nbsp;9.</figcaption>
+      </figure>
+      <h4>The three overall scenarios</h4>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo_figures/F08_overall_scenarios.png" alt="Demo overall PD of the three scenarios" loading="lazy" decoding="async">
+          <figcaption>Demo overall PD: A1 SOP-only 0.70, A2 both 0.70, A3 covariates-only 0.59.
+          The second dimension lifts overall PD by +0.11.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SOH</span>
+          <img src="assets/paper_figures/paper_fig10.png" alt="Ren et al. 2026 Fig 10a: overall scenarios" loading="lazy" decoding="async">
+          <figcaption>Ren et al. (2026) Fig 10a: A1 = 0.641, A2 = 0.716, A3 = 0.635. The combined
+          model is best; SOPs alone slightly beat covariates alone.</figcaption>
+        </figure>
+      </div>
+      <div class="pairnote">In both, adding SOPs to the covariates raises overall PD, and SOPs on
+      their own are competitive with the entire conventional covariate set.</div>
+      <h4>The two permutation nulls — the decisive test</h4>
+      <p>Two mechanisms inflate the SOP-only PD regardless of whether local anomalies carry any
+      information: sheer dimensionality (hundreds of SOP columns), and the fact that an SOP
+      correlates with the covariate field it summarises. Only a <i>conditional</i> null controls
+      for both.</p>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>Test</th><th class="num">observed</th><th class="num">null mean</th><th class="num">empirical p</th><th>verdict (demo)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Marginal</b> — SOP-only vs shuffled SOP</td><td class="num">0.699</td><td class="num">0.400</td><td class="num">0.02</td><td>clears (necessary, weak)</td></tr>
+            <tr><td><b>Conditional</b> — covariates+SOP vs covariates+shuffled SOP</td><td class="num">0.700</td><td class="num">0.612</td><td class="num">0.02</td><td><b>clears (decisive)</b></td></tr>
+            <tr><td>reference: covariates only (A3)</td><td class="num">0.586</td><td class="num">—</td><td class="num">—</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>T11_permutation_null.csv</code> (demo, signal on). The conditional null
+        asks the question the paper actually claims: does the second dimension add anything
+        <i>beyond</i> the first?</figcaption>
+      </figure>
+      <div class="callout c-warn">
+        <div class="callout-h"><span class="callout-i">!</span>Why the marginal null is not enough — the falsification test</div>
+        <div class="callout-b">
+          <p>Set <code>cfg$demo$outlier_signal_weight = 0</code> so the response depends only on
+          the smooth covariates, and re-run. The SOP-only PD still reaches 0.745 and still clears
+          the marginal null — yet covariates alone score 0.825, and the <b>conditional null fails
+          at p = 1.0</b>. A study that reported that 0.745 as evidence for the second dimension
+          would be reporting an artefact. Always report the conditional null.</p>
+        </div>
+      </div>
+      <h4>Paper reference</h4>
+      <p>Ren&nbsp;et&nbsp;al. (2026) Figs.&nbsp;9–10
+      (<a href="../../pdf/SOH-ren2026.pdf">PDF</a>); the permutation-null layer is an addition of
+      this template.</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><i>(paper reading)</i> Ren et al. (2026) report the combined model as best (0.716)
+                and interpret the SOP gain as evidence that outlier patterns explain heterogeneity
+                beyond the covariates. The augmentation figure supports this variable by
+                variable.</li>
+            <li><i>(the deeper point)</i> A high SOP-only PD proves nothing on its own, because
+                SOPs are built from the covariate field and there are hundreds of them. The claim
+                lives or dies on the conditional null: real SOPs must beat <i>shuffled</i> SOPs
+                once the covariates are already in the model.</li>
+            <li><i>(case reasoning)</i> When you port SOH, run the falsification test first on
+                your own data — build a response you <i>know</i> depends only on covariates and
+                confirm the conditional null fails. If it passes on a known-null response, your
+                pipeline has a leak (often an edge-effect or an id misalignment between points and
+                grids).</li>
+            <li><i>(what to report)</i> Put the conditional null in the body of the paper, not the
+                supplement. A reviewer who has to hunt for it will assume it was buried, and it is
+                the one number that separates a real second-dimension effect from SOPs quietly
+                proxying the covariates.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>T11_permutation_null.csv</code> shows the conditional null clearing at
+          p&nbsp;=&nbsp;0.02 (observed 0.700 vs null mean 0.612) with the signal on — and failing
+          at p&nbsp;=&nbsp;1.0 in the signal-off falsification case.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-6">
+    <div class="step-card-h">
+      <span class="step-label">Step 6 · verified</span>
+      <h4>Scale and threshold sensitivity</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Sweep the neighbourhood radius and the outlier threshold. The headline methodological
+      finding of the reference study came from the scale sweep: PD of the SOP-only and combined
+      models rose with radius and stabilised near 200&nbsp;km, while the covariate-only model was
+      flat. That plateau is the scale at which local anomaly structure stops adding context.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">terminal + R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>Rscript code/06_sensitivity.R
+scale_df &lt;- soh_exp_scale(points, sopvars, cfg)        # PD vs largest radius
+thr_df   &lt;- soh_exp_threshold(points, grids, cfg)      # PD vs 1.5 / 2 / 2.5 SD</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo_figures/F09_scale_sensitivity.png" alt="Demo scale sensitivity curves" loading="lazy" decoding="async">
+          <figcaption>Demo: overall PD against the largest neighbourhood radius. SOP-only (orange)
+          and combined (red) rise then plateau; covariates-only (grey) is flat by
+          construction.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SOH</span>
+          <img src="assets/paper_figures/paper_fig10.png" alt="Ren et al. 2026 Fig 10b: scale sensitivity" loading="lazy" decoding="async">
+          <figcaption>Ren et al. (2026) Fig 10b: SOP-only PD climbs steeply to ~140 km, then
+          flattens toward a plateau near 200 km; original-only is scale-invariant.</figcaption>
+        </figure>
+      </div>
+      <div class="pairnote">Identical qualitative behaviour. The plateau radius is the scale
+      finding to report — the distance beyond which widening the neighbourhood adds no explanatory
+      context.</div>
+      <figure class="fig">
+        <img style="max-width:560px" src="assets/demo_figures/F10_threshold_sensitivity.png" alt="Demo threshold sweep" loading="lazy" decoding="async">
+        <figcaption><span class="pairtag tag-demo">Demo run</span> Demo threshold sweep: overall
+        PD under outlier thresholds of 1.5, 2, and 2.5 standard deviations. Combined PD moves
+        within a spread of 0.03, so the conclusions do not hinge on the choice of
+        2&nbsp;SD.</figcaption>
+      </figure>
+      <h4>Paper reference</h4>
+      <p>Ren&nbsp;et&nbsp;al. (2026) Fig.&nbsp;10b
+      (<a href="../../pdf/SOH-ren2026.pdf">PDF</a>).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><i>(paper reading)</i> The ~200 km plateau means barley's second dimension is a
+                broad-scale phenomenon: local anomalies matter up to a regional extent, beyond
+                which the neighbourhood becomes so wide that it converges on the global average
+                and SOPs stop being local.</li>
+            <li><i>(mechanism)</i> Read the plateau on the <b>SOP-only</b> curve, not the combined
+                one. The combined curve is anchored by the covariate floor and would report a
+                plateau it inherited rather than earned.</li>
+            <li><i>(case reasoning)</i> The plateau radius is a domain fingerprint. A
+                commuting-scale outcome (housing, crashes) will plateau at a few kilometres; a
+                climate-driven outcome (crops, fire) at hundreds. If your PD is still rising at
+                the largest radius in the sweep, extend <code>cfg$scale_sweep</code> before
+                claiming any threshold — the finding is the <i>location</i> of the plateau, and
+                you cannot report one you have not reached.</li>
+            <li><i>(what to check)</i> Because CART is greedy, the scale curve need not rise
+                monotonically and the combined model can dip below SOP-only. That is expected
+                behaviour, not a bug. Interpret the plateau, not each step; the threshold sweep
+                confirms the conclusions are stable to the one free parameter that a reviewer will
+                question.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>T12_scale_sensitivity.csv</code> shows the plateau inside the sweep range;
+          <code>T13_threshold_sensitivity.csv</code> keeps the combined PD within a 0.032 spread
+          across thresholds 1.5 / 2 / 2.5&nbsp;SD on the demo data.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <p><code>code/07_figures.R</code> regenerates all ten figures (<code>F01–F10</code>) from the
+  cached interim data alone — no recomputation — into <code>03_results/figures/</code>; the web
+  copies shown on this page live in <code>assets/demo_figures/</code>.</p>
+
+  <h4>Validation summary</h4>
+  <figure class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Validation item</th><th>File</th><th>Decision rule</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Conditional permutation null</td><td><code>T11_permutation_null.csv</code></td><td>must clear (demo: p = 0.02) and must fail on the signal-off falsification case (p = 1.0)</td></tr>
+        <tr><td>Augmentation gains</td><td><code>T09_augmentation.csv</code></td><td>every covariate gains from its SOP (demo median gain +0.34)</td></tr>
+        <tr><td>Scale sweep</td><td><code>T12_scale_sensitivity.csv</code></td><td>the SOP-only curve reaches a plateau inside the sweep range</td></tr>
+        <tr><td>Threshold sweep</td><td><code>T13_threshold_sensitivity.csv</code></td><td>combined PD stable across 1.5 / 2 / 2.5 SD (demo spread 0.032)</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Four decision rules that must hold before the results are written up.</figcaption>
+  </figure>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Main finding narrative</div>
+    <div class="callout-b">
+      <p>The demo recovers its planted structure exactly: every SOP block outscores the covariate
+      it was derived from (strongest 0.614 vs 0.263), the three scenarios rank
+      A1&nbsp;0.70&nbsp;/ A2&nbsp;0.70&nbsp;/ A3&nbsp;0.59, and the conditional permutation null
+      clears at p&nbsp;=&nbsp;0.02 — while failing, exactly as it must, when the planted
+      second-dimension signal is switched off. The second dimension explains heterogeneity beyond
+      the covariates, and the validation layer shows the claim is not an artefact of
+      dimensionality or SOP–covariate correlation.</p>
+    </div>
+  </div>
+</section>
+
+<section id="adaptation">
+  <h2>4&nbsp;Adaptation, Writing &amp; Reproducibility</h2>
+
+  <h3 id="port-domain">4.1&nbsp;Port to Your Domain</h3>
+  <p>A candidate problem needs four things. The binding one is covariates at a resolution
+  <i>finer</i> than your analysis units — without that, there is no second dimension to
+  extract.</p>
+  <ul>
+    <li><b>A response on discrete analysis units</b> — polygons or points. Continuous fields must
+        be aggregated to units first (a modifiable areal unit problem to acknowledge).</li>
+    <li><b>Covariates finer than the units</b> — remote sensing, gridded climate, high-resolution
+        soil, dense sensors. Anything published only at unit level carries no second
+        dimension.</li>
+    <li><b>Genuine local anomalies</b> — hotspots, pockets, scars, clusters. A perfectly smooth
+        covariate has an empty second dimension.</li>
+    <li><b>Room around the units</b> — covariate coverage must extend past the study boundary by
+        at least the largest buffer.</li>
+  </ul>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Domain</th><th>Response</th><th>Units</th><th>Covariate categories</th><th>Buffers</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Public health</td><td>disease incidence</td><td>counties</td><td>pollution / climate / built env / access</td><td>5–50 km</td></tr>
+        <tr><td>Urban studies</td><td>house price / m²</td><td>neighbourhoods</td><td>amenity / accessibility / environment / morphology</td><td>0.5–5 km</td></tr>
+        <tr><td>Transport safety</td><td>crashes / vehicle-km</td><td>traffic zones</td><td>traffic / network / land use</td><td>0.2–3 km</td></tr>
+        <tr><td>Ecology</td><td>species richness</td><td>survey plots</td><td>structure / productivity / terrain / disturbance</td><td>100 m–2 km</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Four worked mappings. Set the buffer radii to distances that mean something in the
+    system — a commuting range, a dispersal distance, a catchment — not to round
+    numbers.</figcaption>
+  </figure>
+  <h4>What to edit</h4>
+  <ol>
+    <li>Prepare <code>data/processed/points.csv</code> and <code>grids.csv</code> (use
+        <code>code/gee/</code> if your covariates come from Earth Engine).</li>
+    <li>In <code>config/config.R</code>: set <code>data$mode = "user"</code>, the column names, a
+        projected <code>crs_epsg</code>, the variable <code>codes</code> and their
+        <code>category</code>, and the <code>buffers</code>.</li>
+    <li>Write your ingestion code in the two blocks of <code>code/01_prepare_data.R</code> marked
+        <code>ADAPT</code>, then run <code>code/99_run_all.R</code> and work through the §4.3
+        checklist.</li>
+  </ol>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>Detect a second dimension before committing</div>
+    <div class="callout-b">
+      <p>Generate SOPs at one representative radius and check the non-zero share per covariate:
+      <code>vapply(soh_generate_sop_all(points, grids, cfg, buffers = median(cfg$sop$buffers)),
+      function(b) mean(as.matrix(b) != 0), numeric(1))</code>. A covariate below ~0.1 has almost
+      no local anomaly structure at that scale — try another radius before dropping it, since
+      anomalies exist at a scale.</p>
+    </div>
+  </div>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>When SOH is the wrong method</div>
+    <div class="callout-b">
+      <p>Use a different method if you need prediction (use SDO), a causal effect (PD is
+      associational), your covariates are smooth (empty second dimension), your covariates come at
+      unit resolution (nothing to extract), or you have very few units (CART becomes unstable
+      below ~100).</p>
+    </div>
+  </div>
+
+  <h3 id="write-paper">4.2&nbsp;Write the Paper</h3>
+  <p>The published application shares one manuscript architecture: Methods sections mirror the
+  pipeline steps 1:1, every Results sentence carries a number from a
+  <code>03_results/tables/</code> CSV, and the Discussion is built on the conditional null and the
+  scale plateau of Steps&nbsp;5–6. Decide first whether the paper is an <b>application</b> (SOH
+  used unchanged; the contribution is the domain finding, and the target is the domain's journal —
+  most ports) or a <b>methodological extension</b> (the model itself changed; Section&nbsp;2
+  carries the full formalisation plus a simulation study, and the target is IJGIS or Spatial
+  Statistics) — application papers that pose as methods papers get rejected for thin novelty.</p>
+  <figure class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Manuscript section</th><th>Template output</th><th>Writing job</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Methods</td><td><code>config/config.R</code></td><td>describe SOP construction (Equations 3–4) and CART + PD (Equations 5–6) with buffer radii, threshold, and <code>cart_cp</code> quoted from the config, never from memory</td></tr>
+        <tr><td>Results</td><td><code>T04, T09, T10, T11</code> + figures F03–F08</td><td>mirror the pipeline steps 1:1 — strongest single factors, augmentation gains, the three scenarios, the conditional null; every finding sentence carries a number</td></tr>
+        <tr><td>Discussion</td><td><code>T12, T13</code> + figures F09–F10</td><td>interpret the scale plateau as a domain fingerprint; state PD's limits (explanatory, not predictive or causal; inflated by autocorrelation, so Moran's I is reported beside it)</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Where each manuscript section draws its material from. Fill the abstract from the
+    tables first — the strongest factors from T04, the gains from T09, the scenarios from T10, the
+    conditional null from T11, the plateau from T12 — because the abstract fixes the argument
+    every other section must serve.</figcaption>
+  </figure>
+  <h4>Manuscript skeleton (shared with the published application)</h4>
+  <div class="codewrap nofold">
+    <span class="code-label">manuscript outline</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>1  Introduction            — 6 paragraphs; P4 reviews GD/SDA/SDO; P5 gap sentence
+                             "However, there are still challenges in {ISSUE} due to
+                             {GAP_1}, {GAP_2}, {GAP_3}."; P6 aim + 3 contributions
+2  {MODEL NAME}            — 2.1 Concept (no formulas)
+                             2.2 Calculation process (ALL formulas live here):
+                                 2.2.1 Neighbourhood buffers and local standardisation
+                                 2.2.2 Spatial outlier patterns SOP+ / SOP-   (Eqs 3-4)
+                                 2.2.3 CART stratification                    (Eq 5)
+                                 2.2.4 Power of determinant + significance    (Eq 6)
+3  Case                    — 3.1 Study area &amp; data · 3.2 Pre-processing
+                             3.3 Model-based analysis (1:1 with §2.2 steps)
+                             3.4 Validation: augmentation · scenarios · permutation
+                                 nulls · scale and threshold sensitivity
+4  Results                 — subsections mirror 3.3 steps 1:1; every finding sentence
+                             carries a number; one interpretive takeaway per subsection
+5  Discussion              — 4 paragraphs, 2 tables (capability comparison;
+                             reproduction guidance), no subsection headings
+6  Conclusions             — 8-10 sentences answering: accomplished? contribution?
+                             meaning for readers? limitations &amp; future work?</code></pre>
+  </div>
+  <h4>Results-to-manuscript map</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Manuscript element</th><th>Source file</th><th>Shown in</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Study-area / response figure</td><td><code>F01</code>, <code>F02</code></td><td>§3.1 + §4.1 of paper</td></tr>
+        <tr><td>Moran's I statement (prerequisite + caveat)</td><td><code>T03_moran.csv</code>, <code>F03</code></td><td>§4.1</td></tr>
+        <tr><td>SOP construction maps</td><td><code>F04</code>, <code>T02_sop_diagnostics.csv</code></td><td>§4.2 (≈ published Fig 6)</td></tr>
+        <tr><td>Individual PD: covariate vs SOP block</td><td><code>T04_individual_pd.csv</code>, <code>F05</code></td><td>§4.2 (≈ published Fig 7)</td></tr>
+        <tr><td>Interaction matrices + type distribution</td><td><code>T05–T08</code>, <code>F06a/b</code></td><td>§4.3 (≈ published Fig 8)</td></tr>
+        <tr><td>Augmentation gains</td><td><code>T09_augmentation.csv</code>, <code>F07a/b</code></td><td>§4.4 (≈ published Fig 9)</td></tr>
+        <tr><td><b>Main table</b> (scenarios + permutation nulls)</td><td><code>T10_overall.csv</code>, <code>T11_permutation_null.csv</code>, <code>F08</code></td><td>§4.4 (≈ published Fig 10a); the conditional null goes in the body, not the supplement</td></tr>
+        <tr><td>Robustness numbers</td><td><code>T12</code>, <code>T13</code>, <code>F09–F10</code></td><td>§4.5 / response to reviewers</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Every manuscript element traces to one regenerable file.</figcaption>
+  </figure>
+
+  <h3 id="repro-package">4.3&nbsp;Final Reproducibility Package</h3>
+  <p>Everything an editor, reviewer, or reader needs sits in this folder; the three blocks below
+  are what a submission's data-and-code availability statement should point to.</p>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Code</div><div class="v">numbered scripts in <code>code/</code> + functions in <code>code/R/</code> + <code>config/config.R</code></div></div>
+    <div class="kv"><div class="k">Data</div><div class="v"><code>data/demo/</code> (synthetic) — or your <code>points.csv</code> + <code>grids.csv</code> via the <code>ADAPT</code> blocks</div></div>
+    <div class="kv"><div class="k">Verified outputs</div><div class="v"><code>expected-results/tables/T01–T13</code>, byte-identical to a fresh run (2026-07-24)</div></div>
+  </div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Before claiming reproducible</div>
+    <div class="callout-b">
+      <ul>
+        <li>Re-run <code>Rscript code/99_run_all.R</code>: all 13 tables match
+            <code>expected-results/tables/</code> (verified 2026-07-24, R&nbsp;4.6.0).</li>
+        <li>Units and grid share one <b>projected</b> CRS; the grid is finer than the units and
+            extends past the boundary by at least the largest buffer; positive and negative SOPs
+            kept separate, never summed.</li>
+        <li>The <b>conditional</b> null is cleared and reported in the body — never the marginal
+            null alone; Moran's I reported beside every PD; <code>n_strata</code> well below the
+            number of units; any departure from <code>cart_cp = 0.01</code> justified.</li>
+        <li><code>config/config.R</code>, <code>session-info.txt</code>, and the run log
+            committed; code and data deposited with a licence and a DOI, and the deposit
+            regenerates every figure and table in the manuscript.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">i</span>Known failure modes</div>
+    <div class="callout-b">
+      <p>All SOPs zero → threshold too strict or covariate too smooth. PD near 1 for everything →
+      too many strata; raise <code>cp</code>. Observed PD inside the conditional null → the second
+      dimension carries no information; report the null result. Combined below SOP-only → greedy
+      CART, report both. Edge units with weak SOPs → grid clipped to the boundary; re-clip with a
+      margin.</p>
+    </div>
+  </div>
+  <h4>References &amp; credits</h4>
+  <p>Demo outputs were generated by the scripts in this folder (verified 2026-07-24). Reference
+  figures are reproduced from Ren et al. (2026) for comparison; cite the method papers, not this
+  walkthrough.</p>
+  <ol>
+    <li>Ren K, Song Y, Yang X, Wang X, Chen M, Yu Q (2026). Spatial outliers as a pattern
+        determinant for explaining heterogeneity. <i>International Journal of Geographical
+        Information Science</i>.
+        <a href="https://doi.org/10.1080/13658816.2026.2682957">doi:10.1080/13658816.2026.2682957</a>
+        · <a href="../../pdf/SOH-ren2026.pdf">PDF</a>
+        (source of all reference figures on this page)</li>
+    <li>Ren K, Song Y, Yu Q (2025). Second-dimension outliers for spatial prediction.
+        <i>IJGIS</i> 40(6):1915–1942.
+        <a href="https://doi.org/10.1080/13658816.2025.2580414">doi:10.1080/13658816.2025.2580414</a>
+        · <a href="../../pdf/SDO-ren2025.pdf">PDF</a></li>
+    <li>Song Y (2022). The second dimension of spatial association. <i>International Journal of
+        Applied Earth Observation and Geoinformation</i> 111:102834.
+        <a href="https://doi.org/10.1016/j.jag.2022.102834">doi:10.1016/j.jag.2022.102834</a>
+        · <a href="../../pdf/SDA-song2022.pdf">PDF</a></li>
+    <li>Wang J-F, et al. (2010). Geographical detectors-based health risk assessment.
+        <i>IJGIS</i> 24(1):107–127.
+        <a href="https://doi.org/10.1080/13658810802443457">doi:10.1080/13658810802443457</a></li>
+  </ol>
+  <p>Authors' code and data:
+  <a href="https://github.com/renkaigis/Second-dimension_Outlier-driven_Heterogeneity">github.com/renkaigis/Second-dimension_Outlier-driven_Heterogeneity</a>
+  (MIT) and Figshare
+  <a href="https://doi.org/10.6084/m9.figshare.31169701">doi:10.6084/m9.figshare.31169701</a>.</p>
+</section>
+
+</main>
+
+<div id="lightbox"><img alt="enlarged figure" loading="lazy" decoding="async"></div>
+
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var sidebar=document.getElementById('sidebar');
+  var menuBtn=document.getElementById('menu-btn');
+  var themeBtn=document.getElementById('themebtn');
+  var filter=document.getElementById('toc-filter');
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var lightbox=document.getElementById('lightbox');
+  var lightboxImg=lightbox ? lightbox.querySelector('img') : null;
+
+  function setTheme(mode){
+    if(mode==='dark'){
+      root.setAttribute('data-theme','dark');
+      if(themeBtn) themeBtn.textContent='Light mode';
+    }else{
+      root.removeAttribute('data-theme');
+      if(themeBtn) themeBtn.textContent='Dark mode';
+    }
+    try{localStorage.setItem('reproduce-template-theme',mode)}catch(e){}
+  }
+  try{
+    var saved=localStorage.getItem('reproduce-template-theme');
+    if(saved==='dark') setTheme('dark');
+  }catch(e){}
+
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      setTheme(root.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+    });
+  }
+
+  if(menuBtn && sidebar){
+    menuBtn.addEventListener('click',function(){
+      sidebar.classList.toggle('open');
+    });
+  }
+  links.forEach(function(a){
+    a.addEventListener('click',function(){
+      if(sidebar) sidebar.classList.remove('open');
+    });
+  });
+
+  if(filter){
+    filter.addEventListener('input',function(){
+      var q=filter.value.trim().toLowerCase();
+      links.forEach(function(a){
+        a.style.display=a.textContent.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+      });
+    });
+  }
+
+  document.querySelectorAll('.copybtn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var box=btn.closest('.codewrap');
+      var code=box ? box.querySelector('pre code') : null;
+      if(!code) return;
+      navigator.clipboard.writeText(code.innerText).then(function(){
+        btn.classList.add('ok');
+        btn.textContent='Copied';
+        setTimeout(function(){
+          btn.classList.remove('ok');
+          btn.textContent='Copy';
+        },1200);
+      });
+    });
+  });
+
+  document.querySelectorAll('figure img,.figpair img').forEach(function(img){
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',function(){
+      if(!lightbox || !lightboxImg) return;
+      lightboxImg.src=img.src;
+      lightboxImg.alt=img.alt || 'enlarged figure';
+      lightbox.classList.add('open');
+    });
+  });
+  if(lightbox){
+    lightbox.addEventListener('click',function(){
+      lightbox.classList.remove('open');
+      if(lightboxImg) lightboxImg.removeAttribute('src');
+    });
+  }
+
+  var headings=[].slice.call(document.querySelectorAll('section[id],h3[id],article[id]'));
+  function onScroll(){
+    var active=null;
+    var y=window.scrollY+110;
+    headings.forEach(function(h){
+      if(h.offsetTop<=y) active=h.id;
+    });
+    links.forEach(function(a){
+      a.classList.toggle('active',a.getAttribute('href')==='#'+active);
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+</script>
+<script>
+// Lightweight R/YAML highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-yaml code').forEach(function(codeEl){
+  var src = codeEl.textContent;
+  var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var isR = codeEl.parentElement.classList.contains('lang-r');
+  var kw = isR
+    ? /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")|\b(function|if|else|for|while|return|library|source|TRUE|FALSE|NULL|NA_real_|NA_character_|NA|in)\b/g
+    : /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")/g;
+  var out = '', last = 0, m;
+  while ((m = kw.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    if (m[1])      out += '<span class="cm">' + esc(m[1]) + '</span>';
+    else if (m[2]) out += '<span class="st">' + esc(m[2]) + '</span>';
+    else           out += '<span class="kw">' + esc(m[3]) + '</span>';
+    last = kw.lastIndex;
+  }
+  out += esc(src.slice(last));
+  codeEl.innerHTML = out;
+});
+</script>
+<script>
+// Collapsible code boxes: boxes longer than 4 lines start collapsed to a 3-line preview.
+document.querySelectorAll('.codewrap:not(.nofold)').forEach(function(w){
+  var code=w.querySelector('pre.code code');
+  if(!code) return;
+  var lines=code.textContent.replace(/\n+$/,'').split('\n').length;
+  if(lines<=4) return;
+  w.classList.add('has-fold','collapsed');
+  var chip=w.querySelector('.code-label');
+  if(chip) chip.textContent+=' \u00b7 '+lines+' lines';
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.className='foldbtn';
+  btn.title='Expand / collapse code';
+  function label(){
+    btn.textContent=w.classList.contains('collapsed') ? 'Expand' : 'Collapse \u25b4';
+  }
+  label();
+  btn.addEventListener('click',function(){
+    w.classList.toggle('collapsed');
+    label();
+    if(w.classList.contains('collapsed')) w.scrollIntoView({block:'nearest'});
+  });
+  w.appendChild(btn);
+});
+</script>
+<script>
+// Match the director avatar to the height of the name-to-email text block (desktop only).
+(function(){
+  function sizeDirectorAvatar(){
+    document.querySelectorAll('.director-card').forEach(function(card){
+      var img=card.querySelector('img');
+      var info=card.querySelector('.director-info');
+      if(!img||!info) return;
+      if(window.innerWidth<=1000){
+        img.style.width='';img.style.height='';img.style.minWidth='';
+        return;
+      }
+      var h=Math.round(info.getBoundingClientRect().height);
+      img.style.height=h+'px';
+      img.style.width=h+'px';
+      img.style.minWidth=h+'px';
+    });
+  }
+  window.addEventListener('load',sizeDirectorAvatar);
+  window.addEventListener('resize',sizeDirectorAvatar);
+  sizeDirectorAvatar();
+})();
+</script>
+</body>
+</html>

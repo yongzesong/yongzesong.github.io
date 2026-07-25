@@ -8,7 +8,23 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
     <title>Methods and Software - Yongze Song</title>
-    <meta name="description" content="Geospatial theories and methods: 42 innovative methods across 24 research themes, 12 open-source R packages, and 260,000+ downloads.">
+    <link rel="canonical" href="https://yongzesong.com/methods.html">
+    <meta name="description" content="Geospatial theories and methods: 44 innovative methods across 25 research themes, 12 open-source R packages, and 260,000+ downloads.">
+    <!-- Open Graph / Twitter Card -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Yongze Song">
+    <meta property="og:locale" content="en_AU">
+    <meta property="og:title" content="Methods and Software - Yongze Song">
+    <meta property="og:description" content="Geospatial theories and methods: 44 innovative methods across 25 research themes, 12 open-source R packages, and 260,000+ downloads.">
+    <meta property="og:url" content="https://yongzesong.com/methods.html">
+    <meta property="og:image" content="https://yongzesong.com/assets/images/opgd.png">
+    <meta property="og:image:alt" content="Optimal parameters-based geographical detector">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@YongzeSong">
+    <meta name="twitter:creator" content="@YongzeSong">
+    <meta name="twitter:title" content="Methods and Software - Yongze Song">
+    <meta name="twitter:description" content="Geospatial theories and methods: 44 innovative methods across 25 research themes, 12 open-source R packages, and 260,000+ downloads.">
+    <meta name="twitter:image" content="https://yongzesong.com/assets/images/opgd.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -128,6 +144,47 @@
         .card-links a.p2 { color: var(--part2); border-color: var(--part2); } .card-links a.p2:hover { background: var(--part2); color: #fff; text-decoration: none; }
         .card-links a.p3 { color: var(--part3); border-color: var(--part3); } .card-links a.p3:hover { background: var(--part3); color: #fff; text-decoration: none; }
 
+        /* === REPRODUCIBILITY TUTORIALS === */
+        .repro-section { margin-bottom: 2.5rem; }
+        .repro-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 2px solid #b9770e; }
+        .repro-badge { font-family: var(--font-serif); font-weight: 700; font-size: 0.75rem; color: #fff; padding: 3px 10px; border-radius: 3px; white-space: nowrap; background: #b9770e; }
+        .repro-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; font-variation-settings: "opsz" 36; }
+
+        .repro-grid { display: grid; grid-template-columns: repeat(7, 168px); gap: 10px; justify-content: start; align-items: stretch; }
+        @media (max-width: 1320px) { .repro-grid { grid-template-columns: repeat(auto-fill, 168px); } }
+
+        .repro-card {
+            --accent: #1a5276; --accent-soft: #eaf2f8;
+            position: relative; width: 168px; display: flex; flex-direction: column;
+            border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background: #fff;
+            text-decoration: none; color: inherit;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .repro-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); z-index: 2; }
+        .repro-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); border-color: var(--accent); text-decoration: none; }
+
+        .repro-media {
+            position: relative; height: 90px; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent-soft) 0%, #ffffff 100%);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .repro-media svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .repro-abbr { position: relative; font-family: var(--font-serif); font-weight: 900; font-size: 1.7rem; color: var(--accent); font-variation-settings: "opsz" 144; line-height: 1; }
+        .repro-media.has-fig { background: #fff; }
+        .repro-media.has-fig img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .repro-media.has-fig::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgba(0,0,0,0.05); }
+        .repro-media.has-fig .repro-abbr {
+            position: absolute; left: 6px; bottom: 5px; font-size: 0.7rem; line-height: 1.4;
+            padding: 0 7px; border-radius: 999px; background: rgba(255,255,255,0.92);
+            border: 1px solid var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .repro-body { padding: 8px 10px 10px; display: flex; flex-direction: column; flex: 1; }
+        .repro-name { font-family: var(--font-serif); font-size: 0.72rem; font-weight: 700; color: var(--color-heading); line-height: 1.3; margin-bottom: 8px; }
+        .repro-cta { margin-top: auto; display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-sans); font-size: 0.62rem; font-weight: 700; color: var(--accent); padding-top: 6px; border-top: 1px solid #f0f0f0; }
+        .repro-cta .arrow { transition: transform 0.2s ease; }
+        .repro-card:hover .repro-cta .arrow { transform: translateX(3px); }
+
         /* === IMPORTANT CONCEPTS === */
         .concepts-heading { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; text-align: center; margin: 2.5rem 0 1.2rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; }
         .concepts-list { margin: 0 0 1rem; padding-left: 1.3rem; }
@@ -223,7 +280,7 @@
         }
 
         @media (max-width: 768px) {
-            html, body { font-size: 15px; }
+            html, body { font-size: 16px; }
             .cards-inline { grid-auto-columns: 155px; }
             .method-card { width: 155px; }
             .members-grid { gap: 12px; }
@@ -233,9 +290,26 @@
             .footer-inner { grid-template-columns: 1fr; gap: 16px; }
             .footer-bottom { flex-direction: column; gap: 8px; }
         }
+    
+        /* Mobile readability: keep primary reading text at 15px or above */
+        @media (max-width: 768px) {
+            /* Card rows scroll inside themselves instead of widening the page */
+            .subcat-group { display: flex; max-width: 100%; }
+            .cards-inline {
+                max-width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 4px;
+            }
+            .mc-detail-pubs .badge { font-size: 0.72rem; }
+            .mc-detail-role, .mc-detail-pubs, .mc-detail-pubs a { font-size: 0.8rem; }
+            .badge, .repro-name, .sw-sub { font-size: 0.78rem; }
+            .sw-info, .sw-info a { font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
     <header class="site-header">
         <div class="header-inner">
             <a href="index.html" class="site-title">Yongze Song<span>Geography &amp; Sustainability</span></a>
@@ -249,36 +323,38 @@
         </div>
     </header>
 
+<main id="main">
+
     <div class="main-wrapper">
         <h1 class="page-title">Geospatial Theories and Methods</h1>
-        <p class="page-subtitle">42 innovative methods across 24 research themes &middot; 12 open-source R packages &middot; 260,000+ downloads</p>
+        <p class="page-subtitle">44 innovative methods across 25 research themes &middot; 12 open-source R packages &middot; 260,000+ downloads</p>
 
         <!-- ==================== MEMBERS ==================== -->
         <h2 class="members-heading" id="members">Members</h2>
         <div class="members-grid">
 
             <div class="mc-card" data-member="yongze-song" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/yongze-song.jpeg" alt="Yongze Song">
+                <img class="mc-avatar" src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy" decoding="async">
                 <div class="mc-name">Yongze Song</div>
                 <div class="mc-methods">Supervisor</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Yongze Song</div>
-                    <div class="mc-detail-role"><strong>Associate Professor</strong><br>Curtin University<br>Email: <a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a><br>Homepage: <a href="https://yongzesong.com/" target="_blank">yongzesong.com</a><br><br>Australian Young Tall Poppy Science Award winner<br>Fellow of Royal Geographical Society (UK)<br>Fellow of Harvard Spatial Data Lab (US)<br>Fellow of DAAD AInet (Germany)<br>Special Issue Editor (SIE) &amp; Associate Editor &ndash; International Journal of Applied Earth Observation and Geoinformation<br>Associate Editor &ndash; GIScience &amp; Remote Sensing<br>Special Issue Editor (SIE) &ndash; Geomatica<br>Editor &ndash; Geoscientific Model Development<br>Associate Editor &ndash; All Earth<br>Editor &ndash; Journal of Spatial Science</div>
+                    <div class="mc-detail-role"><strong>Associate Professor</strong><br>Curtin University<br>Email: <a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a><br>Homepage: <a href="https://yongzesong.com/" target="_blank" rel="noopener noreferrer">yongzesong.com</a><br><br>Australian Young Tall Poppy Science Award winner<br>Fellow of Royal Geographical Society (UK)<br>Fellow of Harvard Spatial Data Lab (US)<br>Fellow of DAAD AInet (Germany)<br>Special Issue Editor (SIE) &amp; Associate Editor &ndash; International Journal of Applied Earth Observation and Geoinformation<br>Associate Editor &ndash; GIScience &amp; Remote Sensing<br>Special Issue Editor (SIE) &ndash; Geomatica<br>Editor &ndash; Geoscientific Model Development<br>Associate Editor &ndash; All Earth<br>Editor &ndash; Journal of Spatial Science</div>
                 </div>
             </div>
 
             <div class="mc-card" data-member="zehua-zhang" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/zehua-zhang.png" alt="Zehua Zhang">
+                <img class="mc-avatar" src="assets/images/zehua-zhang.png" alt="Zehua Zhang" loading="lazy" decoding="async">
                 <div class="mc-name">Zehua Zhang</div>
                 <div class="mc-methods">RID · HSA · RGD · GIGNN · LPI</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Zehua Zhang</div>
-                    <div class="mc-detail-role"><strong>Postdoc Researcher</strong><br>Curtin University<br>PhD: Curtin University (Chancellor's Commendation Award)<br>Master: University of Melbourne (with Distinction)<br>Email: <a href="mailto:Zehua.Zhang@curtin.edu.au">Zehua.Zhang@curtin.edu.au</a><br>Homepage: <a href="https://www.researchgate.net/profile/Zehua-Zhang-25" target="_blank">ResearchGate</a></div>
+                    <div class="mc-detail-role"><strong>Postdoc Researcher</strong><br>Curtin University<br>PhD: Curtin University (Chancellor's Commendation Award)<br>Master: University of Melbourne (with Distinction)<br>Email: <a href="mailto:Zehua.Zhang@curtin.edu.au">Zehua.Zhang@curtin.edu.au</a><br>Homepage: <a href="https://www.researchgate.net/profile/Zehua-Zhang-25" target="_blank" rel="noopener noreferrer">ResearchGate</a></div>
                     <ul class="mc-detail-pubs">
                         <li><a href="https://www.sciencedirect.com/science/article/pii/S2211675324000058">Robust Interaction Detector (RID)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/spatial-statistics">Spatial Statistics</a>.</span> <span class="badge">Highly Cited Paper.</span></li>
-                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">Heterogeneous spatial autocorrelation (HSA)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 4 Most Read Article, 2025)</span> <span class="sub"><a href="https://github.com/Zehua-Zhang-01/Heterogeneous_Spatial_Autocorrelation_Model" target="_blank">R Code for HSA model</a></span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">Heterogeneous spatial autocorrelation (HSA)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 4 Most Read Article, 2025)</span> <span class="sub"><a href="https://github.com/Zehua-Zhang-01/Heterogeneous_Spatial_Autocorrelation_Model" target="_blank" rel="noopener noreferrer">R Code for HSA model</a></span></li>
                         <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Geocomplexity explains spatial errors</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 30 Most Cited, 2025; Top 1 Most Read, 2023)</span> <span class="sub"><a href="https://cran.r-project.org/web/packages/geocomplexity/index.html">R package "geocomplexity"</a></span></li>
-                        <li><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Robust geographical detector (RGD)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span> <span class="sub"><a href="https://github.com/zehua-zhang-01/robust_geographical_detector" target="_blank">Python Code for RGD model</a></span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Robust geographical detector (RGD)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span> <span class="sub"><a href="https://github.com/zehua-zhang-01/robust_geographical_detector" target="_blank" rel="noopener noreferrer">Python Code for RGD model</a></span></li>
                         <li><a href="https://www.sciencedirect.com/science/article/pii/S2211675325000429">Geographically informed graph neural network (GIGNN)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/spatial-statistics">Spatial Statistics</a>.</span></li>
                         <li><a href="https://doi.org/10.1016/j.jag.2025.105072">Local effects of pattern interaction (LPI)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span></li>
                     </ul>
@@ -286,18 +362,18 @@
             </div>
 
             <div class="mc-card" data-member="peng-luo" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/peng-luo.jpeg" alt="Peng Luo">
+                <img class="mc-avatar" src="assets/images/peng-luo.jpeg" alt="Peng Luo" loading="lazy" decoding="async">
                 <div class="mc-name">Peng Luo</div>
                 <div class="mc-methods">GHM · GOZH · GPI · LESH · STUH · FFRK</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Peng Luo</div>
-                    <div class="mc-detail-role"><strong>Assistant Professor</strong><br><a href="https://sees.uiowa.edu/" target="_blank">University of Iowa</a> &amp; <a href="https://senseable.mit.edu/" target="_blank">MIT</a><br>PhD: Technical University of Munich<br>Master: Peking University<br>Email: <a href="mailto:peng-luo@uiowa.edu">peng-luo@uiowa.edu</a><br>Homepage: <a href="https://peng-luo.com/" target="_blank">peng-luo.com</a></div>
+                    <div class="mc-detail-role"><strong>Assistant Professor</strong><br><a href="https://sees.uiowa.edu/" target="_blank" rel="noopener noreferrer">University of Iowa</a> &amp; <a href="https://senseable.mit.edu/" target="_blank" rel="noopener noreferrer">MIT</a><br>PhD: Technical University of Munich<br>Master: Peking University<br>Email: <a href="mailto:peng-luo@uiowa.edu">peng-luo@uiowa.edu</a><br>Homepage: <a href="https://peng-luo.com/" target="_blank" rel="noopener noreferrer">peng-luo.com</a></div>
                     <ul class="mc-detail-pubs">
                         <li><a href="https://doi.org/10.1080/13658816.2022.2147530">Generalized Heterogeneity Model (GHM)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 4 Most Cited, 2025; Top 10 Most Read, 2024)</span></li>
                         <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Geocomplexity explains spatial errors</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 30 Most Cited, 2025; Top 1 Most Read, 2023)</span></li>
-                        <li><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">Geographically Optimal Zones-based Heterogeneity (GOZH)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/isprs-journal-of-photogrammetry-and-remote-sensing">ISPRS J. Photogramm. Remote Sens.</a></span> <span class="sub">R Code for GOZH model: <a href="https://github.com/yongzesong/gozh" target="_blank">Code 1</a>; <a href="https://github.com/pengtum/GOZH-model/tree/main" target="_blank">Code 2</a></span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">Geographically Optimal Zones-based Heterogeneity (GOZH)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/isprs-journal-of-photogrammetry-and-remote-sensing">ISPRS J. Photogramm. Remote Sens.</a></span> <span class="sub">R Code for GOZH model: <a href="https://github.com/yongzesong/gozh" target="_blank" rel="noopener noreferrer">Code 1</a>; <a href="https://github.com/pengtum/GOZH-model/tree/main" target="_blank" rel="noopener noreferrer">Code 2</a></span></li>
                         <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">Geographical Pattern Interaction (GPI)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 1 Most Read, 2025)</span></li>
-                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Locally explained heterogeneity model</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tjde20">Int. J. Digital Earth</a>.</span> <span class="sub"><a href="https://github.com/liyang4991/LESH-model/tree/main" target="_blank">R Code for LESH model</a></span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Locally explained heterogeneity model</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tjde20">Int. J. Digital Earth</a>.</span> <span class="sub"><a href="https://github.com/liyang4991/LESH-model/tree/main" target="_blank" rel="noopener noreferrer">R Code for LESH model</a></span></li>
                         <li><a href="https://www.sciencedirect.com/science/article/pii/S1569843224004229">Spatio-temporal unmixing with heterogeneity (STUH)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span></li>
                         <li><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">Focal-Feature Regression Kriging (FFRK)</a>. <span class="journal"><a href="https://onlinelibrary.wiley.com/journal/15384632">Geographical Analysis.</a></span></li>
                     </ul>
@@ -305,7 +381,7 @@
             </div>
 
             <div class="mc-card" data-member="pengcheng-zhang" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang">
+                <img class="mc-avatar" src="assets/images/pengcheng-zhang.png" alt="Pengcheng Zhang" loading="lazy" decoding="async">
                 <div class="mc-name">Pengcheng Zhang</div>
                 <div class="mc-methods">DSTGN · GMS · DG · SPOCA</div>
                 <div class="mc-detail">
@@ -321,54 +397,54 @@
             </div>
 
             <div class="mc-card" data-member="yang-li" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/yang-li.png" alt="Yang Li">
+                <img class="mc-avatar" src="assets/images/yang-li.png" alt="Yang Li" loading="lazy" decoding="async">
                 <div class="mc-name">Yang Li</div>
                 <div class="mc-methods">GPI · LESH</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Yang Li</div>
-                    <div class="mc-detail-role"><strong>Postdoc Researcher:</strong><br>Beihang University<br>PhD: Beijing Normal University<br>Email: <a href="mailto:isliyang@buaa.edu.cn">isliyang@buaa.edu.cn</a><br>Homepage: <a href="https://www.researchgate.net/profile/Yang-Li-373" target="_blank">ResearchGate</a></div>
+                    <div class="mc-detail-role"><strong>Postdoc Researcher:</strong><br>Beihang University<br>PhD: Beijing Normal University<br>Email: <a href="mailto:isliyang@buaa.edu.cn">isliyang@buaa.edu.cn</a><br>Homepage: <a href="https://www.researchgate.net/profile/Yang-Li-373" target="_blank" rel="noopener noreferrer">ResearchGate</a></div>
                     <ul class="mc-detail-pubs">
                         <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">Geographical Pattern Interaction (GPI)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span></li>
-                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Locally explained heterogeneity model</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tjde20">Int. J. Digital Earth</a>.</span> <span class="sub"><a href="https://github.com/liyang4991/LESH-model/tree/main" target="_blank">R Code for LESH model</a></span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Locally explained heterogeneity model</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tjde20">Int. J. Digital Earth</a>.</span> <span class="sub"><a href="https://github.com/liyang4991/LESH-model/tree/main" target="_blank" rel="noopener noreferrer">R Code for LESH model</a></span></li>
                     </ul>
                 </div>
             </div>
 
             <div class="mc-card" data-member="jiao-hu" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/jiao-hu.png" alt="Jiao Hu">
+                <img class="mc-avatar" src="assets/images/jiao-hu.png" alt="Jiao Hu" loading="lazy" decoding="async">
                 <div class="mc-name">Jiao Hu</div>
                 <div class="mc-methods">LISP · LPA · LPI</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Jiao Hu</div>
-                    <div class="mc-detail-role"><strong>Research Associate:</strong><br>Curtin University<br>PhD: Chengdu University of Technology<br>Email: <a href="mailto:jiao.hu@curtin.edu.au">jiao.hu@curtin.edu.au</a><br>Homepage: <a href="https://www.researchgate.net/profile/Jiao-Hu-8" target="_blank">ResearchGate</a></div>
+                    <div class="mc-detail-role"><strong>Research Associate:</strong><br>Curtin University<br>PhD: Chengdu University of Technology<br>Email: <a href="mailto:jiao.hu@curtin.edu.au">jiao.hu@curtin.edu.au</a><br>Homepage: <a href="https://www.researchgate.net/profile/Jiao-Hu-8" target="_blank" rel="noopener noreferrer">ResearchGate</a></div>
                     <ul class="mc-detail-pubs">
-                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">Local indicator of stratified power (LISP)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 2 Most Read, 2026)</span> <span class="sub"><a href="https://doi.org/10.6084/m9.figshare.26518651.v3" target="_blank">R Code for LISP model</a></span></li>
-                        <li><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Local pathways of association (LPA)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span> <span class="sub"><a href="https://figshare.com/articles/dataset/Local_pathways_of_association/27187623" target="_blank">R Code for LPA model</a></span></li>
+                        <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">Local indicator of stratified power (LISP)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Top 2 Most Read, 2026)</span> <span class="sub"><a href="https://doi.org/10.6084/m9.figshare.26518651.v3" target="_blank" rel="noopener noreferrer">R Code for LISP model</a></span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Local pathways of association (LPA)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span> <span class="sub"><a href="https://figshare.com/articles/dataset/Local_pathways_of_association/27187623" target="_blank" rel="noopener noreferrer">R Code for LPA model</a></span></li>
                         <li><a href="https://doi.org/10.1016/j.jag.2025.105072">Local effects of pattern interaction (LPI)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span></li>
                     </ul>
                 </div>
             </div>
 
             <div class="mc-card" data-member="rui-qu" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/rui-qu.png" alt="Rui Qu">
+                <img class="mc-avatar" src="assets/images/rui-qu.png" alt="Rui Qu" loading="lazy" decoding="async">
                 <div class="mc-name">Rui Qu</div>
                 <div class="mc-methods">LPA</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Rui Qu</div>
                     <div class="mc-detail-role"><strong>Research Associate:</strong><br>Curtin University<br>PhD: Chengdu University of Technology<br>Email: <a href="mailto:rui.qu@curtin.edu.au">rui.qu@curtin.edu.au</a></div>
                     <ul class="mc-detail-pubs">
-                        <li><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Local pathways of association (LPA)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span> <span class="sub"><a href="https://figshare.com/articles/dataset/Local_pathways_of_association/27187623" target="_blank">R Code for LPA model</a></span></li>
+                        <li><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Local pathways of association (LPA)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span> <span class="sub"><a href="https://figshare.com/articles/dataset/Local_pathways_of_association/27187623" target="_blank" rel="noopener noreferrer">R Code for LPA model</a></span></li>
                     </ul>
                 </div>
             </div>
 
             <div class="mc-card" data-member="xinyue-yang" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/xinyue-yang.jpg" alt="Xinyue Yang">
+                <img class="mc-avatar" src="assets/images/xinyue-yang.jpg" alt="Xinyue Yang" loading="lazy" decoding="async">
                 <div class="mc-name">Xinyue Yang</div>
                 <div class="mc-methods">Anisotropy</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Xinyue Yang</div>
-                    <div class="mc-detail-role"><strong>PhD Researcher:</strong><br>Curtin University<br>Email: <a href="mailto:xinyue.yang2@postgrad.curtin.edu.au">xinyue.yang2@postgrad.curtin.edu.au</a><br>Homepage: <a href="https://www.researchgate.net/profile/Xinyue-Yang-28" target="_blank">ResearchGate</a></div>
+                    <div class="mc-detail-role"><strong>PhD Researcher:</strong><br>Curtin University<br>Email: <a href="mailto:xinyue.yang2@postgrad.curtin.edu.au">xinyue.yang2@postgrad.curtin.edu.au</a><br>Homepage: <a href="https://www.researchgate.net/profile/Xinyue-Yang-28" target="_blank" rel="noopener noreferrer">ResearchGate</a></div>
                     <ul class="mc-detail-pubs">
                         <li><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Spatial irregular anisotropy in urban heat effects</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/sustainable-cities-and-society">Sustainable Cities and Society.</a></span></li>
                     </ul>
@@ -376,14 +452,14 @@
             </div>
 
             <div class="mc-card" data-member="kai-ren" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/kai-ren.jpg" alt="Kai Ren">
+                <img class="mc-avatar" src="assets/images/kai-ren.jpg" alt="Kai Ren" loading="lazy" decoding="async">
                 <div class="mc-name">Kai Ren</div>
                 <div class="mc-methods">SOH · SDO · Anisotropy</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Kai Ren</div>
-                    <div class="mc-detail-role"><strong>Postdoc Researcher:</strong><br>Nanjing Normal University<br>Email: <a href="mailto:kai@njnu.edu.cn">kai@njnu.edu.cn</a><br>Homepage: <a href="https://renkaigis.cn/" target="_blank">renkaigis.cn</a></div>
+                    <div class="mc-detail-role"><strong>Postdoc Researcher:</strong><br>Nanjing Normal University<br>Email: <a href="mailto:kai@njnu.edu.cn">kai@njnu.edu.cn</a><br>Homepage: <a href="https://renkaigis.cn/" target="_blank" rel="noopener noreferrer">renkaigis.cn</a></div>
                     <ul class="mc-detail-pubs">
-                        <li><a href="https://doi.org/10.1080/13658816.2026.2682957">Second-dimension outlier-driven heterogeneity model (SOH)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="sub"><a href="https://github.com/renkaigis/Second-dimension_Outlier-driven_Heterogeneity" target="_blank">R Code for SOH model</a></span></li>
+                        <li><a href="https://doi.org/10.1080/13658816.2026.2682957">Second-dimension outlier-driven heterogeneity model (SOH)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="sub"><a href="https://github.com/renkaigis/Second-dimension_Outlier-driven_Heterogeneity" target="_blank" rel="noopener noreferrer">R Code for SOH model</a></span></li>
                         <li><a href="https://doi.org/10.1080/13658816.2025.2580414">Second-Dimension Outliers (SDO)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="badge">(Most Read Article, 2026)</span></li>
                         <li><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Spatial irregular anisotropy in urban heat effects</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/sustainable-cities-and-society">Sustainable Cities and Society.</a></span></li>
                     </ul>
@@ -391,14 +467,14 @@
             </div>
 
             <div class="mc-card" data-member="haiyang-liu" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/haiyang-liu.png" alt="Haiyang Liu">
+                <img class="mc-avatar" src="assets/images/haiyang-liu.png" alt="Haiyang Liu" loading="lazy" decoding="async">
                 <div class="mc-name">Haiyang Liu</div>
                 <div class="mc-methods">DSI · LPI · DG · PSL</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Haiyang Liu</div>
-                    <div class="mc-detail-role"><strong>PhD Researcher:</strong><br>Hokkaido University, Japan<br>Email: <a href="mailto:haiyang.liu.q6@elms.hokudai.ac.jp">haiyang.liu.q6@elms.hokudai.ac.jp</a><br>Homepage: <a href="https://kevinoceanliu.github.io/" target="_blank">kevinoceanliu.github.io</a></div>
+                    <div class="mc-detail-role"><strong>PhD Researcher:</strong><br>Hokkaido University, Japan<br>Email: <a href="mailto:haiyang.liu.q6@elms.hokudai.ac.jp">haiyang.liu.q6@elms.hokudai.ac.jp</a><br>Homepage: <a href="https://kevinoceanliu.github.io/" target="_blank" rel="noopener noreferrer">kevinoceanliu.github.io</a></div>
                     <ul class="mc-detail-pubs">
-                        <li><a href="https://doi.org/10.1080/13658816.2026.2614335">Degree of spatial interpretability (DSI)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="sub"><a href="https://github.com/KevinOceanLiu/DSI" target="_blank">R Code for DSI model</a></span></li>
+                        <li><a href="https://doi.org/10.1080/13658816.2026.2614335">Degree of spatial interpretability (DSI)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">Int. J. Geogr. Inf. Sci.</a></span> <span class="sub"><a href="https://github.com/KevinOceanLiu/DSI" target="_blank" rel="noopener noreferrer">R Code for DSI model</a></span></li>
                         <li><a href="https://doi.org/10.1016/j.jag.2025.105072">Local effects of pattern interaction (LPI)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/international-journal-of-applied-earth-observation-and-geoinformation">Int. J. Appl. Earth Obs. Geoinf.</a></span></li>
                         <li><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">Degree of geocomplexity for validation (DG)</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgrs20">GISci. &amp; Remote Sens.</a></span></li>
                         <li><a href="https://link.springer.com/article/10.1007/s41651-026-00279-y">Pattern similarity learning (PSL)</a>. <span class="journal"><a href="https://link.springer.com/journal/41651">J. Geovis. Spatial Anal.</a></span></li>
@@ -407,12 +483,12 @@
             </div>
 
             <div class="mc-card" data-member="lai-chen" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/lai-chen.png" alt="Lai Chen">
+                <img class="mc-avatar" src="assets/images/lai-chen.png" alt="Lai Chen" loading="lazy" decoding="async">
                 <div class="mc-name">Lai Chen</div>
                 <div class="mc-methods">ST-MST</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Lai Chen</div>
-                    <div class="mc-detail-role"><strong>Research Associate:</strong><br>Curtin University<br>Email: <a href="mailto:chenlai@cug.edu.cn">chenlai@cug.edu.cn</a></div>
+                    <div class="mc-detail-role"><strong>PhD Researcher:</strong><br>China University of Geosciences<br>Email: <a href="mailto:chenlai@cug.edu.cn">chenlai@cug.edu.cn</a></div>
                     <ul class="mc-detail-pubs">
                         <li><a href="https://doi.org/10.1080/13658816.2025.2602536">Spatiotemporal multiscale transformer</a>. <span class="journal"><a href="https://www.tandfonline.com/journals/tgis20">International Journal of Geographical Information Science.</a></span></li>
                     </ul>
@@ -420,12 +496,12 @@
             </div>
 
             <div class="mc-card" data-member="wenbo-lyu" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/wenbo-lv.png" alt="Wenbo Lyu">
+                <img class="mc-avatar" src="assets/images/wenbo-lv.png" alt="Wenbo Lyu" loading="lazy" decoding="async">
                 <div class="mc-name">Wenbo Lyu</div>
                 <div class="mc-methods">GCMC · tEDM · gdverse</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Wenbo Lyu</div>
-                    <div class="mc-detail-role">Email: <a href="mailto:lyu.geosocial@gmail.com">lyu.geosocial@gmail.com</a><br>Homepage: <a href="https://github.com/spatlyu" target="_blank">GitHub</a></div>
+                    <div class="mc-detail-role">Email: <a href="mailto:lyu.geosocial@gmail.com">lyu.geosocial@gmail.com</a><br>Homepage: <a href="https://github.com/spatlyu" target="_blank" rel="noopener noreferrer">GitHub</a></div>
                     <ul class="mc-detail-pubs">
                         <li><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2026.2687121">Geographical cross mapping cardinality (GCMC)</a>. <span class="journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2026.2687121">Int. J. Geogr. Inf. Sci.</a></span></li>
                         <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0198971526000372">Causal with temporal empirical dynamic modeling (tEDM)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/computers-environment-and-urban-systems">Computers, Environ. and Urban Syst.</a></span></li>
@@ -435,12 +511,12 @@
             </div>
 
             <div class="mc-card" data-member="yilong-wu" onclick="toggleMemberDetail(this)">
-                <img class="mc-avatar" src="assets/images/yilong-wu.png" alt="Yilong Wu">
+                <img class="mc-avatar" src="assets/images/yilong-wu.png" alt="Yilong Wu" loading="lazy" decoding="async">
                 <div class="mc-name">Yilong Wu</div>
                 <div class="mc-methods">FFRK · ESDA</div>
                 <div class="mc-detail">
                     <div class="mc-detail-name">Yilong Wu</div>
-                    <div class="mc-detail-role">Email: <a href="mailto:yilong.wu@student.curtin.edu.au">yilong.wu@student.curtin.edu.au</a><br>Homepage: <a href="http://yilongwu.top/" target="_blank">yilongwu.top</a></div>
+                    <div class="mc-detail-role">Email: <a href="mailto:yilong.wu@student.curtin.edu.au">yilong.wu@student.curtin.edu.au</a><br>Homepage: <a href="http://yilongwu.top/" target="_blank" rel="noopener noreferrer">yilongwu.top</a></div>
                     <ul class="mc-detail-pubs">
                         <li><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">Focal-Feature Regression Kriging (FFRK)</a>. <span class="journal"><a href="https://onlinelibrary.wiley.com/journal/15384632">Geographical Analysis.</a></span></li>
                         <li><a href="https://www.sciencedirect.com/science/article/pii/S0264275126003008">Explainable second-dimension spatial association (ESDA)</a>. <span class="journal"><a href="https://www.sciencedirect.com/journal/cities">Cities.</a></span></li>
@@ -449,7 +525,7 @@
             </div>
 
             <div class="mc-card">
-                <a href="lab.html"><img class="mc-avatar" src="assets/images/logo_lab.png" alt="Lab"></a>
+                <a href="lab.html"><img class="mc-avatar" src="assets/images/logo_lab.png" alt="Lab" loading="lazy" decoding="async"></a>
                 <div class="mc-name"><a href="lab.html">Lab</a></div>
                 <div class="mc-methods">Geospatial Intelligence Lab</div>
             </div>
@@ -472,11 +548,130 @@
         });
         </script>
 
+        <!-- ==================== REPRODUCIBILITY TUTORIALS ==================== -->
+        <div class="repro-section">
+            <div class="repro-header">
+                <span class="repro-badge">TUTORIALS</span>
+                <span class="repro-title">Tutorials for Reproducing Models</span>
+            </div>
+            <div class="repro-grid">
+
+                <!-- OPGD -->
+                <a class="repro-card" href="reproduce/OPGD/opgd.html" style="--accent:#6c3483; --accent-soft:#f2e9f5;">
+                    <div class="repro-media has-fig">
+                        <img src="assets/images/repro-opgd.png" alt="" loading="lazy" decoding="async">
+                        <span class="repro-abbr">OPGD</span>
+                    </div>
+                    <div class="repro-body">
+                        <div class="repro-name">Optimal Parameters-based Geographical Detector</div>
+                        <span class="repro-cta">Open tutorial <span class="arrow">&rarr;</span></span>
+                    </div>
+                </a>
+
+                <!-- GC -->
+                <a class="repro-card" href="reproduce/GC/gc.html" style="--accent:#117864; --accent-soft:#e8f6f3;">
+                    <div class="repro-media has-fig">
+                        <img src="assets/images/repro-gc.png" alt="" loading="lazy" decoding="async">
+                        <span class="repro-abbr">GC</span>
+                    </div>
+                    <div class="repro-body">
+                        <div class="repro-name">Geocomplexity Explains Spatial Errors</div>
+                        <span class="repro-cta">Open tutorial <span class="arrow">&rarr;</span></span>
+                    </div>
+                </a>
+
+                <!-- LPI -->
+                <a class="repro-card" href="reproduce/LPI/lpi.html" style="--accent:#b9770e; --accent-soft:#fdf3e2;">
+                    <div class="repro-media has-fig">
+                        <img src="assets/images/repro-lpi.png" alt="" loading="lazy" decoding="async">
+                        <span class="repro-abbr">LPI</span>
+                    </div>
+                    <div class="repro-body">
+                        <div class="repro-name">Local Pattern Interaction</div>
+                        <span class="repro-cta">Open tutorial <span class="arrow">&rarr;</span></span>
+                    </div>
+                </a>
+
+                <!-- LPA -->
+                <a class="repro-card" href="reproduce/LPA/lpa.html" style="--accent:#4a569d; --accent-soft:#eceef7;">
+                    <div class="repro-media has-fig">
+                        <img src="assets/images/repro-lpa.png" alt="" loading="lazy" decoding="async">
+                        <span class="repro-abbr">LPA</span>
+                    </div>
+                    <div class="repro-body">
+                        <div class="repro-name">Local Pathways of Association</div>
+                        <span class="repro-cta">Open tutorial <span class="arrow">&rarr;</span></span>
+                    </div>
+                </a>
+
+                <!-- SDA -->
+                <a class="repro-card" href="reproduce/SDA/sda.html" style="--accent:#a04000; --accent-soft:#fdf0e9;">
+                    <div class="repro-media has-fig">
+                        <img src="assets/images/repro-sda.png" alt="" loading="lazy" decoding="async">
+                        <span class="repro-abbr">SDA</span>
+                    </div>
+                    <div class="repro-body">
+                        <div class="repro-name">Second Dimension of Spatial Association</div>
+                        <span class="repro-cta">Open tutorial <span class="arrow">&rarr;</span></span>
+                    </div>
+                </a>
+
+                <!-- SOH -->
+                <a class="repro-card" href="reproduce/SOH/soh.html" style="--accent:#1a6b4a; --accent-soft:#e7f6ee;">
+                    <div class="repro-media has-fig">
+                        <img src="assets/images/repro-soh.png" alt="" loading="lazy" decoding="async">
+                        <span class="repro-abbr">SOH</span>
+                    </div>
+                    <div class="repro-body">
+                        <div class="repro-name">Spatial Outliers Explains Heterogeneity</div>
+                        <span class="repro-cta">Open tutorial <span class="arrow">&rarr;</span></span>
+                    </div>
+                </a>
+
+                <!-- DSI -->
+                <a class="repro-card" href="reproduce/DSI/dsi.html" style="--accent:#1a5276; --accent-soft:#eaf2f8;">
+                    <div class="repro-media has-fig">
+                        <img src="assets/images/repro-dsi.png" alt="" loading="lazy" decoding="async">
+                        <span class="repro-abbr">DSI</span>
+                    </div>
+                    <div class="repro-body">
+                        <div class="repro-name">Degree of Spatial Interpretability</div>
+                        <span class="repro-cta">Open tutorial <span class="arrow">&rarr;</span></span>
+                    </div>
+                </a>
+
+                <!-- STOR -->
+                <a class="repro-card" href="reproduce/STOR/stor.html" style="--accent:#a13d63; --accent-soft:#f7e9f0;">
+                    <div class="repro-media has-fig">
+                        <img src="assets/images/repro-stor.png" alt="" loading="lazy" decoding="async">
+                        <span class="repro-abbr">STOR</span>
+                    </div>
+                    <div class="repro-body">
+                        <div class="repro-name">Spatial Trade-Off Relation</div>
+                        <span class="repro-cta">Open tutorial <span class="arrow">&rarr;</span></span>
+                    </div>
+                </a>
+
+                <!-- SDM -->
+                <a class="repro-card" href="reproduce/SDM/sdm.html" style="--accent:#a93226; --accent-soft:#fbeceb;">
+                    <div class="repro-media has-fig">
+                        <img src="assets/images/repro-sdm.png" alt="" loading="lazy" decoding="async">
+                        <span class="repro-abbr">SDM</span>
+                    </div>
+                    <div class="repro-body">
+                        <div class="repro-name">Spatial Delta Model for Accessibility</div>
+                        <span class="repro-cta">Open tutorial <span class="arrow">&rarr;</span></span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
         <!-- ==================== PART I ==================== -->
         <div class="part-section">
             <div class="part-header p1">
                 <span class="part-num p1">PART I</span>
-                <span class="part-title">Spatial Prediction via Spatial Feature Modeling</span>
+                <span class="part-title">Spatial Prediction via Spatial Feature Modelling</span>
             </div>
             <div class="part-flow">
 
@@ -497,7 +692,7 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2026.2614335">Degree of Spatial Interpretability</a></div>
                                 <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2026.2614335">Int. J. Geogr. Inf. Sci.</a></div>
-                                <div class="card-links"><a class="p1" href="https://github.com/KevinOceanLiu/DSI" target="_blank">R Code</a><a class="p1" href="pdf/DSI-liu2026.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="https://github.com/KevinOceanLiu/DSI" target="_blank" rel="noopener noreferrer">R Code</a><a class="p1" href="pdf/DSI-liu2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -517,7 +712,7 @@
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">Degree of Geocomplexity</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2657087">GISci. &amp; Remote Sens.</a></div>
                             
-                                <div class="card-links"><a class="p1" href="pdf/DG-zhang2026.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/DG-zhang2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -541,7 +736,7 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">Second-Dimension Spatial Association</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">Int. J. Appl. Earth Obs. Geoinf.</a></div>
-                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/SecDim/vignettes/SecDim.html">R package: SecDim</a><a class="p1" href="pdf/SDA-song2022.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/src/contrib/Archive/SecDim/">R package: SecDim</a><a class="p1" href="pdf/SDA-song2022.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -559,7 +754,7 @@
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0264275126003008">Explainable Second-Dimension Spatial Association</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0264275126003008">Cities</a></div>
                             
-                                <div class="card-links"><a class="p1" href="pdf/ESDA-wu2026.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/ESDA-wu2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -586,7 +781,7 @@
                                 <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2025.2580414">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mr">Most Read 2026</span>
                             
-                                <div class="card-links"><a class="p1" href="pdf/SDO-ren2025.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="https://github.com/renkaigis/Second-Dimension_Outliers" target="_blank" rel="noopener noreferrer">R Code</a><a class="p1" href="pdf/SDO-ren2025.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -607,7 +802,26 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://doi.org/10.1080/13658816.2026.2682957">Spatial Outliers explain Heterogeneity</a></div>
                                 <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2026.2682957">Int. J. Geogr. Inf. Sci.</a></div>
-                                <div class="card-links"><a class="p1" href="https://github.com/renkaigis/Second-dimension_Outlier-driven_Heterogeneity">R Code</a><a class="p1" href="pdf/SOH-ren2026.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="https://github.com/renkaigis/Second-dimension_Outlier-driven_Heterogeneity">R Code</a><a class="p1" href="pdf/SOH-ren2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
+                            </div>
+                        </div>
+                        <div class="method-card">
+                            <div class="card-media">
+                                <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <circle cx="70" cy="48" r="26" fill="#1a5276" fill-opacity="0.05" stroke="#1a5276" stroke-width="0.8" opacity="0.4" stroke-dasharray="3,2"/>
+                                <g opacity="0.55" fill="#1a5276"><circle cx="58" cy="40" r="2.2"/><circle cx="72" cy="36" r="2.2"/><circle cx="80" cy="50" r="2.2"/><circle cx="64" cy="56" r="2.2"/><circle cx="54" cy="50" r="2.2"/></g>
+                                <circle cx="70" cy="48" r="3" fill="#1a5276"/>
+                                <circle cx="122" cy="30" r="5" fill="none" stroke="#e74c3c" stroke-width="1.5"/><circle cx="122" cy="30" r="2.2" fill="#e74c3c" opacity="0.6"/>
+                                <line x1="70" y1="48" x2="122" y2="30" stroke="#1a5276" stroke-width="0.8" opacity="0.3" stroke-dasharray="2,2"/>
+                                <text x="87" y="86" text-anchor="middle" font-size="7" fill="#1a5276" font-weight="600" opacity="0.5">Context-aware</text>
+                            </svg>
+                                <span class="card-author" title="Yongze Song" onclick="showMemberCard(event, 'yongze-song')"><img src="assets/images/yongze-song.jpeg" alt="Yongze Song" loading="lazy"></span>
+                                <span class="card-abbr-overlay p1"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2700126">LOCA</a></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2700126">Local Outliers for Context-Aware Prediction</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2700126">GISci. &amp; Remote Sens.</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/LOCA-song2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -634,7 +848,7 @@
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">Heterogeneous Spatial Autocorrelation</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2391981">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mr">Top 4 Most Read 2025</span>
-                                <div class="card-links"><a class="p1" href="https://github.com/Zehua-Zhang-01/Heterogeneous_Spatial_Autocorrelation_Model" target="_blank">R Code</a><a class="p1" href="pdf/HSA-zhang2024.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="https://github.com/Zehua-Zhang-01/Heterogeneous_Spatial_Autocorrelation_Model" target="_blank" rel="noopener noreferrer">R Code</a><a class="p1" href="pdf/HSA-zhang2024.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -660,7 +874,7 @@
                                 <div class="card-journal"><a href="https://ieeexplore.ieee.org/document/8307463">IEEE Trans. Intell. Transp. Syst.</a></div>
                                 <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span>
                             
-                                <div class="card-links"><a class="p1" href="pdf/SRK-song2018.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/SRK-song2018.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -679,7 +893,7 @@
                                 <div class="card-abbr"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">Focal-Feature Regression Kriging</a></div>
                                 <div class="card-journal"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/gean.70035">Geographical Analysis</a></div>
                             
-                                <div class="card-links"><a class="p1" href="pdf/FFRK-luo2026.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/FFRK-luo2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -705,7 +919,7 @@
                                 <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Explains spatial errors</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mc">Top 30 Cited 3y</span>
-                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geocomplexity/index.html">R package: geocomplexity</a><a class="p1" href="pdf/GEOC-zhang2023.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geocomplexity/index.html">R package: geocomplexity</a><a class="p1" href="pdf/GEOC-zhang2023.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -731,7 +945,7 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">Geographically Optimal Similarity</a></div>
                                 <div class="card-journal"><a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">Mathematical Geosciences</a></div>
-                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html">R package: geosimilarity</a><a class="p1" href="pdf/GOS-song2022.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html">R package: geosimilarity</a><a class="p1" href="pdf/GOS-song2022.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -758,15 +972,40 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://link.springer.com/article/10.1007/s41651-026-00279-y">Pattern Similarity Learning</a></div>
                                 <div class="card-journal"><a href="https://link.springer.com/article/10.1007/s41651-026-00279-y">J. Geovis. Spatial Anal.</a></div>
-                                <div class="card-links"><a class="p1" href="pdf/PSL-liu2026.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/PSL-liu2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 8. Spatial graph network -->
+                <!-- 8. Spatial singularity -->
                 <div class="subcat-group">
-                    <div class="subcat-label p1">8. Spatial graph network</div>
+                    <div class="subcat-label p1">8. Spatial singularity</div>
+                    <div class="cards-inline">
+                        <div class="method-card">
+                            <div class="card-media">
+                                <svg class="card-svg p1" viewBox="0 0 175 95">
+                                <path d="M25 70 Q55 60 75 58 L87 22 L99 58 Q120 60 150 70" fill="none" stroke="#1a5276" stroke-width="1.8" opacity="0.55"/>
+                                <path d="M25 72 Q55 62 75 60 L87 26 L99 60 Q120 62 150 72 L150 80 L25 80 Z" fill="#1a5276" fill-opacity="0.07"/>
+                                <line x1="87" y1="22" x2="87" y2="78" stroke="#e74c3c" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>
+                                <circle cx="87" cy="22" r="3.2" fill="#e74c3c" opacity="0.75"/>
+                                <text x="87" y="90" text-anchor="middle" font-size="7" fill="#1a5276" font-weight="600" opacity="0.5">Singularity</text>
+                            </svg>
+                                <span class="card-author" title="Kai Ren" onclick="showMemberCard(event, 'kai-ren')"><img src="assets/images/kai-ren.jpg" alt="Kai Ren" loading="lazy"></span>
+                                <span class="card-abbr-overlay p1"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2690341">SRK</a></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2690341">Singularity Regression Kriging</a></div>
+                                <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2026.2690341">GISci. &amp; Remote Sens.</a></div>
+                                <div class="card-links"><a class="p1" href="https://github.com/renkaigis/Singularity_Regression_Kriging" target="_blank" rel="noopener noreferrer">R Code</a><a class="p1" href="pdf/SRK-ren2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. Spatial graph network -->
+                <div class="subcat-group">
+                    <div class="subcat-label p1">9. Spatial graph network</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <svg class="card-svg p1" viewBox="0 0 175 95">
@@ -778,7 +1017,7 @@
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2514330">Dynamic Spatiotemporal Graph Network</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2025.2514330">GISci. &amp; Remote Sens.</a></div>
                             
-                                <div class="card-links"><a class="p1" href="pdf/DSTGN-zhang2025.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/DSTGN-zhang2025.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -794,15 +1033,15 @@
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S2211675325000429">Geographically Informed Graph Neural Network</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S2211675325000429">Spatial Statistics</a></div>
                             
-                                <div class="card-links"><a class="p1" href="pdf/GIGNN-zhang2025.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/GIGNN-zhang2025.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 9. Spatial fusion -->
+                <!-- 10. Spatial fusion -->
                 <div class="subcat-group">
-                    <div class="subcat-label p1">9. Spatial fusion</div>
+                    <div class="subcat-label p1">10. Spatial fusion</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -821,15 +1060,15 @@
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2509099">Spatial Context-Aware Fusion</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2509099">Int. J. Digital Earth</a></div>
                             
-                                <div class="card-links"><a class="p1" href="pdf/SCAF-song2025.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/SCAF-song2025.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 10. Spatial transformer -->
+                <!-- 11. Spatial transformer -->
                 <div class="subcat-group">
-                    <div class="subcat-label p1">10. Spatial transformer</div>
+                    <div class="subcat-label p1">11. Spatial transformer</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <svg class="card-svg p1" viewBox="0 0 175 95">
@@ -844,16 +1083,16 @@
                                 <div class="card-full"><a href="https://doi.org/10.1080/13658816.2025.2602536">Spatiotemporal Multiscale Transformer</a></div>
                                 <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2025.2602536">Int. J. Geogr. Inf. Sci.</a></div>
                             
-                                <div class="card-links"><a class="p1" href="pdf/STMST-chen2025.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/STMST-chen2025.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
 
-                <!-- 11. Generalized heterogeneity -->
+                <!-- 12. Generalized heterogeneity -->
                 <div class="subcat-group">
-                    <div class="subcat-label p1 fit-width">11. Generalized heterogeneity</div>
+                    <div class="subcat-label p1 fit-width">12. Generalized heterogeneity</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -872,7 +1111,7 @@
                                 <div class="card-journal"><a href="https://doi.org/10.1080/13658816.2022.2147530">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mc">Top 4 Cited 3y</span>
                             
-                                <div class="card-links"><a class="p1" href="pdf/GHM-luo2022.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p1" href="pdf/GHM-luo2022.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -889,9 +1128,9 @@
             </div>
             <div class="part-flow">
 
-                <!-- 12. Spatial heterogeneity -->
+                <!-- 13. Spatial heterogeneity -->
                 <div class="subcat-group">
-                    <div class="subcat-label p2">12. Spatial heterogeneity</div>
+                    <div class="subcat-label p2">13. Spatial heterogeneity</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -905,7 +1144,7 @@
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">Optimal Parameters-based Geographical Detector</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">GISci. &amp; Remote Sens. (2020)</a></div>
                                 <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span><span class="card-badge hc">No.1 Most Cited in History</span>
-                                <div class="card-links"><a class="p2" href="http://cran.r-project.org/web/packages/GD/vignettes/GD.html">R package: GD</a><a class="p2" href="https://yongzesong.com/gd/">Q&amp;A</a><a class="p2" href="pdf/OPGD-song2020.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/web/packages/GD/vignettes/GD.html">R package: GD</a><a class="p2" href="gd.html">Q&amp;A</a><a class="p2" href="pdf/OPGD-song2020.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -919,7 +1158,7 @@
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">Local Indicator of Stratified Power</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mr">Top 2 Most Read 2026</span>
-                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/web/packages/localsp/index.html">R package: localsp</a><a class="p2" href="https://doi.org/10.6084/m9.figshare.26518651.v3" target="_blank">R Code</a><a class="p2" href="pdf/LISP-hu2024.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/web/packages/localsp/index.html">R package: localsp</a><a class="p2" href="https://doi.org/10.6084/m9.figshare.26518651.v3" target="_blank" rel="noopener noreferrer">R Code</a><a class="p2" href="pdf/LISP-hu2024.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -932,7 +1171,7 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">Geographically Optimal Zones-based Heterogeneity</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0924271622000132">ISPRS J. Photogramm. Remote Sens.</a></div>
-                                <div class="card-links"><a class="p2" href="https://github.com/yongzesong/gozh" target="_blank">R Code 1</a><a class="p2" href="https://github.com/pengtum/GOZH-model/tree/main" target="_blank">R Code 2</a><a class="p2" href="pdf/GOZH-luo2022.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="https://github.com/yongzesong/gozh" target="_blank" rel="noopener noreferrer">R Code 1</a><a class="p2" href="https://github.com/pengtum/GOZH-model/tree/main" target="_blank" rel="noopener noreferrer">R Code 2</a><a class="p2" href="pdf/GOZH-luo2022.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -946,7 +1185,7 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Locally Explained Heterogeneity Model</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/17538947.2023.2271883">Int. J. Digital Earth</a></div>
-                                <div class="card-links"><a class="p2" href="https://github.com/liyang4991/LESH-model/tree/main" target="_blank">R Code</a><a class="p2" href="pdf/LESH-li2023.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="https://github.com/liyang4991/LESH-model/tree/main" target="_blank" rel="noopener noreferrer">R Code</a><a class="p2" href="pdf/LESH-li2023.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -959,7 +1198,7 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70032">gdverse: Spatial Stratified Heterogeneity Family</a></div>
                                 <div class="card-journal"><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70032">Trans. in GIS</a></div>
-                                <div class="card-links"><a class="p2" href="https://github.com/stscl/gdverse" target="_blank">R package: gdverse</a><a class="p2" href="pdf/gdverse-lyu2026.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="https://github.com/stscl/gdverse" target="_blank" rel="noopener noreferrer">R package: gdverse</a><a class="p2" href="pdf/gdverse-lyu2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -974,15 +1213,15 @@
                                 <div class="card-abbr"><a href="https://www.nature.com/articles/s41598-021-96772-z">Wavelet Geographically Weighted Regression</a></div>
                                 <div class="card-journal"><a href="https://www.nature.com/articles/s41598-021-96772-z">Scientific Reports</a></div>
                             
-                                <div class="card-links"><a class="p2" href="pdf/WGWR-song2021.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="pdf/WGWR-song2021.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 13. Robust spatial models -->
+                <!-- 14. Robust spatial models -->
                 <div class="subcat-group">
-                    <div class="subcat-label p2">13. Robust spatial models</div>
+                    <div class="subcat-label p2">14. Robust spatial models</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -994,15 +1233,15 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Robust Geographical Detector</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0303243422001088">Int. J. Appl. Earth Obs. Geoinf.</a></div>
-                                <div class="card-links"><a class="p2" href="https://github.com/zehua-zhang-01/robust_geographical_detector" target="_blank">Python Code</a><a class="p2" href="pdf/RGD-zhang2022.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="https://github.com/zehua-zhang-01/robust_geographical_detector" target="_blank" rel="noopener noreferrer">Python Code</a><a class="p2" href="pdf/RGD-zhang2022.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 14. Spatial interaction -->
+                <!-- 15. Spatial interaction -->
                 <div class="subcat-group">
-                    <div class="subcat-label p2">14. Spatial interaction</div>
+                    <div class="subcat-label p2">15. Spatial interaction</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -1016,7 +1255,7 @@
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S2211675324000058">Spatial Statistics</a></div>
                                 <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span>
                             
-                                <div class="card-links"><a class="p2" href="pdf/RID-zhang2024.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="pdf/RID-zhang2024.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1032,7 +1271,7 @@
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2025.2526042">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mr">Top 1 Most Read 2025</span>
                             
-                                <div class="card-links"><a class="p2" href="pdf/GPI-luo2025.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="pdf/GPI-luo2025.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1047,7 +1286,7 @@
                                 <div class="card-abbr"><a href="https://doi.org/10.1016/j.jag.2025.105072">Local Effects of Pattern Interaction</a></div>
                                 <div class="card-journal"><a href="https://doi.org/10.1016/j.jag.2025.105072">Int. J. Appl. Earth Obs. Geoinf.</a></div>
                             
-                                <div class="card-links"><a class="p2" href="pdf/LPI-song2025.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="pdf/LPI-song2025.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1062,15 +1301,15 @@
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">Interactive Detector for Spatial Associations</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">Int. J. Geogr. Inf. Sci.</a></div>
                                 <span class="card-badge mc">Top 2 Cited 2023</span>
-                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/web/packages/IDSA/IDSA.pdf">R package: IDSA</a><a class="p2" href="pdf/IDSA-song2021.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="https://cran.r-project.org/src/contrib/Archive/IDSA/">R package: IDSA</a><a class="p2" href="pdf/IDSA-song2021.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 15. Causal discovery -->
+                <!-- 16. Causal discovery -->
                 <div class="subcat-group">
-                    <div class="subcat-label p2">15. Causal discovery</div>
+                    <div class="subcat-label p2">16. Causal discovery</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -1092,7 +1331,7 @@
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0198971526000372">Causal with Temporal Empirical Dynamic Modeling</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0198971526000372">Computers, Environ. and Urban Syst.</a></div>
                             
-                                <div class="card-links"><a class="p2" href="pdf/tEDM-lyu2026.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="pdf/tEDM-lyu2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1117,15 +1356,15 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2026.2687121">Geographical Cross Mapping Cardinality</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2026.2687121">Int. J. Geogr. Inf. Sci.</a></div>
-                                <div class="card-links"><a class="p2" href="https://cloud.r-project.org/package=spEDM" target="_blank">R package: spEDM</a><a class="p2" href="pdf/GCMC-lyu2026.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="https://cloud.r-project.org/package=spEDM" target="_blank" rel="noopener noreferrer">R package: spEDM</a><a class="p2" href="pdf/GCMC-lyu2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 16. Spatial anisotropy -->
+                <!-- 17. Spatial anisotropy -->
                 <div class="subcat-group">
-                    <div class="subcat-label p2">16. Spatial anisotropy</div>
+                    <div class="subcat-label p2">17. Spatial anisotropy</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <svg class="card-svg p2" viewBox="0 0 175 95"><ellipse cx="67" cy="42" rx="25" ry="12" transform="rotate(-30 67 42)" fill="#8C1515" opacity="0.1" stroke="#8C1515" stroke-width="0.8"/>
@@ -1137,15 +1376,15 @@
                                 <div class="card-full"><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Spatial irregular anisotropy in urban heat</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S2210670725006535">Sustain. Cities and Society</a></div>
                             
-                                <div class="card-links"><a class="p2" href="pdf/SIA-yang2025.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="pdf/SIA-yang2025.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 17. Spatial path analysis -->
+                <!-- 18. Spatial path analysis -->
                 <div class="subcat-group">
-                    <div class="subcat-label p2">17. Spatial path analysis</div>
+                    <div class="subcat-label p2">18. Spatial path analysis</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -1158,15 +1397,15 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Local Pathways of Association</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1569843225001785">Int. J. Appl. Earth Obs. Geoinf.</a></div>
-                                <div class="card-links"><a class="p2" href="https://figshare.com/articles/dataset/Local_pathways_of_association/27187623" target="_blank">R Code</a><a class="p2" href="pdf/LPA-hu2025.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="https://figshare.com/articles/dataset/Local_pathways_of_association/27187623" target="_blank" rel="noopener noreferrer">R Code</a><a class="p2" href="pdf/LPA-hu2025.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 18. Spatial segmentation -->
+                <!-- 19. Spatial segmentation -->
                 <div class="subcat-group">
-                    <div class="subcat-label p2">18. Spatial segmentation</div>
+                    <div class="subcat-label p2">19. Spatial segmentation</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -1179,7 +1418,7 @@
                             <div class="card-body">
                                 <div class="card-abbr"><a href="https://ieeexplore.ieee.org/document/9123684">Spatial Heterogeneity-based Segmentation</a></div>
                                 <div class="card-journal"><a href="https://ieeexplore.ieee.org/document/9123684">IEEE Trans. Intell. Transp. Syst.</a></div>
-                                <div class="card-links"><a class="p2" href="https://cran.rstudio.com/web/packages/HS/index.html">R package: HS</a><a class="p2" href="pdf/SHS-song2020.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="https://cran.rstudio.com/web/packages/HS/index.html">R package: HS</a><a class="p2" href="pdf/SHS-song2020.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1194,15 +1433,15 @@
                                 <div class="card-abbr"><a href="https://ieeexplore.ieee.org/abstract/document/10974410">Gaussian Mixture Segmentation</a></div>
                                 <div class="card-journal"><a href="https://ieeexplore.ieee.org/abstract/document/10974410">IEEE Trans. Intell. Transp. Syst.</a></div>
                             
-                                <div class="card-links"><a class="p2" href="pdf/GMS-zhang2025.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="pdf/GMS-zhang2025.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 19. Spatial unmixing -->
+                <!-- 20. Spatial unmixing -->
                 <div class="subcat-group">
-                    <div class="subcat-label p2">19. Spatial unmixing</div>
+                    <div class="subcat-label p2">20. Spatial unmixing</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -1217,7 +1456,7 @@
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224004229">Spatio-temporal Unmixing with Heterogeneity</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224004229">Int. J. Appl. Earth Obs. Geoinf.</a></div>
                             
-                                <div class="card-links"><a class="p2" href="pdf/STUH-luo2024.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p2" href="pdf/STUH-luo2024.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1234,9 +1473,9 @@
             </div>
             <div class="part-flow">
 
-                <!-- 20. Spatial accessibility -->
+                <!-- 21. Spatial accessibility -->
                 <div class="subcat-group">
-                    <div class="subcat-label p3">20. Spatial accessibility</div>
+                    <div class="subcat-label p3">21. Spatial accessibility</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -1253,15 +1492,15 @@
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2018.1446713">GISci. &amp; Remote Sens.</a></div>
                                 <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span>
                             
-                                <div class="card-links"><a class="p3" href="pdf/D2SFCA-song2018.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p3" href="pdf/D2SFCA-song2018.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 21. Spatial trade-off -->
+                <!-- 22. Spatial trade-off -->
                 <div class="subcat-group">
-                    <div class="subcat-label p3">21. Spatial trade-off</div>
+                    <div class="subcat-label p3">22. Spatial trade-off</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -1276,7 +1515,7 @@
                                 <div class="card-journal"><a href="https://ieeexplore.ieee.org/document/9548776">IEEE Trans. Intell. Transp. Syst.</a></div>
                                 <span class="card-badge hc">🏆 Highly Cited Paper (Top 1%)</span>
                             
-                                <div class="card-links"><a class="p3" href="pdf/DTOM-song2021.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p3" href="pdf/DTOM-song2021.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1293,7 +1532,7 @@
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224001778">Spatial Delta Model</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1569843224001778">Int. J. Appl. Earth Obs. Geoinf.</a></div>
                             
-                                <div class="card-links"><a class="p3" href="pdf/SDM-song2024.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p3" href="pdf/SDM-song2024.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                         <div class="method-card">
@@ -1308,15 +1547,15 @@
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S0303243421002920">Spatial Trade-Off Relation</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S0303243421002920">Int. J. Appl. Earth Obs. Geoinf.</a></div>
                             
-                                <div class="card-links"><a class="p3" href="pdf/STOR-song2021.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p3" href="pdf/STOR-song2021.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 22. Spatial boundary -->
+                <!-- 23. Spatial boundary -->
                 <div class="subcat-group">
-                    <div class="subcat-label p3">22. Spatial boundary</div>
+                    <div class="subcat-label p3">23. Spatial boundary</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <svg class="card-svg p3" viewBox="0 0 175 95"><g opacity="0.4">
@@ -1330,15 +1569,15 @@
                                 <div class="card-full"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2018.1511793">POI for redefining spatial boundaries of cities</a></div>
                                 <div class="card-journal"><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2018.1511793">Int. J. Geogr. Inf. Sci.</a></div>
                             
-                                <div class="card-links"><a class="p3" href="pdf/SBC-song2018.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p3" href="pdf/SBC-song2018.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 23. Spatial decision-making -->
+                <!-- 24. Spatial decision-making -->
                 <div class="subcat-group">
-                    <div class="subcat-label p3">23. Spatial decision-making</div>
+                    <div class="subcat-label p3">24. Spatial decision-making</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -1354,15 +1593,15 @@
                                 <div class="card-abbr"><a href="https://www.sciencedirect.com/science/article/pii/S1364032120308224">Multi-factor Spatial Decision Model</a></div>
                                 <div class="card-journal"><a href="https://www.sciencedirect.com/science/article/pii/S1364032120308224">Renew. Sustain. Energy Rev.</a></div>
                             
-                                <div class="card-links"><a class="p3" href="pdf/MFSD-song2020.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p3" href="pdf/MFSD-song2020.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 24. Spatial optimization -->
+                <!-- 25. Spatial optimization -->
                 <div class="subcat-group">
-                    <div class="subcat-label p3">24. Spatial optimization</div>
+                    <div class="subcat-label p3">25. Spatial optimization</div>
                     <div class="cards-inline">
                         <div class="method-card">
                             <div class="card-media">
@@ -1380,7 +1619,7 @@
                                 <div class="card-abbr"><a href="https://www.mdpi.com/2220-9964/15/2/70">Spatiotemporal Particle Swarm Optimization for Cost Allocation</a></div>
                                 <div class="card-journal"><a href="https://www.mdpi.com/2220-9964/15/2/70">ISPRS Int. J. Geo-Inf.</a></div>
                             
-                                <div class="card-links"><a class="p3" href="pdf/SPOCA-zhang2026.pdf" target="_blank">PDF</a></div>
+                                <div class="card-links"><a class="p3" href="pdf/SPOCA-zhang2026.pdf" target="_blank" rel="noopener noreferrer">PDF</a></div>
                             </div>
                         </div>
                     </div>
@@ -1394,11 +1633,12 @@
         <ol class="concepts-list">
             <li><span class="concept-name">Spatial validation:</span> <a href="pdf/DSI-liu2026.pdf">degree of spatial interpretability</a>, <a href="pdf/DG-zhang2026.pdf">degree of geocomplexity</a></li>
             <li><span class="concept-name">Spatial association:</span> <a href="pdf/SDA-song2022.pdf">second-dimension spatial association</a>, <a href="pdf/ESDA-wu2026.pdf">explainable second-dimension spatial association</a></li>
-            <li><span class="concept-name">Spatial outliers:</span> <a href="pdf/SDO-ren2025.pdf">second-dimension outliers</a>, <a href="pdf/SOH-ren2026.pdf">second-dimension outlier-driven heterogeneity</a></li>
+            <li><span class="concept-name">Spatial outliers:</span> <a href="pdf/SDO-ren2025.pdf">second-dimension outliers</a>, <a href="pdf/SOH-ren2026.pdf">second-dimension outlier-driven heterogeneity</a>, <a href="pdf/LOCA-song2026.pdf">local outliers for context-aware prediction</a></li>
             <li><span class="concept-name">Spatial autocorrelation:</span> <a href="pdf/HSA-zhang2024.pdf">heterogeneous spatial autocorrelation</a></li>
             <li><span class="concept-name">Geostatistics or kriging:</span> <a href="pdf/SRK-song2018.pdf">segment-based regression kriging</a>, <a href="pdf/FFRK-luo2026.pdf">focal-feature regression kriging</a></li>
             <li><span class="concept-name">Geocomplexity:</span> <a href="pdf/GEOC-zhang2023.pdf">geocomplexity</a></li>
             <li><span class="concept-name">Geographical similarity:</span> <a href="pdf/GOS-song2022.pdf">geographically optimal similarity</a>, <a href="pdf/PSL-liu2026.pdf">pattern similarity learning</a></li>
+            <li><span class="concept-name">Spatial singularity:</span> <a href="pdf/SRK-ren2026.pdf">singularity regression kriging</a></li>
             <li><span class="concept-name">Spatial graph network:</span> <a href="pdf/GIGNN-zhang2025.pdf">geographically informed graph neural network</a>, <a href="pdf/DSTGN-zhang2025.pdf">dynamic spatiotemporal graph network</a></li>
             <li><span class="concept-name">Spatial fusion:</span> <a href="pdf/SCAF-song2025.pdf">spatial context-aware fusion</a></li>
             <li><span class="concept-name">Spatial transformer:</span> <a href="pdf/STMST-chen2025.pdf">spatiotemporal multiscale transformer</a></li>
@@ -1422,18 +1662,18 @@
         <!-- ==================== SOFTWARE ==================== -->
         <h2 class="software-heading" id="software">Open-Source Geospatial Software (260,000+ downloads)</h2>
         <div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Optimal Parameters-based Geographical Detectors (OPGD)</strong> for spatial factor exploration. <a href="http://cran.r-project.org/web/packages/GD/vignettes/GD.html" class="sw-pkg">R package "GD"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">publication</a><div class="sw-sub">&ndash; Highly Cited Paper &middot; No. 1 Most Cited Article in GIScience &amp; Remote Sensing in 2021&ndash;2023</div></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/GD" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/GD" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Geographically Optimal Similarity (GOS)</strong> for spatial prediction. <a href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html" class="sw-pkg">R package "geosimilarity"</a> | <a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/geosimilarity" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/geosimilarity" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Second-Dimension Spatial Association (SDA)</strong> for spatial prediction. <a href="https://cran.r-project.org/web/packages/SecDim/vignettes/SecDim.html" class="sw-pkg">R package "SecDim"</a> | <a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/SecDim" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/SecDim" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Geocomplexity.</strong> <a href="https://cran.r-project.org/web/packages/geocomplexity/index.html" class="sw-pkg">R package "geocomplexity"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/geocomplexity" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/geocomplexity" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Interactive Detector for Spatial Association (IDSA)</strong> for spatial factor exploration. <a href="https://cran.r-project.org/web/packages/IDSA/IDSA.pdf" class="sw-pkg">R package "IDSA"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">publication</a><div class="sw-sub">&ndash; No. 2 Most Cited Article in IJGIS in 2021&ndash;2023</div></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/IDSA" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/IDSA" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Homogenous Segmentation (HS)</strong> for segmenting spatial lines data. <a href="https://cran.rstudio.com/web/packages/HS/index.html" class="sw-pkg">R package "HS"</a> | <a href="https://ieeexplore.ieee.org/document/9123684">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/HS" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/HS" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Segment-based Kriging (SK)</strong> for spatial prediction. <a href="https://cran.r-project.org/src/contrib/Archive/SK/" class="sw-pkg">R package "SK"</a> | <a href="https://ieeexplore.ieee.org/document/8307463">publication</a><div class="sw-sub">&ndash; Highly Cited Paper</div></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/SK" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/SK" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Energy Decomposition Analysis (EDA)</strong> for analysing carbon emission factors. <a href="https://cran.r-project.org/web/packages/EDA/vignettes/EDA.html" class="sw-pkg">R package "EDA"</a> | <a href="https://www.sciencedirect.com/science/article/pii/S0959652619305992">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/EDA" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/EDA" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">SDGdetector:</strong> Detecting Sustainable Development Goals (SDGs) in Text. <a href="https://cran.r-project.org/web/packages/SDGdetector/index.html" class="sw-pkg">R package "SDGdetector"</a> | <a href="https://joss.theoj.org/papers/10.21105/joss.05124">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/SDGdetector" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/SDGdetector" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">gdverse:</strong> Analysis of Spatial Stratified Heterogeneity. <a href="https://cran.r-project.org/web/packages/gdverse/index.html" class="sw-pkg">R package "gdverse"</a> | <a href="https://onlinelibrary.wiley.com/doi/10.1111/tgis.70032">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/gdverse" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/gdverse" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">localsp:</strong> Local Indicator of Stratified Power. <a href="https://cran.r-project.org/web/packages/localsp/index.html" class="sw-pkg">R package "localsp"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/localsp" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/localsp" alt="downloads/month"></div></div>
-            <div class="sw-row"><div class="sw-info"><strong class="sw-name">cisp:</strong> A Correlation Indicator Based on Spatial Patterns. <a href="https://cran.r-project.org/web/packages/cisp/index.html" class="sw-pkg">R package "cisp"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/cisp" alt="downloads"><img src="https://cranlogs.r-pkg.org/badges/cisp" alt="downloads/month"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Optimal Parameters-based Geographical Detectors (OPGD)</strong> for spatial factor exploration. <a href="https://cran.r-project.org/web/packages/GD/vignettes/GD.html" class="sw-pkg">R package "GD"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/15481603.2020.1760434">publication</a><div class="sw-sub">&ndash; Highly Cited Paper &middot; No. 1 Most Cited Article in GIScience &amp; Remote Sensing in 2021&ndash;2023</div></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/GD" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/GD" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Geographically Optimal Similarity (GOS)</strong> for spatial prediction. <a href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html" class="sw-pkg">R package "geosimilarity"</a> | <a href="https://link.springer.com/article/10.1007/s11004-022-10036-8">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/geosimilarity" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/geosimilarity" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Second-Dimension Spatial Association (SDA)</strong> for spatial prediction. <a href="https://cran.r-project.org/src/contrib/Archive/SecDim/" class="sw-pkg">R package "SecDim"</a> | <a href="https://www.sciencedirect.com/science/article/pii/S156984322200036X">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/SecDim" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/SecDim" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Geocomplexity.</strong> <a href="https://cran.r-project.org/web/packages/geocomplexity/index.html" class="sw-pkg">R package "geocomplexity"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2023.2203212">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/geocomplexity" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/geocomplexity" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Interactive Detector for Spatial Association (IDSA)</strong> for spatial factor exploration. <a href="https://cran.r-project.org/src/contrib/Archive/IDSA/" class="sw-pkg">R package "IDSA"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2021.1882680">publication</a><div class="sw-sub">&ndash; No. 2 Most Cited Article in IJGIS in 2021&ndash;2023</div></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/IDSA" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/IDSA" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Homogenous Segmentation (HS)</strong> for segmenting spatial lines data. <a href="https://cran.rstudio.com/web/packages/HS/index.html" class="sw-pkg">R package "HS"</a> | <a href="https://ieeexplore.ieee.org/document/9123684">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/HS" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/HS" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Segment-based Kriging (SK)</strong> for spatial prediction. <a href="https://cran.r-project.org/src/contrib/Archive/SK/" class="sw-pkg">R package "SK"</a> | <a href="https://ieeexplore.ieee.org/document/8307463">publication</a><div class="sw-sub">&ndash; Highly Cited Paper</div></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/SK" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/SK" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">Energy Decomposition Analysis (EDA)</strong> for analysing carbon emission factors. <a href="https://cran.r-project.org/src/contrib/Archive/EDA/" class="sw-pkg">R package "EDA"</a> | <a href="https://www.sciencedirect.com/science/article/pii/S0959652619305992">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/EDA" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/EDA" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">SDGdetector:</strong> Detecting Sustainable Development Goals (SDGs) in Text. <a href="https://cran.r-project.org/web/packages/SDGdetector/index.html" class="sw-pkg">R package "SDGdetector"</a> | <a href="https://joss.theoj.org/papers/10.21105/joss.05124">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/SDGdetector" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/SDGdetector" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">gdverse:</strong> Analysis of Spatial Stratified Heterogeneity. <a href="https://cran.r-project.org/web/packages/gdverse/index.html" class="sw-pkg">R package "gdverse"</a> | <a href="https://onlinelibrary.wiley.com/doi/10.1111/tgis.70032">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/gdverse" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/gdverse" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">localsp:</strong> Local Indicator of Stratified Power. <a href="https://cran.r-project.org/web/packages/localsp/index.html" class="sw-pkg">R package "localsp"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/localsp" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/localsp" alt="downloads/month" loading="lazy" decoding="async"></div></div>
+            <div class="sw-row"><div class="sw-info"><strong class="sw-name">cisp:</strong> A Correlation Indicator Based on Spatial Patterns. <a href="https://cran.r-project.org/web/packages/cisp/index.html" class="sw-pkg">R package "cisp"</a> | <a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2024.2437811">publication</a></div><div class="sw-badges"><img src="https://cranlogs.r-pkg.org/badges/grand-total/cisp" alt="downloads" loading="lazy" decoding="async"><img src="https://cranlogs.r-pkg.org/badges/cisp" alt="downloads/month" loading="lazy" decoding="async"></div></div>
         </div>
     </div>
 
@@ -1441,6 +1681,9 @@
     <div id="memberPopup" class="member-popup" onclick="event.stopPropagation()"></div>
 
     <!-- ========== FOOTER ========== -->
+
+</main>
+
 <footer class="site-footer">
     <div class="footer-inner">
         <div class="footer-col">
@@ -1472,17 +1715,17 @@
         <div class="footer-left">
             <span class="footer-copyright">&copy; 2026 Yongze Song</span>
             <div class="footer-social">
-                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
-                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
-                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
-                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
-                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar" loading="lazy" decoding="async"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate" loading="lazy" decoding="async"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID" loading="lazy" decoding="async"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn" loading="lazy" decoding="async"></a>
+                <a href="https://x.com/YongzeSong" title="X (formerly Twitter)"><img src="assets/images/x-logo.svg" alt="X" loading="lazy" decoding="async"></a>
             </div>
             <a href="cn.html" class="footer-lang">中文</a>
         </div>
         <div class="footer-right">
-            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods"></a>
-            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods" loading="lazy" decoding="async"></a>
+            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab" loading="lazy" decoding="async"></a>
         </div>
     </div>
 </footer>

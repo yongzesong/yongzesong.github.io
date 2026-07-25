@@ -1,0 +1,55 @@
+"walk_minutes","region","mean_delta"
+3,"Bayswater-Bassendean",0.054
+3,"Belmont-Victoria Park",0.0658
+3,"Canning",-0.001
+3,"Cottesloe-Claremont",0.0152
+3,"Fremantle",0.0854
+3,"Melville",0.0585
+3,"Perth City",-0.1596
+3,"South Perth",-0.0737
+3,"Stirling",0.0081
+5,"Bayswater-Bassendean",0.0915
+5,"Belmont-Victoria Park",0.0888
+5,"Canning",0.0273
+5,"Cottesloe-Claremont",0.0204
+5,"Fremantle",-3e-04
+5,"Melville",0.0632
+5,"Perth City",-0.1812
+5,"South Perth",-0.1058
+5,"Stirling",0.005
+10,"Bayswater-Bassendean",0.1695
+10,"Belmont-Victoria Park",0.1579
+10,"Canning",0.0707
+10,"Cottesloe-Claremont",0.1286
+10,"Fremantle",0.031
+10,"Melville",0.1109
+10,"Perth City",-0.2107
+10,"South Perth",-0.1221
+10,"Stirling",-0.1141
+15,"Bayswater-Bassendean",0.2271
+15,"Belmont-Victoria Park",0.1695
+15,"Canning",0.0882
+15,"Cottesloe-Claremont",0.1959
+15,"Fremantle",0.0712
+15,"Melville",0.14
+15,"Perth City",-0.2531
+15,"South Perth",-0.1437
+15,"Stirling",-0.1645
+20,"Bayswater-Bassendean",0.2533
+20,"Belmont-Victoria Park",0.1529
+20,"Canning",0.1519
+20,"Cottesloe-Claremont",0.2432
+20,"Fremantle",0.173
+20,"Melville",0.1635
+20,"Perth City",-0.3916
+20,"South Perth",-0.1548
+20,"Stirling",-0.1646
+30,"Bayswater-Bassendean",0.2817
+30,"Belmont-Victoria Park",0.1491
+30,"Canning",0.2837
+30,"Cottesloe-Claremont",0.3937
+30,"Fremantle",0.4118
+30,"Melville",0.2782
+30,"Perth City",-0.7651
+30,"South Perth",-0.2629
+30,"Stirling",-0.1526

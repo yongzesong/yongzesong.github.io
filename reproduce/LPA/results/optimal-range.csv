@@ -1,0 +1,5 @@
+"correction","window","r_opt_km","L_max","published_km","difference_km","selected","plateau_from_km","plateau_to_km"
+"none","rectangle",378.51,62.9900406479339,707.29,-328.78,FALSE,NA,NA
+"border","rectangle",705.29,128.942368633554,707.29,-2,TRUE,686.95,723.18
+"isotropic","rectangle",805.99,98.027032393676,707.29,98.7,FALSE,NA,NA
+"border","hull",568.03,48.9204750300634,707.29,-139.26,FALSE,NA,NA

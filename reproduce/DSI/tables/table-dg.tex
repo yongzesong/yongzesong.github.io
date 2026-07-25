@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering
+\caption{Point-wise degree of geocomplexity summarised across evaluation locations.}
+\label{tab:dg}
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Model} & \textbf{Mean DG} & \textbf{95\% CI} & \textbf{Median DG} & \textbf{Share $DG>0$} \\
+\hline
+rpart & 31.554 & [-29.327, 92.436] & 0.512 & 63.2\% \\
+xgbTree & 22.363 & [-21.486, 66.213] & 0.504 & 64.8\% \\
+cubist & 29.799 & [-25.081, 84.679] & 0.407 & 62.6\% \\
+knn & 16.878 & [-16.253, 50.009] & 0.402 & 61.9\% \\
+rf & 28.452 & [-26.944, 83.847] & 0.349 & 59.0\% \\
+\hline
+\end{tabular}
+\\[2pt]\footnotesize Local complexity computed under 18 nearest neighbours. The median is reported alongside the mean because the point-wise ratio is heavy-tailed.
+\end{table}

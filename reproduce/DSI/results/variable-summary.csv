@@ -1,0 +1,8 @@
+"variable","role","n","mean","sd","min","max"
+"y","response",1024,12.2629,5.3749,-1.734,27.3558
+"temperature","predictor",1024,17.7641,3.3813,8.849,27.2529
+"precipitation","predictor",1024,590.087,83.3223,301.2569,946.7799
+"elevation","predictor",1024,299.6908,121.2844,-68.5618,707.9269
+"soil_ph","predictor",1024,6.4348,0.3816,5.0944,7.6094
+"distance_km","predictor",1024,150,50,-10.3902,300.7494
+"noise_var","predictor",1024,0.0394,1.0302,-2.797,3.2989

@@ -8,7 +8,23 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
     <title>GD R Package - Yongze Song</title>
+    <link rel="canonical" href="https://yongzesong.com/gd.html">
     <meta name="description" content="Geodetector Model and GD R Package: Q&A, Installation, and Advanced Models documentation.">
+    <!-- Open Graph / Twitter Card -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Yongze Song">
+    <meta property="og:locale" content="en_AU">
+    <meta property="og:title" content="GD R Package - Yongze Song">
+    <meta property="og:description" content="Geodetector Model and GD R Package: Q&amp;A, Installation, and Advanced Models documentation.">
+    <meta property="og:url" content="https://yongzesong.com/gd.html">
+    <meta property="og:image" content="https://yongzesong.com/assets/images/opgd.png">
+    <meta property="og:image:alt" content="Optimal parameters-based geographical detector">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@YongzeSong">
+    <meta name="twitter:creator" content="@YongzeSong">
+    <meta name="twitter:title" content="GD R Package - Yongze Song">
+    <meta name="twitter:description" content="Geodetector Model and GD R Package: Q&amp;A, Installation, and Advanced Models documentation.">
+    <meta name="twitter:image" content="https://yongzesong.com/assets/images/opgd.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -330,15 +346,24 @@
             .badges { flex-wrap: wrap; }
         }
         @media (max-width: 768px) {
-            html, body { font-size: 15px; }
-            h1 { font-size: 1.2rem; }
-            h2 { font-size: 1.1rem; }
-            p { font-size: 0.72rem; }
+            html, body { font-size: 16px; }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.3rem; }
             .table-container { font-size: 0.75rem; }
+        }
+    
+        /* Mobile readability: keep primary reading text at 15px or above */
+        @media (max-width: 768px) {
+            .question, .note-box, .content-column td, .content-column li { font-size: 0.95rem; }
+            p, .answer { font-size: 1rem; }
+            .section-list { font-size: 0.95rem; }
+            .content-column h3 { font-size: 1.1rem; }
+            .content-column h4 { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <!-- ========== HEADER ========== -->
 <header class="site-header">
@@ -358,7 +383,7 @@
 </header>
 
 <!-- ========== MAIN CONTENT ========== -->
-<main class="main-content">
+<main id="main" class="main-content">
 
     <!-- Left Sidebar Navigation -->
     <aside class="sidebar">
@@ -392,9 +417,9 @@
             <p>The geographical detectors (GD) model is a powerful statistical method for spatial heterogeneity analysis and identifying the determinants of geographical phenomena. The 'GD' R package provides an efficient implementation of this model with comprehensive tools for spatial analysis. </p>
              <p>R package "GD" <a href="https://cran.r-project.org/web/packages/GD/vignettes/GD.html">Tutorial</a></p>
             <div class="badges">
-                <img src="assets/images/gd-badge.svg" alt="GD Badge">
-                <img src="https://cranlogs.r-pkg.org/badges/grand-total/GD" alt="downloads">
-                <img src="https://cranlogs.r-pkg.org/badges/GD" alt="downloads/month">
+                <img src="assets/images/gd-badge.svg" alt="GD Badge" loading="lazy" decoding="async">
+                <img src="https://cranlogs.r-pkg.org/badges/grand-total/GD" alt="downloads" loading="lazy" decoding="async">
+                <img src="https://cranlogs.r-pkg.org/badges/GD" alt="downloads/month" loading="lazy" decoding="async">
             </div>
         </div>
 
@@ -461,18 +486,18 @@ library("GD")</code></pre>
                             <tr>
                                 <td><strong>OPGD</strong></td>
                                 <td>Characterising spatial heterogeneity, identifying geographical factors and interactive impacts</td>
-                                <td><a href="https://yongzesong.com/wp-content/uploads/2021/11/an-optimal-parameters-based-geographical-detector-model-enhances-geographic-characteristics-of-explanatory-variables-for-spatial.pdf">Song et al. (2020)</a></td>
+                                <td><a href="pdf/OPGD-song2020.pdf" target="_blank" rel="noopener noreferrer">Song et al. (2020)</a></td>
                                 <td>R package "GD". <a href="https://cran.r-project.org/web/packages/GD/vignettes/GD.html">Tutorial</a></td>
                             </tr>
                             <tr>
                                 <td><strong>IDSA</strong></td>
                                 <td>Estimating power of interactive determinants from spatial perspective</td>
-                                <td><a href="https://yongzesong.com/wp-content/uploads/2021/11/an-interactive-detector-for-spatial-associations.pdf">Song et al. (2021)</a></td>
+                                <td><a href="pdf/IDSA-song2021.pdf" target="_blank" rel="noopener noreferrer">Song et al. (2021)</a></td>
                                 <td>R package "IDSA"</td>
                             </tr>
                             <tr>
                                 <td><strong>GHM</strong></td>
-                                <td>Characterizing local and stratified heterogeneity, improving interpolation</td>
+                                <td>Characterising local and stratified heterogeneity, improving interpolation</td>
                                 <td><a href="https://www.tandfonline.com/doi/full/10.1080/13658816.2022.2147530">Luo, Song*, et al. (2023)</a></td>
                                 <td></td>
                             </tr>
@@ -538,7 +563,7 @@ library("GD")</code></pre>
 
         <div class="model-item">
             <h3>OPGD (Optimal Parameters-based Geographical Detector)</h3>
-            <p>An enhanced version of the original GD model that automatically optimizes discretization parameters to maximize the explanatory power of spatial factors. This model provides better accuracy in identifying spatial heterogeneity and is particularly effective for continuous variables.</p>
+            <p>An enhanced version of the original GD model that automatically optimises discretization parameters to maximise the explanatory power of spatial factors. This model provides better accuracy in identifying spatial heterogeneity and is particularly effective for continuous variables.</p>
         </div>
 
         <div class="model-item">
@@ -548,7 +573,7 @@ library("GD")</code></pre>
 
         <div class="model-item">
             <h3>GHM (Generalized Heterogeneity Model)</h3>
-            <p>Characterizes both local and stratified heterogeneity patterns, improving spatial interpolation and prediction accuracy. Particularly useful for applications requiring localized heterogeneity assessment.</p>
+            <p>Characterises both local and stratified heterogeneity patterns, improving spatial interpolation and prediction accuracy. Particularly useful for applications requiring localized heterogeneity assessment.</p>
         </div>
 
         <div class="model-item">
@@ -627,17 +652,17 @@ library("GD")</code></pre>
         <div class="footer-left">
             <span class="footer-copyright">&copy; 2026 Yongze Song</span>
             <div class="footer-social">
-                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar"></a>
-                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate"></a>
-                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID"></a>
-                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn"></a>
-                <a href="https://twitter.com/YongzeSong" title="Twitter"><img src="assets/images/twitter.png" alt="Twitter"></a>
+                <a href="https://scholar.google.com/citations?user=bNuxvgIAAAAJ&hl=en" title="Google Scholar"><img src="assets/images/googlescholar.png" alt="Scholar" loading="lazy" decoding="async"></a>
+                <a href="https://www.researchgate.net/profile/Yongze-Song" title="ResearchGate"><img src="assets/images/researchgate.png" alt="ResearchGate" loading="lazy" decoding="async"></a>
+                <a href="https://orcid.org/0000-0003-3420-9622" title="ORCID"><img src="assets/images/orcid-1.png" alt="ORCID" loading="lazy" decoding="async"></a>
+                <a href="https://www.linkedin.com/in/yongzesong/" title="LinkedIn"><img src="assets/images/linkedin-black-icon-5-2322292596-e1682078661908.png" alt="LinkedIn" loading="lazy" decoding="async"></a>
+                <a href="https://x.com/YongzeSong" title="X (formerly Twitter)"><img src="assets/images/x-logo.svg" alt="X" loading="lazy" decoding="async"></a>
             </div>
             <a href="cn.html" class="footer-lang">中文</a>
         </div>
         <div class="footer-right">
-            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods"></a>
-            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab"></a>
+            <a href="https://spatialmethods.org/"><img src="assets/images/logo_v02.png" alt="International Society for Spatial Methods" loading="lazy" decoding="async"></a>
+            <a href="lab.html"><img src="assets/images/logo_03.png" alt="Geospatial Intelligence Lab" loading="lazy" decoding="async"></a>
         </div>
     </div>
 </footer>

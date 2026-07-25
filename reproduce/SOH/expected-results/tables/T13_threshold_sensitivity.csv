@@ -1,0 +1,10 @@
+"sd_threshold","scenario","qv"
+1.5,"A1 SOP only",0.641379198101067
+1.5,"A2 variables + SOP",0.683948271687187
+1.5,"A3 variables only",0.586383518911541
+2,"A1 SOP only",0.699422364741941
+2,"A2 variables + SOP",0.700081544971088
+2,"A3 variables only",0.586383518911541
+2.5,"A1 SOP only",0.66012325058494
+2.5,"A2 variables + SOP",0.66819076557354
+2.5,"A3 variables only",0.586383518911541

@@ -1,0 +1,22 @@
+\begin{table}[!ht]
+\centering
+\caption{Local pathways of spatial association identified by the LPA model, against the global structural equation estimates. Summaries cover the locations whose coefficient falls inside $[-1, 1]$; the significance share covers the locations returning a complete set of $p$-values.}
+\label{tab:lpa-validation}
+\begin{tabular}{lccc}
+\hline
+Paths & Local $\lambda$ mean [min, max] & Significant ($p<0.05$) & Global $\lambda$ \\
+\hline
+\multicolumn{4}{l}{\textit{Variable relationship}} \\
+Precipitation $=\sim$ Climate & $-0.370$ [$-0.967$, $0.747$] & $94.39$ \% & $-0.332$** \\
+LST $=\sim$ Climate & $0.798$ [$-0.605$, $0.999$] & $98.29$ \% & $0.858$** \\
+Water content $=\sim$ Soil & $-0.763$ [$-0.987$, $0.430$] & $96.80$ \% & $-0.895$** \\
+NDVI $=\sim$ Plant & $0.773$ [$0.004$, $1.000$] & $98.21$ \% & $0.995$** \\
+\multicolumn{4}{l}{\textit{Latent variable relationships}} \\
+Soil $\sim$ Plant & $-0.269$ [$-0.998$, $0.774$] & $70.07$ \% & $-0.528$** \\
+Climate $\sim$ Plant & $0.335$ [$-0.994$, $0.998$] & $63.52$ \% & $0.267$** \\
+Climate $\sim$ Soil & $0.427$ [$-0.969$, $0.997$] & $62.35$ \% & $0.677$** \\
+\hline
+\multicolumn{4}{l}{\footnotesize $=\sim$: regression between an observed and a latent variable; $\sim$: between two latent variables.} \\
+\multicolumn{4}{l}{\footnotesize Significance of the global estimates: ** $p<0.01$, * $p<0.05$.} \\
+\end{tabular}
+\end{table}

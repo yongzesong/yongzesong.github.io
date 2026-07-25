@@ -1,0 +1,7 @@
+"walk_minutes","distance_m","access_col","accessibility_col","delta_col"
+3,250,"u3","v3","df3"
+5,417,"u5","v5","df5"
+10,833,"u10","v10","df10"
+15,1250,"u15","v15","df15"
+20,1667,"u20","v20","df20"
+30,2500,"u30","v30","df30"

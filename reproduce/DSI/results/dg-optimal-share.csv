@@ -1,0 +1,6 @@
+"model","n_locations","share"
+"xgbTree",101,0.3258
+"rpart",77,0.2484
+"knn",67,0.2161
+"cubist",56,0.1806
+"rf",9,0.029

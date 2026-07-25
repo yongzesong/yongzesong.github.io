@@ -1,0 +1,31 @@
+"variable","role","mean","sd","min","max"
+"u3","access (alpha)",0,1,-0.7387,7.3868
+"u5","access (alpha)",0,1,-0.9334,6.5595
+"u10","access (alpha)",0,1,-1.284,5.8649
+"u15","access (alpha)",0,1,-1.521,5.6668
+"u20","access (alpha)",0,1,-1.5961,5.5875
+"u30","access (alpha)",0,1,-1.9441,5.1425
+"v3","accessibility (beta)",0,1,-0.4138,42.5378
+"v5","accessibility (beta)",0,1,-0.4338,50.4406
+"v10","accessibility (beta)",0,1,-0.5703,25.1922
+"v15","accessibility (beta)",0,1,-0.647,24.9103
+"v20","accessibility (beta)",0,1,-0.7717,22.3155
+"v30","accessibility (beta)",0,1,-0.9176,14.6515
+"df3","difference (delta)",0,0.7081,-3.7356,35.151
+"df5","difference (delta)",0,0.754,-3.575,43.8811
+"df10","difference (delta)",0,0.7144,-2.5532,20.4436
+"df15","difference (delta)",0,0.763,-2.5182,20.1476
+"df20","difference (delta)",0,0.7599,-2.2404,17.5094
+"df30","difference (delta)",0,0.8,-2.1053,10.1364
+"popdenskm2","explanatory",4045.7838,4183.3255,33.1126,155384.6154
+"dwedenskm2","explanatory",2114.973,3132.986,0,120000
+"shapefacto","explanatory",0.444,0.1116,0.101,0.7858
+"compactrat","explanatory",0.6286,0.1209,0.167,0.8821
+"neargsdist","explanatory",118.3942,143.179,0,830.3936
+"neargsarea","explanatory",0.1231,0.3977,0.0016,4.157
+"lisav1","explanatory, contextualised",0.3969,3.6979,-4.0294,126.7946
+"lisav2","explanatory, contextualised",0.415,3.5876,-2.0548,142.5544
+"lisav3","explanatory, contextualised",0.1074,0.3808,-2.0545,3.1537
+"lisav4","explanatory, contextualised",0.0928,0.3624,-1.8515,3.8594
+"lisav5","explanatory, contextualised",0.5419,1.3256,-1.1391,17.032
+"lisav6","explanatory, contextualised",0.5384,5.5922,-2.3179,93.7703

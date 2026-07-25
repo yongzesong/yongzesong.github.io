@@ -1,0 +1,4104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reproducing the LPI Model — Step-by-Step Guide</title>
+<meta name="description" content="Step-by-step, verified guide to reproducing the local effects of pattern interaction (LPI) model in R, combining local stratified power with geocomplexity patterns.">
+<link rel="canonical" href="https://yongzesong.com/reproduce/LPI/lpi.html">
+<link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../../assets/images/apple-touch-icon.png">
+<style>
+:root{
+  --accent:#B2182B;
+  --accent-2:#2166AC;
+  --accent-soft:#f7e9ea;
+  --bg:#ffffff;
+  --fg:#1a1d21;
+  --muted:#5a626b;
+  --line:#e6e8eb;
+  --side-bg:#fbfcfd;
+  --code-bg:#f6f8fa;
+  --code-fg:#24292e;
+  --nav-fg:#495057;
+  --nav-l2:#6c757d;
+  --nav-active:#2761e3;
+  --nav-active-bg:#eef4ff;
+  --nav-hover:#eef0f2;
+  --sidew:290px;
+  --rightw:var(--sidew);
+  --maxw:880px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+[data-theme=dark]{
+  --bg:#0f1216;
+  --fg:#e6e8eb;
+  --muted:#9aa4af;
+  --line:#242a31;
+  --side-bg:#0c1014;
+  --code-bg:#161b22;
+  --code-fg:#d1d7de;
+  --accent-soft:#2a1416;
+  --nav-fg:#b4bcc4;
+  --nav-l2:#8b939c;
+  --nav-active:#6ea8fe;
+  --nav-active-bg:#15202f;
+  --nav-hover:#171c22;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{
+  font-family:var(--mono);
+  font-size:.88em;
+  background:var(--code-bg);
+  color:var(--code-fg);
+  padding:.1em .35em;
+  border-radius:4px;
+}
+
+/* Sidebar: LISP-GC navigation pattern, SOH dark-mode behavior. */
+#menu-btn{
+  display:none;
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:60;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 11px;
+  font-size:1.05rem;
+  cursor:pointer;
+  color:var(--fg);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+#sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:var(--sidew);
+  overflow-y:auto;
+  background:var(--side-bg);
+  border-right:1px solid var(--line);
+  padding:22px 18px 40px;
+  z-index:50;
+}
+#sidebar .back-to-site{
+  display:inline-block;
+  font-size:.78rem;
+  color:var(--muted);
+  text-decoration:none;
+  margin-bottom:10px;
+  padding:3px 8px;
+  border:1px solid var(--line);
+  border-radius:5px;
+}
+#sidebar .back-to-site:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+}
+#sidebar .brand{
+  font-size:1.06rem;
+  font-weight:700;
+  color:var(--fg);
+  line-height:1.35;
+  margin-bottom:4px;
+}
+#sidebar .brand-sub{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+#toc-filter{
+  width:100%;
+  padding:6px 10px;
+  font-size:.85rem;
+  border:1px solid var(--line);
+  border-radius:6px;
+  margin-bottom:14px;
+  outline:none;
+  background:var(--bg);
+  color:var(--fg);
+}
+#toc-filter:focus{border-color:var(--nav-active)}
+#toc a{
+  display:block;
+  padding:4px 8px;
+  font-size:.88rem;
+  color:var(--nav-fg);
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  line-height:1.35;
+  margin:1px 0;
+}
+#toc a.l2{
+  padding-left:22px;
+  font-size:.82rem;
+  color:var(--nav-l2);
+}
+#toc a:hover{
+  background:var(--nav-hover);
+  text-decoration:none;
+}
+#toc a.active{
+  color:var(--nav-active);
+  border-left-color:var(--nav-active);
+  background:var(--nav-active-bg);
+  font-weight:600;
+}
+.side-foot{
+  padding:16px 8px 0;
+  margin-top:14px;
+  border-top:1px solid var(--line);
+}
+.themebtn{
+  font:inherit;
+  font-size:.82rem;
+  cursor:pointer;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:5px 10px;
+  color:var(--muted);
+}
+.themebtn:hover{color:var(--fg)}
+
+/* Hero and content. */
+.hero{
+  border-bottom:1px solid var(--line);
+  padding:34px 40px 26px;
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  background:var(--bg);
+}
+.hero h1{
+  margin:0 0 6px;
+  font-size:1.9rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  color:var(--fg);
+}
+.hero .sub{
+  color:var(--muted);
+  font-size:1.05rem;
+}
+.cite-lead{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--fg);
+  margin-top:16px;
+}
+.cite{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:12px;
+}
+.cite div+div{margin-top:4px}
+.dlbtn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding:9px 18px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  font-size:.92rem;
+  border-radius:8px;
+}
+.dlbtn:hover{filter:brightness(1.12);text-decoration:none}
+.dlnote{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* Lab director card adapted from lab.html, with template typography and colours. */
+.director-card{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  margin:18px 0 4px;
+  padding:16px;
+  background:var(--side-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+.director-card img{
+  width:110px;
+  min-width:110px;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:50%;
+  background:#fff;
+}
+.director-info h3{
+  font-size:1.16rem;
+  line-height:1.25;
+  margin:0 0 4px;
+}
+.director-info p{
+  font-size:.82rem;
+  line-height:1.5;
+  margin:2px 0;
+  color:var(--muted);
+}
+.director-info a{
+  font-size:.82rem;
+  font-weight:600;
+}
+
+/* Fixed right rail for future related reproducible-model tutorials. */
+.related-rail{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  width:var(--rightw);
+  overflow-y:auto;
+  z-index:40;
+  padding:22px 18px 40px;
+  border-left:1px solid var(--line);
+  background:var(--side-bg);
+}
+.related-rail .rail-title{
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1.35;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.related-rail a{
+  display:block;
+  padding:4px 8px;
+  margin:1px 0;
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  color:var(--nav-fg);
+  font-size:.88rem;
+  line-height:1.35;
+}
+.related-rail a:hover{
+  text-decoration:none;
+  background:var(--nav-hover);
+}
+.related-rail a.current{
+  color:var(--nav-active);
+  background:var(--nav-active-bg);
+  border-left-color:var(--nav-active);
+  font-weight:600;
+}
+.related-rail .rail-note{
+  color:var(--muted);
+  font-size:.76rem;
+  line-height:1.45;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+main{
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  padding:26px 40px 90px;
+}
+section{padding-top:4px}
+h2{
+  font-size:1.5rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  margin:48px 0 14px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+  color:var(--fg);
+}
+section:first-of-type h2{margin-top:20px}
+h3{
+  font-size:1.16rem;
+  font-weight:600;
+  margin:30px 0 10px;
+  letter-spacing:-.005em;
+  color:var(--fg);
+}
+h4{
+  font-size:1rem;
+  font-weight:600;
+  margin:20px 0 8px;
+  color:var(--fg);
+}
+p{margin:.7em 0}
+ul,ol{
+  margin:.6em 0;
+  padding-left:1.3em;
+}
+li{margin:.28em 0}
+
+/* Reusable content blocks. */
+.callout{
+  border:1px solid var(--line);
+  border-left-width:4px;
+  border-radius:8px;
+  padding:12px 16px;
+  margin:1.2em 0;
+  background:var(--side-bg);
+}
+.callout-h{
+  font-weight:700;
+  font-size:.92rem;
+  margin-bottom:2px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.callout-i{font-size:1rem}
+.callout-b p{margin:.4em 0}
+.callout-b ul{margin:.4em 0}
+.c-interpret{border-left-color:var(--accent);background:var(--accent-soft)}
+.c-tip{border-left-color:#178a3c}
+.c-warn{border-left-color:#d98a00}
+.c-repro{border-left-color:var(--accent-2)}
+.c-note{border-left-color:#8b939c}
+
+.codewrap{
+  position:relative;
+  margin:1.1em 0;
+}
+.code-label{
+  position:absolute;
+  top:-9px;
+  left:12px;
+  font-size:.7rem;
+  font-family:var(--mono);
+  background:var(--accent);
+  color:#fff;
+  padding:1px 8px;
+  border-radius:4px;
+  letter-spacing:.02em;
+}
+.copybtn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  font:inherit;
+  font-size:.74rem;
+  cursor:pointer;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:3px 9px;
+  color:var(--muted);
+  opacity:.85;
+  transition:.15s;
+}
+.copybtn:hover{
+  color:var(--fg);
+  opacity:1;
+  border-color:var(--accent);
+}
+.copybtn.ok{
+  color:#178a3c;
+  border-color:#178a3c;
+}
+pre.code{
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px;
+  overflow-x:auto;
+  margin:0;
+  font-family:var(--mono);
+  font-size:.83rem;
+  line-height:1.5;
+}
+pre.code code{
+  background:none;
+  padding:0;
+  color:var(--code-fg);
+  white-space:pre;
+}
+.console{
+  background:#22262b;
+  color:#d8dee4;
+  border-radius:8px;
+  padding:12px 15px;
+  margin:14px 0;
+  font-family:var(--mono);
+  font-size:.78rem;
+  line-height:1.5;
+  overflow:auto;
+  max-height:320px;
+  white-space:pre;
+}
+.console .lbl{
+  display:block;
+  color:#8b949e;
+  font-size:.72rem;
+  margin-bottom:6px;
+  font-family:inherit;
+}
+
+.tablewrap{
+  margin:1.2em 0;
+  overflow-x:auto;
+}
+.tablewrap table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:.86rem;
+}
+.tablewrap th{
+  text-align:left;
+  border-bottom:2px solid var(--fg);
+  padding:7px 10px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.tablewrap td{
+  border-bottom:1px solid var(--line);
+  padding:6px 10px;
+  vertical-align:top;
+}
+.tablewrap tbody tr:hover{background:rgba(127,127,127,.05)}
+.tablewrap figcaption{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:8px;
+}
+.tablewrap.compact td,
+.tablewrap.compact th{
+  padding:4px 8px;
+  font-size:.8rem;
+}
+table code{font-size:.82em}
+
+figure.fig{
+  margin:1.2em 0;
+  text-align:center;
+}
+figure.fig img{
+  max-width:100%;
+  height:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+figure.fig figcaption{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:8px;
+  text-align:left;
+}
+.credit{
+  display:block;
+  font-style:italic;
+  margin-top:2px;
+}
+.figpair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin:1.2em 0;
+}
+.figpair figure{margin:0}
+.figpair img{
+  max-width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+.figpair figcaption{
+  font-size:.78rem;
+  color:var(--muted);
+  margin-top:6px;
+  text-align:left;
+}
+.pairtag{
+  font-size:.72rem;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:5px;
+  margin-bottom:6px;
+  display:inline-block;
+}
+.tag-demo{
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+.tag-paper{
+  background:#eef3f8;
+  color:var(--accent-2);
+}
+[data-theme=dark] .tag-paper{background:#14202e}
+.pairnote{
+  font-size:.82rem;
+  color:var(--muted);
+  border-left:3px solid var(--line);
+  padding-left:12px;
+  margin:.2em 0 1em;
+}
+
+.flow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:8px;
+  margin:16px 0;
+}
+.flow .chip{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 12px;
+  background:var(--side-bg);
+  font-size:.8rem;
+  line-height:1.4;
+  flex:1;
+  min-width:135px;
+}
+.flow .chip b{
+  display:block;
+  font-size:.9rem;
+  color:var(--fg);
+}
+.flow .chip.hl{
+  border-color:var(--nav-active);
+  background:var(--nav-active-bg);
+}
+.flow .arrow{
+  align-self:center;
+  color:var(--muted);
+  font-size:1.1rem;
+}
+.mini-badge{
+  display:inline-block;
+  font-size:.68rem;
+  font-weight:600;
+  border-radius:4px;
+  padding:1px 6px;
+  margin-left:4px;
+  vertical-align:1px;
+  background:#eceff1;
+  color:#6c757d;
+}
+.mini-badge.oa{
+  background:#d8f3e1;
+  color:#1c7a43;
+}
+
+.step-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:1.4em 0 1.8em;
+  overflow:hidden;
+  background:var(--bg);
+}
+.step-card-h{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  background:var(--side-bg);
+}
+.step-label{
+  display:inline-block;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+.step-card-h h4{
+  margin:0;
+  font-size:1.05rem;
+}
+.step-card-b{padding:14px 16px 16px}
+.step-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+.kv{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  background:var(--side-bg);
+}
+.kv .k{
+  font-size:.72rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+.kv .v{
+  font-size:.9rem;
+  color:var(--fg);
+}
+
+#lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(15,18,22,.88);
+  display:none;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  cursor:zoom-out;
+  padding:30px;
+}
+#lightbox img{
+  max-width:96%;
+  max-height:96%;
+  background:#fff;
+  border-radius:6px;
+  padding:10px;
+}
+#lightbox.open{display:flex}
+
+@media (max-width:1000px){
+  #sidebar{
+    transform:translateX(-100%);
+    transition:transform .2s;
+  }
+  #sidebar.open{
+    transform:none;
+    box-shadow:0 0 30px rgba(0,0,0,.2);
+  }
+  #menu-btn{display:block}
+  .hero,
+  main{
+    margin-left:0;
+    margin-right:0;
+  }
+  .hero{padding:60px 20px 22px}
+  main{
+    padding:20px 20px 70px;
+    max-width:none;
+  }
+  .director-card{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+  .director-card img{
+    width:90px;
+    height:90px;
+    align-self:center;
+  }
+  .figpair{grid-template-columns:1fr}
+  .related-rail{display:none}
+}
+@media print{
+  #sidebar,
+  #menu-btn,
+  .copybtn,
+  #lightbox{display:none}
+  .hero,
+  main{margin-left:0}
+}
+
+/* --- LPI-page additions to the shared template --- */
+.figpair.triple{grid-template-columns:1fr 1fr 1fr}
+.tag-lisp{background:#e9f7f4;color:#0f766e}
+[data-theme=dark] .tag-lisp{background:#0e2320}
+.tablewrap td.num,.tablewrap th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre.code .cm{color:#7f8896;font-style:italic}
+pre.code .st{color:#20794d}
+pre.code .kw{color:#8f3faf;font-weight:600}
+[data-theme=dark] pre.code .cm{color:#8b949e}
+[data-theme=dark] pre.code .st{color:#7ee2a8}
+[data-theme=dark] pre.code .kw{color:#d2a8ff}
+@media (max-width:1000px){.figpair.triple{grid-template-columns:1fr}}
+
+/* Collapsible code boxes: long blocks start collapsed to a ~3-line preview.
+   The expand/collapse control is a full-height accent strip on the LEFT edge of
+   the box — clickable at any scroll position. */
+.codewrap.collapsed pre.code{max-height:78px;overflow:hidden}
+.codewrap.has-fold pre.code{padding-left:46px}
+.codewrap.has-fold .code-label{left:44px}
+.foldbtn{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  width:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:none;
+  border-left:1px solid var(--line);   /* rotated 180deg: renders on the visual right, against the code */
+  border-radius:0 10px 10px 0;         /* rotated 180deg: rounds the visual left corners */
+  background:var(--code-bg);
+  color:var(--muted);
+  font:inherit;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  cursor:pointer;
+}
+.foldbtn:hover{color:var(--fg);background:var(--nav-hover)}
+@media print{
+  .foldbtn{display:none}
+  .codewrap.collapsed pre.code{max-height:none}
+  .codewrap.has-fold pre.code{padding-left:16px}
+}
+
+/* featured figure above section 1 */
+figure.featured-fig{width:50%;margin:0 auto 1.6em;text-align:center;}
+figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff;}
+figure.featured-fig.featured-pair{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;}
+@media (max-width:1000px){figure.featured-fig{width:100%;}}
+</style>
+</head>
+<body>
+
+<button id="menu-btn" aria-label="Menu">☰</button>
+
+<aside id="sidebar">
+  <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
+  <div class="brand">Reproducing the LPI Model</div>
+  <div class="brand-sub">LISP × Geocomplexity · verified template</div>
+  <input id="toc-filter" type="text" placeholder="Filter sections...">
+  <nav id="toc">
+    <a href="#overview">1&nbsp;Overview &amp; Scope</a>
+    <a class="l2" href="#core-idea">1.1&nbsp;Core idea</a>
+    <a class="l2" href="#method-logic">1.2&nbsp;Method logic</a>
+    <a class="l2" href="#reproduction-scope">1.3&nbsp;Reproduction scope</a>
+    <a href="#setup">2&nbsp;Setup &amp; Data</a>
+    <a class="l2" href="#environment">2.1&nbsp;Environment</a>
+    <a class="l2" href="#structure-config">2.2&nbsp;Structure &amp; config</a>
+    <a class="l2" href="#data-contract">2.3&nbsp;Data contract</a>
+    <a href="#pipeline">3&nbsp;Pipeline &amp; Results</a>
+    <a class="l2" href="#pipeline-execution">3.1&nbsp;Pipeline execution</a>
+    <a class="l2" href="#core-steps">3.2&nbsp;Core analytical steps</a>
+    <a class="l2" href="#step-1">·&ensp;Step&nbsp;1&nbsp;Response intake</a>
+    <a class="l2" href="#step-2">·&ensp;Step&nbsp;2&nbsp;Geocomplexity</a>
+    <a class="l2" href="#step-3">·&ensp;Step&nbsp;3&nbsp;Local extent</a>
+    <a class="l2" href="#step-4">·&ensp;Step&nbsp;4&nbsp;Local stratified power</a>
+    <a class="l2" href="#step-5">·&ensp;Step&nbsp;5&nbsp;Pattern interactions</a>
+    <a class="l2" href="#step-6">·&ensp;Step&nbsp;6&nbsp;GOZH total effect</a>
+    <a class="l2" href="#validation-interpretation">3.3&nbsp;Validation &amp; interpretation</a>
+    <a class="l2" href="#step-7">·&ensp;Step&nbsp;7&nbsp;Global benchmark</a>
+    <a class="l2" href="#step-8">·&ensp;Step&nbsp;8&nbsp;Subsample stability</a>
+    <a class="l2" href="#step-9">·&ensp;Step&nbsp;9&nbsp;Parameter sensitivity</a>
+    <a href="#adaptation">4&nbsp;Adaptation &amp; Reproducibility</a>
+    <a class="l2" href="#port-domain">4.1&nbsp;Port to your domain</a>
+    <a class="l2" href="#write-paper">4.2&nbsp;Write the paper</a>
+    <a class="l2" href="#repro-package">4.3&nbsp;Reproducibility package</a>
+  </nav>
+  <div class="side-foot">
+    <button id="themebtn" class="themebtn">Dark mode</button>
+  </div>
+</aside>
+
+<header class="hero">
+  <h1>Reproducing the Local Pattern Interaction (LPI) Model</h1>
+  <div class="sub">A complete, verified walkthrough of the Local Pattern Interaction model —
+  local stratified power (LISP) combined with geocomplexity (GC) patterns — for spatially
+  heterogeneous driver analysis, from raw data to manuscript.</div>
+  <div class="director-card">
+    <img src="../../assets/images/yongze-song.png" alt="Yongze Song">
+    <div class="director-info">
+      <h3>Yongze Song</h3>
+      <p>Associate Professor, Curtin University</p>
+      <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.2) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.8)</p>
+      <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
+    </div>
+  </div>
+  <a class="dlbtn" href="lpi-code-and-data.zip" download>⬇ Download code &amp; example data (zip, 73&nbsp;KB)</a>
+  <div class="dlnote"><code>R/</code> pipeline scripts · <code>data/processed/analysis-table.csv</code>
+  (600-unit demo) · <code>config/project-config.yaml</code> — unzip, then run
+  <code>Rscript R/00-setup.R</code> from the <code>LPI/</code> folder root.</div>
+  <div class="cite-lead">To cite the LPI model and its R packages and codes in publications, please use:</div>
+  <div class="cite">
+    <div>Sun&nbsp;Y, Wu&nbsp;G, Song&nbsp;Y, et&nbsp;al. (2026). Local effects of pattern interactions
+    in driving urbanization. <i>Int&nbsp;J&nbsp;Appl Earth Obs Geoinf</i> 146:105072.
+    <a href="https://doi.org/10.1016/j.jag.2025.105072">doi</a> ·
+    <a href="../../pdf/LPI-song2025.pdf">PDF</a></div>
+    <div>Hu&nbsp;J, Song&nbsp;Y, Zhang&nbsp;T (2024). A local indicator of stratified power.
+    <i>IJGIS</i>. <a href="https://doi.org/10.1080/13658816.2024.2437811">doi</a> ·
+    <a href="../../pdf/LISP-hu2024.pdf">PDF</a></div>
+    <div>Song&nbsp;Y, Wang&nbsp;J, Ge&nbsp;Y, Xu&nbsp;C (2020). An optimal parameters-based geographical
+    detector model… <i>GIScience &amp; Remote Sensing</i> 57(5):593–610.
+    <a href="https://doi.org/10.1080/15481603.2020.1760434">doi</a> ·
+    <a href="../../pdf/OPGD-song2020.pdf">PDF</a></div>
+    <div>Luo&nbsp;P, Song&nbsp;Y, et&nbsp;al. (2022). …geographically optimal zones-based heterogeneity
+    model. <i>ISPRS&nbsp;JPRS</i> 185:111–128.
+    <a href="https://doi.org/10.1016/j.isprsjprs.2022.01.009">doi</a> ·
+    <a href="../../pdf/GOZH-luo2022.pdf">PDF</a></div>
+    <div>Zhang&nbsp;Z, Song&nbsp;Y, Luo&nbsp;P, Wu&nbsp;P (2023). Geocomplexity explains spatial errors.
+    <i>IJGIS</i> 37(7):1449–1469.
+    <a href="https://doi.org/10.1080/13658816.2023.2203212">doi</a> ·
+    <a href="../../pdf/GEOC-zhang2023.pdf">PDF</a></div>
+  </div>
+</header>
+
+<aside class="related-rail" aria-label="Related tutorials for reproducible models">
+  <div class="rail-title">Related tutorials for reproducible models</div>
+  <a href="../../methods.html">Geospatial Theories and Methods</a>
+  <a href="../OPGD/opgd.html">1 &middot; OPGD &mdash; Optimal Parameters Geographical Detector</a>
+  <a href="../GC/gc.html">2 &middot; GC &mdash; Geocomplexity</a>
+  <a class="current" href="lpi.html">3 &middot; LPI &mdash; Local Pattern Interaction</a>
+  <a href="../LPA/lpa.html">4 &middot; LPA &mdash; Local Pathways of Association</a>
+  <a href="../SDA/sda.html">5 &middot; SDA &mdash; Second Dimension of Spatial Association</a>
+  <a href="../SOH/soh.html">6 &middot; SOH &mdash; Second-dimension Outlier-driven Heterogeneity</a>
+  <a href="../DSI/dsi.html">7 &middot; DSI &mdash; Degree of Spatial Interpretability</a>
+  <a href="../STOR/stor.html">8 &middot; STOR &mdash; Spatial Trade-Off Relation</a>
+  <a href="../SDM/sdm.html">9 &middot; SDM &mdash; Spatial Delta Model for Accessibility</a>
+</aside>
+
+<main>
+
+<figure class="featured-fig featured-pair">
+  <img src="assets/lisp-fig5-local-pd.jpg" alt="Local power of individual variables and significance maps (LISP Fig 5)" decoding="async">
+  <img src="assets/lisp-fig6-panel-a.jpg" alt="Local power of interaction and significance maps, panel a (LISP Fig 6)" decoding="async">
+</figure>
+
+<section id="overview">
+  <h2>1&nbsp;Method Overview &amp; Reproduction Scope</h2>
+
+  <h3 id="core-idea">1.1&nbsp;Core Idea</h3>
+  <p>Given an observed response variable <code>y</code> and explanatory variables
+  <code>x1..xp</code> recorded at <i>n</i> spatial units, the <b>LPI (Local Pattern
+  Interaction)</b> model answers four questions that a single global statistic cannot:</p>
+  <ol>
+    <li><b>Where</b> does each variable explain the response? (local <i>q</i>-statistic maps)</li>
+    <li>Do the <b>spatial patterns</b> of the variables — their geocomplexity — explain the
+        response beyond the variable values themselves?</li>
+    <li>Which <b>pairs</b> of variables and patterns interact, of what type (enhance / weaken),
+        and where?</li>
+    <li>How much do <b>all variables jointly</b> explain at each location (GOZH total effect),
+        benchmarked against the global OPGD value?</li>
+  </ol>
+  <ul>
+    <li><b>Research problem:</b> global <i>q</i>-statistics average away spatially varying driver
+        effects, and ignore the explanatory power carried by the spatial arrangement of each
+        variable.</li>
+    <li><b>One-line contribution:</b> LPI treats each variable's geocomplexity pattern GC(x) as an
+        additional explanatory variable and runs the local stratified-power machinery on the
+        augmented set {x<sub>1</sub>..x<sub>p</sub>, GC(x<sub>1</sub>)..GC(x<sub>p</sub>)} —
+        yielding local <i>q</i> maps, typed pattern interactions, and a per-location joint
+        ceiling.</li>
+    <li><b>Why it matters:</b> drivers and interactions that are globally non-significant can be
+        strong and significant in subregions; the demo below surfaces two such discoveries that a
+        global analysis would discard.</li>
+  </ul>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Reader anchor</div>
+    <div class="callout-b">
+      <p>Treat the spatial pattern of every variable — how much its local arrangement contradicts
+      spatial dependence — as an explanatory variable in its own right, then measure explanatory
+      power locally: where each driver acts, where patterns amplify it, and how much everything
+      jointly explains at each place. Interactions then come in three categories:
+      variable&nbsp;×&nbsp;variable, variable&nbsp;×&nbsp;GC, and GC&nbsp;×&nbsp;GC.</p>
+    </div>
+  </div>
+
+  <h3 id="method-logic">1.2&nbsp;Method Logic</h3>
+  <p>All power-of-determinant (PD) quantities in this family are variants of
+  <i>q</i>&nbsp;=&nbsp;1&nbsp;−&nbsp;SSW/SST (within-strata over total variance).
+  LPI composes four earlier building blocks:</p>
+  <div class="flow">
+    <div class="chip"><b>GD 2010</b>geographical detector: global <i>q</i> per stratified variable<br>
+      <a href="https://doi.org/10.1080/13658810802443457">Wang et al., IJGIS</a><span class="mini-badge">cited</span></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>OPGD 2020</b>optimises discretisation &amp; scale parameters<br>
+      <a href="https://doi.org/10.1080/15481603.2020.1760434">Song et al., GISci&nbsp;RS</a> · <a href="../../pdf/OPGD-song2020.pdf">PDF</a></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>GOZH 2022</b>tree-based optimal zones; reliable multi-variable interaction<br>
+      <a href="https://doi.org/10.1016/j.isprsjprs.2022.01.009">Luo et al., ISPRS&nbsp;JPRS</a> · <a href="../../pdf/GOZH-luo2022.pdf">PDF</a></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>GEOC 2023</b>geocomplexity indicator G<sub>i</sub>; explains model errors<br>
+      <a href="https://doi.org/10.1080/13658816.2023.2203212">Zhang et al., IJGIS</a> · <a href="../../pdf/GEOC-zhang2023.pdf">PDF</a></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>LISP 2024</b>makes stratified power local via semivariogram extents<br>
+      <a href="https://doi.org/10.1080/13658816.2024.2437811">Hu et al., IJGIS</a> · <a href="../../pdf/LISP-hu2024.pdf">PDF</a></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>LPI 2026</b>LISP over {variables ∪ GC patterns} + pattern interactions<br>
+      <a href="https://doi.org/10.1016/j.jag.2025.105072">Sun et al., JAG</a> · <a href="../../pdf/LPI-song2025.pdf">PDF</a><span class="mini-badge oa">CC BY</span></div>
+  </div>
+  <h4>Key concepts and equations</h4>
+  <p>Six building blocks drive the whole pipeline, one from each reference:</p>
+  <ul>
+    <li><b>Stratified power (<i>q</i>-statistic):</b> q&nbsp;=&nbsp;1&nbsp;−&nbsp;SSW/SST — the
+        share of response variance explained by a stratification; the quantity every later step
+        localises — Wang&nbsp;et&nbsp;al. (2010)
+        <a href="https://doi.org/10.1080/13658810802443457">doi</a></li>
+    <li><b>Optimised discretisation:</b> continuous variables are stratified by
+        parameter-optimised binning; the pipeline uses quantile bins
+        (discnum&nbsp;=&nbsp;4) inside every local window — Song&nbsp;et&nbsp;al. (2020)
+        <a href="https://doi.org/10.1080/15481603.2020.1760434">doi</a> ·
+        <a href="../../pdf/OPGD-song2020.pdf">PDF</a></li>
+    <li><b>GOZH total effect:</b> a regression tree over all predictors zones the data, and the
+        combined-zone q of the leaf zones measures the joint explanatory ceiling —
+        Luo&nbsp;et&nbsp;al. (2022)
+        <a href="https://doi.org/10.1016/j.isprsjprs.2022.01.009">doi</a> ·
+        <a href="../../pdf/GOZH-luo2022.pdf">PDF</a></li>
+    <li><b>Geocomplexity:</b> G<sub>i</sub>&nbsp;∈&nbsp;[0,1] measures how much a variable's
+        arrangement in the neighbourhood of unit <i>i</i> contradicts spatial dependence; LPI
+        treats each GC(x) as an additional explanatory variable — Zhang&nbsp;et&nbsp;al. (2023)
+        <a href="https://doi.org/10.1080/13658816.2023.2203212">doi</a> ·
+        <a href="../../pdf/GEOC-zhang2023.pdf">PDF</a></li>
+    <li><b>Local extent and local <i>q</i>:</b> the window radius d&nbsp;=&nbsp;2<i>a</i> comes
+        from the range <i>a</i> of a semivariogram fitted to the response, and
+        q(u)&nbsp;=&nbsp;1&nbsp;−&nbsp;SSW/SST is computed inside each unit's window for every
+        variable and pattern — Hu&nbsp;et&nbsp;al. (2024)
+        <a href="https://doi.org/10.1080/13658816.2024.2437811">doi</a> ·
+        <a href="../../pdf/LISP-hu2024.pdf">PDF</a></li>
+    <li><b>Pattern interactions:</b> pairwise combined-zone q over {X,&nbsp;GC(X)}, typed into
+        the five geographical-detector classes and grouped into three categories
+        (X×X, X×GC, GC×GC) — Sun&nbsp;et&nbsp;al. (2026)
+        <a href="https://doi.org/10.1016/j.jag.2025.105072">doi</a> ·
+        <a href="../../pdf/LPI-song2025.pdf">PDF</a></li>
+  </ul>
+
+  <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
+  <p>Everything tagged <i>Demo run</i> on this page regenerates from the scripts and data in this
+  folder; everything tagged <i>Published reference</i> is shown as a static comparison image or
+  table from the two source articles. The demo was last verified end to end on 2026-07-24 with
+  R&nbsp;4.6.0.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Demo template</th><th>Published reference</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data</td>
+            <td>600 simulated point units, 6 predictors
+                (<code>data/processed/analysis-table.csv</code>, seed&nbsp;42)</td>
+            <td>LPI: counties of Shanxi–Henan–Hebei, composite urbanization index, 5 economic
+                variables · LISP: gridded lake-terminating glacier units, Greater Himalayas</td></tr>
+        <tr><td>Tables</td>
+            <td><code>results/step08-validation-table.csv</code> and robustness summaries,
+                regenerated by the scripts</td>
+            <td>LPI Table&nbsp;4 and LISP Table&nbsp;2, shown as excerpts beside the demo table in
+                §3.3</td></tr>
+        <tr><td>Figures</td>
+            <td>fig01–fig08 PDFs regenerated by <code>R/11-figures.R</code> (web copies in
+                <code>assets/</code>)</td>
+            <td>LPI Figs&nbsp;3–10 and LISP Figs&nbsp;2, 4–6, embedded as static reference
+                images</td></tr>
+      </tbody>
+    </table>
+    <figcaption>What the template regenerates versus what is shown as published reference.</figcaption>
+  </figure>
+
+  <h4>Published applications of this exact pipeline</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Application</th><th>Spatial unit</th><th>Response</th><th>Predictors</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Urbanization drivers, Shanxi–Henan–Hebei, China (Sun&nbsp;et&nbsp;al. 2026, LPI —
+            reference figures on this page)</td>
+            <td>County</td><td>Composite urbanization index (9 indicators, 5 dimensions)</td>
+            <td>5 economic variables + their 5 GC patterns</td><td>Published (JAG, CC&nbsp;BY)</td></tr>
+        <tr><td>Glacier thickness change of lake-terminating glaciers, Greater Himalayas
+            (Hu&nbsp;et&nbsp;al. 2024, LISP — reference figures on this page)</td>
+            <td>Gridded glacier unit</td><td>Observed thickness change 2000–2020 (direct)</td>
+            <td>8 climate, terrain and environment variables</td><td>Published (IJGIS)</td></tr>
+        <tr><td>Synthetic demonstration (this page — all demo outputs)</td>
+            <td>600 points</td><td>Observed response y (direct)</td>
+            <td>6 variables + 6 GC patterns</td><td>Verified 2026-07-24</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Two published applications share the pipeline; the synthetic demo makes it
+    reproducible without external data.</figcaption>
+  </figure>
+
+  <h4>How to use this page</h4>
+  <ul>
+    <li><b>To reproduce the demo:</b> this folder already contains everything — the R scripts
+        (<code>R/</code>), the configuration (<code>config/</code>), and the simulated example data
+        (<code>data/processed/analysis-table.csv</code>). Run the scripts in numbered order from the
+        folder root; every expected output is shown on this page so you can verify each step.</li>
+    <li><b>To apply LPI to your own problem:</b> read §2.3 (data contract), edit the §2.2 config and
+        the real-data branch of the preparation script, then run the same scripts unchanged
+        (§4.1).</li>
+    <li><b>To write the paper:</b> §4.2 gives the section skeleton used by the published
+        applications and maps every result file to its manuscript element.</li>
+  </ul>
+</section>
+
+<section id="setup">
+  <h2>2&nbsp;Setup, Structure &amp; Data Contract</h2>
+
+  <h3 id="environment">2.1&nbsp;Environment &amp; Dependencies</h3>
+  <p>The pipeline is pure R. The verified run used R&nbsp;4.6.0 (aarch64, macOS) with CRAN builds
+  of all packages; the complete environment of that run is recorded in
+  <code>results/session-info.txt</code>. Install everything with the setup script below, or
+  directly from the R console:</p>
+  <div class="codewrap">
+    <span class="code-label">R console</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>install.packages(c("yaml", "sf", "sdsfun", "geocomplexity", "gdverse",
+                   "FNN", "rpart", "automap", "dplyr",
+                   "ggplot2", "reshape2", "mgcv", "scales", "patchwork",
+                   "ggrepel", "localsp"))
+# if localsp is unavailable on CRAN for your R version:
+# remotes::install_github("stscl/localsp")</code></pre>
+  </div>
+  <figure class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Package</th><th>Role in the pipeline</th><th>Required?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>geocomplexity</code></td><td><code>geocd_vector()</code> — GC pattern of each variable (Step&nbsp;2)</td><td>yes</td></tr>
+        <tr><td><code>localsp</code></td><td><code>lisp()</code> — LISP local factor detector (Step&nbsp;4)</td><td>yes</td></tr>
+        <tr><td><code>gdverse</code></td><td><code>gd()</code> — geographical-detector <i>q</i> for interactions and benchmarks (Steps&nbsp;5–7)</td><td>yes</td></tr>
+        <tr><td><code>sdsfun</code></td><td>spatial weights; in-window quantile discretisation</td><td>yes</td></tr>
+        <tr><td><code>automap</code></td><td><code>autofitVariogram()</code> — local analysis extent (Step&nbsp;3)</td><td>yes</td></tr>
+        <tr><td><code>rpart</code>, <code>FNN</code></td><td>GOZH decision-tree zoning; k-nearest neighbourhoods (Step&nbsp;6)</td><td>yes</td></tr>
+        <tr><td><code>sf</code>, <code>dplyr</code>, <code>yaml</code>, <code>parallel</code></td><td>spatial data, wrangling, config, parallel loops</td><td>yes</td></tr>
+        <tr><td><code>ggplot2</code>, <code>patchwork</code>, <code>reshape2</code>, <code>mgcv</code>, <code>ggrepel</code>, <code>scales</code></td><td>figures (Step&nbsp;10)</td><td>figures only</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Package roles. The three method packages (geocomplexity, localsp, gdverse) carry
+    the statistical core; the rest are infrastructure.</figcaption>
+  </figure>
+  <p>The setup script checks and installs every dependency, then records the session:</p>
+  <div class="codewrap">
+    <span class="code-label">R/00-setup.R</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># =============================================================================
+# 00-setup.R — check and install required packages
+# Run once: Rscript R/00-setup.R
+# =============================================================================
+
+cran_packages &lt;- c(
+  &quot;yaml&quot;,          # config loading
+  &quot;sf&quot;,            # spatial data
+  &quot;sdsfun&quot;,        # spatial weights, discretize_vector
+  &quot;geocomplexity&quot;, # geocd_vector — GC patterns
+  &quot;gdverse&quot;,       # gd() — geographical detector q-statistic
+  &quot;FNN&quot;,           # k-nearest neighbours
+  &quot;rpart&quot;,         # GOZH decision tree
+  &quot;automap&quot;,       # autofitVariogram — local range
+  &quot;dplyr&quot;,
+  &quot;parallel&quot;,
+  # figures
+  &quot;ggplot2&quot;, &quot;reshape2&quot;, &quot;mgcv&quot;, &quot;scales&quot;, &quot;patchwork&quot;, &quot;ggrepel&quot;
+)
+
+# localsp provides lisp(), the LISP factor detector.
+# If unavailable on CRAN for your R version, install from GitHub:
+#   remotes::install_github(&quot;stscl/localsp&quot;)
+other_packages &lt;- c(&quot;localsp&quot;)
+
+missing &lt;- setdiff(cran_packages, rownames(installed.packages()))
+if (length(missing) &gt; 0) {
+  cat(&quot;Installing:&quot;, paste(missing, collapse = &quot;, &quot;), &quot;\n&quot;)
+  install.packages(missing)
+}
+
+for (pkg in other_packages) {
+  if (!pkg %in% rownames(installed.packages())) {
+    cat(sprintf(&quot;Package &#x27;%s&#x27; missing — trying CRAN, then GitHub.\n&quot;, pkg))
+    tryCatch(install.packages(pkg), error = function(e) NULL)
+    if (!pkg %in% rownames(installed.packages())) {
+      if (!&quot;remotes&quot; %in% rownames(installed.packages())) {
+        install.packages(&quot;remotes&quot;)
+      }
+      remotes::install_github(paste0(&quot;stscl/&quot;, pkg))
+    }
+  }
+}
+
+cat(&quot;\nAll packages present:\n&quot;)
+for (pkg in c(cran_packages, other_packages)) {
+  ok &lt;- requireNamespace(pkg, quietly = TRUE)
+  cat(sprintf(&quot;  %-14s %s\n&quot;, pkg, ifelse(ok, &quot;OK&quot;, &quot;MISSING&quot;)))
+}
+
+# Record the environment for reproducibility.
+dir.create(&quot;results&quot;, showWarnings = FALSE)
+writeLines(capture.output(sessionInfo()), &quot;results/session-info.txt&quot;)
+cat(&quot;\nSession info written to results/session-info.txt\n&quot;)
+</code></pre>
+  </div>
+  <div class="console"><span class="lbl">Expected output of Rscript R/00-setup.R (abridged)</span>All packages present:
+  yaml           OK
+  sf             OK
+  sdsfun         OK
+  geocomplexity  OK
+  gdverse        OK
+  ...
+  localsp        OK
+
+Session info written to results/session-info.txt</div>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>If <code>localsp</code> is not on CRAN for your R version</div>
+    <div class="callout-b">
+      <p>Install it from GitHub instead: <code>remotes::install_github("stscl/localsp")</code>.
+      The verified run used R&nbsp;4.6.0 with CRAN builds of all packages (fresh installs needed
+      for <code>yaml</code>, <code>automap</code>, <code>localsp</code>).</p>
+    </div>
+  </div>
+
+  <h3 id="structure-config">2.2&nbsp;Project Structure &amp; Configuration</h3>
+  <p>Every script runs from the folder root (<code>Rscript R/03-geocomplexity.R</code>), reads the
+  config plus the <code>results/step*.csv</code> files of earlier steps, and can therefore be
+  re-run in isolation at any time. Deleting <code>results/</code> and <code>figures/</code> and
+  re-running the scripts regenerates everything shown on this page.</p>
+  <div class="codewrap">
+    <span class="code-label">folder tree</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>LPI/
+├── lpi.html                            # this guide
+├── assets/                             # figures shown in this guide (web copies)
+├── config/project-config.yaml          # the ONLY file to edit for a new domain
+├── data/processed/analysis-table.csv   # simulated example data (600 units)
+├── R/
+│   ├── functions/                      # method core: fn-config.R,
+│   │                                   #   fn-lpi-core.R, fn-plot-helpers.R
+│   └── 00-setup.R … 11-figures.R       # numbered pipeline scripts
+├── results/                            # step02–step10 CSVs + session-info.txt
+└── figures/                            # fig01–fig08 PDFs of the verified run</code></pre>
+  </div>
+  <h4>Main configuration file</h4>
+  <div class="codewrap">
+    <span class="code-label">config/project-config.yaml</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-yaml"><code># =============================================================================
+# LPI project configuration — the single file to edit when porting the
+# pipeline to a new domain. Every R script reads this file; none of them
+# hard-code variable names, coordinates, or parameters.
+#
+# Method: LPI (Local Pattern Interaction) = LISP local stratified power
+#         + geocomplexity (GC) patterns + local interactions + GOZH total effect
+# =============================================================================
+
+project:
+  name: &quot;lpi-application-template&quot;
+  domain: &quot;example&quot;              # short label for your application domain
+  crs_input: 4326                # CRS of the coordinates in the analysis table
+  crs_projected: 32650           # metric CRS for distance computation — EDIT
+                                 # to a projected CRS suited to your region
+                                 # (units must be metres; the demo data sit in
+                                 # UTM zone 50N = 32650)
+
+data:
+  use_example: true              # true  = 01-prepare-data.R simulates a demo
+                                 #         dataset so the pipeline runs end to end
+                                 # false = 01-prepare-data.R reads your raw data
+                                 #         (edit that script for your source format)
+  analysis_table: &quot;data/processed/analysis-table.csv&quot;
+  boundary: &quot;&quot;                   # optional study-area boundary for maps, e.g.
+                                 # &quot;data/boundary/study-area.gpkg&quot; (&quot;&quot; = no boundary)
+  id_col: &quot;uid&quot;
+  x_col: &quot;lon&quot;                   # longitude / easting column in analysis table
+  y_col: &quot;lat&quot;                   # latitude / northing column in analysis table
+
+response:
+  direct_col: &quot;y&quot;                # observed response column in the analysis table
+  response_name: &quot;z&quot;             # standard internal name used by the pipeline
+
+predictors:
+  x_vars: [&quot;x1&quot;, &quot;x2&quot;, &quot;x3&quot;, &quot;x4&quot;, &quot;x5&quot;, &quot;x6&quot;]
+  # Display labels used in every figure (keep short; GC labels are derived
+  # automatically as &quot;GC(&lt;label&gt;)&quot;).
+  labels:
+    x1: &quot;Variable 1&quot;
+    x2: &quot;Variable 2&quot;
+    x3: &quot;Variable 3&quot;
+    x4: &quot;Variable 4&quot;
+    x5: &quot;Variable 5&quot;
+    x6: &quot;Variable 6&quot;
+
+params:
+  gc:                            # Step 03 geocomplexity
+    knn_share: 0.02              # k = max(knn_min, knn_share * n)
+    knn_min: 30
+    method: &quot;spvar&quot;              # geocomplexity::geocd_vector method
+  lisp:                          # Steps 04-05 local range + local q
+    threshold_multiplier: 2      # local extent = multiplier * variogram range
+    discnum: 4                   # discretisation bins inside local windows
+    discmethod: &quot;quantile&quot;
+  interaction:                   # Step 06 local pairwise interactions
+    top_n_vars: 5                # pairs are formed among the top-N variables
+                                 # by mean local q (N=5 gives 10 pairs)
+    min_local_n: 10              # fallback neighbourhood size if the distance
+                                 # circle contains fewer points
+  global:                        # Step 08 global benchmark (OPGD-style)
+    n_strata: 5
+    top_n_interactions: 10
+  cores: &quot;auto&quot;                  # &quot;auto&quot; = detectCores() - 1, or an integer
+
+validation:
+  holdout:                       # Step 09 subsample stability
+    n_repeats: 20
+    drop_share: 0.05
+    top_n_vars: 10
+    seed: 2026
+  sensitivity:                   # Step 10 parameter sensitivity
+    threshold_multipliers: [1.5, 2, 3]
+    discnums: [3, 4, 5]
+    top_n_vars: 5
+
+figures:
+  # Fixed six-class palette for quantile-binned maps (colour-method mapping
+  # stays constant across all figures).
+  palette: [&quot;#1F6B4A&quot;, &quot;#4F9C93&quot;, &quot;#8FC8BE&quot;, &quot;#E6A8B6&quot;, &quot;#D85A8E&quot;, &quot;#8F1E5F&quot;]
+  interaction_colors:
+    xx: &quot;#1F6B4A&quot;                # X x X pairs
+    xgc: &quot;#8FC8BE&quot;               # X x GC pairs
+    gcgc: &quot;#8F1E5F&quot;              # GC x GC pairs
+  point_size: 0.6
+  width_single: 5                # inches, single-panel figures
+  width_full: 14                 # inches, four-panel map rows
+</code></pre>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>Single adaptation point</div>
+    <div class="callout-b">
+      <p>The config is the only file to edit when porting the pipeline to a new domain — no R
+      script hard-codes variable names, coordinates, or parameters. Every script loads it through
+      the shared loader below. When writing the manuscript, quote parameter values from this file,
+      never from memory.</p>
+    </div>
+  </div>
+  <div class="codewrap">
+    <span class="code-label">R/functions/fn-config.R — shared loader, sourced by every script</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># =============================================================================
+# fn-config.R — configuration loader and small shared utilities
+# All pipeline scripts source this file first and run from the project root.
+# =============================================================================
+
+load_config &lt;- function(path = &quot;config/project-config.yaml&quot;) {
+  if (!file.exists(path)) {
+    stop(&quot;Config not found at &#x27;&quot;, path,
+         &quot;&#x27;. Run scripts from the project root, e.g. Rscript R/03-geocomplexity.R&quot;)
+  }
+  yaml::read_yaml(path)
+}
+
+get_cores &lt;- function(cfg) {
+  if (identical(cfg$params$cores, &quot;auto&quot;)) {
+    max(1L, parallel::detectCores() - 1L)
+  } else {
+    as.integer(cfg$params$cores)
+  }
+}
+
+ensure_dir &lt;- function(path) {
+  dir.create(path, showWarnings = FALSE, recursive = TRUE)
+  invisible(path)
+}
+
+read_analysis_table &lt;- function(cfg) {
+  path &lt;- cfg$data$analysis_table
+  if (!file.exists(path)) {
+    stop(&quot;Analysis table not found at &#x27;&quot;, path,
+         &quot;&#x27;. Run R/01-prepare-data.R first.&quot;)
+  }
+  read.csv(path)
+}
+
+# Column-name helpers -----------------------------------------------------
+
+gc_names_of &lt;- function(cfg) paste0(&quot;gc_&quot;, cfg$predictors$x_vars)
+
+all_vars_of &lt;- function(cfg) c(cfg$predictors$x_vars, gc_names_of(cfg))
+
+# Named label vectors for figures: x labels from config, GC labels derived.
+get_labels &lt;- function(cfg) {
+  x_vars   &lt;- cfg$predictors$x_vars
+  x_labels &lt;- unlist(cfg$predictors$labels)[x_vars]
+  gc_labels &lt;- setNames(paste0(&quot;GC(&quot;, x_labels, &quot;)&quot;), gc_names_of(cfg))
+  c(x_labels, gc_labels)
+}
+
+# Read the response (with coordinates) produced by 02-response-intake.R
+read_response &lt;- function(cfg) {
+  path &lt;- &quot;results/step02-response.csv&quot;
+  if (!file.exists(path)) {
+    stop(&quot;Response file not found at &#x27;&quot;, path,
+         &quot;&#x27;. Run R/02-response-intake.R first.&quot;)
+  }
+  read.csv(path)
+}
+
+# Read the local extent estimated by 04-local-range.R
+read_local_range &lt;- function(cfg) {
+  path &lt;- &quot;results/step04-local-range.csv&quot;
+  if (!file.exists(path)) {
+    stop(&quot;Local range file not found at &#x27;&quot;, path,
+         &quot;&#x27;. Run R/04-local-range.R first.&quot;)
+  }
+  read.csv(path)
+}
+
+# Assemble the modelling frame: analysis table + response + geocomplexity.
+# Every script from Step 05 onward starts from this call, so any script can
+# be re-run in isolation without recomputing upstream steps.
+build_model_frame &lt;- function(cfg) {
+  d  &lt;- read_analysis_table(cfg)
+  rz &lt;- read_response(cfg)
+  d[[cfg$response$response_name]] &lt;- rz[[cfg$response$response_name]]
+
+  gc_path &lt;- &quot;results/step03-geocomplexity.csv&quot;
+  if (file.exists(gc_path)) {
+    gc &lt;- read.csv(gc_path)
+    for (v in gc_names_of(cfg)) d[[v]] &lt;- gc[[v]]
+  }
+  d
+}
+</code></pre>
+  </div>
+  <h4>Key parameters and where they come from</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Parameter</th><th>Default</th><th>Origin / rationale</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>lisp$threshold_multiplier</code></td><td class="num">2</td><td>LISP defines the local extent as d&nbsp;=&nbsp;2&nbsp;×&nbsp;semivariogram range (Hu&nbsp;et&nbsp;al. 2024); sensitivity in Step&nbsp;9</td></tr>
+        <tr><td><code>lisp$discnum</code>, <code>discmethod</code></td><td class="num">4, quantile</td><td>in-window discretisation used by both published applications; sensitivity in Step&nbsp;9</td></tr>
+        <tr><td><code>gc$knn_share</code>, <code>knn_min</code></td><td class="num">2%, 30</td><td>neighbourhood for GC and local GOZH: k&nbsp;=&nbsp;max(30, 0.02·n)</td></tr>
+        <tr><td><code>interaction$top_n_vars</code></td><td class="num">5</td><td>pairs formed among top-N variables by mean local <i>q</i> (N=5 → 10 pairs) to keep the local loop tractable</td></tr>
+        <tr><td><code>global$n_strata</code></td><td class="num">5</td><td>equal-interval strata for the OPGD-style global benchmark</td></tr>
+        <tr><td><code>validation$holdout</code></td><td class="num">20 × 5%</td><td>subsample-stability protocol (drop 5%, repeat 20×, fixed seed)</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Free parameters, their defaults, and the published rules they follow.</figcaption>
+  </figure>
+
+  <h3 id="data-contract">2.3&nbsp;Data Contract</h3>
+  <p>The whole pipeline consumes one analysis-ready table with one row per spatial unit. Units can
+  be anything point-referenced: counties (urbanization application), 1-km road segments, grid
+  cells (glacier application), stations, polygon centroids. Comfortable sample sizes are roughly
+  300&nbsp;≤&nbsp;n&nbsp;≤&nbsp;10,000; no missing values (the preparation script keeps complete
+  cases and documents any imputation).</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Column</th><th>Config key</th><th>Type</th><th>Meaning</th><th>Required?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>uid</code></td><td><code>data$id_col</code></td><td>integer / string</td><td>unique unit id</td><td>yes</td></tr>
+        <tr><td><code>lon</code>, <code>lat</code></td><td><code>data$x_col</code>, <code>data$y_col</code></td><td>numeric</td><td>coordinates in <code>project$crs_input</code> (demo: EPSG:4326)</td><td>yes</td></tr>
+        <tr><td><code>y</code></td><td><code>response$direct_col</code></td><td>numeric</td><td>the observed response variable (raw observation, one value per unit)</td><td>yes</td></tr>
+        <tr><td><code>x1…x6</code></td><td><code>predictors$x_vars</code></td><td>numeric</td><td>continuous explanatory variables (5–15 recommended)</td><td>yes</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Required schema of <code>data/processed/analysis-table.csv</code>. Column names are
+    free — they are declared in the config, not hard-coded.</figcaption>
+  </figure>
+  <h4>Example analysis-ready table</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th class="num">uid</th><th class="num">lon</th><th class="num">lat</th><th class="num">y</th>
+        <th class="num">x1</th><th class="num">x2</th><th class="num">x3</th><th class="num">x4</th><th class="num">x5</th><th class="num">x6</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num">1</td><td class="num">116.915</td><td class="num">36.448</td><td class="num">0.789</td><td class="num">−0.117</td><td class="num">1.015</td><td class="num">0.613</td><td class="num">1.964</td><td class="num">−1.468</td><td class="num">−0.531</td></tr>
+        <tr><td class="num">2</td><td class="num">116.937</td><td class="num">36.254</td><td class="num">0.765</td><td class="num">−0.562</td><td class="num">0.067</td><td class="num">−0.889</td><td class="num">0.649</td><td class="num">−1.189</td><td class="num">−1.561</td></tr>
+        <tr><td class="num">3</td><td class="num">116.286</td><td class="num">36.699</td><td class="num">0.626</td><td class="num">−0.895</td><td class="num">0.618</td><td class="num">1.723</td><td class="num">−0.429</td><td class="num">−1.287</td><td class="num">0.291</td></tr>
+        <tr><td class="num">4</td><td class="num">116.830</td><td class="num">36.273</td><td class="num">0.680</td><td class="num">−0.940</td><td class="num">0.193</td><td class="num">−0.532</td><td class="num">0.446</td><td class="num">−1.255</td><td class="num">−1.272</td></tr>
+      </tbody>
+    </table>
+    <figcaption>First rows of the demo table. 600 rows total; <code>y</code> is the observed
+    response, taken as-is. Generated by the example branch of <code>01-prepare-data.R</code> with
+    <code>set.seed(42)</code>.</figcaption>
+  </figure>
+  <h4>The synthetic ground truth (why the demo is a good test)</h4>
+  <p>The demo generator plants a known spatial structure, so every downstream result can be checked
+  against a "right answer":</p>
+  <ul>
+    <li><b>Two regimes:</b> driver <code>x1</code> dominates the west, <code>x2</code> the east —
+        local <i>q</i> maps must recover this split (Step&nbsp;4 does).</li>
+    <li><b>One planted interaction:</b> <code>x5&nbsp;×&nbsp;x6</code> enters the response jointly —
+        interaction detection should rank pairs above single factors (Step&nbsp;5 does).</li>
+    <li><b>Observed response:</b> <code>y</code> is generated directly from the regimes, the
+        interaction term, and noise, then treated as a raw observation — no index construction
+        is involved in the demo.</li>
+  </ul>
+  <h4>Preparation script (demo mode + real-data mode)</h4>
+  <div class="codewrap">
+    <span class="code-label">R/01-prepare-data.R</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># =============================================================================
+# 01-prepare-data.R — build the analysis table
+#
+# Output: data/processed/analysis-table.csv with EXACTLY this schema:
+#   &lt;id_col&gt;   unique unit id                     (config: data$id_col)
+#   &lt;x_col&gt;    longitude or easting               (config: data$x_col)
+#   &lt;y_col&gt;    latitude or northing               (config: data$y_col)
+#   y          the observed response variable     (config: response$direct_col)
+#   x1..xp     the explanatory variables listed in predictors$x_vars
+#
+# Two modes (config: data$use_example):
+#   true  — simulate a synthetic demo dataset so the whole pipeline runs
+#           end to end with no external data (recommended first run)
+#   false — adapt the marked section below to your own raw data
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+cfg &lt;- load_config()
+ensure_dir(&quot;data/processed&quot;)
+
+if (isTRUE(cfg$data$use_example)) {
+
+  # ---------------------------------------------------------------------------
+  # EXAMPLE MODE — synthetic spatial dataset (n = 600 point units)
+  # Design: two latent regimes (west/east) with different dominant drivers,
+  # so local q values genuinely vary across space; x5 x x6 carry a joint
+  # (interaction) signal; y is the directly observed response.
+  # ---------------------------------------------------------------------------
+  set.seed(42)
+  n &lt;- 600
+
+  lon &lt;- runif(n, 116.0, 117.0)   # ~100 km east-west extent
+  lat &lt;- runif(n, 36.0, 36.9)
+
+  east &lt;- (lon - min(lon)) / diff(range(lon))   # 0 west -&gt; 1 east
+  north &lt;- (lat - min(lat)) / diff(range(lat))
+
+  smooth_field &lt;- function(fx, fy, phase = 0, noise = 0.15) {
+    field &lt;- sin(2 * pi * fx * east + phase) * cos(2 * pi * fy * north) +
+      0.5 * north
+    as.numeric(scale(field + rnorm(n, 0, noise)))
+  }
+
+  x1 &lt;- smooth_field(1.0, 0.5)
+  x2 &lt;- smooth_field(0.5, 1.0, phase = 1)
+  x3 &lt;- smooth_field(1.5, 0.7, phase = 2)
+  x4 &lt;- as.numeric(scale(east + rnorm(n, 0, 0.3)))
+  x5 &lt;- smooth_field(0.8, 1.2, phase = 3)
+  x6 &lt;- smooth_field(1.2, 0.4, phase = 4)
+
+  # Observed response: driver x1 dominates in the west, x2 in the east,
+  # x5*x6 adds a nonlinear-enhance interaction, x3 a weak global effect.
+  latent &lt;- (1 - east) * 1.2 * x1 + east * 1.2 * x2 +
+    0.8 * x5 * x6 + 0.3 * x3 + rnorm(n, 0, 0.4)
+  y_obs &lt;- (latent - min(latent)) / diff(range(latent))
+
+  d &lt;- data.frame(
+    uid = seq_len(n),
+    lon = lon,
+    lat = lat,
+    y   = y_obs,
+    x1 = x1, x2 = x2, x3 = x3, x4 = x4, x5 = x5, x6 = x6
+  )
+
+  write.csv(d, cfg$data$analysis_table, row.names = FALSE)
+  cat(sprintf(&quot;Example analysis table written: %s (%d rows)\n&quot;,
+              cfg$data$analysis_table, nrow(d)))
+  cat(&quot;Set data$use_example to false in config/project-config.yaml\n&quot;)
+  cat(&quot;and adapt this script once your own data are ready.\n&quot;)
+
+} else {
+
+  # ---------------------------------------------------------------------------
+  # REAL-DATA MODE — adapt this section to your domain.
+  # Typical steps:
+  #   1. read raw files from data/raw/
+  #   2. aggregate to your spatial unit (grid cell, county, segment, station)
+  #   3. compute or join coordinates for each unit
+  #   4. rename columns to match config (id, coords, response, x_vars)
+  #   5. drop units with missing coordinates; document any imputation
+  # ---------------------------------------------------------------------------
+  raw_path &lt;- &quot;data/raw/raw-data.csv&quot;   # EDIT: your raw source file
+  if (!file.exists(raw_path)) {
+    stop(&quot;Real-data mode: expected raw data at &#x27;&quot;, raw_path,
+         &quot;&#x27;. Edit R/01-prepare-data.R for your source format.&quot;)
+  }
+  raw &lt;- read.csv(raw_path)
+
+  # EDIT from here: aggregation and renaming for your domain. The example
+  # below simply passes columns through and keeps complete rows.
+  needed &lt;- c(cfg$data$id_col, cfg$data$x_col, cfg$data$y_col,
+              cfg$response$direct_col, cfg$predictors$x_vars)
+  missing_cols &lt;- setdiff(needed, names(raw))
+  if (length(missing_cols) &gt; 0) {
+    stop(&quot;Raw data lacks required columns: &quot;,
+         paste(missing_cols, collapse = &quot;, &quot;),
+         &quot;. Adapt R/01-prepare-data.R or config/project-config.yaml.&quot;)
+  }
+
+  d &lt;- raw[complete.cases(raw[, needed]), needed]
+  write.csv(d, cfg$data$analysis_table, row.names = FALSE)
+  cat(sprintf(&quot;Analysis table written: %s (%d rows, %d dropped as incomplete)\n&quot;,
+              cfg$data$analysis_table, nrow(d), nrow(raw) - nrow(d)))
+}
+</code></pre>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>Real-data checklist (replace the example branch)</div>
+    <div class="callout-b">
+      <p>Read raw files from <code>data/raw/</code> → aggregate to your spatial unit (the glacier
+      application built gridded units from remote-sensing products; the urbanization application
+      joined county yearbook tables) → attach one coordinate pair per unit → rename columns to the
+      config names → keep complete cases. Then set <code>data$use_example:&nbsp;false</code>. The
+      script validates that every configured column exists before writing.</p>
+    </div>
+  </div>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Common data gotcha</div>
+    <div class="callout-b">
+      <p><code>project$crs_projected</code> must be a metric CRS suited to your region — a
+      projected CRS in degrees silently breaks the variogram range and every local window
+      downstream. Check the response distribution before modelling too: heavy skew or a few
+      extreme units will dominate in-window variance and inflate local q around them (consider a
+      transform, and say so in the manuscript).</p>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>3&nbsp;Reproduction Pipeline, Results &amp; Validation</h2>
+
+  <h3 id="pipeline-execution">3.1&nbsp;Pipeline Execution</h3>
+  <p>Eleven numbered scripts run from the folder root. Steps 1–6 are the analytical core, Steps
+  08–10 the validation layer, Step 10 regenerates all figures from <code>results/</code> only.
+  Each step writes its outputs to <code>results/step*.csv</code>, so any step can be re-run in
+  isolation without recomputing upstream steps.</p>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Full run</div><div class="v"><code>R/00-setup.R → R/11-figures.R</code></div></div>
+    <div class="kv"><div class="k">Results folder</div><div class="v"><code>results/</code></div></div>
+    <div class="kv"><div class="k">Figures folder</div><div class="v"><code>figures/</code></div></div>
+  </div>
+  <div class="codewrap">
+    <span class="code-label">terminal</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-bash"><code>cd LPI                       # this folder
+Rscript R/00-setup.R         # once: install packages + record session info
+for s in R/0[1-9]*.R R/1*.R; do Rscript "$s"; done</code></pre>
+  </div>
+  <div class="console"><span class="lbl">Verified run · key lines</span>Example analysis table written: data/processed/analysis-table.csv (600 rows)
+Direct response 'y' copied to 'z'.
+Local neighbourhood size k = 30 (2% of n = 600)
+Variogram range = 22407 m (22.41 km)
+Local extent (threshold) = 44814 m (44.81 km)  [multiplier = 2]
+LISP factor detector: 12 variables (6 X + 6 GC), 600 obs, 13 cores
+Running local interaction for 10 pairs x 600 locations...
+Global GOZH q = 0.6908  p = 5.819e-10
+Saved: results/step08-global-q.csv, results/step08-validation-table.csv
+Spearman rank preservation: median = 0.988, min = 0.927
+=== All figures saved to figures/ ===</div>
+
+  <h3 id="core-steps">3.2&nbsp;Core Analytical Steps</h3>
+  <p>Six stages, each with the same anatomy: purpose → script → verified console output → result →
+  <i>how to read it</i>. Steps are numbered 1–10 on this page while the script files keep
+  their own numbers (Step&nbsp;1 runs <code>R/02-response-intake.R</code>) — <code>R/00</code> is
+  setup and <code>R/01</code> builds the analysis table. The method core lives in one file sourced
+  by all stages:</p>
+  <div class="codewrap">
+    <span class="code-label">R/functions/fn-lpi-core.R — spatial scaffolding, LISP wrapper, interaction detector, GOZH, global q</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># =============================================================================
+# fn-lpi-core.R — the generalizable LPI method core
+# Source: cc005 LPI pipeline (main_analysis.R), generalized and config-driven.
+#
+# Components (in pipeline order):
+#   build_spatial()          projected coordinates + full distance matrix
+#   estimate_local_range()   semivariogram range -&gt; local extent (threshold)
+#   run_lisp_factor()        LISP local q per variable (localsp::lisp)
+#   run_local_interaction()  local pairwise interaction q + 5-class typing
+#   run_interactions_all()   parallel loop of run_local_interaction()
+#   run_gozh()               GOZH total effect: rpart zones -&gt; gdverse::gd
+#   run_local_gozh()         local GOZH over k-nearest neighbourhoods
+#   run_global_gd()          OPGD-style global q for one variable
+#   run_global_interaction_q()  global q for one variable pair
+# =============================================================================
+
+# --- Spatial scaffolding -----------------------------------------------------
+
+# Projected coordinate matrix (metres) and full pairwise distance matrix.
+build_spatial &lt;- function(d, cfg) {
+  sf_pts  &lt;- sf::st_as_sf(d, coords = c(cfg$data$x_col, cfg$data$y_col),
+                          crs = cfg$project$crs_input)
+  sf_proj &lt;- sf::st_transform(sf_pts, crs = cfg$project$crs_projected)
+  coords_mat &lt;- sf::st_coordinates(sf_proj)
+  list(sf_proj    = sf_proj,
+       coords_mat = coords_mat,
+       distmat    = as.matrix(dist(coords_mat)))
+}
+
+# Semivariogram of the response on projected coordinates; the local extent
+# (distance threshold) is multiplier * range, following LISP (Hu et al. 2024).
+estimate_local_range &lt;- function(d, cfg, spatial = NULL) {
+  if (is.null(spatial)) spatial &lt;- build_spatial(d, cfg)
+  response &lt;- cfg$response$response_name
+  sp_obj &lt;- as(spatial$sf_proj, &quot;Spatial&quot;)
+  v &lt;- automap::autofitVariogram(
+    as.formula(paste(response, &quot;~ 1&quot;)), sp_obj
+  )
+  vg_range  &lt;- v$var_model$range[2]
+  threshold &lt;- vg_range * cfg$params$lisp$threshold_multiplier
+  list(variogram = v, range = vg_range, threshold = threshold)
+}
+
+# --- LISP factor detector ------------------------------------------------
+
+# Local q (power of determinant) of every variable at every location.
+# Returns list(q = data.frame, sig = data.frame) with NA imputed:
+# q -&gt; 0 (no explanatory power), p -&gt; 1 (not significant).
+run_lisp_factor &lt;- function(d, cfg, vars, threshold, distmat,
+                            discnum = NULL, cores = NULL) {
+  response &lt;- cfg$response$response_name
+  if (is.null(discnum)) discnum &lt;- cfg$params$lisp$discnum
+  if (is.null(cores))   cores   &lt;- get_cores(cfg)
+
+  d_lisp &lt;- d[, c(response, vars)]
+  lisp_result &lt;- localsp::lisp(
+    formula    = as.formula(paste(response, &quot;~ .&quot;)),
+    data       = d_lisp,
+    threshold  = threshold,
+    distmat    = distmat,
+    discnum    = discnum,
+    discmethod = cfg$params$lisp$discmethod,
+    cores      = cores
+  )
+  lisp_df &lt;- as.data.frame(lisp_result)
+
+  pd_cols  &lt;- grep(&quot;^pd_&quot;,  names(lisp_df), value = TRUE)
+  sig_cols &lt;- grep(&quot;^sig_&quot;, names(lisp_df), value = TRUE)
+
+  base_cols &lt;- data.frame(
+    LocationID = seq_len(nrow(d)),
+    Longitude  = d[[cfg$data$x_col]],
+    Latitude   = d[[cfg$data$y_col]]
+  )
+  local_q   &lt;- cbind(base_cols, lisp_df[, pd_cols,  drop = FALSE])
+  local_sig &lt;- cbind(base_cols, lisp_df[, sig_cols, drop = FALSE])
+  names(local_q)[-(1:3)]   &lt;- sub(&quot;^pd_&quot;,  &quot;&quot;, pd_cols)
+  names(local_sig)[-(1:3)] &lt;- sub(&quot;^sig_&quot;, &quot;&quot;, sig_cols)
+
+  var_cols &lt;- setdiff(names(local_q), c(&quot;LocationID&quot;, &quot;Longitude&quot;, &quot;Latitude&quot;))
+  local_q[var_cols]   &lt;- lapply(local_q[var_cols],
+                                function(x) { x[is.na(x)] &lt;- 0;   x })
+  local_sig[var_cols] &lt;- lapply(local_sig[var_cols],
+                                function(x) { x[is.na(x)] &lt;- 1.0; x })
+
+  list(q = local_q, sig = local_sig)
+}
+
+# --- Local pairwise interaction detector ----------------------------------
+
+classify_interaction &lt;- function(qv1, qv2, qv12) {
+  dplyr::case_when(
+    qv12 &lt; min(qv1, qv2)                          ~ &quot;Weaken, nonlinear&quot;,
+    qv12 &gt;= min(qv1, qv2) &amp; qv12 &lt; max(qv1, qv2)  ~ &quot;Weaken, uni-&quot;,
+    qv12 == qv1 + qv2                             ~ &quot;Independent&quot;,
+    qv12 &gt; max(qv1, qv2) &amp; qv12 &lt; qv1 + qv2       ~ &quot;Enhance, bi-&quot;,
+    qv12 &gt; qv1 + qv2                              ~ &quot;Enhance, nonlinear&quot;,
+    TRUE                                          ~ NA_character_
+  )
+}
+
+# One location: local window by distance threshold (fallback: min_local_n
+# nearest points), quantile discretization of each pair member, single and
+# combined-zone q via gdverse::gd, then 5-class interaction typing.
+run_local_interaction &lt;- function(i, data, distmat, threshold,
+                                  response, var_pairs, discnum = 4,
+                                  min_local_n = 10) {
+  dists     &lt;- distmat[i, ]
+  local_idx &lt;- which(dists &lt;= threshold)
+  if (length(local_idx) &lt; min_local_n) {
+    local_idx &lt;- order(dists)[1:min(min_local_n, nrow(data))]
+  }
+  local_data &lt;- data[local_idx, , drop = FALSE]
+
+  empty_row &lt;- function(v1, v2) {
+    data.frame(var1 = v1, var2 = v2,
+               qv1 = NA, qv2 = NA, qv12 = NA, pv12 = NA,
+               interaction = NA, LocationID = i, stringsAsFactors = FALSE)
+  }
+
+  pair_results &lt;- lapply(var_pairs, function(pair) {
+    v1 &lt;- pair[1]; v2 &lt;- pair[2]
+    if (length(unique(local_data[[v1]])) &lt; 2 ||
+        length(unique(local_data[[v2]])) &lt; 2) {
+      return(empty_row(v1, v2))
+    }
+
+    tryCatch({
+      disc_v1 &lt;- tryCatch(
+        sdsfun::discretize_vector(local_data[[v1]], n = discnum,
+                                  method = &quot;quantile&quot;),
+        error = function(e) NULL)
+      disc_v2 &lt;- tryCatch(
+        sdsfun::discretize_vector(local_data[[v2]], n = discnum,
+                                  method = &quot;quantile&quot;),
+        error = function(e) NULL)
+      if (is.null(disc_v1) || is.null(disc_v2)) stop(&quot;discretization failed&quot;)
+
+      tmp &lt;- local_data
+      tmp[[&quot;disc_v1&quot;]]  &lt;- disc_v1
+      tmp[[&quot;disc_v2&quot;]]  &lt;- disc_v2
+      tmp[[&quot;disc_v12&quot;]] &lt;- paste(disc_v1, disc_v2, sep = &quot;_&quot;)
+
+      y &lt;- tmp[[response]]
+      if (sum((y - mean(y))^2) == 0) stop(&quot;zero total SS&quot;)
+
+      gd_v1  &lt;- gdverse::gd(as.formula(paste(response, &quot;~ disc_v1&quot;)),  data = tmp)
+      gd_v2  &lt;- gdverse::gd(as.formula(paste(response, &quot;~ disc_v2&quot;)),  data = tmp)
+      gd_v12 &lt;- gdverse::gd(as.formula(paste(response, &quot;~ disc_v12&quot;)), data = tmp)
+
+      qv1  &lt;- as.numeric(gd_v1$factor[[&quot;Q-statistic&quot;]])
+      qv2  &lt;- as.numeric(gd_v2$factor[[&quot;Q-statistic&quot;]])
+      qv12 &lt;- as.numeric(gd_v12$factor[[&quot;Q-statistic&quot;]])
+      pv12 &lt;- as.numeric(gd_v12$factor[[&quot;P-value&quot;]])
+
+      data.frame(var1 = v1, var2 = v2,
+                 qv1 = qv1, qv2 = qv2, qv12 = qv12, pv12 = pv12,
+                 interaction = classify_interaction(qv1, qv2, qv12),
+                 LocationID = i, stringsAsFactors = FALSE)
+    }, error = function(e) empty_row(v1, v2))
+  })
+
+  do.call(rbind, pair_results)
+}
+
+# Parallel driver over all locations. Returns one long data.frame.
+run_interactions_all &lt;- function(d, cfg, var_pairs, distmat, threshold) {
+  response    &lt;- cfg$response$response_name
+  discnum     &lt;- cfg$params$lisp$discnum
+  min_local_n &lt;- cfg$params$interaction$min_local_n
+  n_cores     &lt;- get_cores(cfg)
+
+  worker &lt;- function(i) {
+    run_local_interaction(
+      i = i, data = d, distmat = distmat, threshold = threshold,
+      response = response, var_pairs = var_pairs,
+      discnum = discnum, min_local_n = min_local_n
+    )
+  }
+
+  if (n_cores &gt; 1) {
+    cl &lt;- parallel::makeCluster(n_cores)
+    on.exit(parallel::stopCluster(cl), add = TRUE)
+    parallel::clusterExport(
+      cl,
+      varlist = c(&quot;d&quot;, &quot;distmat&quot;, &quot;threshold&quot;, &quot;response&quot;, &quot;var_pairs&quot;,
+                  &quot;discnum&quot;, &quot;min_local_n&quot;,
+                  &quot;run_local_interaction&quot;, &quot;classify_interaction&quot;),
+      envir = environment()
+    )
+    parallel::clusterEvalQ(cl, {
+      library(gdverse); library(sdsfun); library(dplyr)
+    })
+    inter_list &lt;- parallel::parLapply(cl, seq_len(nrow(d)), worker)
+  } else {
+    inter_list &lt;- lapply(seq_len(nrow(d)), function(i) {
+      if (i %% 200 == 0) cat(sprintf(&quot;  interaction: location %d / %d\n&quot;,
+                                     i, nrow(d)))
+      worker(i)
+    })
+  }
+
+  do.call(rbind, Filter(Negate(is.null), inter_list))
+}
+
+# --- GOZH total effect -----------------------------------------------------
+
+# rpart regression tree on all predictors -&gt; leaf zones -&gt; combined-zone q.
+run_gozh &lt;- function(data, response, predictors) {
+  formula_tree &lt;- as.formula(
+    paste(response, &quot;~&quot;, paste(predictors, collapse = &quot; + &quot;))
+  )
+  tree &lt;- tryCatch(rpart::rpart(formula_tree, data = data, method = &quot;anova&quot;),
+                   error = function(e) NULL)
+  if (is.null(tree)) return(c(q = NA_real_, p = NA_real_))
+
+  data$.zone &lt;- as.character(as.numeric(tree$where))
+  result &lt;- tryCatch(
+    gdverse::gd(as.formula(paste(response, &quot;~ .zone&quot;)), data = data),
+    error = function(e) NULL)
+  if (is.null(result)) return(c(q = NA_real_, p = NA_real_))
+
+  qv &lt;- tryCatch(as.numeric(result$factor[[&quot;Q-statistic&quot;]]),
+                 error = function(e) NA_real_)
+  pv &lt;- tryCatch(as.numeric(result$factor[[&quot;P-value&quot;]]),
+                 error = function(e) NA_real_)
+  if (length(qv) == 0) qv &lt;- NA_real_
+  if (length(pv) == 0) pv &lt;- NA_real_
+  c(q = qv, p = pv)
+}
+
+# Local GOZH: run_gozh() inside each location&#x27;s k-nearest neighbourhood.
+run_local_gozh &lt;- function(d, cfg, predictors, coords_mat, k_local) {
+  response &lt;- cfg$response$response_name
+  n &lt;- nrow(d)
+  local_q &lt;- rep(NA_real_, n)
+  local_p &lt;- rep(NA_real_, n)
+  for (i in seq_len(n)) {
+    if (i %% 200 == 0) cat(sprintf(&quot;  local GOZH: location %d / %d\n&quot;, i, n))
+    nn_idx &lt;- FNN::get.knnx(coords_mat, coords_mat[i, , drop = FALSE],
+                            k = k_local)$nn.index
+    res &lt;- run_gozh(d[nn_idx, ], response, predictors)
+    local_q[i] &lt;- res[&quot;q&quot;]
+    local_p[i] &lt;- res[&quot;p&quot;]
+  }
+  data.frame(local_gozh = local_q, local_gozh_p = local_p)
+}
+
+# --- Global benchmarks (OPGD-style) ----------------------------------------
+
+run_global_gd &lt;- function(data, response, predictor, n_strata = 5) {
+  tryCatch({
+    df &lt;- data.frame(y = data[[response]], x = data[[predictor]])
+    df &lt;- df[complete.cases(df), ]
+    if (nrow(df) &lt; 30) return(c(q = NA_real_, p = NA_real_))
+    df$x_d &lt;- cut(df$x, breaks = n_strata, labels = FALSE,
+                  include.lowest = TRUE)
+    result &lt;- gdverse::gd(y ~ x_d, data = df)
+    qv &lt;- tryCatch(as.numeric(result$factor[[&quot;Q-statistic&quot;]]),
+                   error = function(e) NA_real_)
+    pv &lt;- tryCatch(as.numeric(result$factor[[&quot;P-value&quot;]]),
+                   error = function(e) NA_real_)
+    if (length(qv) == 0) qv &lt;- NA_real_
+    if (length(pv) == 0) pv &lt;- NA_real_
+    c(q = qv, p = pv)
+  }, error = function(e) c(q = NA_real_, p = NA_real_))
+}
+
+run_global_interaction_q &lt;- function(data, response, v1, v2, n_strata = 5) {
+  tryCatch({
+    df &lt;- data.frame(y = data[[response]], x1 = data[[v1]], x2 = data[[v2]])
+    df &lt;- df[complete.cases(df), ]
+    if (nrow(df) &lt; 30) return(c(q = NA_real_, p = NA_real_))
+    df$x1_d &lt;- cut(df$x1, breaks = n_strata, labels = FALSE,
+                   include.lowest = TRUE)
+    df$x2_d &lt;- cut(df$x2, breaks = n_strata, labels = FALSE,
+                   include.lowest = TRUE)
+    df$x12 &lt;- interaction(df$x1_d, df$x2_d, drop = TRUE)
+    result &lt;- gdverse::gd(y ~ x12, data = df)
+    qv &lt;- tryCatch(as.numeric(result$factor[[&quot;Q-statistic&quot;]]),
+                   error = function(e) NA_real_)
+    pv &lt;- tryCatch(as.numeric(result$factor[[&quot;P-value&quot;]]),
+                   error = function(e) NA_real_)
+    if (length(qv) == 0) qv &lt;- NA_real_
+    if (length(pv) == 0) pv &lt;- NA_real_
+    c(q = qv, p = pv)
+  }, error = function(e) c(q = NA_real_, p = NA_real_))
+}
+</code></pre>
+  </div>
+
+  <article class="step-card" id="step-1">
+    <div class="step-card-h">
+      <span class="step-label">Step 1 · verified</span>
+      <h4>Response intake</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Take the observed response <code>y</code> as-is and register it under the pipeline's
+      standard name <code>z</code> (<code>results/step02-response.csv</code>) together with the
+      unit id and coordinates — every later step reads the response from this one file.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/02-response-intake.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># =============================================================================
+# 02-response-intake.R — register the observed response under the standard name
+#
+# The analysis table carries the observed response (config: response$direct_col,
+# default &quot;y&quot;). This step copies it to the pipeline&#x27;s standard internal name
+# (response$response_name, default &quot;z&quot;) together with the unit id and
+# coordinates, so every later step reads the response from one file.
+#
+# Output: results/step02-response.csv
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+
+cfg &lt;- load_config()
+ensure_dir(&quot;results&quot;)
+
+d    &lt;- read_analysis_table(cfg)
+resp &lt;- cfg$response$response_name
+
+out &lt;- d[, c(cfg$data$id_col, cfg$data$x_col, cfg$data$y_col)]
+out[[resp]] &lt;- d[[cfg$response$direct_col]]
+
+cat(sprintf(&quot;Direct response &#x27;%s&#x27; copied to &#x27;%s&#x27;.\n&quot;,
+            cfg$response$direct_col, resp))
+cat(sprintf(&quot;Response %s: mean=%.4f  sd=%.4f  min=%.4f  max=%.4f\n&quot;,
+            resp, mean(out[[resp]]), sd(out[[resp]]),
+            min(out[[resp]]), max(out[[resp]])))
+
+write.csv(out, &quot;results/step02-response.csv&quot;, row.names = FALSE)
+cat(&quot;Saved: results/step02-response.csv\n&quot;)
+</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>Direct response 'y' copied to 'z'.
+Response z: mean=0.6564  sd=0.1406  min=0.0000  max=1.0000
+Saved: results/step02-response.csv</div>
+      <div class="figpair triple">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo-fig01-response-maps.jpg" alt="Demo response map" loading="lazy" decoding="async">
+          <figcaption>fig01 — the observed response y. High values concentrate in the north-east,
+          following the planted regime structure.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-lisp">Published reference · LISP</span>
+          <img src="assets/lisp-fig2-glacier-thickness.jpg" alt="LISP paper glacier thickness change" loading="lazy" decoding="async">
+          <figcaption>LISP paper Fig. 2 — the observed response of the glacier case: thickness
+          change of lake-terminating glaciers, Greater Himalayas, 2000–2020 (a directly observed
+          response, exactly as in this demo).</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · LPI</span>
+          <img src="assets/lpi-fig3-urban-index.jpg" alt="LPI paper urbanization index" loading="lazy" decoding="async">
+          <figcaption>LPI paper Fig. 3 — the response variable of the urbanization case (a
+          county-level composite index). South-east high, north-west low.</figcaption>
+        </figure>
+      </div>
+      <h4>Paper reference</h4>
+      <p>Both published cases open with the response map as the macro pattern the paper sets out to
+      explain: Hu&nbsp;et&nbsp;al. (2024) Fig.&nbsp;2 (<a href="../../pdf/LISP-hu2024.pdf">PDF</a>)
+      and Sun&nbsp;et&nbsp;al. (2026) Fig.&nbsp;3 (<a href="../../pdf/LPI-song2025.pdf">PDF</a>).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Pattern:</b> the response map is the premise of everything downstream — a clearly
+                structured surface (demo: north-east high, mean 0.656, full 0–1 range used) is worth
+                local analysis; a salt-and-pepper map with no spatial organisation would not be.</li>
+            <li><b>Paper's reading:</b> both published cases present the response map first, as the
+                macro spatial pattern the paper sets out to explain — glacier thinning concentrated
+                along the Himalayan arc (LISP Fig.&nbsp;2), the SE-high / NW-low urbanization
+                gradient (LPI Fig.&nbsp;3).</li>
+            <li><b>Deeper thinking:</b> inspect the response distribution before modelling — heavy
+                skew or a few extreme units will dominate in-window variance and inflate local q
+                around them (consider a transform, and say so in the manuscript).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/step02-response.csv</code> exists with 600 rows and the console reports
+          mean&nbsp;z&nbsp;=&nbsp;0.6564, range 0–1, before you move on.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-2">
+    <div class="step-card-h">
+      <span class="step-label">Step 2 · verified</span>
+      <h4>Geocomplexity (GC) pattern of every variable</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Compute the geocomplexity G<sub>i</sub>&nbsp;∈&nbsp;[0,1] of each explanatory variable
+      (Zhang&nbsp;et&nbsp;al. 2023): high values mark units whose local spatial arrangement
+      contradicts spatial dependence. This step doubles the variable set from {X} to
+      {X,&nbsp;GC(X)} — the defining move of LPI. The LISP glacier case has no counterpart for
+      this stage: pattern augmentation entered the method family with geocomplexity and LPI, so
+      the published references here come from the LPI article only.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/03-geocomplexity.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># =============================================================================
+# 03-geocomplexity.R — geocomplexity (GC) pattern of every explanatory variable
+#
+# GC (Zhang et al. 2023, IJGIS) measures local spatial complexity: high values
+# mark locations whose local pattern contradicts spatial dependence. LPI treats
+# each variable&#x27;s GC pattern as an additional explanatory variable, so this
+# step doubles the variable set from {X} to {X, GC(X)}.
+#
+# Implementation: geocomplexity::geocd_vector(method = &quot;spvar&quot;) with KNN
+# spatial weights, k = max(knn_min, knn_share * n)   (cc005 Step 2).
+#
+# Output: results/step03-geocomplexity.csv
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+
+library(sf)
+library(sdsfun)
+library(geocomplexity)
+
+cfg &lt;- load_config()
+ensure_dir(&quot;results&quot;)
+
+d      &lt;- read_analysis_table(cfg)
+x_vars &lt;- cfg$predictors$x_vars
+
+sf_data &lt;- st_as_sf(d, coords = c(cfg$data$x_col, cfg$data$y_col),
+                    crs = cfg$project$crs_input)
+
+k_local &lt;- max(cfg$params$gc$knn_min,
+               round(nrow(d) * cfg$params$gc$knn_share))
+cat(sprintf(&quot;Local neighbourhood size k = %d (%.0f%% of n = %d)\n&quot;,
+            k_local, cfg$params$gc$knn_share * 100, nrow(d)))
+
+wt &lt;- sdsfun::spdep_contiguity_swm(sf_data, k = k_local)
+
+cat(&quot;Computing geocomplexity for&quot;, length(x_vars), &quot;variables...\n&quot;)
+system.time({
+  gc_result &lt;- geocd_vector(sf_data[, x_vars], wt,
+                            method    = cfg$params$gc$method,
+                            normalize = TRUE)
+})
+
+gc_df &lt;- as.data.frame(gc_result)
+gc_df &lt;- gc_df[, !grepl(&quot;^geometry$&quot;, names(gc_df)), drop = FALSE]
+colnames(gc_df) &lt;- gc_names_of(cfg)
+
+out &lt;- cbind(
+  d[, c(cfg$data$id_col, cfg$data$x_col, cfg$data$y_col)],
+  gc_df
+)
+write.csv(out, &quot;results/step03-geocomplexity.csv&quot;, row.names = FALSE)
+cat(&quot;Saved: results/step03-geocomplexity.csv\n&quot;)
+</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>Local neighbourhood size k = 30 (2% of n = 600)
+Computing geocomplexity for 6 variables...
+   user  system elapsed
+  0.782   0.008   0.833
+Saved: results/step03-geocomplexity.csv</div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo-fig02-gc-trends.png" alt="Demo GC trends" loading="lazy" decoding="async">
+          <figcaption>fig02 — variable value vs GC(X): 5%-quantile bin means with GAM smoother.
+          Nonlinear throughout; complexity is not a rescaling of the values.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · LPI</span>
+          <img src="assets/lpi-fig4-gc-patterns.jpg" alt="LPI paper GC patterns" loading="lazy" decoding="async">
+          <figcaption>LPI paper Fig. 4 — county-level geocomplexity patterns of the five economic
+          variables: complexity concentrates along regime boundaries and around hub
+          cities.</figcaption>
+        </figure>
+      </div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-paper">Published reference · LPI</span>
+          <img src="assets/lpi-fig5-gc-trends.jpg" alt="LPI paper GC trend curves" loading="lazy" decoding="async">
+          <figcaption>LPI paper Fig. 5 — the published counterpart of demo fig02: statistical trend
+          of each variable against its geocomplexity pattern (low value ↔ high complexity,
+          nonlinear).</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · GEOC</span>
+          <img src="assets/geoc-fig5-gc-scatter.jpg" alt="GEOC paper Fig. 5 — variable values vs geocomplexity, coloured by Gini" loading="lazy" decoding="async">
+          <figcaption>GEOC paper Fig. 5 (Zhang et al. 2023) — the origin of this diagnostic:
+          geocomplexity of income (a) and of industrial employees (b) against their values in
+          Australian SA3 regions, coloured by Gini coefficient. Complexity peaks at mid-range
+          values and falls at the extremes — the same nonlinear signature as demo
+          fig02.</figcaption>
+        </figure>
+      </div>
+      <h4>Paper reference</h4>
+      <p>Sun&nbsp;et&nbsp;al. (2026) Figs.&nbsp;4–5
+      (<a href="../../pdf/LPI-song2025.pdf">PDF</a>); the geocomplexity indicator and the
+      value-vs-complexity diagnostic (its Fig.&nbsp;5, reproduced above) are defined in
+      Zhang&nbsp;et&nbsp;al. (2023) (<a href="../../pdf/GEOC-zhang2023.pdf">PDF</a>).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Pattern:</b> GC(X) is highest where a variable's neighbourhood arrangement is
+                disordered, not where its value is high — the demo trend curves are non-monotonic,
+                confirming GC adds information that no transformation of the raw values could.</li>
+            <li><b>Paper's reading:</b> the LPI article reads its Fig.&nbsp;4–5 as evidence that
+                economic variables have "spatial structural effects" distinct from magnitude
+                effects, and the GEOC paper quantifies the stake: geocomplexity explained 17–47% of
+                the residuals that value-based models (OLS, SVR, GWR) left behind.</li>
+            <li><b>Deeper thinking:</b> expect high GC along administrative or physical transition
+                zones that cut through your study area — if your GC maps instead mirror unit
+                density, revisit the KNN size (<code>gc$knn_share</code>), because irregular unit
+                sizes can masquerade as complexity. High-GC areas are also where any later model
+                error will concentrate, so they are the first places to inspect when validation
+                underperforms.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/step03-geocomplexity.csv</code> holds six <code>gc_*</code> columns with
+          k&nbsp;=&nbsp;30; the demo computes in under a second.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-3">
+    <div class="step-card-h">
+      <span class="step-label">Step 3 · verified</span>
+      <h4>Local analysis extent from the semivariogram</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Define "local" operationally: fit a semivariogram to the response on projected
+      coordinates, take its range <i>a</i>, and set the local window radius
+      d&nbsp;=&nbsp;2<i>a</i> (the LISP rule). Every local computation downstream uses this
+      window.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/04-local-range.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># =============================================================================
+# 04-local-range.R — local analysis extent from the response semivariogram
+#
+# LISP (Hu et al. 2024) fixes the local window as   d = multiplier x range,
+# where range comes from a fitted semivariogram of the response on projected
+# coordinates (automap::autofitVariogram). The multiplier (default 2) and the
+# sensitivity of results to it are examined again in Step 10.
+#
+# Outputs: results/step04-local-range.csv       (range, multiplier, threshold)
+#          results/step04-variogram-points.csv  (empirical variogram, for Fig)
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+source(&quot;R/functions/fn-lpi-core.R&quot;)
+
+library(sf)
+library(automap)
+
+cfg &lt;- load_config()
+ensure_dir(&quot;results&quot;)
+
+d  &lt;- read_analysis_table(cfg)
+rz &lt;- read_response(cfg)
+d[[cfg$response$response_name]] &lt;- rz[[cfg$response$response_name]]
+
+spatial &lt;- build_spatial(d, cfg)
+lr      &lt;- estimate_local_range(d, cfg, spatial)
+
+cat(sprintf(&quot;Variogram range = %.0f m (%.2f km)\n&quot;,
+            lr$range, lr$range / 1000))
+cat(sprintf(&quot;Local extent (threshold) = %.0f m (%.2f km)  [multiplier = %s]\n&quot;,
+            lr$threshold, lr$threshold / 1000,
+            cfg$params$lisp$threshold_multiplier))
+
+dm &lt;- spatial$distmat
+cat(sprintf(&quot;Distance matrix (m): min=%.0f  median=%.0f  max=%.0f\n&quot;,
+            min(dm[dm &gt; 0]), median(dm[dm &gt; 0]), max(dm)))
+
+write.csv(
+  data.frame(
+    variogram_model      = as.character(lr$variogram$var_model$model[2]),
+    range_m              = lr$range,
+    threshold_multiplier = cfg$params$lisp$threshold_multiplier,
+    threshold_m          = lr$threshold,
+    n_obs                = nrow(d)
+  ),
+  &quot;results/step04-local-range.csv&quot;, row.names = FALSE
+)
+
+# Empirical variogram points for the diagnostic figure (Step 11).
+vg &lt;- lr$variogram$exp_var
+write.csv(
+  data.frame(dist_m = vg$dist, gamma = vg$gamma, np = vg$np),
+  &quot;results/step04-variogram-points.csv&quot;, row.names = FALSE
+)
+cat(&quot;Saved: results/step04-local-range.csv, results/step04-variogram-points.csv\n&quot;)
+</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>Variogram range = 22407 m (22.41 km)
+Local extent (threshold) = 44814 m (44.81 km)  [multiplier = 2]
+Distance matrix (m): min=112  median=49453  max=127357
+Saved: results/step04-local-range.csv, results/step04-variogram-points.csv</div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-lisp">Published reference · LISP</span>
+          <img src="assets/lisp-fig4-variogram.png" alt="LISP paper variogram" loading="lazy" decoding="async">
+          <figcaption>LISP paper Fig. 4 — the original definition of this step: semivariogram of
+          glacier thickness change, range a = 309.15 km → local extent d = 618.30 km.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · LPI</span>
+          <img src="assets/lpi-fig6-variogram.jpg" alt="LPI paper variogram" loading="lazy" decoding="async">
+          <figcaption>LPI paper Fig. 6 — the same rule in the urbanization case: range
+          a = 99.28 km → local extent d = 198.56 km. The demo counterpart appears in fig08
+          (Step&nbsp;7), where range = 22.4 km → extent = 44.8 km.</figcaption>
+        </figure>
+      </div>
+      <h4>Paper reference</h4>
+      <p>The d&nbsp;=&nbsp;2<i>a</i> rule comes from Hu&nbsp;et&nbsp;al. (2024)
+      (<a href="../../pdf/LISP-hu2024.pdf">PDF</a>) and is applied unchanged in
+      Sun&nbsp;et&nbsp;al. (2026) (<a href="../../pdf/LPI-song2025.pdf">PDF</a>).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Pattern:</b> the range is where the fitted curve levels off — beyond it, response
+                values are no longer spatially correlated; the demo's 22.4&nbsp;km range reflects
+                the wavelength of the planted regimes.</li>
+            <li><b>Paper's reading:</b> the LPI article treats d&nbsp;=&nbsp;2a as the neighbourhood
+                within which stratified power is meaningfully "local" — big enough for stable
+                in-window discretisation, small enough to preserve locality.</li>
+            <li><b>Deeper thinking:</b> two failure modes to check before trusting the extent:
+                (i) a variogram that keeps climbing (trend, no sill) makes the fitted range
+                unstable — detrend or interpret cautiously; (ii) a projected CRS in degrees
+                silently breaks everything — the range must be in metres. Report the median number
+                of neighbours inside the window; if it falls below ~30, discretisation inside
+                windows becomes fragile (see Step&nbsp;9 for the multiplier sensitivity).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/step04-local-range.csv</code> reports range&nbsp;=&nbsp;22407&nbsp;m and
+          threshold&nbsp;=&nbsp;44814&nbsp;m with multiplier&nbsp;2 on the demo data.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-4">
+    <div class="step-card-h">
+      <span class="step-label">Step 4 · verified</span>
+      <h4>Local stratified power (LISP factor detector)</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Compute, at every unit, the local <i>q</i>-statistic of every variable and every GC
+      pattern inside the local window — the core "where does each factor matter" result.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/05-lisp-factor-detector.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># =============================================================================
+# 05-lisp-factor-detector.R — LISP local q for every variable in {X, GC(X)}
+#
+# localsp::lisp() runs the geographical detector factor detector inside each
+# location&#x27;s local window (radius = threshold from Step 04), yielding a local
+# q value and significance per variable per location (cc005 Step 3).
+# NA imputation: q -&gt; 0 (no explanatory power), p -&gt; 1 (not significant).
+#
+# Outputs: results/step05-local-q-values.csv
+#          results/step05-local-q-sig.csv
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+source(&quot;R/functions/fn-lpi-core.R&quot;)
+
+library(sf)
+library(localsp)
+library(gdverse)
+library(sdsfun)
+library(dplyr)
+
+cfg &lt;- load_config()
+ensure_dir(&quot;results&quot;)
+
+d        &lt;- build_model_frame(cfg)
+all_vars &lt;- all_vars_of(cfg)
+n_cores  &lt;- get_cores(cfg)
+
+spatial   &lt;- build_spatial(d, cfg)
+threshold &lt;- read_local_range(cfg)$threshold_m
+
+cat(sprintf(&quot;LISP factor detector: %d variables (%d X + %d GC), %d obs, %d cores\n&quot;,
+            length(all_vars), length(cfg$predictors$x_vars),
+            length(gc_names_of(cfg)), nrow(d), n_cores))
+cat(sprintf(&quot;Threshold = %.0f m\n&quot;, threshold))
+
+system.time({
+  lisp_out &lt;- run_lisp_factor(
+    d, cfg,
+    vars      = all_vars,
+    threshold = threshold,
+    distmat   = spatial$distmat,
+    cores     = n_cores
+  )
+})
+
+write.csv(lisp_out$q,   &quot;results/step05-local-q-values.csv&quot;, row.names = FALSE)
+write.csv(lisp_out$sig, &quot;results/step05-local-q-sig.csv&quot;,    row.names = FALSE)
+cat(&quot;Saved: results/step05-local-q-values.csv, results/step05-local-q-sig.csv\n&quot;)
+
+# Quick console summary: top variables by mean local q.
+mean_q &lt;- sort(colMeans(lisp_out$q[, all_vars], na.rm = TRUE),
+               decreasing = TRUE)
+cat(&quot;\nTop variables by mean local q:\n&quot;)
+for (v in names(head(mean_q, 10))) {
+  cat(sprintf(&quot;  %-24s %.4f\n&quot;, v, mean_q[v]))
+}
+</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>LISP factor detector: 12 variables (6 X + 6 GC), 600 obs, 13 cores
+Threshold = 44814 m
+   user  system elapsed
+  0.125   0.067   7.183
+Saved: results/step05-local-q-values.csv, results/step05-local-q-sig.csv
+
+Top variables by mean local q:
+  x1      0.2986      gc_x1   0.1195
+  x2      0.1777      x5      0.1096
+  x3      0.1457      gc_x6   0.0775
+  x6      0.1319      gc_x2   0.0706</div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo-fig03a-q-hist-x.png" alt="Demo local q histograms of variables" loading="lazy" decoding="async">
+          <figcaption>fig03a — distribution of local q per variable. Wide spreads (x1: mean 0.299,
+          max 0.490) are the signature of heterogeneous explanatory power.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo-fig03b-q-hist-gc.png" alt="Demo local q histograms of GC patterns" loading="lazy" decoding="async">
+          <figcaption>fig03b — distribution of local q per GC pattern. Lower means (GC(x1): 0.120)
+          with long right tails: pattern effects are localized, not universal.</figcaption>
+        </figure>
+      </div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo-fig04-local-q-maps.jpg" alt="Demo local q maps" loading="lazy" decoding="async">
+          <figcaption>fig04 — local q maps, top-4 variables (top row) and top-4 GC patterns
+          (bottom row). x1 dominates the west/north, x2 the east — the planted two-regime
+          structure, recovered.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-lisp">Published reference · LISP</span>
+          <img src="assets/lisp-fig5-local-pd.jpg" alt="LISP paper local PD maps" loading="lazy" decoding="async">
+          <figcaption>LISP paper Fig. 5 — local PD of individual variables and their significance
+          for glacier thickness change: slope has the largest share of significant
+          area.</figcaption>
+        </figure>
+      </div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-paper">Published reference · LPI</span>
+          <img src="assets/lpi-fig7-pd-vars.jpg" alt="LPI paper local PD maps of variables" loading="lazy" decoding="async">
+          <figcaption>LPI paper Fig. 7 — local PD maps + significance for the five economic
+          variables. Tertiary industry and retail sales: highest PD, significant in 100% of
+          counties.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · LPI</span>
+          <img src="assets/lpi-fig8-pd-gc.jpg" alt="LPI paper local PD maps of GC patterns" loading="lazy" decoding="async">
+          <figcaption>LPI paper Fig. 8 — local PD of the geocomplexity patterns: modest on average
+          but with sharply localized significant pockets.</figcaption>
+        </figure>
+      </div>
+      <h4>Paper reference</h4>
+      <p>Hu&nbsp;et&nbsp;al. (2024) Fig.&nbsp;5 (<a href="../../pdf/LISP-hu2024.pdf">PDF</a>);
+      Sun&nbsp;et&nbsp;al. (2026) Figs.&nbsp;7–8
+      (<a href="../../pdf/LPI-song2025.pdf">PDF</a>).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Pattern:</b> read magnitude and significance share together — a variable with
+                modest mean q but near-100% significance is a <i>universal weak driver</i>; one
+                with the same mean but patchy significance is a <i>localized strong driver</i>. In
+                the demo, x1 is both strong and near-universal (mean 0.299, significant at 94.5% of
+                units), while GC(x1) matters only in pockets (mean 0.120, significant at
+                79.8%).</li>
+            <li><b>Paper's reading:</b> the LISP glacier case reads its Fig.&nbsp;5 by exactly this
+                rule — slope is the near-universal driver (significant at 99.34% of locations)
+                while temperature and precipitation matter only in subregions; the LPI article's
+                headline from its Fig.&nbsp;7–8: tertiary industry (mean PD 0.454) and retail
+                (0.434) dominate everywhere, while GC variables are "concentrated in specific local
+                regions" — discoveries a global model cannot make (see the comparison tables in
+                Step&nbsp;7).</li>
+            <li><b>Deeper thinking:</b> look for <i>complementary regimes</i> — where one driver's
+                q falls as another's rises (demo: the x1/x2 west–east handover). Those handover
+                lines are the spatial boundaries your Discussion section should explain
+                mechanistically. Also map the imputed q=0 units (windows with insufficient
+                variation): if they cluster, that subregion's data support is too thin for local
+                claims there.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/step05-local-q-values.csv</code> and <code>-sig.csv</code> exist; the
+          mean-q ranking is led by x1&nbsp;=&nbsp;0.2986 on the demo data.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-5">
+    <div class="step-card-h">
+      <span class="step-label">Step 5 · verified</span>
+      <h4>Local pattern interactions</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>For every unit, discretise each pair of top variables inside the local window, compute
+      single and combined-zone <i>q</i>, and classify the interaction into the five
+      geographical-detector types. Pairs span three categories: X×X, X×GC, GC×GC.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/06-local-interactions.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># =============================================================================
+# 06-local-interactions.R — local pairwise pattern interactions
+#
+# Pairs are formed among the top-N variables by mean local q (N from config;
+# N=5 gives 10 pairs). For every location, each pair member is discretized
+# inside the local window, single and combined-zone q values are computed
+# (gdverse::gd), and the interaction is typed into the 5 geographical
+# detector classes (cc005 Step 3e / LPI Fig 9).
+#
+# Outputs: results/step06-all-pairwise-interactions.csv
+#          results/step06-local-best-interaction.csv
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+source(&quot;R/functions/fn-lpi-core.R&quot;)
+
+library(sf)
+library(gdverse)
+library(sdsfun)
+library(dplyr)
+
+cfg &lt;- load_config()
+ensure_dir(&quot;results&quot;)
+
+d        &lt;- build_model_frame(cfg)
+all_vars &lt;- all_vars_of(cfg)
+
+spatial   &lt;- build_spatial(d, cfg)
+threshold &lt;- read_local_range(cfg)$threshold_m
+
+local_q &lt;- read.csv(&quot;results/step05-local-q-values.csv&quot;)
+
+# --- Top-N variables by mean local q ----------------------------------------
+top_n  &lt;- cfg$params$interaction$top_n_vars
+mean_q &lt;- sort(colMeans(local_q[, all_vars], na.rm = TRUE), decreasing = TRUE)
+top_vars &lt;- names(mean_q)[1:top_n]
+
+cat(sprintf(&quot;Top %d variables by mean local q:\n&quot;, top_n))
+for (v in top_vars) cat(sprintf(&quot;  %-24s %.4f\n&quot;, v, mean_q[v]))
+
+var_pairs &lt;- combn(top_vars, 2, simplify = FALSE)
+cat(sprintf(&quot;\nRunning local interaction for %d pairs x %d locations...\n&quot;,
+            length(var_pairs), nrow(d)))
+
+system.time({
+  inter_all &lt;- run_interactions_all(d, cfg, var_pairs,
+                                    spatial$distmat, threshold)
+})
+
+# --- Best interaction per location -------------------------------------------
+coord_lookup &lt;- data.frame(
+  LocationID = seq_len(nrow(d)),
+  Longitude  = d[[cfg$data$x_col]],
+  Latitude   = d[[cfg$data$y_col]]
+)
+
+inter_best &lt;- inter_all %&gt;%
+  group_by(LocationID) %&gt;%
+  slice_max(qv12, n = 1, with_ties = FALSE) %&gt;%
+  ungroup() %&gt;%
+  left_join(coord_lookup, by = &quot;LocationID&quot;) %&gt;%
+  select(LocationID, Longitude, Latitude,
+         var1, var2, qv1, qv2, qv12, interaction)
+
+write.csv(inter_all,  &quot;results/step06-all-pairwise-interactions.csv&quot;,
+          row.names = FALSE)
+write.csv(inter_best, &quot;results/step06-local-best-interaction.csv&quot;,
+          row.names = FALSE)
+cat(&quot;Saved: step06-all-pairwise-interactions.csv, step06-local-best-interaction.csv\n&quot;)
+
+# Console summary: strongest pairs by mean qv12.
+pair_summary &lt;- inter_all %&gt;%
+  group_by(var1, var2) %&gt;%
+  summarise(mean_qv12 = mean(qv12, na.rm = TRUE), .groups = &quot;drop&quot;) %&gt;%
+  arrange(desc(mean_qv12))
+cat(&quot;\nPairs by mean interaction q (qv12):\n&quot;)
+print(as.data.frame(head(pair_summary, 10)))
+</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output (pair ranking by mean qv12)</span>x2 × x6      0.5242      x2 × x3      0.3775
+x1 × x2      0.4808      x2 × gc_x1   0.3621
+x1 × x3      0.4607      x3 × x6      0.3378
+x1 × x6      0.4565      x6 × gc_x1   0.3145
+x1 × gc_x1   0.3942      x3 × gc_x1   0.3027</div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo-fig05-interaction-strength.png" alt="Demo interaction strength" loading="lazy" decoding="async">
+          <figcaption>fig05 — pairs ranked by mean interaction q (± SD), coloured by category.
+          Every pair beats the best single factor (0.299).</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo-fig06-interaction-type.png" alt="Demo interaction type map" loading="lazy" decoding="async">
+          <figcaption>fig06 — dominant interaction category per unit and category frequencies:
+          spatially organised, with X×GC dominating transition zones.</figcaption>
+        </figure>
+      </div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-lisp">Published reference · LISP</span>
+          <img src="assets/lisp-fig6-interaction-pd.jpg" alt="LISP paper interaction PD" loading="lazy" decoding="async">
+          <figcaption>LISP paper Fig. 6 — local PD of interaction determinants in the glacier
+          case: pairwise interactions (slope ∩ lake area, slope ∩ summer temperature,
+          slope ∩ precipitation) and the all-variable interaction, with per-variable
+          contributions.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · LPI</span>
+          <img src="assets/lpi-fig9-interactions.jpg" alt="LPI paper interaction PD" loading="lazy" decoding="async">
+          <figcaption>LPI paper Fig. 9 — local PD of pattern interactions: interaction strength
+          48–86%, dominated by nonlinear-enhance and bivariate-enhance types; category shares
+          variable×variable 41.7%, variable×GC 56.7%, GC×GC rare.</figcaption>
+        </figure>
+      </div>
+      <h4>Paper reference</h4>
+      <p>Hu&nbsp;et&nbsp;al. (2024) Fig.&nbsp;6 (<a href="../../pdf/LISP-hu2024.pdf">PDF</a>);
+      Sun&nbsp;et&nbsp;al. (2026) Fig.&nbsp;9 (<a href="../../pdf/LPI-song2025.pdf">PDF</a>). The
+      five-class interaction typing follows the geographical detector of Wang&nbsp;et&nbsp;al.
+      (2010).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Pattern:</b> the informative comparison is not
+                qv12&nbsp;&gt;&nbsp;max(qv1,qv2) (true for all "enhance" types by construction) but
+                qv12 vs qv1+qv2 — pairs exceeding the sum are <i>nonlinear</i> enhancements, i.e.
+                genuinely synergistic. The demo's top pair x2&nbsp;×&nbsp;x6 (0.524) far exceeds
+                the sum of its singles (0.178&nbsp;+&nbsp;0.132) — the planted interaction pulls x6
+                into the top five, though the direct x5×x6 pair itself is only tested if you raise
+                <code>top_n_vars</code> (x5 ranks sixth) — a deliberate scope decision to revisit
+                per application.</li>
+            <li><b>Paper's reading:</b> the LPI article's flagship numbers are interaction gains:
+                retail&nbsp;×&nbsp;GC(tertiary) reaches local PD 0.610 against 0.537 globally, and
+                variable×GC pairs supply the majority (56.7%) of best-per-county interactions — the
+                paper's core claim that <i>patterns amplify variables</i>.</li>
+            <li><b>Deeper thinking:</b> a dominant X×GC pair reads mechanistically as "the effect
+                of X is amplified where another variable's spatial arrangement is complex" — a
+                hypothesis generator, not a conclusion; nominate a process (spillover, boundary
+                friction, infrastructure mismatch) and test it in the Discussion. Map <i>where the
+                dominant category switches</i>: switch lines that align with the Step&nbsp;4
+                regime handover corroborate real structure; scattered confetti suggests window
+                sample sizes are too small (check <code>min_local_n</code>).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/step06-all-pairwise-interactions.csv</code> and
+          <code>step06-local-best-interaction.csv</code> exist; the pair ranking is led by
+          x2&nbsp;×&nbsp;x6&nbsp;=&nbsp;0.5242 on the demo data.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-6">
+    <div class="step-card-h">
+      <span class="step-label">Step 6 · verified</span>
+      <h4>GOZH total effect (joint explanatory ceiling)</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Measure how much <i>all</i> variables and patterns jointly explain — globally, and inside
+      each unit's k-nearest neighbourhood — using GOZH: an rpart regression tree zones the data,
+      then the combined-zone <i>q</i> is computed (Luo&nbsp;et&nbsp;al. 2022; no CC-licensed
+      figure available for embedding).</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/07-gozh-total-effect.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># =============================================================================
+# 07-gozh-total-effect.R — GOZH total effect of all variables together
+#
+# GOZH (Luo et al. 2022) zones the study area with a regression tree over all
+# predictors, then measures the combined q of the leaf zones. Run globally
+# (one q for the whole area) and locally (q inside each location&#x27;s k-nearest
+# neighbourhood), as in cc005 Step 4.
+#
+# Outputs: results/step07-gozh-global.csv
+#          results/step07-local-gozh.csv
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+source(&quot;R/functions/fn-lpi-core.R&quot;)
+
+library(sf)
+library(rpart)
+library(gdverse)
+library(FNN)
+
+cfg &lt;- load_config()
+ensure_dir(&quot;results&quot;)
+
+d        &lt;- build_model_frame(cfg)
+all_vars &lt;- all_vars_of(cfg)
+resp     &lt;- cfg$response$response_name
+
+spatial &lt;- build_spatial(d, cfg)
+k_local &lt;- max(cfg$params$gc$knn_min,
+               round(nrow(d) * cfg$params$gc$knn_share))
+
+# --- Global GOZH --------------------------------------------------------------
+cat(&quot;Running global GOZH on the full dataset...\n&quot;)
+gozh_global &lt;- run_gozh(d, resp, all_vars)
+cat(sprintf(&quot;Global GOZH q = %.4f  p = %.4g\n&quot;,
+            gozh_global[&quot;q&quot;], gozh_global[&quot;p&quot;]))
+
+write.csv(
+  data.frame(model = &quot;GOZH_global&quot;,
+             q_value = gozh_global[&quot;q&quot;], p_value = gozh_global[&quot;p&quot;]),
+  &quot;results/step07-gozh-global.csv&quot;, row.names = FALSE
+)
+
+# --- Local GOZH ----------------------------------------------------------------
+cat(sprintf(&quot;Running local GOZH for %d locations (k = %d)...\n&quot;,
+            nrow(d), k_local))
+local_gozh &lt;- run_local_gozh(d, cfg, all_vars, spatial$coords_mat, k_local)
+
+out &lt;- cbind(
+  d[, c(cfg$data$id_col, cfg$data$x_col, cfg$data$y_col)],
+  local_gozh
+)
+write.csv(out, &quot;results/step07-local-gozh.csv&quot;, row.names = FALSE)
+cat(&quot;Saved: results/step07-gozh-global.csv, results/step07-local-gozh.csv\n&quot;)
+
+cat(sprintf(&quot;Local GOZH q: mean=%.4f  min=%.4f  max=%.4f  (%%p&lt;0.05: %.1f)\n&quot;,
+            mean(local_gozh$local_gozh,   na.rm = TRUE),
+            min(local_gozh$local_gozh,    na.rm = TRUE),
+            max(local_gozh$local_gozh,    na.rm = TRUE),
+            mean(local_gozh$local_gozh_p &lt; 0.05, na.rm = TRUE) * 100))
+</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="console"><span class="lbl">Verified console output</span>Global GOZH q = 0.6908  p = 5.819e-10
+Running local GOZH for 600 locations (k = 30)...
+Local GOZH q: mean=0.5173  min=0.1686  max=0.8695  (%p&lt;0.05: 77.2)
+Saved: results/step07-gozh-global.csv, results/step07-local-gozh.csv</div>
+      <figure class="fig">
+        <img src="assets/demo-fig07-gozh-total-effect.png" alt="Demo GOZH total effect" loading="lazy" decoding="async">
+        <figcaption><span class="pairtag tag-demo">Demo run</span> fig07 — local GOZH map and
+        distribution: the joint ceiling averages 0.517 locally (range 0.169–0.870) against 0.691
+        globally.</figcaption>
+      </figure>
+      <h4>Paper reference</h4>
+      <p>GOZH is defined in Luo&nbsp;et&nbsp;al. (2022)
+      (<a href="../../pdf/GOZH-luo2022.pdf">PDF</a>); the urbanization article uses this machinery
+      inside its interaction step.</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Pattern:</b> local GOZH is the <i>ceiling</i> of joint explanation at each
+                place. The gap between it and the best single/pair local q measures unexploited
+                joint structure; where local GOZH itself is low (demo minimum 0.169), the drivers
+                of that subregion are outside the variable set — or the response there is
+                noise-dominated.</li>
+            <li><b>Paper's reading:</b> in the LPI lineage, GOZH supplies the tree-based zoning
+                that makes many-variable interactions reliable (avoiding the fragmented-overlay
+                problem of classic detectors); the urbanization article uses exactly this machinery
+                inside its interaction step.</li>
+            <li><b>Deeper thinking:</b> global GOZH (0.691) exceeding the local mean (0.517) is not
+                a contradiction — explainable variance is scale-dependent: the global tree exploits
+                between-regime contrasts that vanish inside local windows. Use the low-GOZH map as
+                a <i>data-collection targeting tool</i>: those are the places where adding a
+                covariate would pay most.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/step07-gozh-global.csv</code> reports global
+          q&nbsp;=&nbsp;0.6908; <code>step07-local-gozh.csv</code> gives local mean 0.5173 on the
+          demo data.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <h3 id="validation-interpretation">3.3&nbsp;Results, Validation &amp; Interpretation</h3>
+  <p>Three validation layers close the pipeline: the global OPGD-style benchmark that becomes the
+  paper's main table (Step&nbsp;7), subsample stability (Step&nbsp;8), and parameter sensitivity
+  (Step&nbsp;9). Step&nbsp;10 then regenerates all eight figures from <code>results/</code>
+  alone.</p>
+
+  <article class="step-card" id="step-7">
+    <div class="step-card-h">
+      <span class="step-label">Step 7 · verified</span>
+      <h4>Global benchmark and the paper's main table</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Benchmark every local result against the global OPGD-style <i>q</i>, producing the
+      validation table that becomes the main table of an LPI application paper (the published
+      article's Table&nbsp;4).</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/08-global-benchmark.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># =============================================================================
+# 08-global-benchmark.R — OPGD-style global q benchmark + validation table
+#
+# The LPI paper validates local results against the global OPGD power of
+# determinant (LPI Table 4). This script computes global q for every variable
+# and for the strongest interaction pairs, then assembles the validation
+# table: local mean [min, max], % significant, and global q side by side
+# (cc005 Steps 4c + 5).
+#
+# Outputs: results/step08-global-q.csv
+#          results/step08-validation-table.csv
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+source(&quot;R/functions/fn-lpi-core.R&quot;)
+
+library(gdverse)
+library(dplyr)
+
+cfg &lt;- load_config()
+ensure_dir(&quot;results&quot;)
+
+d        &lt;- build_model_frame(cfg)
+all_vars &lt;- all_vars_of(cfg)
+resp     &lt;- cfg$response$response_name
+n_strata &lt;- cfg$params$global$n_strata
+
+local_q   &lt;- read.csv(&quot;results/step05-local-q-values.csv&quot;)
+local_sig &lt;- read.csv(&quot;results/step05-local-q-sig.csv&quot;)
+inter_all &lt;- read.csv(&quot;results/step06-all-pairwise-interactions.csv&quot;)
+gozh_g    &lt;- read.csv(&quot;results/step07-gozh-global.csv&quot;)
+gozh_l    &lt;- read.csv(&quot;results/step07-local-gozh.csv&quot;)
+
+# --- Global q per variable -----------------------------------------------------
+cat(&quot;Global q per variable (OPGD-style,&quot;, n_strata, &quot;strata):\n&quot;)
+global_var_df &lt;- do.call(rbind, lapply(all_vars, function(v) {
+  res &lt;- run_global_gd(d, resp, v, n_strata = n_strata)
+  cat(sprintf(&quot;  %-24s q = %.4f  p = %.4g\n&quot;, v, res[&quot;q&quot;], res[&quot;p&quot;]))
+  data.frame(Variable = v, Global_q = res[&quot;q&quot;], Global_p = res[&quot;p&quot;],
+             Variable_type = ifelse(grepl(&quot;^gc_&quot;, v), &quot;GC&quot;, &quot;X&quot;),
+             stringsAsFactors = FALSE)
+}))
+
+# --- Global q for the strongest interaction pairs ------------------------------
+top_pairs &lt;- inter_all %&gt;%
+  group_by(var1, var2) %&gt;%
+  summarise(LPI_mean = mean(qv12, na.rm = TRUE), .groups = &quot;drop&quot;) %&gt;%
+  arrange(desc(LPI_mean)) %&gt;%
+  slice_head(n = cfg$params$global$top_n_interactions)
+
+cat(&quot;\nGlobal q per interaction pair:\n&quot;)
+global_inter_df &lt;- do.call(rbind, lapply(seq_len(nrow(top_pairs)), function(i) {
+  v1 &lt;- top_pairs$var1[i]; v2 &lt;- top_pairs$var2[i]
+  res &lt;- run_global_interaction_q(d, resp, v1, v2, n_strata = n_strata)
+  cat(sprintf(&quot;  %-40s q = %.4f\n&quot;, paste(v1, &quot;x&quot;, v2), res[&quot;q&quot;]))
+  data.frame(Variable = paste(v1, &quot;×&quot;, v2),
+             Global_q = res[&quot;q&quot;], Global_p = res[&quot;p&quot;],
+             Variable_type = &quot;Interaction&quot;, stringsAsFactors = FALSE)
+}))
+
+global_gozh_df &lt;- data.frame(
+  Variable = &quot;All variables (GOZH)&quot;,
+  Global_q = gozh_g$q_value[1], Global_p = gozh_g$p_value[1],
+  Variable_type = &quot;Total&quot;, stringsAsFactors = FALSE
+)
+
+global_q_all &lt;- rbind(global_var_df, global_inter_df, global_gozh_df)
+write.csv(global_q_all, &quot;results/step08-global-q.csv&quot;, row.names = FALSE)
+
+# --- Validation table: local summary + global benchmark ------------------------
+q_summary &lt;- do.call(rbind, lapply(all_vars, function(v) {
+  q_vals &lt;- local_q[[v]]; sig_vals &lt;- local_sig[[v]]
+  data.frame(
+    Variable      = v,
+    LPI_mean      = round(mean(q_vals, na.rm = TRUE), 4),
+    LPI_min       = round(min(q_vals,  na.rm = TRUE), 4),
+    LPI_max       = round(max(q_vals,  na.rm = TRUE), 4),
+    Pct_sig_p05   = round(mean(sig_vals &lt; 0.05, na.rm = TRUE) * 100, 1),
+    Variable_type = ifelse(grepl(&quot;^gc_&quot;, v), &quot;GC&quot;, &quot;X&quot;),
+    stringsAsFactors = FALSE
+  )
+}))
+
+inter_summary &lt;- inter_all %&gt;%
+  group_by(var1, var2) %&gt;%
+  summarise(
+    LPI_mean    = round(mean(qv12, na.rm = TRUE), 4),
+    LPI_min     = round(min(qv12,  na.rm = TRUE), 4),
+    LPI_max     = round(max(qv12,  na.rm = TRUE), 4),
+    Pct_sig_p05 = round(mean(pv12 &lt; 0.05, na.rm = TRUE) * 100, 1),
+    .groups     = &quot;drop&quot;
+  ) %&gt;%
+  arrange(desc(LPI_mean)) %&gt;%
+  slice_head(n = cfg$params$global$top_n_interactions) %&gt;%
+  mutate(Variable = paste(var1, &quot;×&quot;, var2),
+         Variable_type = &quot;Interaction&quot;) %&gt;%
+  select(Variable, LPI_mean, LPI_min, LPI_max, Pct_sig_p05, Variable_type)
+
+gozh_row &lt;- data.frame(
+  Variable      = &quot;All variables (GOZH)&quot;,
+  LPI_mean      = round(mean(gozh_l$local_gozh, na.rm = TRUE), 4),
+  LPI_min       = round(min(gozh_l$local_gozh,  na.rm = TRUE), 4),
+  LPI_max       = round(max(gozh_l$local_gozh,  na.rm = TRUE), 4),
+  Pct_sig_p05   = round(mean(gozh_l$local_gozh_p &lt; 0.05, na.rm = TRUE) * 100, 1),
+  Variable_type = &quot;Total&quot;,
+  stringsAsFactors = FALSE
+)
+
+validation &lt;- rbind(q_summary, as.data.frame(inter_summary), gozh_row) %&gt;%
+  left_join(global_q_all[, c(&quot;Variable&quot;, &quot;Global_q&quot;, &quot;Global_p&quot;)],
+            by = &quot;Variable&quot;)
+
+write.csv(validation, &quot;results/step08-validation-table.csv&quot;, row.names = FALSE)
+cat(&quot;\nSaved: results/step08-global-q.csv, results/step08-validation-table.csv\n&quot;)
+print(head(validation %&gt;% arrange(desc(LPI_mean)), 15))
+</code></pre>
+      </div>
+      <h4>Demo validation table (results/step08-validation-table.csv, abridged)</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>Variable / interaction</th><th class="num">Local q mean</th><th class="num">[min, max]</th><th class="num">% p&lt;0.05</th><th class="num">Global q</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>x1</td><td class="num">0.299</td><td class="num">[0.004, 0.490]</td><td class="num">94.5</td><td class="num">0.332</td></tr>
+            <tr><td>x2</td><td class="num">0.178</td><td class="num">[0.010, 0.630]</td><td class="num">90.2</td><td class="num">0.179</td></tr>
+            <tr><td>x6</td><td class="num">0.132</td><td class="num">[0.006, 0.391]</td><td class="num">89.8</td><td class="num">0.031 (p=0.085, n.s.)</td></tr>
+            <tr><td>GC(x1)</td><td class="num">0.120</td><td class="num">[0.000, 0.389]</td><td class="num">79.8</td><td class="num">0.065 (p=0.071, n.s.)</td></tr>
+            <tr><td>x2 × x6</td><td class="num">0.524</td><td class="num">[0.220, 0.862]</td><td class="num">88.2</td><td class="num">0.556</td></tr>
+            <tr><td>x6 × GC(x1)</td><td class="num">0.315</td><td class="num">[0.096, 0.599]</td><td class="num">79.8</td><td class="num">0.188 (p=0.919, n.s.)</td></tr>
+            <tr><td>All variables (GOZH)</td><td class="num">0.517</td><td class="num">[0.169, 0.870]</td><td class="num">77.2</td><td class="num">0.691</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Demo run, regenerated by the scripts in this folder.</figcaption>
+      </figure>
+      <h4>Published counterpart 1 — LISP paper Table 2 (Hu et al. 2024, glacier case; excerpt)</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>Variable / interaction</th><th class="num">Local PD mean [min, max]</th><th class="num">% p&lt;0.05</th><th class="num">Global PD</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Slope</td><td class="num">0.266 [0.062, 0.565]</td><td class="num">99.3</td><td class="num">0.207</td></tr>
+            <tr><td>Elevation</td><td class="num">0.181 [0.033, 0.318]</td><td class="num">95.7</td><td class="num">0.062</td></tr>
+            <tr><td>Lake area</td><td class="num">0.154 [0.014, 0.285]</td><td class="num">75.9</td><td class="num">0.155</td></tr>
+            <tr><td>Winter temperature</td><td class="num">0.064 [0.009, 0.363]</td><td class="num">73.1</td><td class="num">0.008</td></tr>
+            <tr><td>Slope ∩ Lake area</td><td class="num">0.441 [0.169, 0.615]</td><td class="num">98.7</td><td class="num">0.361</td></tr>
+            <tr><td>Slope ∩ Summer temperature</td><td class="num">0.427 [0.230, 0.652]</td><td class="num">100.0</td><td class="num">0.289</td></tr>
+            <tr><td>Interaction of all variables</td><td class="num">0.549 [0.284, 0.707]</td><td class="num">100.0</td><td class="num">0.547</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Excerpt from Hu et al. (2024), Table 2
+        (<a href="../../pdf/LISP-hu2024.pdf">PDF</a>).</figcaption>
+      </figure>
+      <h4>Published counterpart 2 — LPI paper Table 4 (Sun et al. 2026, urbanization case; excerpt)</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>Variable / interaction</th><th class="num">LPI mean [min, max]</th><th class="num">% p&lt;0.05</th><th class="num">OPGD global q</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>x3 tertiary industry</td><td class="num">0.454 [0.298, 0.627]</td><td class="num">100.0</td><td class="num">0.483 **</td></tr>
+            <tr><td>x4 retail sales</td><td class="num">0.434 [0.275, 0.628]</td><td class="num">100.0</td><td class="num">0.438 **</td></tr>
+            <tr><td>x1 primary industry</td><td class="num">0.152 [0.005, 0.431]</td><td class="num">56.0</td><td class="num">0.113 **</td></tr>
+            <tr><td>GC(x3)</td><td class="num">0.146 [0.066, 0.458]</td><td class="num">27.7</td><td class="num">0.016 (p=0.134, n.s.)</td></tr>
+            <tr><td>GC(x4)</td><td class="num">0.159 [0.008, 0.464]</td><td class="num">17.2</td><td class="num">0.040 **</td></tr>
+            <tr><td>x1 ∩ x3</td><td class="num">0.641 [0.444, 0.821]</td><td class="num">100.0</td><td class="num">0.639 **</td></tr>
+            <tr><td>x4 ∩ GC(x3)</td><td class="num">0.610 [0.336, 0.783]</td><td class="num">100.0</td><td class="num">0.537 **</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Excerpt from Sun et al. (2026), Table 4
+        (<a href="../../pdf/LPI-song2025.pdf">PDF</a>). x1–x5: gross output of
+        primary/secondary/tertiary industry, total retail sales, public budget expenditure.
+        ** = significant at p&nbsp;&lt;&nbsp;0.01.</figcaption>
+      </figure>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/demo-fig08-diagnostics-benchmark.png" alt="Demo diagnostics and benchmark" loading="lazy" decoding="async">
+          <figcaption>fig08 — (left) demo variogram with range (22.4 km) and extent (44.8 km)
+          marks; (right) local mean [min–max] vs global q on the 1:1 line: local maxima exceed the
+          global value for every variable.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · LPI</span>
+          <img src="assets/lpi-fig10-global-pd.jpg" alt="LPI paper global PD" loading="lazy" decoding="async">
+          <figcaption>LPI paper Fig. 10 — the OPGD global benchmark: (a) individual variables,
+          (b) interactions. The comparison target for all local results.</figcaption>
+        </figure>
+      </div>
+      <h4>Paper reference</h4>
+      <p>The benchmark follows OPGD (Song&nbsp;et&nbsp;al. 2020,
+      <a href="../../pdf/OPGD-song2020.pdf">PDF</a>); the published tables come from
+      Hu&nbsp;et&nbsp;al. (2024) and Sun&nbsp;et&nbsp;al. (2026).</p>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Pattern:</b> classify each row into three regimes: (i) local mean ≈ global with
+                a <i>narrow</i> range → homogeneous driver, local analysis adds little; (ii) local
+                mean ≈ global with a <i>wide</i> range → the global number actively misleads (demo
+                x2: global 0.179 hides a 0.010–0.630 spread); (iii) globally non-significant but
+                locally significant in pockets → a discovery only local analysis can make. The demo
+                produces regime (iii) twice: x6 (global q=0.031, p=0.085, n.s. — yet locally
+                significant at 89.8% of units) and the interaction x6&nbsp;×&nbsp;GC(x1) (global
+                0.188, p=0.919, n.s. — local mean 0.315).</li>
+            <li><b>Paper's reading:</b> both published tables lean on the same regimes. LISP's
+                flagship is elevation: local mean 0.181 against a global PD of only 0.062 — "the
+                LISP model effectively avoids underestimation … that can occur with global
+                geographical detector models". LPI's strongest case is regime (iii): GC(x3) is
+                globally n.s. (q=0.016, p=0.134) yet locally reaches PD 0.458 and is significant in
+                27.7% of counties; interactions tell the same story (0.610 local vs 0.537 global
+                for x4∩GC(x3)).</li>
+            <li><b>Deeper thinking:</b> use this three-regime classification as the skeleton of
+                your Results narrative — it converts a table of numbers into three claims with
+                different practical consequences (stable policy lever / spatially targeted lever /
+                hidden local lever). And note the demo's global q slightly exceeding the local mean
+                for the top variable (x1: 0.332 vs 0.299): global strata exploit between-regime
+                contrast, so "local &lt; global on average, local &gt; global at maxima" is the
+                expected signature of stratified heterogeneity, not an error.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/step08-validation-table.csv</code> matches the demo table above; the two
+          regime-(iii) discovery rows (x6; x6&nbsp;×&nbsp;GC(x1)) are present.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-8">
+    <div class="step-card-h">
+      <span class="step-label">Step 8 · verified</span>
+      <h4>Subsample stability (holdout)</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Drop 5% of units at random, recompute local and global q for the top-10 variables, repeat
+      20 times: do the conclusions survive data perturbation?</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/09-validation-holdout.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># =============================================================================
+# 09-validation-holdout.R — subsample stability of local and global q
+#
+# Robustness protocol from the cc005 R1 revision: randomly drop a share of
+# units (default 5%), recompute local q (LISP) and global q for the top-N
+# variables, repeat n_repeats times. Reports per-variable mean local q with
+# 95% CI, the median change rate against the full-data run, and Spearman
+# rank preservation of the variable-importance ordering.
+#
+# Outputs: results/step09-holdout-local-q.csv
+#          results/step09-holdout-global-q.csv
+#          results/step09-holdout-summary.csv
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+source(&quot;R/functions/fn-lpi-core.R&quot;)
+
+library(sf)
+library(localsp)
+library(gdverse)
+library(sdsfun)
+library(dplyr)
+
+cfg &lt;- load_config()
+ensure_dir(&quot;results&quot;)
+
+hold      &lt;- cfg$validation$holdout
+set.seed(hold$seed)
+
+d        &lt;- build_model_frame(cfg)
+all_vars &lt;- all_vars_of(cfg)
+resp     &lt;- cfg$response$response_name
+n_cores  &lt;- get_cores(cfg)
+
+# Top-N variables by full-data mean local q.
+local_q_full &lt;- read.csv(&quot;results/step05-local-q-values.csv&quot;)
+mean_q_full  &lt;- sort(colMeans(local_q_full[, all_vars], na.rm = TRUE),
+                     decreasing = TRUE)
+top_vars &lt;- names(mean_q_full)[1:hold$top_n_vars]
+
+cat(sprintf(&quot;Holdout validation: %d repeats, drop %.0f%%, top %d variables\n&quot;,
+            hold$n_repeats, hold$drop_share * 100, hold$top_n_vars))
+
+rep_local  &lt;- list()
+rep_global &lt;- list()
+
+for (r in seq_len(hold$n_repeats)) {
+  cat(sprintf(&quot;Repeat %d / %d\n&quot;, r, hold$n_repeats))
+  keep_idx &lt;- sort(sample(seq_len(nrow(d)),
+                          size = round(nrow(d) * (1 - hold$drop_share))))
+  d_sub &lt;- d[keep_idx, ]
+
+  # Rebuild spatial scaffolding and local extent on the subsample.
+  spatial_sub &lt;- build_spatial(d_sub, cfg)
+  lr_sub      &lt;- estimate_local_range(d_sub, cfg, spatial_sub)
+
+  lisp_sub &lt;- run_lisp_factor(
+    d_sub, cfg, vars = top_vars,
+    threshold = lr_sub$threshold,
+    distmat   = spatial_sub$distmat,
+    cores     = n_cores
+  )
+
+  rep_local[[r]] &lt;- data.frame(
+    repeat_id = r,
+    Variable  = top_vars,
+    mean_local_q = sapply(top_vars, function(v) {
+      mean(lisp_sub$q[[v]], na.rm = TRUE)
+    })
+  )
+
+  rep_global[[r]] &lt;- data.frame(
+    repeat_id = r,
+    Variable  = top_vars,
+    global_q  = sapply(top_vars, function(v) {
+      run_global_gd(d_sub, resp, v,
+                    n_strata = cfg$params$global$n_strata)[&quot;q&quot;]
+    })
+  )
+}
+
+local_df  &lt;- do.call(rbind, rep_local)
+global_df &lt;- do.call(rbind, rep_global)
+write.csv(local_df,  &quot;results/step09-holdout-local-q.csv&quot;,  row.names = FALSE)
+write.csv(global_df, &quot;results/step09-holdout-global-q.csv&quot;, row.names = FALSE)
+
+# --- Summary: CI, change rate, rank preservation -------------------------------
+full_ref &lt;- data.frame(Variable = top_vars,
+                       full_mean_q = as.numeric(mean_q_full[top_vars]))
+
+summary_df &lt;- local_df %&gt;%
+  group_by(Variable) %&gt;%
+  summarise(
+    sub_mean_q = mean(mean_local_q),
+    ci_lower   = quantile(mean_local_q, 0.025),
+    ci_upper   = quantile(mean_local_q, 0.975),
+    .groups    = &quot;drop&quot;
+  ) %&gt;%
+  left_join(full_ref, by = &quot;Variable&quot;) %&gt;%
+  mutate(change_pct = round((sub_mean_q - full_mean_q) / full_mean_q * 100, 2))
+
+# Spearman rank correlation of variable importance, per repeat.
+rank_cor &lt;- local_df %&gt;%
+  left_join(full_ref, by = &quot;Variable&quot;) %&gt;%
+  group_by(repeat_id) %&gt;%
+  summarise(spearman = cor(mean_local_q, full_mean_q, method = &quot;spearman&quot;),
+            .groups = &quot;drop&quot;)
+
+summary_df$spearman_median &lt;- median(rank_cor$spearman)
+summary_df$spearman_min    &lt;- min(rank_cor$spearman)
+
+write.csv(summary_df, &quot;results/step09-holdout-summary.csv&quot;, row.names = FALSE)
+cat(&quot;Saved: step09-holdout-local-q / step09-holdout-global-q / step09-holdout-summary\n&quot;)
+print(as.data.frame(summary_df))
+cat(sprintf(&quot;\nSpearman rank preservation: median = %.3f, min = %.3f\n&quot;,
+            median(rank_cor$spearman), min(rank_cor$spearman)))
+</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>Variable</th><th class="num">Full-data mean q</th><th class="num">Subsample mean</th><th class="num">95% CI</th><th class="num">Change %</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>x1</td><td class="num">0.2986</td><td class="num">0.2997</td><td class="num">[0.294, 0.307]</td><td class="num">+0.4</td></tr>
+            <tr><td>x2</td><td class="num">0.1777</td><td class="num">0.1758</td><td class="num">[0.164, 0.188]</td><td class="num">−1.1</td></tr>
+            <tr><td>GC(x1)</td><td class="num">0.1195</td><td class="num">0.1177</td><td class="num">[0.111, 0.124]</td><td class="num">−1.5</td></tr>
+            <tr><td>x5</td><td class="num">0.1096</td><td class="num">0.1020</td><td class="num">[0.082, 0.111]</td><td class="num">−6.9</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Spearman rank preservation of variable importance across 20 repeats:
+        median&nbsp;ρ&nbsp;=&nbsp;0.988, minimum&nbsp;0.927.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Pattern:</b> rank preservation matters more than absolute stability — the
+                manuscript's narrative rests on the <i>ordering</i> of drivers, and a median
+                Spearman of 0.988 says that ordering is robust; individual mean-q changes under
+                ±10% are unremarkable.</li>
+            <li><b>Paper's reading:</b> this protocol is the standard reviewer-requested robustness
+                check in this method family — the published applications report parameter and
+                stability checks as part of their validation; report the CI and the change rate,
+                not just a reassuring sentence.</li>
+            <li><b>Deeper thinking:</b> whenever the minimum Spearman dips visibly below the median
+                (0.927 vs 0.988 here), find the repeat responsible — it is usually one where the
+                dropped 5% removed a dense cluster, which tells you <i>which subregion your
+                conclusions depend on</i>. That is more informative than the median: consider
+                reporting it as a named limitation ("conclusions in subregion S rest on the densest
+                cluster of observations").</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/step09-holdout-summary.csv</code> reports median
+          Spearman&nbsp;=&nbsp;0.988, minimum&nbsp;=&nbsp;0.927 on the demo data
+          (seed&nbsp;2026).</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-9">
+    <div class="step-card-h">
+      <span class="step-label">Step 9 · verified</span>
+      <h4>Parameter sensitivity</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Vary the two free parameters — window multiplier (1.5 / 2 / 3 × range) and in-window bins
+      (3 / 4 / 5) — and confirm that the variable ordering, not the exact q level, is what the
+      analysis depends on.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R/10-sensitivity-params.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># =============================================================================
+# 10-sensitivity-params.R — sensitivity of local q to the two key parameters
+#
+# Protocol from the cc005 R1 revision, on the top-N variables:
+#   Experiment 1 — vary the local extent multiplier (default grid 1.5 / 2 / 3),
+#                  discretization bins fixed at the config value
+#   Experiment 2 — vary the discretization bin count (default grid 3 / 4 / 5),
+#                  local extent fixed at the config multiplier
+#
+# Outputs: results/step10-sensitivity-threshold.csv
+#          results/step10-sensitivity-discnum.csv
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+source(&quot;R/functions/fn-lpi-core.R&quot;)
+
+library(sf)
+library(localsp)
+library(gdverse)
+library(sdsfun)
+library(dplyr)
+
+cfg &lt;- load_config()
+ensure_dir(&quot;results&quot;)
+
+sens &lt;- cfg$validation$sensitivity
+
+d        &lt;- build_model_frame(cfg)
+all_vars &lt;- all_vars_of(cfg)
+n_cores  &lt;- get_cores(cfg)
+
+spatial  &lt;- build_spatial(d, cfg)
+vg_range &lt;- read_local_range(cfg)$range_m
+
+local_q_full &lt;- read.csv(&quot;results/step05-local-q-values.csv&quot;)
+mean_q_full  &lt;- sort(colMeans(local_q_full[, all_vars], na.rm = TRUE),
+                     decreasing = TRUE)
+top_vars &lt;- names(mean_q_full)[1:sens$top_n_vars]
+
+cat(sprintf(&quot;Sensitivity analysis on top %d variables: %s\n&quot;,
+            sens$top_n_vars, paste(top_vars, collapse = &quot;, &quot;)))
+
+# --- Experiment 1: local extent multiplier -------------------------------------
+cat(&quot;\nExperiment 1 — threshold multiplier grid:&quot;,
+    paste(sens$threshold_multipliers, collapse = &quot; / &quot;), &quot;\n&quot;)
+
+exp1 &lt;- do.call(rbind, lapply(sens$threshold_multipliers, function(m) {
+  cat(sprintf(&quot;  multiplier = %.1f (threshold = %.0f m)\n&quot;, m, vg_range * m))
+  lisp_out &lt;- run_lisp_factor(
+    d, cfg, vars = top_vars,
+    threshold = vg_range * m,
+    distmat   = spatial$distmat,
+    cores     = n_cores
+  )
+  data.frame(
+    threshold_multiplier = m,
+    threshold_m = vg_range * m,
+    Variable = top_vars,
+    mean_local_q = sapply(top_vars, function(v) {
+      mean(lisp_out$q[[v]], na.rm = TRUE)
+    })
+  )
+}))
+write.csv(exp1, &quot;results/step10-sensitivity-threshold.csv&quot;, row.names = FALSE)
+
+# --- Experiment 2: discretization bins ------------------------------------------
+cat(&quot;\nExperiment 2 — discnum grid:&quot;,
+    paste(sens$discnums, collapse = &quot; / &quot;), &quot;\n&quot;)
+
+threshold_fixed &lt;- vg_range * cfg$params$lisp$threshold_multiplier
+exp2 &lt;- do.call(rbind, lapply(sens$discnums, function(k) {
+  cat(sprintf(&quot;  discnum = %d\n&quot;, k))
+  lisp_out &lt;- run_lisp_factor(
+    d, cfg, vars = top_vars,
+    threshold = threshold_fixed,
+    distmat   = spatial$distmat,
+    discnum   = k,
+    cores     = n_cores
+  )
+  data.frame(
+    discnum = k,
+    Variable = top_vars,
+    mean_local_q = sapply(top_vars, function(v) {
+      mean(lisp_out$q[[v]], na.rm = TRUE)
+    })
+  )
+}))
+write.csv(exp2, &quot;results/step10-sensitivity-discnum.csv&quot;, row.names = FALSE)
+
+cat(&quot;\nSaved: step10-sensitivity-threshold.csv, step10-sensitivity-discnum.csv\n&quot;)
+
+cat(&quot;\nMean local q by threshold multiplier:\n&quot;)
+print(reshape2::dcast(exp1, Variable ~ threshold_multiplier,
+                      value.var = &quot;mean_local_q&quot;))
+cat(&quot;\nMean local q by discnum:\n&quot;)
+print(reshape2::dcast(exp2, Variable ~ discnum, value.var = &quot;mean_local_q&quot;))
+</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead>
+            <tr><th>Mean local q</th><th class="num">multiplier 1.5</th><th class="num">2 (default)</th><th class="num">3</th><th class="num">discnum 3</th><th class="num">4 (default)</th><th class="num">5</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>x1</td><td class="num">0.271</td><td class="num">0.299</td><td class="num">0.304</td><td class="num">0.279</td><td class="num">0.299</td><td class="num">0.314</td></tr>
+            <tr><td>x2</td><td class="num">0.223</td><td class="num">0.178</td><td class="num">0.168</td><td class="num">0.145</td><td class="num">0.178</td><td class="num">0.196</td></tr>
+            <tr><td>x3</td><td class="num">0.210</td><td class="num">0.146</td><td class="num">0.053</td><td class="num">0.124</td><td class="num">0.146</td><td class="num">0.160</td></tr>
+            <tr><td>x6</td><td class="num">0.176</td><td class="num">0.132</td><td class="num">0.057</td><td class="num">0.099</td><td class="num">0.132</td><td class="num">0.154</td></tr>
+            <tr><td>GC(x1)</td><td class="num">0.135</td><td class="num">0.119</td><td class="num">0.078</td><td class="num">0.099</td><td class="num">0.119</td><td class="num">0.134</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Mean local q of the top-5 variables across the multiplier grid (left) and the
+        discretisation grid (right).</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>Pattern:</b> two systematic drifts are <i>expected</i>, not alarming: more bins
+                → mechanically higher q (finer strata always explain more variance), and a larger
+                window → q drifts toward the global value as more heterogeneity is mixed in. The
+                check is whether the <i>ordering</i> of top variables survives — here x1 leads
+                under every setting.</li>
+            <li><b>Paper's reading:</b> the LPI article reports parameter sensitivity as part of
+                its validation trio (statistical accuracy, spatial consistency, robustness); the
+                convention is to show the drift openly and argue ordering stability.</li>
+            <li><b>Deeper thinking:</b> the interesting cells are the collapses as the window
+                triples — x3 falls from 0.210 to 0.053, x6 from 0.176 to 0.057, GC(x1) from 0.135
+                to 0.078 — while the broad regime driver x1 <i>grows</i> (0.271 → 0.304). Which
+                variables are scale-bound tells you the operative scale of each driver: localized
+                and pattern effects dissolve in wide windows, regime-wide effects gain. If such a
+                variable is central to your story, report its q across multipliers, and never
+                compare q values across different discnum settings (the comparison is meaningless
+                by construction).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+        <div class="callout-b">
+          <p><code>results/step10-sensitivity-threshold.csv</code> and
+          <code>step10-sensitivity-discnum.csv</code> exist; x1 leads the ordering in every cell of
+          both grids.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <h4>Figure regeneration (all eight figures from results/ only)</h4>
+  <div class="codewrap">
+    <span class="code-label">R/11-figures.R</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># =============================================================================
+# 11-figures.R — the eight core figures of an LPI application paper
+# Reads results/step*.csv only; no recomputation. Figure plan and the
+# argumentation task of each figure: figures/figure-plan.md
+#
+#   fig01 response index maps            fig05 interaction strength bars
+#   fig02 X vs GC(X) trend curves        fig06 interaction type map + counts
+#   fig03 local q histograms (X, GC)     fig07 local GOZH map + histogram
+#   fig04 local q maps (top X + top GC)  fig08 variogram + local vs global q
+# =============================================================================
+
+source(&quot;R/functions/fn-config.R&quot;)
+source(&quot;R/functions/fn-plot-helpers.R&quot;)
+
+library(ggplot2)
+library(reshape2)
+library(sf)
+library(dplyr)
+library(mgcv)
+library(patchwork)
+
+cfg &lt;- load_config()
+ensure_dir(&quot;figures&quot;)
+
+x_vars   &lt;- cfg$predictors$x_vars
+gc_names &lt;- gc_names_of(cfg)
+all_vars &lt;- all_vars_of(cfg)
+labels   &lt;- get_labels(cfg)
+resp     &lt;- cfg$response$response_name
+w_full   &lt;- cfg$figures$width_full
+w_single &lt;- cfg$figures$width_single
+
+d_z    &lt;- read.csv(&quot;results/step02-response.csv&quot;)
+d_gc   &lt;- read.csv(&quot;results/step03-geocomplexity.csv&quot;)
+d_q    &lt;- read.csv(&quot;results/step05-local-q-values.csv&quot;)
+d_iall &lt;- read.csv(&quot;results/step06-all-pairwise-interactions.csv&quot;)
+d_ibst &lt;- read.csv(&quot;results/step06-local-best-interaction.csv&quot;)
+d_gozh &lt;- read.csv(&quot;results/step07-local-gozh.csv&quot;)
+d_vt   &lt;- read.csv(&quot;results/step08-validation-table.csv&quot;)
+d_vg   &lt;- read.csv(&quot;results/step04-variogram-points.csv&quot;)
+d_lr   &lt;- read.csv(&quot;results/step04-local-range.csv&quot;)
+
+xc &lt;- cfg$data$x_col
+yc &lt;- cfg$data$y_col
+
+# =============================================================================
+# FIGURE 1: Spatial distribution of the response index (and sub-indices)
+# =============================================================================
+
+resp_cols &lt;- intersect(
+  c(grep(paste0(&quot;^&quot;, resp, &quot;_&quot;), names(d_z), value = TRUE), resp),
+  names(d_z)
+)
+fig1_panels &lt;- lapply(resp_cols, function(v) {
+  make_value_map(d_z[[v]], d_z[[xc]], d_z[[yc]], cfg,
+                 title = v, legend_title = &quot;Index&quot;)
+})
+p_fig1 &lt;- wrap_plots(fig1_panels, ncol = min(4, length(fig1_panels)))
+ggsave(&quot;figures/fig01-response-maps.pdf&quot;, p_fig1,
+       width = min(w_full, 3.5 * length(fig1_panels) + 1), height = 4.5,
+       dpi = 300)
+cat(&quot;Figure 1 saved.\n&quot;)
+
+# =============================================================================
+# FIGURE 2: X value vs GC(X), 5%-quantile binned means + GAM smoother
+# =============================================================================
+
+# Raw variable values live in the analysis table; GC values in step03.
+d_raw  &lt;- read.csv(cfg$data$analysis_table)
+d_main &lt;- merge(d_raw, d_gc[, c(cfg$data$id_col, gc_names)],
+                by = cfg$data$id_col)
+gc_summary &lt;- do.call(rbind, lapply(x_vars, function(v) {
+  df &lt;- data.frame(x = d_main[[v]], y = d_main[[paste0(&quot;gc_&quot;, v)]])
+  q_breaks &lt;- quantile(df$x, probs = seq(0, 1, 0.05), na.rm = TRUE)
+  df$group &lt;- cut(df$x, breaks = unique(q_breaks),
+                  labels = FALSE, include.lowest = TRUE)
+  smry &lt;- df %&gt;%
+    group_by(group) %&gt;%
+    summarise(mean_x = mean(x, na.rm = TRUE),
+              mean_y = mean(y, na.rm = TRUE),
+              se_y   = sd(y, na.rm = TRUE) / sqrt(sum(!is.na(y))),
+              .groups = &quot;drop&quot;)
+  smry$variable &lt;- labels[[v]]
+  smry
+}))
+gc_summary$variable &lt;- factor(gc_summary$variable, levels = labels[x_vars])
+
+p_fig2 &lt;- ggplot(gc_summary, aes(x = mean_x, y = mean_y)) +
+  geom_errorbar(aes(ymin = mean_y - se_y, ymax = mean_y + se_y),
+                width = 0, linewidth = 0.4, colour = &quot;grey50&quot;) +
+  geom_point(size = 1.2, colour = &quot;steelblue&quot;) +
+  geom_smooth(colour = &quot;red&quot;, linewidth = 0.8, se = TRUE,
+              fill = &quot;pink&quot;, alpha = 0.3) +
+  facet_wrap(~ variable, scales = &quot;free&quot;, ncol = 3) +
+  labs(x = &quot;Variable value&quot;, y = &quot;Geocomplexity (GC)&quot;) +
+  facet_theme()
+ggsave(&quot;figures/fig02-gc-trends.pdf&quot;, p_fig2, width = 8, height = 6, dpi = 300)
+cat(&quot;Figure 2 saved.\n&quot;)
+
+# =============================================================================
+# FIGURE 3: Local q distributions — X variables (3a) and GC patterns (3b)
+# =============================================================================
+
+plot_q_histograms(d_q, x_vars,   labels, 3, &quot;figures/fig03a-q-hist-x.pdf&quot;)
+plot_q_histograms(d_q, gc_names, labels, 3, &quot;figures/fig03b-q-hist-gc.pdf&quot;)
+cat(&quot;Figure 3 saved.\n&quot;)
+
+# =============================================================================
+# FIGURE 4: Spatial maps of local q — top X and top GC variables
+# =============================================================================
+
+n_top    &lt;- min(4, length(x_vars))
+mean_q_x  &lt;- sort(colMeans(d_q[, x_vars],   na.rm = TRUE), decreasing = TRUE)
+mean_q_gc &lt;- sort(colMeans(d_q[, gc_names], na.rm = TRUE), decreasing = TRUE)
+top_map_vars &lt;- c(names(mean_q_x)[1:n_top], names(mean_q_gc)[1:n_top])
+
+fig4_panels &lt;- lapply(top_map_vars, function(v) {
+  make_value_map(d_q[[v]], d_q$Longitude, d_q$Latitude, cfg,
+                 title = labels[[v]], legend_title = &quot;Local q&quot;)
+})
+p_fig4 &lt;- wrap_plots(fig4_panels, ncol = n_top)
+ggsave(&quot;figures/fig04-local-q-maps.pdf&quot;, p_fig4,
+       width = w_full, height = 7, dpi = 300)
+cat(&quot;Figure 4 saved.\n&quot;)
+
+# =============================================================================
+# FIGURE 5: Interaction strength — top pairs by mean qv12, by pair category
+# =============================================================================
+
+pair_label_of &lt;- function(v) {
+  ifelse(v %in% names(labels), labels[v], v)
+}
+
+top_pairs &lt;- d_iall %&gt;%
+  group_by(var1, var2) %&gt;%
+  summarise(mean_qv12 = mean(qv12, na.rm = TRUE),
+            sd_qv12   = sd(qv12,   na.rm = TRUE),
+            .groups = &quot;drop&quot;) %&gt;%
+  mutate(vartype = vartype_of(var1, var2, x_vars, gc_names)) %&gt;%
+  arrange(desc(mean_qv12)) %&gt;%
+  slice_head(n = 15) %&gt;%
+  mutate(pair_label = paste(pair_label_of(var1), &quot;×&quot;, pair_label_of(var2)))
+top_pairs$pair_label &lt;- factor(top_pairs$pair_label,
+                               levels = rev(top_pairs$pair_label))
+
+p_fig5 &lt;- ggplot(top_pairs,
+                 aes(x = pair_label, y = mean_qv12, fill = vartype)) +
+  geom_bar(stat = &quot;identity&quot;, alpha = 0.7) +
+  geom_errorbar(aes(ymin = mean_qv12 - sd_qv12, ymax = mean_qv12 + sd_qv12),
+                width = 0.4, colour = &quot;orange&quot;, alpha = 0.9, linewidth = 1.0) +
+  scale_fill_manual(values = interaction_palette(cfg),
+                    name = &quot;Interaction type&quot;) +
+  coord_flip() +
+  labs(x = NULL, y = &quot;Mean interaction q-value (qv12) ± SD&quot;) +
+  theme_bw() +
+  theme(axis.text = element_text(size = 8),
+        legend.position = &quot;bottom&quot;,
+        panel.grid.minor = element_blank())
+ggsave(&quot;figures/fig05-interaction-strength.pdf&quot;, p_fig5,
+       width = 8, height = 6, dpi = 300)
+cat(&quot;Figure 5 saved.\n&quot;)
+
+# =============================================================================
+# FIGURE 6: Dominant interaction category — spatial map + frequency bars
+# =============================================================================
+
+d_ibst$vartype &lt;- vartype_of(d_ibst$var1, d_ibst$var2, x_vars, gc_names)
+
+p_fig6a &lt;- ggplot() +
+  boundary_layer(cfg) +
+  geom_point(data = d_ibst,
+             aes(x = Longitude, y = Latitude, colour = vartype),
+             size = cfg$figures$point_size, alpha = 0.8) +
+  scale_colour_manual(values = interaction_palette(cfg),
+                      name = &quot;Dominant interaction&quot;) +
+  labs(x = &quot;Longitude&quot;, y = &quot;Latitude&quot;) +
+  map_theme() +
+  guides(colour = guide_legend(override.aes = list(size = 3)))
+
+type_count &lt;- as.data.frame(table(d_ibst$vartype))
+colnames(type_count) &lt;- c(&quot;Type&quot;, &quot;Count&quot;)
+type_count$Pct &lt;- round(type_count$Count / sum(type_count$Count) * 100, 1)
+
+p_fig6b &lt;- ggplot(type_count, aes(x = Type, y = Count, fill = Type)) +
+  geom_bar(stat = &quot;identity&quot;, colour = &quot;black&quot;, linewidth = 0.3) +
+  geom_text(aes(label = paste0(Pct, &quot;%&quot;)), vjust = -0.4, size = 4) +
+  scale_fill_manual(values = interaction_palette(cfg)) +
+  labs(x = &quot;Interaction type&quot;, y = &quot;Number of locations&quot;) +
+  theme_bw() +
+  theme(legend.position = &quot;none&quot;, panel.grid.minor = element_blank())
+
+p_fig6 &lt;- p_fig6a + p_fig6b + plot_layout(widths = c(1.4, 1))
+ggsave(&quot;figures/fig06-interaction-type.pdf&quot;, p_fig6,
+       width = 10, height = 4.5, dpi = 300)
+cat(&quot;Figure 6 saved.\n&quot;)
+
+# =============================================================================
+# FIGURE 7: Local GOZH total effect — map + distribution
+# =============================================================================
+
+p_fig7a &lt;- make_value_map(d_gozh$local_gozh, d_gozh[[xc]], d_gozh[[yc]], cfg,
+                          title = NULL, legend_title = &quot;GOZH q (all vars)&quot;)
+
+mean_gozh &lt;- mean(d_gozh$local_gozh, na.rm = TRUE)
+p_fig7b &lt;- ggplot(d_gozh, aes(x = local_gozh)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 40,
+                 fill = &quot;lightblue&quot;, colour = &quot;black&quot;, alpha = 0.7) +
+  geom_density(colour = &quot;red&quot;, linewidth = 0.8) +
+  geom_vline(xintercept = mean_gozh, colour = &quot;blue&quot;,
+             linetype = &quot;dashed&quot;, linewidth = 0.8) +
+  annotate(&quot;text&quot;, x = Inf, y = Inf,
+           label = paste(&quot;Mean:&quot;, round(mean_gozh, 3)),
+           hjust = 1.15, vjust = 1.4, size = 4) +
+  labs(x = &quot;Local GOZH q-value (all variables)&quot;, y = &quot;Density&quot;) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())
+
+p_fig7 &lt;- p_fig7a + p_fig7b + plot_layout(widths = c(1.2, 1))
+ggsave(&quot;figures/fig07-gozh-total-effect.pdf&quot;, p_fig7,
+       width = 10, height = 4.5, dpi = 300)
+cat(&quot;Figure 7 saved.\n&quot;)
+
+# =============================================================================
+# FIGURE 8: Method diagnostics — variogram (8a) + local vs global q (8b)
+# =============================================================================
+
+p_fig8a &lt;- ggplot(d_vg, aes(x = dist_m / 1000, y = gamma)) +
+  geom_point(size = 1.5, colour = &quot;steelblue&quot;) +
+  geom_vline(xintercept = d_lr$range_m[1] / 1000,
+             colour = &quot;red&quot;, linetype = &quot;dashed&quot;) +
+  geom_vline(xintercept = d_lr$threshold_m[1] / 1000,
+             colour = &quot;blue&quot;, linetype = &quot;dashed&quot;) +
+  annotate(&quot;text&quot;, x = d_lr$range_m[1] / 1000, y = Inf,
+           label = &quot;range&quot;, hjust = -0.1, vjust = 1.5,
+           size = 3, colour = &quot;red&quot;) +
+  annotate(&quot;text&quot;, x = d_lr$threshold_m[1] / 1000, y = Inf,
+           label = &quot;local extent&quot;, hjust = 1.1, vjust = 1.5,
+           size = 3, colour = &quot;blue&quot;) +
+  labs(x = &quot;Distance (km)&quot;, y = &quot;Semivariance&quot;) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())
+
+d_cmp &lt;- d_vt %&gt;%
+  filter(Variable_type %in% c(&quot;X&quot;, &quot;GC&quot;)) %&gt;%
+  filter(!is.na(Global_q))
+d_cmp$label &lt;- ifelse(d_cmp$Variable %in% names(labels),
+                      labels[d_cmp$Variable], d_cmp$Variable)
+
+p_fig8b &lt;- ggplot(d_cmp, aes(x = Global_q, y = LPI_mean,
+                             colour = Variable_type)) +
+  geom_abline(slope = 1, intercept = 0, linetype = &quot;dashed&quot;,
+              colour = &quot;grey60&quot;) +
+  geom_errorbar(aes(ymin = LPI_min, ymax = LPI_max),
+                width = 0, linewidth = 0.4, alpha = 0.6) +
+  geom_point(size = 2) +
+  ggrepel::geom_text_repel(aes(label = label), size = 2.5,
+                           show.legend = FALSE) +
+  scale_colour_manual(values = c(&quot;X&quot; = unlist(cfg$figures$palette)[1],
+                                 &quot;GC&quot; = unlist(cfg$figures$palette)[6]),
+                      name = &quot;Variable type&quot;) +
+  labs(x = &quot;Global q (OPGD benchmark)&quot;,
+       y = &quot;Local q, mean with [min, max]&quot;) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())
+
+p_fig8 &lt;- p_fig8a + p_fig8b + plot_layout(widths = c(1, 1.3))
+ggsave(&quot;figures/fig08-diagnostics-benchmark.pdf&quot;, p_fig8,
+       width = 10, height = 4.5, dpi = 300)
+cat(&quot;Figure 8 saved.\n&quot;)
+
+cat(&quot;\n=== All figures saved to figures/ ===\n&quot;)
+</code></pre>
+  </div>
+  <div class="codewrap">
+    <span class="code-label">R/functions/fn-plot-helpers.R</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># =============================================================================
+# fn-plot-helpers.R — shared plotting components
+# Source: cc005 LPI pipeline (plot results.R), generalized.
+# Colour-method mapping is bound once from config and reused in every figure
+# (writing style guide Rule 26: fixed colour mapping across all figures).
+# =============================================================================
+
+map_theme &lt;- function() {
+  ggplot2::theme_bw() +
+    ggplot2::theme(
+      axis.text    = ggplot2::element_text(size = 8),
+      legend.title = ggplot2::element_text(size = 9),
+      legend.text  = ggplot2::element_text(size = 8),
+      panel.grid   = ggplot2::element_blank()
+    )
+}
+
+facet_theme &lt;- function() {
+  ggplot2::theme_bw() +
+    ggplot2::theme(
+      strip.text       = ggplot2::element_text(size = 7.5),
+      axis.text        = ggplot2::element_text(size = 7),
+      axis.title       = ggplot2::element_text(size = 9),
+      panel.grid.minor = ggplot2::element_blank()
+    )
+}
+
+# Optional study-area boundary layer (&quot;&quot; in config -&gt; empty layer list).
+boundary_layer &lt;- function(cfg) {
+  if (is.null(cfg$data$boundary) || cfg$data$boundary == &quot;&quot;) return(list())
+  boundary &lt;- sf::st_read(cfg$data$boundary, quiet = TRUE)
+  list(ggplot2::geom_sf(data = boundary, fill = &quot;grey95&quot;,
+                        colour = &quot;grey60&quot;, linewidth = 0.3))
+}
+
+# One map panel with its own 6-quantile legend (equal-frequency bins).
+make_value_map &lt;- function(values, x_coords, y_coords, cfg,
+                           title = NULL, legend_title = &quot;Value&quot;) {
+  palette  &lt;- unlist(cfg$figures$palette)
+  q_breaks &lt;- unique(quantile(values, probs = seq(0, 1, length.out = 7),
+                              na.rm = TRUE))
+  n_bins &lt;- length(q_breaks) - 1
+  bin_labels &lt;- paste0(round(q_breaks[-(n_bins + 1)], 3), &quot;-&quot;,
+                       round(q_breaks[-1], 3))
+
+  df_map &lt;- data.frame(
+    x_plot  = x_coords,
+    y_plot  = y_coords,
+    value_q = cut(values, breaks = q_breaks, labels = bin_labels,
+                  include.lowest = TRUE)
+  )
+
+  ggplot2::ggplot() +
+    boundary_layer(cfg) +
+    ggplot2::geom_point(
+      data = df_map,
+      ggplot2::aes(x = x_plot, y = y_plot, colour = value_q),
+      size = cfg$figures$point_size, alpha = 0.8
+    ) +
+    ggplot2::scale_colour_manual(
+      values = setNames(palette[1:n_bins], bin_labels),
+      name   = legend_title,
+      guide  = ggplot2::guide_legend(override.aes = list(size = 2.5))
+    ) +
+    ggplot2::labs(title = title, x = &quot;Longitude&quot;, y = &quot;Latitude&quot;) +
+    map_theme() +
+    ggplot2::theme(
+      plot.title      = ggplot2::element_text(size = 9, hjust = 0.5),
+      legend.key.size = ggplot2::unit(0.4, &quot;cm&quot;),
+      legend.text     = ggplot2::element_text(size = 7)
+    )
+}
+
+# Faceted histogram + density + mean line of local q values.
+plot_q_histograms &lt;- function(q_df, var_list, label_map, ncol_val, fname,
+                              width = 8, height = 6) {
+  q_long &lt;- reshape2::melt(q_df[, c(&quot;LocationID&quot;, var_list)],
+                           id.vars = &quot;LocationID&quot;)
+  q_long$variable &lt;- factor(label_map[as.character(q_long$variable)],
+                            levels = label_map[var_list])
+  mean_vals &lt;- aggregate(value ~ variable, data = q_long,
+                         FUN = mean, na.rm = TRUE)
+  mean_vals$value &lt;- round(mean_vals$value, 3)
+
+  p &lt;- ggplot2::ggplot(q_long, ggplot2::aes(x = value)) +
+    ggplot2::geom_histogram(
+      ggplot2::aes(y = ggplot2::after_stat(density)), bins = 40,
+      fill = &quot;lightblue&quot;, colour = &quot;black&quot;, alpha = 0.7) +
+    ggplot2::geom_density(colour = &quot;red&quot;, linewidth = 0.8) +
+    ggplot2::geom_vline(
+      data = mean_vals, ggplot2::aes(xintercept = value),
+      colour = &quot;blue&quot;, linetype = &quot;dashed&quot;, linewidth = 0.8) +
+    ggplot2::geom_text(
+      data = mean_vals,
+      ggplot2::aes(x = Inf, y = Inf, label = paste(&quot;Mean:&quot;, value)),
+      hjust = 1.15, vjust = 1.4, size = 3, colour = &quot;black&quot;,
+      inherit.aes = FALSE) +
+    ggplot2::facet_wrap(~ variable, scales = &quot;free&quot;, ncol = ncol_val) +
+    ggplot2::labs(x = &quot;Local q-value&quot;, y = &quot;Density&quot;) +
+    facet_theme()
+
+  ggplot2::ggsave(fname, p, width = width, height = height, dpi = 300)
+  cat(&quot;Saved:&quot;, fname, &quot;\n&quot;)
+  invisible(p)
+}
+
+# Interaction pair category: &quot;X x X&quot;, &quot;X x GC&quot;, &quot;GC x GC&quot;.
+vartype_of &lt;- function(var1, var2, x_vars, gc_names) {
+  ifelse(var1 %in% x_vars &amp; var2 %in% x_vars, &quot;X × X&quot;,
+         ifelse(var1 %in% gc_names &amp; var2 %in% gc_names,
+                &quot;GC × GC&quot;, &quot;X × GC&quot;))
+}
+
+interaction_palette &lt;- function(cfg) {
+  setNames(
+    c(cfg$figures$interaction_colors$xx,
+      cfg$figures$interaction_colors$xgc,
+      cfg$figures$interaction_colors$gcgc),
+    c(&quot;X × X&quot;, &quot;X × GC&quot;, &quot;GC × GC&quot;)
+  )
+}
+</code></pre>
+  </div>
+
+  <h4>Validation summary</h4>
+  <figure class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Validation item</th><th>File / figure</th><th>Decision rule</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Local vs global benchmark</td><td><code>results/step08-validation-table.csv</code>, fig08</td><td>local maxima exceed global q per variable; globally-n.s.-but-locally-significant rows are the discovery cases</td></tr>
+        <tr><td>Subsample stability</td><td><code>results/step09-holdout-summary.csv</code></td><td>Spearman rank preservation high (demo: median 0.988, min 0.927); mean-q changes within ±10%</td></tr>
+        <tr><td>Parameter sensitivity</td><td><code>results/step10-sensitivity-*.csv</code></td><td>variable ordering stable across multipliers 1.5–3 and bins 3–5 (demo: x1 leads in every cell)</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Three decision rules that must hold before the results are written up.</figcaption>
+  </figure>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Main finding narrative</div>
+    <div class="callout-b">
+      <p>The demo recovers its planted structure exactly: the x1/x2 west–east regime split appears
+      in the local q maps (Step&nbsp;4), the planted x5&nbsp;×&nbsp;x6 signal drives the top
+      interaction pair x2&nbsp;×&nbsp;x6 (0.524, exceeding the sum of its singles), and two
+      results that are globally non-significant — x6 and the interaction
+      x6&nbsp;×&nbsp;GC(x1) — turn out strong and significant across most of the map. Local
+      pattern analysis finds what the global statistic discards; the validation trio shows the
+      finding is not an artefact of the sample or the parameters.</p>
+    </div>
+  </div>
+</section>
+
+<section id="adaptation">
+  <h2>4&nbsp;Adaptation, Writing &amp; Reproducibility</h2>
+
+  <h3 id="port-domain">4.1&nbsp;Port to Your Domain</h3>
+  <p>The pipeline was designed to move between domains without touching the analytical scripts:
+  the config declares the data, the preparation script builds the analysis table, and everything
+  downstream is generic. Two published applications illustrate the span:</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Domain</th><th>Response</th><th>Spatial unit</th><th>Key adaptation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Urbanization drivers (Sun&nbsp;et&nbsp;al. 2026)</td>
+            <td>Composite urbanization index</td><td>County</td>
+            <td>5 economic variables from yearbook tables + their GC patterns; regional projected
+            CRS</td></tr>
+        <tr><td>Glacier thickness change (Hu&nbsp;et&nbsp;al. 2024)</td>
+            <td>Observed thinning 2000–2020</td><td>Gridded glacier unit</td>
+            <td>8 climate/terrain variables from remote-sensing products; directly observed
+            response</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Any point-referenced unit with one response and 5–15 continuous predictors
+    fits the data contract of §2.3.</figcaption>
+  </figure>
+  <h4>What to edit</h4>
+  <ol>
+    <li><code>config/project-config.yaml</code> — the CRS pair, column names,
+        <code>x_vars</code> and their display labels, and the parameters (the single adaptation
+        point of §2.2).</li>
+    <li>The real-data branch of <code>R/01-prepare-data.R</code> — read <code>data/raw/</code>,
+        aggregate to your spatial unit, rename columns to the config names, keep complete cases;
+        then set <code>data$use_example:&nbsp;false</code>.</li>
+    <li>Nothing else: re-run Steps 1–10 unchanged. Per application, revisit
+        <code>interaction$top_n_vars</code> and the validation grids of
+        <code>validation$sensitivity</code>.</li>
+  </ol>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Common pitfalls</div>
+    <div class="callout-b">
+      <p>A projected CRS in degrees silently breaks the variogram range and every local window —
+      <code>crs_projected</code> must be in metres. GC maps that mirror unit density instead of
+      structure mean the KNN size needs revisiting (<code>gc$knn_share</code>). The
+      <code>top_n_vars</code> cut can exclude a genuine interaction partner — in the demo, x5 ranks
+      sixth, so the planted x5×x6 pair is only tested directly if you raise the cut. And never
+      compare q values across different <code>discnum</code> settings: finer strata mechanically
+      explain more variance.</p>
+    </div>
+  </div>
+
+  <h3 id="write-paper">4.2&nbsp;Write the Paper</h3>
+  <p>The published applications share one manuscript architecture: Methods sections mirror the
+  pipeline steps 1:1, every Results sentence carries a number from a <code>results/</code> CSV,
+  and the Discussion is built on the three-regime classification of Step&nbsp;7.</p>
+  <figure class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Manuscript section</th><th>Template output</th><th>Writing job</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Methods</td><td><code>config/project-config.yaml</code>, <code>results/step04-local-range.csv</code></td><td>describe the four calculation stages (GC extraction, local extent, local stratified power, interactions + total effect) with parameter values quoted from the config</td></tr>
+        <tr><td>Results</td><td><code>figures/fig01–fig08</code>, <code>results/step08-validation-table.csv</code></td><td>mirror the pipeline steps 1:1; one interpretive takeaway per subsection; every finding sentence carries a number</td></tr>
+        <tr><td>Discussion</td><td><code>results/step09-holdout-summary.csv</code>, <code>step10-sensitivity-*.csv</code></td><td>argue the three-regime classification and ordering stability; name the subregion the conclusions depend on</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Where each manuscript section draws its material from.</figcaption>
+  </figure>
+  <h4>Manuscript skeleton (shared by the published applications)</h4>
+  <div class="codewrap nofold">
+    <span class="code-label">manuscript outline</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>1  Introduction            — 6 paragraphs; P4 reviews OPGD/GOZH/GEOC/LISP; P5 gap sentence
+                             "However, there are still challenges in {ISSUE} due to
+                             {GAP_1}, {GAP_2}, {GAP_3}."; P6 aim + 3 contributions
+2  {MODEL NAME}            — 2.1 Concept (no formulas)
+                             2.2 Calculation process (ALL formulas live here):
+                                 2.2.1 Geocomplexity pattern extraction   (G_i)
+                                 2.2.2 Local extent determination         (γ(h); d = 2a)
+                                 2.2.3 Local stratified power             (q(u) = 1 − SSW/SST)
+                                 2.2.4 Local pattern interaction + total effect
+3  Case                    — 3.1 Study area &amp; data · 3.2 Pre-processing
+                             3.3 Model-based analysis (1:1 with §2.2 steps)
+                             3.4 Validation: OPGD benchmark · holdout · sensitivity
+4  Results                 — subsections mirror 3.3 steps 1:1; every finding sentence
+                             carries a number; one interpretive takeaway per subsection
+5  Discussion              — 4 paragraphs, 2 tables (capability comparison;
+                             reproduction guidance), no subsection headings
+6  Conclusions             — 8–10 sentences answering: accomplished? contribution?
+                             meaning for readers? limitations &amp; future work?</code></pre>
+  </div>
+  <h4>Results-to-manuscript map</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Manuscript element</th><th>Source file</th><th>Shown in</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Study-area / response figure</td><td><code>figures/fig01-response-maps.pdf</code></td><td>§3.1 + §4.1 of paper</td></tr>
+        <tr><td>GC pattern evidence figure</td><td><code>figures/fig02-gc-trends.pdf</code></td><td>§4.2</td></tr>
+        <tr><td>Local-extent statement (range, d)</td><td><code>results/step04-local-range.csv</code></td><td>§3.3 parameters</td></tr>
+        <tr><td>Local q distributions + maps</td><td><code>fig03a/b</code>, <code>fig04</code></td><td>§4.3</td></tr>
+        <tr><td>Interaction ranking, categories</td><td><code>fig05</code>, <code>fig06</code></td><td>§4.4</td></tr>
+        <tr><td>Total-effect map</td><td><code>fig07</code></td><td>§4.4</td></tr>
+        <tr><td><b>Main table</b> (local vs global)</td><td><code>results/step08-validation-table.csv</code></td><td>§4.5 (≈ published Table 4)</td></tr>
+        <tr><td>Benchmark figure</td><td><code>fig08</code></td><td>§4.5</td></tr>
+        <tr><td>Robustness numbers</td><td><code>step09-holdout-summary.csv</code>, <code>step10-sensitivity-*.csv</code></td><td>§4.5 / response to reviewers</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Every manuscript element traces to one regenerable file.</figcaption>
+  </figure>
+
+  <h3 id="repro-package">4.3&nbsp;Final Reproducibility Package</h3>
+  <p>Everything an editor, reviewer, or reader needs sits in this folder; the three blocks below
+  are what a submission's data-and-code availability statement should point to.</p>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Code</div><div class="v">numbered scripts in <code>R/</code> + method core in <code>R/functions/</code> + <code>config/project-config.yaml</code></div></div>
+    <div class="kv"><div class="k">Data</div><div class="v"><code>data/processed/analysis-table.csv</code> (demo) — or your raw data plus the adapted preparation script</div></div>
+    <div class="kv"><div class="k">Manuscript</div><div class="v"><code>figures/fig01–fig08</code> (PDF) + <code>results/step08-validation-table.csv</code> as the main table</div></div>
+  </div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Before claiming reproducible</div>
+    <div class="callout-b">
+      <ul>
+        <li>Delete <code>results/</code> and <code>figures/</code>, re-run the eleven scripts —
+            every number and figure on this page regenerates (verified 2026-07-24).</li>
+        <li><code>results/session-info.txt</code> matches the environment claimed in the
+            manuscript (verified run: R&nbsp;4.6.0, CRAN package builds).</li>
+        <li>Every finding sentence traces to a <code>results/step*.csv</code>; every parameter is
+            quoted from <code>config/project-config.yaml</code>, not from memory.</li>
+        <li>The data availability statement covers the analysis table (or raw data + preparation
+            script) and this code folder.</li>
+      </ul>
+    </div>
+  </div>
+  <h4>References &amp; credits</h4>
+  <p>Demo outputs were generated by the scripts in this folder (verified 2026-07-24). Reference
+  figures and table excerpts are reproduced from the cited articles for comparison: the LPI paper
+  is open access (CC&nbsp;BY); the remaining figures are © their authors and publishers.</p>
+  <ol>
+    <li>Wang J-F, et al. (2010). Geographical detectors-based health risk assessment…
+        <i>IJGIS</i> 24(1):107–127.
+        <a href="https://doi.org/10.1080/13658810802443457">doi:10.1080/13658810802443457</a></li>
+    <li>Song Y, Wang J, Ge Y, Xu C (2020). An optimal parameters-based geographical detector
+        model… <i>GIScience &amp; Remote Sensing</i> 57(5):593–610.
+        <a href="https://doi.org/10.1080/15481603.2020.1760434">doi:10.1080/15481603.2020.1760434</a>
+        · <a href="../../pdf/OPGD-song2020.pdf">PDF</a></li>
+    <li>Luo P, Song Y, et al. (2022). …geographically optimal zones-based heterogeneity model.
+        <i>ISPRS JPRS</i> 185:111–128.
+        <a href="https://doi.org/10.1016/j.isprsjprs.2022.01.009">doi:10.1016/j.isprsjprs.2022.01.009</a>
+        · <a href="../../pdf/GOZH-luo2022.pdf">PDF</a></li>
+    <li>Zhang Z, Song Y, Luo P, Wu P (2023). Geocomplexity explains spatial errors.
+        <i>IJGIS</i> 37(7):1449–1469.
+        <a href="https://doi.org/10.1080/13658816.2023.2203212">doi:10.1080/13658816.2023.2203212</a>
+        (open access) · <a href="../../pdf/GEOC-zhang2023.pdf">PDF</a></li>
+    <li>Hu J, Song Y, Zhang T (2024). A local indicator of stratified power. <i>IJGIS</i>.
+        <a href="https://doi.org/10.1080/13658816.2024.2437811">doi:10.1080/13658816.2024.2437811</a>
+        · <a href="../../pdf/LISP-hu2024.pdf">PDF</a>
+        (source of the LISP reference figures and Table 2 values on this page)
+        · data &amp; code: <a href="https://doi.org/10.6084/m9.figshare.26518651.v3">figshare 26518651</a></li>
+    <li>Sun Y, Wu G, Song Y, et al. (2026). Local effects of pattern interactions in driving
+        urbanization. <i>Int J Appl Earth Obs Geoinf</i> 146:105072.
+        <a href="https://doi.org/10.1016/j.jag.2025.105072">doi:10.1016/j.jag.2025.105072</a>
+        (open access, CC&nbsp;BY — source of the LPI reference figures and Table 4 values on this
+        page) · <a href="../../pdf/LPI-song2025.pdf">PDF</a></li>
+  </ol>
+</section>
+
+</main>
+
+<div id="lightbox"><img alt="enlarged figure" loading="lazy" decoding="async"></div>
+
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var sidebar=document.getElementById('sidebar');
+  var menuBtn=document.getElementById('menu-btn');
+  var themeBtn=document.getElementById('themebtn');
+  var filter=document.getElementById('toc-filter');
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var lightbox=document.getElementById('lightbox');
+  var lightboxImg=lightbox ? lightbox.querySelector('img') : null;
+
+  function setTheme(mode){
+    if(mode==='dark'){
+      root.setAttribute('data-theme','dark');
+      if(themeBtn) themeBtn.textContent='Light mode';
+    }else{
+      root.removeAttribute('data-theme');
+      if(themeBtn) themeBtn.textContent='Dark mode';
+    }
+    try{localStorage.setItem('reproduce-template-theme',mode)}catch(e){}
+  }
+  try{
+    var saved=localStorage.getItem('reproduce-template-theme');
+    if(saved==='dark') setTheme('dark');
+  }catch(e){}
+
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      setTheme(root.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+    });
+  }
+
+  if(menuBtn && sidebar){
+    menuBtn.addEventListener('click',function(){
+      sidebar.classList.toggle('open');
+    });
+  }
+  links.forEach(function(a){
+    a.addEventListener('click',function(){
+      if(sidebar) sidebar.classList.remove('open');
+    });
+  });
+
+  if(filter){
+    filter.addEventListener('input',function(){
+      var q=filter.value.trim().toLowerCase();
+      links.forEach(function(a){
+        a.style.display=a.textContent.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+      });
+    });
+  }
+
+  document.querySelectorAll('.copybtn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var box=btn.closest('.codewrap');
+      var code=box ? box.querySelector('pre code') : null;
+      if(!code) return;
+      navigator.clipboard.writeText(code.innerText).then(function(){
+        btn.classList.add('ok');
+        btn.textContent='Copied';
+        setTimeout(function(){
+          btn.classList.remove('ok');
+          btn.textContent='Copy';
+        },1200);
+      });
+    });
+  });
+
+  document.querySelectorAll('figure img,.figpair img').forEach(function(img){
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',function(){
+      if(!lightbox || !lightboxImg) return;
+      lightboxImg.src=img.src;
+      lightboxImg.alt=img.alt || 'enlarged figure';
+      lightbox.classList.add('open');
+    });
+  });
+  if(lightbox){
+    lightbox.addEventListener('click',function(){
+      lightbox.classList.remove('open');
+      if(lightboxImg) lightboxImg.removeAttribute('src');
+    });
+  }
+
+  var headings=[].slice.call(document.querySelectorAll('section[id],h3[id],article[id]'));
+  function onScroll(){
+    var active=null;
+    var y=window.scrollY+110;
+    headings.forEach(function(h){
+      if(h.offsetTop<=y) active=h.id;
+    });
+    links.forEach(function(a){
+      a.classList.toggle('active',a.getAttribute('href')==='#'+active);
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+</script>
+<script>
+// Lightweight R/YAML highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-yaml code').forEach(function(codeEl){
+  var src = codeEl.textContent;
+  var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var isR = codeEl.parentElement.classList.contains('lang-r');
+  var kw = isR
+    ? /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")|\b(function|if|else|for|while|return|library|source|TRUE|FALSE|NULL|NA_real_|NA_character_|NA|in)\b/g
+    : /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")/g;
+  var out = '', last = 0, m;
+  while ((m = kw.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    if (m[1])      out += '<span class="cm">' + esc(m[1]) + '</span>';
+    else if (m[2]) out += '<span class="st">' + esc(m[2]) + '</span>';
+    else           out += '<span class="kw">' + esc(m[3]) + '</span>';
+    last = kw.lastIndex;
+  }
+  out += esc(src.slice(last));
+  codeEl.innerHTML = out;
+});
+</script>
+<script>
+// Collapsible code boxes: boxes longer than 4 lines start collapsed to a 3-line preview.
+document.querySelectorAll('.codewrap:not(.nofold)').forEach(function(w){
+  var code=w.querySelector('pre.code code');
+  if(!code) return;
+  var lines=code.textContent.replace(/\n+$/,'').split('\n').length;
+  if(lines<=4) return;
+  w.classList.add('has-fold','collapsed');
+  var chip=w.querySelector('.code-label');
+  if(chip) chip.textContent+=' \u00b7 '+lines+' lines';
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.className='foldbtn';
+  btn.title='Expand / collapse code';
+  function label(){
+    btn.textContent=w.classList.contains('collapsed') ? 'Expand' : 'Collapse \u25b4';
+  }
+  label();
+  btn.addEventListener('click',function(){
+    w.classList.toggle('collapsed');
+    label();
+    if(w.classList.contains('collapsed')) w.scrollIntoView({block:'nearest'});
+  });
+  w.appendChild(btn);
+});
+</script>
+<script>
+// Match the director avatar to the height of the name-to-email text block (desktop only).
+(function(){
+  function sizeDirectorAvatar(){
+    document.querySelectorAll('.director-card').forEach(function(card){
+      var img=card.querySelector('img');
+      var info=card.querySelector('.director-info');
+      if(!img||!info) return;
+      if(window.innerWidth<=1000){
+        img.style.width='';img.style.height='';img.style.minWidth='';
+        return;
+      }
+      var h=Math.round(info.getBoundingClientRect().height);
+      img.style.height=h+'px';
+      img.style.width=h+'px';
+      img.style.minWidth=h+'px';
+    });
+  }
+  window.addEventListener('load',sizeDirectorAvatar);
+  window.addEventListener('resize',sizeDirectorAvatar);
+  sizeDirectorAvatar();
+})();
+</script>
+</body>
+</html>

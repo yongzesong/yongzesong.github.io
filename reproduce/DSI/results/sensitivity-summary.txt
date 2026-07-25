@@ -1,0 +1,9 @@
+Sensitivity summary — dsi-demo — 2026-07-24
+
+Neighbourhood size: k in {6, 8, 10, 14, 18, 22}, primary k = 8.
+Largest change in theta_probable: 0.00% (cubist at k = 6).
+DSI is stable across neighbourhood sizes (all changes below 5%).
+
+Stratification: tree (primary) against kmeans (alternative).
+Spearman rank agreement of eta_heterogeneity: -0.900.
+Model ranking depends on the partition. State the stratification rule in the Methods section and report both rankings.

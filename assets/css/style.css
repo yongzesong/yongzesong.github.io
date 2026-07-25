@@ -138,6 +138,63 @@ a:hover {
     color: var(--color-accent);
 }
 
+/* === SCREEN-READER-ONLY TEXT === */
+/* Visible to assistive technology, removed from the visual layout. */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* === SKIP LINK === */
+/* Off-screen until focused, then it drops into view for keyboard users. */
+.skip-link {
+    position: absolute;
+    left: 8px;
+    top: -60px;
+    z-index: 3000;
+    background: var(--color-accent);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 0 0 4px 4px;
+    text-decoration: none;
+    transition: top 0.15s ease;
+}
+.skip-link:focus {
+    top: 0;
+    color: #fff;
+}
+
+/* === KEYBOARD FOCUS === */
+/* Visible focus ring for keyboard users; mouse clicks stay clean. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Browsers without :focus-visible still get a ring from the default :focus. */
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible) {
+    outline: none;
+}
+
 img {
     max-width: 100%;
     height: auto;
@@ -244,7 +301,7 @@ nav a.active {
     justify-content: space-between;
     align-items: center;
     font-size: 0.68rem;
-    color: #999;
+    color: #595959;
 }
 
 .footer-left {
@@ -282,7 +339,7 @@ nav a.active {
 
 .footer-lang {
     font-size: 0.68rem;
-    color: #999;
+    color: #595959;
     text-decoration: none;
     padding: 1px 6px;
     border: 1px solid #ddd;
@@ -336,19 +393,47 @@ nav a.active {
 
 @media (max-width: 768px) {
     html, body {
-        font-size: 15px;
+        font-size: 16px;
     }
     h1 {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
     }
     h2 {
-        font-size: 1.1rem;
+        font-size: 1.3rem;
     }
-    p {
-        font-size: 0.75rem;
-    }
+    /* Body copy inherits the 1rem base — never shrink it below 16px */
     .footer-inner {
         grid-template-columns: 1fr;
         gap: 16px;
+    }
+
+    /* Header: stack the title above a centred, wrapping nav */
+    .header-inner {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        text-align: center;
+    }
+    .site-header nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0 4px;
+    }
+    .site-header nav a {
+        margin-left: 0;
+        font-size: 0.95rem;
+        padding: 8px 10px;   /* comfortable tap target */
+    }
+}
+
+/* Narrow phones: tighten the nav so the five links stay on a single row */
+@media (max-width: 480px) {
+    .header-inner {
+        padding: 0 10px;
+    }
+    .site-header nav a {
+        font-size: 0.82rem;
+        padding: 7px 4px;
     }
 }
