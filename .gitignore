@@ -21,3 +21,9 @@ Desktop.ini
 # Logs and temp files
 *.log
 *.tmp
+
+# Claude Code local config
+.claude/
+
+# Dropbox/FUSE remnants
+.fuse_hidden*
