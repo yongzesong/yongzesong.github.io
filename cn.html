@@ -392,6 +392,8 @@
             padding: 0 7px; border-radius: 999px; background: rgba(255,255,255,0.92);
             border: 1px solid var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
+        .dsi-hex-zoom { transition: transform 0.15s ease; }
+        .dsi-hex-zoom:hover { transform: scale(1.12); }
         .repro-body { padding: 8px 10px 10px; display: flex; flex-direction: column; flex: 1; }
         .repro-name { font-family: var(--font-cn); font-size: 0.78rem; font-weight: 700; color: var(--color-heading); line-height: 1.5; margin-bottom: 8px; }
         .repro-cta { margin-top: auto; display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-cn); font-size: 0.68rem; font-weight: 700; color: var(--accent); padding-top: 6px; border-top: 1px solid #f0f0f0; }
@@ -541,6 +543,13 @@
                 <a class="repro-card" href="reproduce/DSI/dsi.html" style="--accent:#1a5276; --accent-soft:#eaf2f8;">
                     <div class="repro-media has-fig">
                         <img src="assets/images/repro-dsi.png" alt="" loading="lazy" decoding="async">
+                        <span class="dsi-hex-zoom" role="link" tabindex="0" aria-label="打开在线 DSI 计算器"
+                              title="在线 DSI 计算器"
+                              style="position:absolute; top:7px; left:7px; width:34px; z-index:2; cursor:pointer; line-height:0;"
+                              onclick="event.preventDefault(); event.stopPropagation(); window.location.href='app/dsi/';"
+                              onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); window.location.href='app/dsi/';}">
+                            <img src="assets/images/dsi-hex.svg" alt="" style="width:100%; height:auto; display:block;" loading="lazy" decoding="async">
+                        </span>
                         <span class="repro-abbr">DSI</span>
                     </div>
                     <div class="repro-body">

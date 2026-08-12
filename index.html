@@ -172,6 +172,9 @@
         /* === RIGHT COLUMN === */
         .right-col { min-width: 0; }
 
+        .dsi-hex-zoom { transition: transform 0.15s ease; }
+        .dsi-hex-zoom:hover { transform: scale(1.12); }
+
         .teams-list {
             font-size: 0.82rem;
             margin: 6px 0;
@@ -385,7 +388,7 @@
             <img src="assets/images/spatial-methods-card.svg" alt="Spatial Methods" loading="lazy" decoding="async">
         </div>
         <div class="card-body">
-            <div class="card-desc">44 new spatial methods and 12 R packages</div>
+            <div class="card-desc">45 new spatial methods and 12 R packages</div>
         </div>
     </a>
 
@@ -465,6 +468,17 @@
 
     <!-- ===== RIGHT COLUMN ===== -->
     <div class="right-col">
+
+        <!-- DSI online calculator -->
+        <a href="app/dsi/" title="Open the online DSI calculator"
+           style="display:flex; align-items:center; gap:12px; margin:6px 0 14px 0; text-decoration:none; color:inherit;">
+            <img class="dsi-hex-zoom" src="assets/images/dsi-hex.svg" alt="DSI hex logo" width="46" height="51"
+                 loading="lazy" decoding="async" style="flex:0 0 auto;">
+            <span style="min-width:0;">
+                <span style="display:block; font-weight:600; font-size:0.95rem; line-height:1.3;">DSI calculator</span>
+                <span style="display:block; font-size:0.8rem; color:#6b6b6b; line-height:1.3;">degree of spatial interpretability</span>
+            </span>
+        </a>
 
         <!-- Teams -->
         <h2>Teams</h2>

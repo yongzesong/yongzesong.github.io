@@ -124,6 +124,8 @@
         }
         .card-author img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .card-author:hover { transform: scale(1.12); }
+        .dsi-hex-zoom { transition: transform 0.15s ease; }
+        .dsi-hex-zoom:hover { transform: scale(1.12); }
 
         .card-body { padding: 8px 10px 10px; flex: 1; display: flex; flex-direction: column; }
         .card-abbr { font-family: var(--font-serif); font-size: 0.72rem; font-weight: 700; color: var(--color-heading); margin-bottom: 1px; line-height: 1.3; }
@@ -637,6 +639,13 @@
                 <a class="repro-card" href="reproduce/DSI/dsi.html" style="--accent:#1a5276; --accent-soft:#eaf2f8;">
                     <div class="repro-media has-fig">
                         <img src="assets/images/repro-dsi.png" alt="" loading="lazy" decoding="async">
+                        <span class="dsi-hex-zoom" role="link" tabindex="0" aria-label="Open the online DSI calculator"
+                              title="Online DSI calculator"
+                              style="position:absolute; top:7px; left:7px; width:34px; z-index:2; cursor:pointer; line-height:0;"
+                              onclick="event.preventDefault(); event.stopPropagation(); window.location.href='app/dsi/';"
+                              onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); window.location.href='app/dsi/';}">
+                            <img src="assets/images/dsi-hex.svg" alt="" style="width:100%; height:auto; display:block;" loading="lazy" decoding="async">
+                        </span>
                         <span class="repro-abbr">DSI</span>
                     </div>
                     <div class="repro-body">
@@ -691,6 +700,9 @@
                                     <circle cx="80" cy="35" r="2.5" fill="#1a5276" opacity="0.4"/><circle cx="95" cy="52" r="2.5" fill="#1a5276" opacity="0.5"/><circle cx="74" cy="50" r="2.5" fill="#1a5276" opacity="0.5"/><circle cx="90" cy="38" r="2.5" fill="#1a5276" opacity="0.6"/><circle cx="100" cy="45" r="2.5" fill="#1a5276" opacity="0.3"/><circle cx="83" cy="58" r="2.5" fill="#1a5276" opacity="0.4"/>
                                     <line x1="87" y1="47" x2="80" y2="35" stroke="#1a5276" stroke-width="0.5" opacity="0.3" stroke-dasharray="2,2"/><line x1="87" y1="47" x2="95" y2="52" stroke="#1a5276" stroke-width="0.5" opacity="0.3" stroke-dasharray="2,2"/>
                                 </svg>
+                                <a class="dsi-hex-zoom" href="app/dsi/" title="Online DSI calculator"
+                                   style="position:absolute; top:6px; left:6px; width:32px; z-index:1; line-height:0;">
+                                    <img src="assets/images/dsi-hex.svg" alt="DSI calculator" style="width:100%; height:auto; display:block;" loading="lazy" decoding="async"></a>
                                 <span class="card-abbr-overlay p1"><a href="https://doi.org/10.1080/13658816.2026.2614335">DSI</a></span>
                                 <span class="card-author" title="Haiyang Liu" onclick="showMemberCard(event, 'haiyang-liu')"><img src="assets/images/haiyang-liu.png" alt="Haiyang Liu" loading="lazy"></span>
                             </div>

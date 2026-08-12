@@ -186,6 +186,8 @@ code{
   margin-right:var(--rightw);
   background:var(--bg);
 }
+.dsi-hex-zoom{transition:transform .15s ease}
+.dsi-hex-zoom:hover{transform:scale(1.12)}
 .hero h1{
   margin:0 0 6px;
   font-size:1.9rem;
@@ -808,6 +810,10 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 </aside>
 
 <header class="hero">
+  <a class="dsi-hex-zoom" href="../../app/dsi/" title="Open the online DSI calculator"
+     style="float:right; margin:0 0 12px 18px; line-height:0;"><img
+     src="../../assets/images/dsi-hex.svg" alt="DSI hex logo"
+     width="88" height="97" loading="lazy" decoding="async"></a>
   <h1>Reproducing the Degree of Spatial Interpretability (DSI)</h1>
   <div class="sub">A complete walkthrough of the degree of spatial interpretability
   (DSI) and its local extension, the degree of geocomplexity (DG) — measuring how much of the
