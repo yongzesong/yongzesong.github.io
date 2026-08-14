@@ -203,6 +203,8 @@ code{
   color:var(--fg);
   margin-top:16px;
 }
+.opgd-hex-zoom{transition:transform .15s ease}
+.opgd-hex-zoom:hover{transform:scale(1.12)}
 .cite{
   font-size:.82rem;
   color:var(--muted);
@@ -810,6 +812,10 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 </aside>
 
 <header class="hero">
+  <a class="opgd-hex-zoom" href="../../app/opgd/" title="Open the online OPGD calculator"
+     style="float:right; margin:0 0 12px 18px; line-height:0;"><img
+     src="../../assets/images/opgd-hex.svg" alt="OPGD hex logo"
+     width="88" height="97" loading="lazy" decoding="async"></a>
   <h1>Reproducing the Optimal Parameters-based Geographical Detector (OPGD)</h1>
   <div class="sub">A complete walkthrough of the OPGD model — the geographical
   detector of spatial stratified heterogeneity, enhanced by searching the optimal spatial
@@ -829,6 +835,11 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
   <code>tests/</code> verification · <code>run-all.R</code> — the demo data ship inside the
   <code>GD</code> package, so unzip and run <code>Rscript run-all.R test</code> from the
   <code>OPGD/</code> folder root.</div>
+  <a class="dlbtn" href="../../app/opgd/">🧮 Open the online OPGD calculator — no installation, runs in your browser</a>
+  <div class="dlnote">Upload a CSV (ID, y, and explanatory variables), press Compute, and get
+  the full <code>gdm()</code> output — optimal discretisation, factor, interaction, risk and
+  ecological detectors — as figures and tables with CSV/PNG/PDF downloads. Computed by the
+  CRAN <code>GD</code> package itself (WebAssembly R); all computation stays on your device.</div>
   <div class="cite-lead">To cite the OPGD model and its R packages and codes in publications, please use:</div>
   <div class="cite">
     <div>Song&nbsp;Y, Wang&nbsp;J, Ge&nbsp;Y, Xu&nbsp;C (2020). An optimal parameters-based
@@ -855,7 +866,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
   <a href="../../methods.html">Geospatial Theories and Methods</a>
   <a class="current" href="opgd.html">1 &middot; OPGD &mdash; Optimal Parameters Geographical Detector</a>
   <a href="../GC/gc.html">2 &middot; GC &mdash; Geocomplexity</a>
-  <a href="../LPI/lpi.html">3 &middot; LPI &mdash; Local Pattern Interaction</a>
+  <a href="../LISP/lisp.html">3 &middot; LISP &mdash; Local Indicator of Stratified Power</a>
   <a href="../LPA/lpa.html">4 &middot; LPA &mdash; Local Pathways of Association</a>
   <a href="../SDA/sda.html">5 &middot; SDA &mdash; Second Dimension of Spatial Association</a>
   <a href="../SOH/soh.html">6 &middot; SOH &mdash; Second-dimension Outlier-driven Heterogeneity</a>
@@ -935,7 +946,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
       <a href="https://doi.org/10.1080/13658816.2024.2437811">Hu et al., IJGIS</a> &middot; <a href="../../pdf/LISP-hu2024.pdf">PDF</a></div>
     <div class="arrow">&rarr;</div>
     <div class="chip"><b>LPI 2026</b>local stratified power over variables and their patterns; has its own tutorial<br>
-      <a href="../LPI/lpi.html">LPI tutorial</a> &middot; <a href="../../pdf/LPI-song2025.pdf">PDF</a></div>
+      <a href="../LISP/lisp.html">LISP tutorial</a> &middot; <a href="../../pdf/LPI-song2025.pdf">PDF</a></div>
   </div>
   <p>The schematic below is the whole method on one page:</p>
   <figure class="fig half">

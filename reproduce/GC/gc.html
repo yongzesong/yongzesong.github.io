@@ -178,6 +178,9 @@ code{
 }
 .themebtn:hover{color:var(--fg)}
 
+.gc-hex-zoom{transition:transform .15s ease}
+.gc-hex-zoom:hover{transform:scale(1.12)}
+
 /* Hero and content. */
 .hero{
   border-bottom:1px solid var(--line);
@@ -808,6 +811,10 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
 </aside>
 
 <header class="hero">
+  <a class="gc-hex-zoom" href="../../app/gc/" title="Open the online GC calculator"
+     style="float:right; margin:0 0 12px 18px; line-height:0;"><img
+     src="../../assets/images/gc-hex.svg" alt="GC hex logo"
+     width="88" height="97" loading="lazy" decoding="async"></a>
   <h1>Reproducing Geocomplexity Explains Spatial Errors</h1>
   <div class="sub">A complete walkthrough of geocomplexity — a local measure of how
   far a variable's neighbourhood departs from smooth spatial dependence — and of the claim it was
@@ -827,6 +834,11 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
   <code>data/econineq.gpkg</code> (333 Australian SA3 regions, the published case) ·
   <code>tests/</code> · <code>run-all.R</code> — unzip and run
   <code>Rscript run-all.R test</code> from the <code>GC/</code> folder root.</div>
+  <a class="dlbtn" href="../../app/gc/">🧮 Open the online GC calculator — no installation, runs in your browser</a>
+  <div class="dlnote">Upload a CSV (ID, location, and one or more variables), press Compute,
+  and download a table of your data with one geocomplexity column per variable, plus the
+  variable–geocomplexity curves. Identical to <code>geocomplexity::geocd_vector()</code>;
+  all computation stays on your device.</div>
   <div class="cite-lead">To cite the geocomplexity model and its R package and codes in publications, please use:</div>
   <div class="cite">
     <div>Zhang&nbsp;Z, Song&nbsp;Y, Luo&nbsp;P, Wu&nbsp;P (2023). Geocomplexity explains spatial
@@ -845,7 +857,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
   <a href="../../methods.html">Geospatial Theories and Methods</a>
   <a href="../OPGD/opgd.html">1 &middot; OPGD &mdash; Optimal Parameters Geographical Detector</a>
   <a class="current" href="gc.html">2 &middot; GC &mdash; Geocomplexity</a>
-  <a href="../LPI/lpi.html">3 &middot; LPI &mdash; Local Pattern Interaction</a>
+  <a href="../LISP/lisp.html">3 &middot; LISP &mdash; Local Indicator of Stratified Power</a>
   <a href="../LPA/lpa.html">4 &middot; LPA &mdash; Local Pathways of Association</a>
   <a href="../SDA/sda.html">5 &middot; SDA &mdash; Second Dimension of Spatial Association</a>
   <a href="../SOH/soh.html">6 &middot; SOH &mdash; Second-dimension Outlier-driven Heterogeneity</a>
@@ -923,7 +935,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
       <a href="https://doi.org/10.1080/13658816.2023.2203212">Zhang et al., IJGIS</a> · <a href="../../pdf/GEOC-zhang2023.pdf">PDF</a><span class="mini-badge oa">open access</span></div>
     <div class="arrow">→</div>
     <div class="chip"><b>LPI 2026</b>GC of each variable becomes an extra explanatory variable<br>
-      <a href="../LPI/lpi.html">LPI tutorial</a></div>
+      <a href="../LISP/lisp.html">LISP tutorial</a></div>
     <div class="arrow">→</div>
     <div class="chip"><b>GeoCGWR</b>GC enters the geographical weighting itself<br>
       <code>gwr_geoc()</code> in the package</div>
@@ -1006,7 +1018,7 @@ figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);
         <code>Rscript run-all.R</code>. Every number and figure below regenerates.</li>
     <li><b>To use geocomplexity on your own data:</b> §2.3 gives the data contract — one layer with
         a response and explanatory variables — and §4.1 the porting steps.</li>
-    <li><b>To see geocomplexity used as a building block:</b> the <a href="../LPI/lpi.html">LPI
+    <li><b>To see geocomplexity used as a building block:</b> the <a href="../LISP/lisp.html">LISP
         tutorial</a> treats the geocomplexity of every variable as an extra explanatory variable in
         a local stratified-power model.</li>
   </ul>
@@ -1375,7 +1387,7 @@ wt &lt;- sdsfun::spdep_contiguity_swm(x, queen = TRUE, style = "B")</code></pre>
           <code>shannon</code> is <b>−0.60</b>. They answer different questions: local
           autocorrelation, raw fluctuation, and neighbourhood entropy. Name the measure in the
           Methods section; a result under one is not a result under another. The
-          <a href="../LPI/lpi.html">LPI tutorial</a> uses <code>spvar</code> deliberately, because
+          <a href="../LISP/lisp.html">LISP tutorial</a> uses <code>spvar</code> deliberately, because
           there geocomplexity enters as an explanatory variable describing pattern intensity
           rather than as a diagnostic of dependence.</p>
         </div>
@@ -1662,7 +1674,7 @@ g2 &lt;- geocomplexity::gwr_geoc(Gini ~ ., data = x, bw = "AIC", adaptive = TRUE
       <thead><tr><th>Role</th><th>Where</th><th>What geocomplexity is used as</th></tr></thead>
       <tbody>
         <tr><td>Diagnostic</td><td>this page (Zhang et&nbsp;al. 2023)</td><td>an explanation of where models err, computed before fitting</td></tr>
-        <tr><td>Explanatory variable</td><td><a href="../LPI/lpi.html">LPI tutorial</a></td><td>GC of every variable joins the variable set, doubling it from {X} to {X, GC(X)}</td></tr>
+        <tr><td>Explanatory variable</td><td><a href="../LISP/lisp.html">LISP tutorial</a></td><td>GC of every variable joins the variable set, doubling it from {X} to {X, GC(X)}</td></tr>
         <tr><td>Spatial weight</td><td><code>gwr_geoc()</code>, §3 Step&nbsp;5</td><td>complexity enters the geographical weighting itself</td></tr>
       </tbody>
     </table>
@@ -1804,7 +1816,7 @@ g2 &lt;- geocomplexity::gwr_geoc(Gini ~ ., data = x, bw = "AIC", adaptive = TRUE
     <li>Sun Y, Wu G, Song Y, et al. (2026). Local effects of pattern interactions in driving
         urbanization. <i>Int J Appl Earth Obs Geoinf</i> 146:105072.
         <a href="https://doi.org/10.1016/j.jag.2025.105072">doi:10.1016/j.jag.2025.105072</a>
-        · <a href="../LPI/lpi.html">LPI tutorial</a>
+        · <a href="../LISP/lisp.html">LISP tutorial</a>
         (geocomplexity used as an explanatory variable)</li>
   </ol>
 </section>

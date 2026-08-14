@@ -369,6 +369,13 @@
         .repro-badge { font-family: var(--font-cn); font-weight: 700; font-size: 0.75rem; color: #fff; padding: 3px 10px; border-radius: 3px; white-space: nowrap; background: #b9770e; }
         .repro-title { font-family: var(--font-cn); font-size: 1.15rem; font-weight: 600; color: var(--color-heading); }
         .repro-grid { display: grid; grid-template-columns: repeat(auto-fill, 168px); gap: 10px; justify-content: start; align-items: stretch; }
+        .repro-grid + .repro-grid { margin-top: 14px; }
+        .repro-col { width: 168px; display: flex; flex-direction: column; }
+        .repro-col .repro-card { flex: 1; }
+        .repro-app { display: flex; align-items: center; gap: 8px; margin: 0 0 8px 0; text-decoration: none; color: inherit; }
+        .repro-app img { width: 34px; height: auto; flex: 0 0 auto; }
+        .repro-app .app-name { display: block; font-weight: 600; font-size: 0.85rem; line-height: 1.25; }
+        .repro-app .app-sub { display: block; font-size: 0.72rem; color: #6b6b6b; line-height: 1.25; }
         .repro-card {
             --accent: #1a5276; --accent-soft: #eaf2f8;
             position: relative; width: 168px; display: flex; flex-direction: column;
@@ -467,41 +474,81 @@
             </div>
             <div class="repro-grid">
 
-                <!-- OPGD -->
-                <a class="repro-card" href="reproduce/OPGD/opgd.html" style="--accent:#6c3483; --accent-soft:#f2e9f5;">
-                    <div class="repro-media has-fig">
-                        <img src="assets/images/repro-opgd.png" alt="" loading="lazy" decoding="async">
-                        <span class="repro-abbr">OPGD</span>
-                    </div>
-                    <div class="repro-body">
-                        <div class="repro-name">最优参数地理探测器</div>
-                        <span class="repro-cta">打开教程 <span class="arrow">&rarr;</span></span>
-                    </div>
-                </a>
+                <!-- OPGD（含在线应用入口） -->
+                <div class="repro-col">
+                    <a class="repro-app" href="app/opgd/" title="打开在线 OPGD 计算器">
+                        <img class="dsi-hex-zoom" src="assets/images/opgd-hex.svg" alt="OPGD hex logo" loading="lazy" decoding="async">
+                        <span><span class="app-name">OPGD 计算器</span><span class="app-sub">最优参数地理探测器</span></span>
+                    </a>
+                    <a class="repro-card" href="reproduce/OPGD/opgd.html" style="--accent:#6c3483; --accent-soft:#f2e9f5;">
+                        <div class="repro-media has-fig">
+                            <img src="assets/images/repro-opgd.png" alt="" loading="lazy" decoding="async">
+                            <span class="repro-abbr">OPGD</span>
+                        </div>
+                        <div class="repro-body">
+                            <div class="repro-name">最优参数地理探测器</div>
+                            <span class="repro-cta">打开教程 <span class="arrow">&rarr;</span></span>
+                        </div>
+                    </a>
+                </div>
 
-                <!-- GC -->
-                <a class="repro-card" href="reproduce/GC/gc.html" style="--accent:#117864; --accent-soft:#e8f6f3;">
-                    <div class="repro-media has-fig">
-                        <img src="assets/images/repro-gc.png" alt="" loading="lazy" decoding="async">
-                        <span class="repro-abbr">GC</span>
-                    </div>
-                    <div class="repro-body">
-                        <div class="repro-name">地理复杂性解释空间误差</div>
-                        <span class="repro-cta">打开教程 <span class="arrow">&rarr;</span></span>
-                    </div>
-                </a>
+                <!-- GC（含在线应用入口） -->
+                <div class="repro-col">
+                    <a class="repro-app" href="app/gc/" title="打开在线 GC 计算器">
+                        <img class="dsi-hex-zoom" src="assets/images/gc-hex.svg" alt="GC hex logo" loading="lazy" decoding="async">
+                        <span><span class="app-name">GC 计算器</span><span class="app-sub">地理复杂性</span></span>
+                    </a>
+                    <a class="repro-card" href="reproduce/GC/gc.html" style="--accent:#117864; --accent-soft:#e8f6f3;">
+                        <div class="repro-media has-fig">
+                            <img src="assets/images/repro-gc.png" alt="" loading="lazy" decoding="async">
+                            <span class="repro-abbr">GC</span>
+                        </div>
+                        <div class="repro-body">
+                            <div class="repro-name">地理复杂性解释空间误差</div>
+                            <span class="repro-cta">打开教程 <span class="arrow">&rarr;</span></span>
+                        </div>
+                    </a>
+                </div>
 
-                <!-- LPI -->
-                <a class="repro-card" href="reproduce/LPI/lpi.html" style="--accent:#b9770e; --accent-soft:#fdf3e2;">
-                    <div class="repro-media has-fig">
-                        <img src="assets/images/repro-lpi.png" alt="" loading="lazy" decoding="async">
-                        <span class="repro-abbr">LPI</span>
-                    </div>
-                    <div class="repro-body">
-                        <div class="repro-name">局部格局交互</div>
-                        <span class="repro-cta">打开教程 <span class="arrow">&rarr;</span></span>
-                    </div>
-                </a>
+                <!-- LISP（含在线应用入口） -->
+                <div class="repro-col">
+                    <a class="repro-app" href="app/lisp/" title="打开在线 LISP 计算器">
+                        <img class="dsi-hex-zoom" src="assets/images/lisp-hex.svg" alt="LISP hex logo" loading="lazy" decoding="async">
+                        <span><span class="app-name">LISP 计算器</span><span class="app-sub">局部分层力指标</span></span>
+                    </a>
+                    <a class="repro-card" href="reproduce/LISP/lisp.html" style="--accent:#b9770e; --accent-soft:#fdf3e2;">
+                        <div class="repro-media has-fig">
+                            <img src="assets/images/repro-lisp.png" alt="" loading="lazy" decoding="async">
+                            <span class="repro-abbr">LISP</span>
+                        </div>
+                        <div class="repro-body">
+                            <div class="repro-name">局部分层力指标</div>
+                            <span class="repro-cta">打开教程 <span class="arrow">&rarr;</span></span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- DSI（含在线应用入口） -->
+                <div class="repro-col">
+                    <a class="repro-app" href="app/dsi/" title="打开在线 DSI 计算器">
+                        <img class="dsi-hex-zoom" src="assets/images/dsi-hex.svg" alt="DSI hex logo" loading="lazy" decoding="async">
+                        <span><span class="app-name">DSI 计算器</span><span class="app-sub">空间可解释度</span></span>
+                    </a>
+                    <a class="repro-card" href="reproduce/DSI/dsi.html" style="--accent:#1a5276; --accent-soft:#eaf2f8;">
+                        <div class="repro-media has-fig">
+                            <img src="assets/images/repro-dsi.png" alt="" loading="lazy" decoding="async">
+                            <span class="repro-abbr">DSI</span>
+                        </div>
+                        <div class="repro-body">
+                            <div class="repro-name">空间可解释度</div>
+                            <span class="repro-cta">打开教程 <span class="arrow">&rarr;</span></span>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="repro-grid">
 
                 <!-- LPA -->
                 <a class="repro-card" href="reproduce/LPA/lpa.html" style="--accent:#4a569d; --accent-soft:#eceef7;">
@@ -535,25 +582,6 @@
                     </div>
                     <div class="repro-body">
                         <div class="repro-name">空间异常值解释异质性</div>
-                        <span class="repro-cta">打开教程 <span class="arrow">&rarr;</span></span>
-                    </div>
-                </a>
-
-                <!-- DSI -->
-                <a class="repro-card" href="reproduce/DSI/dsi.html" style="--accent:#1a5276; --accent-soft:#eaf2f8;">
-                    <div class="repro-media has-fig">
-                        <img src="assets/images/repro-dsi.png" alt="" loading="lazy" decoding="async">
-                        <span class="dsi-hex-zoom" role="link" tabindex="0" aria-label="打开在线 DSI 计算器"
-                              title="在线 DSI 计算器"
-                              style="position:absolute; top:7px; left:7px; width:34px; z-index:2; cursor:pointer; line-height:0;"
-                              onclick="event.preventDefault(); event.stopPropagation(); window.location.href='app/dsi/';"
-                              onkeydown="if(event.key==='Enter'){event.preventDefault(); event.stopPropagation(); window.location.href='app/dsi/';}">
-                            <img src="assets/images/dsi-hex.svg" alt="" style="width:100%; height:auto; display:block;" loading="lazy" decoding="async">
-                        </span>
-                        <span class="repro-abbr">DSI</span>
-                    </div>
-                    <div class="repro-body">
-                        <div class="repro-name">空间可解释度</div>
                         <span class="repro-cta">打开教程 <span class="arrow">&rarr;</span></span>
                     </div>
                 </a>
