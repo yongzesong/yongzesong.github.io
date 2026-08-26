@@ -1,0 +1,2457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reproducing Geographically Optimal Similarity — Step-by-Step Guide</title>
+<meta name="description" content="Step-by-step guide to reproducing the geographically optimal similarity (GOS) model in R with the geosimilarity package: characterise the geographical configuration, search for the optimal similarity threshold, predict, and map the prediction uncertainty.">
+<link rel="canonical" href="https://yongzesong.com/reproduce/GOS/gos.html">
+<link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../../assets/images/apple-touch-icon.png">
+<style>
+:root{
+  --accent:#b03a2e;
+  --accent-2:#2166AC;
+  --accent-soft:#fbeeec;
+  --bg:#ffffff;
+  --fg:#1a1d21;
+  --muted:#5a626b;
+  --line:#e6e8eb;
+  --side-bg:#fbfcfd;
+  --code-bg:#f6f8fa;
+  --code-fg:#24292e;
+  --nav-fg:#495057;
+  --nav-l2:#6c757d;
+  --nav-active:#2761e3;
+  --nav-active-bg:#eef4ff;
+  --nav-hover:#eef0f2;
+  --sidew:290px;
+  --rightw:var(--sidew);
+  --maxw:880px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+[data-theme=dark]{
+  --bg:#0f1216;
+  --fg:#e6e8eb;
+  --muted:#9aa4af;
+  --line:#242a31;
+  --side-bg:#0c1014;
+  --code-bg:#161b22;
+  --code-fg:#d1d7de;
+  --accent-soft:#2a1512;
+  --nav-fg:#b4bcc4;
+  --nav-l2:#8b939c;
+  --nav-active:#6ea8fe;
+  --nav-active-bg:#15202f;
+  --nav-hover:#171c22;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+[data-theme=dark] a{color:#e08a7c}
+code{
+  font-family:var(--mono);
+  font-size:.88em;
+  background:var(--code-bg);
+  color:var(--code-fg);
+  padding:.1em .35em;
+  border-radius:4px;
+}
+
+/* Sidebar: LISP-GC navigation pattern, SOH dark-mode behavior. */
+#menu-btn{
+  display:none;
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:60;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 11px;
+  font-size:1.05rem;
+  cursor:pointer;
+  color:var(--fg);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+#sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:var(--sidew);
+  overflow-y:auto;
+  background:var(--side-bg);
+  border-right:1px solid var(--line);
+  padding:22px 18px 40px;
+  z-index:50;
+}
+#sidebar .back-to-site{
+  display:inline-block;
+  font-size:.78rem;
+  color:var(--muted);
+  text-decoration:none;
+  margin-bottom:10px;
+  padding:3px 8px;
+  border:1px solid var(--line);
+  border-radius:5px;
+}
+#sidebar .back-to-site:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+}
+[data-theme=dark] #sidebar .back-to-site:hover{color:#e08a7c;border-color:#e08a7c}
+#sidebar .brand{
+  font-size:1.06rem;
+  font-weight:700;
+  color:var(--fg);
+  line-height:1.35;
+  margin-bottom:4px;
+}
+#sidebar .brand-sub{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+#toc-filter{
+  width:100%;
+  padding:6px 10px;
+  font-size:.85rem;
+  border:1px solid var(--line);
+  border-radius:6px;
+  margin-bottom:14px;
+  outline:none;
+  background:var(--bg);
+  color:var(--fg);
+}
+#toc-filter:focus{border-color:var(--nav-active)}
+#toc a{
+  display:block;
+  padding:4px 8px;
+  font-size:.88rem;
+  color:var(--nav-fg);
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  line-height:1.35;
+  margin:1px 0;
+}
+#toc a.l2{
+  padding-left:22px;
+  font-size:.82rem;
+  color:var(--nav-l2);
+}
+#toc a:hover{
+  background:var(--nav-hover);
+  text-decoration:none;
+}
+#toc a.active{
+  color:var(--nav-active);
+  border-left-color:var(--nav-active);
+  background:var(--nav-active-bg);
+  font-weight:600;
+}
+.side-foot{
+  padding:16px 8px 0;
+  margin-top:14px;
+  border-top:1px solid var(--line);
+}
+.themebtn{
+  font:inherit;
+  font-size:.82rem;
+  cursor:pointer;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:5px 10px;
+  color:var(--muted);
+}
+.themebtn:hover{color:var(--fg)}
+
+.gc-hex-zoom{transition:transform .15s ease}
+.gc-hex-zoom:hover{transform:scale(1.12)}
+
+/* Hero and content. */
+.hero{
+  border-bottom:1px solid var(--line);
+  padding:34px 40px 26px;
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  background:var(--bg);
+}
+.hero h1{
+  margin:0 0 6px;
+  font-size:1.9rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  color:var(--fg);
+}
+.hero .sub{
+  color:var(--muted);
+  font-size:1.05rem;
+}
+.cite-lead{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--fg);
+  margin-top:16px;
+}
+.cite{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:12px;
+}
+.cite div+div{margin-top:4px}
+.dlbtn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding:9px 18px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  font-size:.92rem;
+  border-radius:8px;
+}
+.dlbtn:hover{filter:brightness(1.12);text-decoration:none}
+[data-theme=dark] .dlbtn{color:#fff}
+.dlnote{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* Lab director card adapted from lab.html, with template typography and colours. */
+.director-card{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  margin:18px 0 4px;
+  padding:16px;
+  background:var(--side-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+.director-card img{
+  width:110px;
+  min-width:110px;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:50%;
+  background:#fff;
+}
+.director-info h3{
+  font-size:1.16rem;
+  line-height:1.25;
+  margin:0 0 4px;
+}
+.director-info p{
+  font-size:.82rem;
+  line-height:1.5;
+  margin:2px 0;
+  color:var(--muted);
+}
+.director-info a{
+  font-size:.82rem;
+  font-weight:600;
+}
+
+/* Fixed right rail for related reproducible-model tutorials. */
+.related-rail{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  width:var(--rightw);
+  overflow-y:auto;
+  z-index:40;
+  padding:22px 18px 40px;
+  border-left:1px solid var(--line);
+  background:var(--side-bg);
+}
+.related-rail .rail-title{
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1.35;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.related-rail a{
+  display:block;
+  padding:4px 8px;
+  margin:1px 0;
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  color:var(--nav-fg);
+  font-size:.88rem;
+  line-height:1.35;
+}
+.related-rail a:hover{
+  text-decoration:none;
+  background:var(--nav-hover);
+}
+.related-rail a.current{
+  color:var(--nav-active);
+  background:var(--nav-active-bg);
+  border-left-color:var(--nav-active);
+  font-weight:600;
+}
+.related-rail .rail-note{
+  color:var(--muted);
+  font-size:.76rem;
+  line-height:1.45;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+main{
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  padding:26px 40px 90px;
+}
+section{padding-top:4px}
+h2{
+  font-size:1.5rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  margin:48px 0 14px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+  color:var(--fg);
+}
+section:first-of-type h2{margin-top:20px}
+h3{
+  font-size:1.16rem;
+  font-weight:600;
+  margin:30px 0 10px;
+  letter-spacing:-.005em;
+  color:var(--fg);
+}
+h4{
+  font-size:1rem;
+  font-weight:600;
+  margin:20px 0 8px;
+  color:var(--fg);
+}
+p{margin:.7em 0}
+ul,ol{
+  margin:.6em 0;
+  padding-left:1.3em;
+}
+li{margin:.28em 0}
+
+/* Reusable content blocks. */
+.callout{
+  border:1px solid var(--line);
+  border-left-width:4px;
+  border-radius:8px;
+  padding:12px 16px;
+  margin:1.2em 0;
+  background:var(--side-bg);
+}
+.callout-h{
+  font-weight:700;
+  font-size:.92rem;
+  margin-bottom:2px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.callout-i{font-size:1rem}
+.callout-b p{margin:.4em 0}
+.callout-b ul{margin:.4em 0}
+.c-interpret{border-left-color:var(--accent);background:var(--accent-soft)}
+.c-tip{border-left-color:#178a3c}
+.c-warn{border-left-color:#d98a00}
+.c-repro{border-left-color:var(--accent-2)}
+.c-note{border-left-color:#8b939c}
+
+.codewrap{
+  position:relative;
+  margin:1.1em 0;
+}
+.code-label{
+  position:absolute;
+  top:-9px;
+  left:12px;
+  font-size:.7rem;
+  font-family:var(--mono);
+  background:var(--accent);
+  color:#fff;
+  padding:1px 8px;
+  border-radius:4px;
+  letter-spacing:.02em;
+}
+.copybtn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  font:inherit;
+  font-size:.74rem;
+  cursor:pointer;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:3px 9px;
+  color:var(--muted);
+  opacity:.85;
+  transition:.15s;
+}
+.copybtn:hover{
+  color:var(--fg);
+  opacity:1;
+  border-color:var(--accent);
+}
+.copybtn.ok{
+  color:#178a3c;
+  border-color:#178a3c;
+}
+pre.code{
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px;
+  overflow-x:auto;
+  margin:0;
+  font-family:var(--mono);
+  font-size:.83rem;
+  line-height:1.5;
+}
+pre.code code{
+  background:none;
+  padding:0;
+  color:var(--code-fg);
+  white-space:pre;
+}
+.console{
+  background:#22262b;
+  color:#d8dee4;
+  border-radius:8px;
+  padding:12px 15px;
+  margin:14px 0;
+  font-family:var(--mono);
+  font-size:.78rem;
+  line-height:1.5;
+  overflow:auto;
+  max-height:320px;
+  white-space:pre;
+}
+
+.tablewrap{
+  margin:1.2em 0;
+  overflow-x:auto;
+}
+.tablewrap table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:.86rem;
+}
+.tablewrap th{
+  text-align:left;
+  border-bottom:2px solid var(--fg);
+  padding:7px 10px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.tablewrap td{
+  border-bottom:1px solid var(--line);
+  padding:6px 10px;
+  vertical-align:top;
+}
+.tablewrap tbody tr:hover{background:rgba(127,127,127,.05)}
+.tablewrap figcaption{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:8px;
+}
+.tablewrap.compact td,
+.tablewrap.compact th{
+  padding:4px 8px;
+  font-size:.8rem;
+}
+table code{font-size:.82em}
+tr.hl td{background:var(--accent-soft)}
+
+figure.fig{
+  margin:1.2em 0;
+  text-align:center;
+}
+figure.fig img{
+  max-width:100%;
+  height:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+figure.fig figcaption{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:8px;
+  text-align:left;
+}
+.credit{
+  display:block;
+  font-style:italic;
+  margin-top:2px;
+}
+.figpair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin:1.2em 0;
+}
+.figpair figure{margin:0}
+.figpair img{
+  max-width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+.figpair figcaption{
+  font-size:.78rem;
+  color:var(--muted);
+  margin-top:6px;
+  text-align:left;
+}
+.pairtag{
+  font-size:.72rem;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:5px;
+  margin-bottom:6px;
+  display:inline-block;
+}
+.tag-demo{
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+[data-theme=dark] .tag-demo{color:#e08a7c}
+.tag-paper{
+  background:#eef3f8;
+  color:var(--accent-2);
+}
+[data-theme=dark] .tag-paper{background:#14202e;color:#8ab4dd}
+.pairnote{
+  font-size:.82rem;
+  color:var(--muted);
+  border-left:3px solid var(--line);
+  padding-left:12px;
+  margin:.2em 0 1em;
+}
+
+.flow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:8px;
+  margin:16px 0;
+}
+.flow .chip{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 12px;
+  background:var(--side-bg);
+  font-size:.8rem;
+  line-height:1.4;
+  flex:1;
+  min-width:135px;
+}
+.flow .chip b{
+  display:block;
+  font-size:.9rem;
+  color:var(--fg);
+}
+.flow .chip.hl{
+  border-color:var(--nav-active);
+  background:var(--nav-active-bg);
+}
+.flow .arrow{
+  align-self:center;
+  color:var(--muted);
+  font-size:1.1rem;
+}
+.mini-badge{
+  display:inline-block;
+  font-size:.68rem;
+  font-weight:600;
+  border-radius:4px;
+  padding:1px 6px;
+  margin-left:4px;
+  vertical-align:1px;
+  background:#eceff1;
+  color:#6c757d;
+}
+.mini-badge.oa{
+  background:#d8f3e1;
+  color:#1c7a43;
+}
+
+.step-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:1.4em 0 1.8em;
+  overflow:hidden;
+  background:var(--bg);
+}
+.step-card-h{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  background:var(--side-bg);
+}
+.step-label{
+  display:inline-block;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+[data-theme=dark] .step-label{color:#e08a7c}
+.step-card-h h4{
+  margin:0;
+  font-size:1.05rem;
+}
+.step-card-b{padding:14px 16px 16px}
+.step-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+.kv{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  background:var(--side-bg);
+}
+.kv .k{
+  font-size:.72rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+.kv .v{
+  font-size:.9rem;
+  color:var(--fg);
+}
+
+#lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(15,18,22,.88);
+  display:none;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  cursor:zoom-out;
+  padding:30px;
+}
+#lightbox img{
+  max-width:96%;
+  max-height:96%;
+  background:#fff;
+  border-radius:6px;
+  padding:10px;
+}
+#lightbox.open{display:flex}
+
+@media (max-width:1000px){
+  #sidebar{
+    transform:translateX(-100%);
+    transition:transform .2s;
+  }
+  #sidebar.open{
+    transform:none;
+    box-shadow:0 0 30px rgba(0,0,0,.2);
+  }
+  #menu-btn{display:block}
+  .hero,
+  main{
+    margin-left:0;
+    margin-right:0;
+  }
+  .hero{padding:60px 20px 22px}
+  main{
+    padding:20px 20px 70px;
+    max-width:none;
+  }
+  .director-card{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+  .director-card img{
+    width:90px;
+    height:90px;
+    align-self:center;
+  }
+  .figpair{grid-template-columns:1fr}
+  .related-rail{display:none}
+}
+@media print{
+  #sidebar,
+  #menu-btn,
+  .copybtn,
+  #lightbox{display:none}
+  .hero,
+  main{margin-left:0}
+}
+
+/* --- Page additions shared with the LPI tutorial --- */
+.figpair.triple{grid-template-columns:1fr 1fr 1fr}
+.tablewrap td.num,.tablewrap th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre.code .cm{color:#7f8896;font-style:italic}
+pre.code .st{color:#20794d}
+pre.code .kw{color:#8f3faf;font-weight:600}
+[data-theme=dark] pre.code .cm{color:#8b949e}
+[data-theme=dark] pre.code .st{color:#7ee2a8}
+[data-theme=dark] pre.code .kw{color:#d2a8ff}
+@media (max-width:1000px){.figpair.triple{grid-template-columns:1fr}}
+
+/* Half-width figures (method flowchart, single-map demo panels). */
+figure.fig.half img{max-width:50%}
+figure.fig.two-thirds img{max-width:68%}
+@media (max-width:1000px){
+  figure.fig.half img,
+  figure.fig.two-thirds img{max-width:100%}
+}
+
+/* Equation display blocks (DSI page): serif-style formula rows. */
+.eq{
+  font-size:1.02rem;
+  margin:.6em 0;
+  padding:10px 14px;
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+.eq .eqn{
+  float:right;
+  color:var(--muted);
+  font-size:.85rem;
+  padding-left:18px;
+}
+
+/* Collapsible code boxes: long blocks start collapsed to a ~3-line preview.
+   The expand/collapse control is a full-height accent strip on the LEFT edge of
+   the box — clickable at any scroll position. */
+.codewrap.collapsed pre.code{max-height:78px;overflow:hidden}
+.codewrap.has-fold pre.code{padding-left:46px}
+.codewrap.has-fold .code-label{left:44px}
+.foldbtn{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  width:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:none;
+  border-left:1px solid var(--line);   /* rotated 180deg: renders on the visual right, against the code */
+  border-radius:0 10px 10px 0;         /* rotated 180deg: rounds the visual left corners */
+  background:var(--code-bg);
+  color:var(--muted);
+  font:inherit;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  cursor:pointer;
+}
+.foldbtn:hover{color:var(--fg);background:var(--nav-hover)}
+@media print{
+  .foldbtn{display:none}
+  .codewrap.collapsed pre.code{max-height:none}
+  .codewrap.has-fold pre.code{padding-left:16px}
+}
+
+/* Featured figure above section 1. Wider than the GC template's 50% because
+   this banner is a 2.6:1 strip rather than a squarish panel. */
+figure.featured-fig{width:84%;margin:0 auto 1.6em;text-align:center;}
+figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff;}
+figure.featured-fig figcaption{font-size:.8rem;color:var(--muted);margin-top:8px;text-align:left;}
+@media (max-width:1000px){figure.featured-fig{width:100%;}}
+</style>
+</head>
+<body>
+
+<button id="menu-btn" aria-label="Menu">☰</button>
+
+<aside id="sidebar">
+  <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
+  <div class="brand">Reproducing GOS</div>
+  <div class="brand-sub">Geographically optimal similarity</div>
+  <input id="toc-filter" type="text" placeholder="Filter sections...">
+  <nav id="toc">
+    <a href="#overview">1&nbsp;Overview &amp; Scope</a>
+    <a class="l2" href="#core-idea">1.1&nbsp;Core idea</a>
+    <a class="l2" href="#method-logic">1.2&nbsp;Method logic (Eq.&nbsp;1–12)</a>
+    <a class="l2" href="#reproduction-scope">1.3&nbsp;Reproduction scope</a>
+    <a href="#setup">2&nbsp;Setup &amp; Data</a>
+    <a class="l2" href="#environment">2.1&nbsp;Environment</a>
+    <a class="l2" href="#structure-config">2.2&nbsp;Structure &amp; config</a>
+    <a class="l2" href="#data-contract">2.3&nbsp;Data contract</a>
+    <a href="#pipeline">3&nbsp;Pipeline &amp; Results</a>
+    <a class="l2" href="#pipeline-execution">3.1&nbsp;Pipeline execution</a>
+    <a class="l2" href="#core-steps">3.2&nbsp;Core analytical steps</a>
+    <a class="l2" href="#step-1">·&ensp;Step&nbsp;1&nbsp;Prepare the response</a>
+    <a class="l2" href="#step-2">·&ensp;Step&nbsp;2&nbsp;Characterise configuration</a>
+    <a class="l2" href="#step-3">·&ensp;Step&nbsp;3&nbsp;Optimal threshold λ</a>
+    <a class="l2" href="#step-4">·&ensp;Step&nbsp;4&nbsp;Predict &amp; map uncertainty</a>
+    <a class="l2" href="#step-5">·&ensp;Step&nbsp;5&nbsp;BCS contrast</a>
+    <a class="l2" href="#step-6">·&ensp;Step&nbsp;6&nbsp;Accuracy comparison</a>
+    <a class="l2" href="#interpretation">3.3&nbsp;Reading the results together</a>
+    <a class="l2" href="#validation">3.4&nbsp;Validation</a>
+    <a href="#adaptation">4&nbsp;Adaptation &amp; Reproducibility</a>
+    <a class="l2" href="#port-domain">4.1&nbsp;Port to your domain</a>
+    <a class="l2" href="#write-paper">4.2&nbsp;Write the paper</a>
+    <a class="l2" href="#repro-package">4.3&nbsp;Reproducibility package</a>
+  </nav>
+  <div class="side-foot">
+    <button id="themebtn" class="themebtn">Dark mode</button>
+  </div>
+</aside>
+
+<header class="hero">
+  <a class="gc-hex-zoom" href="../../app/gos/" title="Open the online GOS calculator"
+     style="float:right; margin:0 0 12px 18px; line-height:0;"><img
+     src="../../assets/images/gos-hex.svg" alt="GOS hex logo"
+     width="88" height="97" loading="lazy" decoding="async"></a>
+  <h1>Reproducing Geographically Optimal Similarity</h1>
+  <div class="sub">A complete walkthrough of GOS — a spatial prediction model built on the
+  geographical similarity principle, which borrows values from the observations whose
+  <i>geographical configuration</i> most resembles the unknown location, and from no others.
+  From the packaged Leonora trace-element data to a manuscript, with every number regenerable
+  by one command.</div>
+  <div class="director-card">
+    <img src="../../assets/images/yongze-song.png" alt="Yongze Song">
+    <div class="director-info">
+      <h3>Yongze Song</h3>
+      <p>Associate Professor, Curtin University</p>
+      <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.2) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.8)</p>
+      <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
+    </div>
+  </div>
+  <a class="dlbtn" href="gos-code-and-data.zip" download>⬇ Download code &amp; results (zip, 46&nbsp;KB)</a>
+  <div class="dlnote"><code>R/</code> pipeline scripts · <code>config/project-config.R</code> ·
+  <code>run-all.R</code> · <code>tests/</code> · <code>results/</code> · <code>tables/</code> ·
+  <code>env/</code> · a <code>README.md</code>. Unzip and run <code>Rscript run-all.R test</code>
+  from the <code>GOS/</code> folder root. The input data are <b>not</b> in the archive — both
+  tables ship inside the <code>geosimilarity</code> package and step&nbsp;1 writes CSV copies of
+  them for you.</div>
+  <a class="dlbtn" href="../../app/gos/">🧮 Open the online GOS calculator — no installation, runs in your browser</a>
+  <div class="dlnote">Upload a sample CSV (and, optionally, a prediction grid), pick the response
+  and the covariates, and the app runs the same CRAN <code>geosimilarity</code> package compiled to
+  WebAssembly: the κ search, the GOS prediction, the uncertainty maps and an MLR/BCS/GOS accuracy
+  table, all downloadable as PNG, PDF and CSV. Nothing is uploaded to a server — the computation
+  happens on your device.</div>
+  <div class="cite-lead">To cite the GOS model and its R package and codes in publications, please use:</div>
+  <div class="cite">
+    <div>Song&nbsp;Y (2023). Geographically Optimal Similarity.
+    <i>Mathematical Geosciences</i> 55:295–320.
+    <a href="https://doi.org/10.1007/s11004-022-10036-8">doi</a> ·
+    <a href="../../pdf/GOS-song2022.pdf">PDF</a></div>
+    <div>Song&nbsp;Y, Lyu&nbsp;W. <i>geosimilarity: Geographically Optimal Similarity</i>.
+    R package.
+    <a href="https://cran.r-project.org/package=geosimilarity">CRAN</a> ·
+    <a href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html">vignette</a></div>
+  </div>
+</header>
+
+<aside class="related-rail" aria-label="Related tutorials for reproducible models">
+  <div class="rail-title">Related tutorials for reproducible models</div>
+  <a href="../../methods.html">Geospatial Theories and Methods</a>
+  <a href="../OPGD/opgd.html">1 &middot; OPGD &mdash; Optimal Parameters Geographical Detector</a>
+  <a href="../GC/gc.html">2 &middot; GC &mdash; Geocomplexity</a>
+  <a href="../LISP/lisp.html">3 &middot; LISP &mdash; Local Indicator of Stratified Power</a>
+  <a href="../LPA/lpa.html">4 &middot; LPA &mdash; Local Pathways of Association</a>
+  <a href="../SDA/sda.html">5 &middot; SDA &mdash; Second Dimension of Spatial Association</a>
+  <a href="../SOH/soh.html">6 &middot; SOH &mdash; Second-dimension Outlier-driven Heterogeneity</a>
+  <a href="../DSI/dsi.html">7 &middot; DSI &mdash; Degree of Spatial Interpretability</a>
+  <a href="../STOR/stor.html">8 &middot; STOR &mdash; Spatial Trade-Off Relation</a>
+  <a href="../SDM/sdm.html">9 &middot; SDM &mdash; Spatial Delta Model for Accessibility</a>
+  <a class="current" href="gos.html">10 &middot; GOS &mdash; Geographically Optimal Similarity</a>
+  <a href="../SRK/srk.html">11 &middot; SRK &mdash; Singularity Regression Kriging</a>
+  <div class="rail-note">GOS is the only model in this series that predicts a value at unsampled
+  locations without ever using the coordinates: similarity is computed from covariates alone.</div>
+</aside>
+
+<main>
+
+<figure class="featured-fig">
+  <img src="assets/featured-gos.jpg" alt="Cross-validation RMSE against kappa for Cu, and the GOS prediction and uncertainty maps of the study area" decoding="async">
+  <figcaption>The whole method in one strip, from the published paper. Left: cross-validation
+  RMSE against the percentage threshold κ for Cu — steep fall, a minimum at λ = 0.05, then a slow
+  rise, which is the finding that using <i>fewer</i> but more similar observations predicts better.
+  Right: the GOS prediction and its uncertainty at ζ = 0.9 over the Leonora study area. Sections 3.2
+  and 3.4 rebuild all three panels for Zn from the packaged data.
+  <span class="credit">Song (2023), Mathematical Geosciences 55:295–320 (open access).</span></figcaption>
+</figure>
+
+<section id="overview">
+  <h2>1&nbsp;Method Overview &amp; Reproduction Scope</h2>
+
+  <h3 id="core-idea">1.1&nbsp;Core Idea</h3>
+  <p>Most spatial prediction starts from distance. Kriging borrows from nearby samples; a
+  regression borrows from a fitted equation. The <b>geographical similarity principle</b> — the
+  Third Law of Geography — borrows from somewhere else entirely: <i>similar geographical
+  configurations produce similar values, wherever they happen to be</i>. Two sites 60&nbsp;km apart
+  with the same terrain, vegetation, soil chemistry and distance to mining can inform each other
+  better than two adjacent sites that differ in all of them.</p>
+  <p>A geographical configuration is just the vector of covariate values at a location. Similarity
+  compares two such vectors directly — there is no regression coefficient anywhere in the model,
+  and no explicit relationship between response and covariates is ever estimated. That is the
+  point: the method describes <i>the comprehensive degree of approximation of a geographical
+  structure</i> instead of an explicit relationship between variables.</p>
+  <p>The earlier <b>basic configuration similarity</b> (BCS) model applies that principle by
+  averaging over <i>every</i> observation, weighted by similarity. <b>GOS</b> adds one idea and one
+  parameter: at each unknown location, keep only the most similar κ share of observations and
+  discard the rest. Observations with low similarity are not neutral — they are noise dressed up as
+  evidence, and averaging them in drags every prediction towards the study-area mean.</p>
+  <ul>
+    <li><b>Research problem:</b> similarity-based prediction uses all samples at every location,
+        so large data sets cost more to compute and predict <i>worse</i>, because unrelated
+        observations dilute the informative ones.</li>
+    <li><b>One-line contribution:</b> a cross-validated threshold λ that selects, at each unknown
+        location, the small share of observations with optimal similarity — plus an uncertainty
+        measure read straight off the retained similarities.</li>
+    <li><b>Why it matters here:</b> on the packaged Zn data, λ&nbsp;=&nbsp;<b>0.08</b> — 8&nbsp;% of
+        885 observations, about 71 samples per cell — beats using all of them on MAE in
+        <b>50 of 50</b> cross-validation splits, and lowers mean prediction uncertainty at
+        ζ&nbsp;=&nbsp;0.9 by <b>67&nbsp;%</b>.</li>
+  </ul>
+  <figure class="fig">
+    <span class="pairtag tag-paper">Published reference · GOS</span>
+    <img src="assets/paper-gos-fig1.jpg" alt="Schematic overview of the geographically optimal similarity model, Song 2023 Figure 1">
+    <figcaption>Paper Fig. 1 — the four stages this page follows. <b>Stage 1</b> selects covariates
+    and turns them into a geographical configuration at every location, sampled and unsampled.
+    <b>Stage 2</b> computes a per-covariate similarity <i>E</i>, composes them into a single
+    sample-scale similarity <i>S</i> with the operator <i>P</i>, and collects one similarity vector
+    <b>S</b> per unknown location. <b>Stage 3</b> finds the threshold λ that minimises
+    cross-validation error and keeps only the observations above it — the red dots in the bottom
+    right panel. <b>Stage 4</b> predicts and maps uncertainty. Note that no arrow in this diagram
+    carries a distance.
+    <span class="credit">Song (2023), Mathematical Geosciences 55:295–320 (open access).</span></figcaption>
+  </figure>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Reader anchor</div>
+    <div class="callout-b">
+      <p>Configuration = the covariate vector at a location → similarity = how closely two
+      configurations match, composed with a minimum operator → BCS averages over all of them →
+      GOS keeps only the best κ share, with κ chosen by cross-validation → and the similarity of
+      what was kept <i>is</i> the uncertainty. Everything on this page serves that line.</p>
+    </div>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>What you need</div>
+    <div class="callout-b">
+      <p>R 4.1+ and one CRAN package, <code>geosimilarity</code>. Nothing else: the figures are
+      base graphics, the tables are written by hand-rolled helpers, and both input tables ship
+      inside the package, so the pipeline never touches the network. A full run takes
+      <b>107&nbsp;seconds</b> on one core — almost all of it cross-validation.</p>
+    </div>
+  </div>
+
+  <h3 id="method-logic">1.2&nbsp;Method Logic</h3>
+  <p>GOS runs in four stages, and each stage is a small number of equations. Equation numbers below
+  are the paper's, and every one of them is exercised by the pipeline in §3.</p>
+  <div class="flow">
+    <div class="chip"><b>Stage 1</b>Characterise the configuration<br>Eq.&nbsp;1 · correlation + VIF</div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>Stage 2</b>Assess similarity<br>Eq.&nbsp;2–6 · <code>gos(kappa = 1)</code> = BCS</div>
+    <div class="arrow">→</div>
+    <div class="chip hl"><b>Stage 3</b>Determine optimal similarity<br>Eq.&nbsp;7–10 · <code>gos_bestkappa()</code></div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>Stage 4</b>Predict and quantify uncertainty<br>Eq.&nbsp;11–12 · <code>gos(kappa = λ)</code></div>
+  </div>
+
+  <h4>Stage 1 — characterising the geographical configuration (Eq. 1)</h4>
+  <p>Two screens, in order. First keep the covariates significantly correlated with the response;
+  then drop the most collinear one repeatedly until every variance inflation factor is under 4,
+  the paper's conservative threshold. What survives is the configuration:</p>
+  <div class="eq"><span class="eqn">(1)</span><b>e</b>&nbsp;=&nbsp;{<i>e<sub>i</sub></i>},&emsp;<i>i</i>&nbsp;=&nbsp;1,&nbsp;…,&nbsp;<i>p</i></div>
+  <p>where <i>e<sub>i</sub></i> is the value of covariate <i>X<sub>i</sub></i> at a given location.
+  The configuration must be computable at the unsampled locations too, which is what rules out
+  covariates you only measured at the samples.</p>
+
+  <h4>Stage 2 — assessing similarity (Eq. 2–6)</h4>
+  <p>For an unknown location <i>v<sub>β</sub></i> and an observation <i>u<sub>α</sub></i>, each
+  covariate contributes its own Gaussian similarity, and the covariate-scale similarities are
+  composed into one number:</p>
+  <div class="eq"><span class="eqn">(2)</span><i>S</i>(<i>u<sub>α</sub></i>,&nbsp;<i>v<sub>β</sub></i>)&nbsp;=&nbsp;<i>P</i>{<i>E<sub>i</sub></i>(<i>e<sub>i</sub></i>(<i>u<sub>α</sub></i>),&nbsp;<i>e<sub>i</sub></i>(<i>v<sub>β</sub></i>))}</div>
+  <div class="eq"><span class="eqn">(3)</span><i>E<sub>i</sub></i>&nbsp;=&nbsp;exp[&nbsp;−(<i>e<sub>i</sub></i>(<i>u<sub>α</sub></i>)&nbsp;−&nbsp;<i>e<sub>i</sub></i>(<i>v<sub>β</sub></i>))²&nbsp;/&nbsp;2(σ²/δ(<i>v<sub>β</sub></i>))²&nbsp;]</div>
+  <div class="eq"><span class="eqn">(4)</span>δ(<i>u<sub>α</sub></i>,&nbsp;<b>v</b>)&nbsp;=&nbsp;√[&nbsp;Σ<sub>β</sub>&nbsp;(<i>e</i>(<i>u<sub>α</sub></i>)&nbsp;−&nbsp;<i>e</i>(<i>v<sub>β</sub></i>))²&nbsp;/&nbsp;<i>n</i>&nbsp;]</div>
+  <p>Three details in there decide everything downstream. <b>σ</b> is the standard deviation of the
+  covariate over the observation <i>and</i> prediction locations together, so the scale is set by
+  the whole study area, not by the samples alone. <b>δ</b> is a root-mean-square deviation that
+  makes the Gaussian bandwidth adaptive rather than fixed. And <b>P is the minimum operator</b> —
+  the paper adopts Zhu et al.'s <code>min</code>, so a single badly matched covariate is enough to
+  make two locations dissimilar no matter how well the others agree. Similarity is a conjunction,
+  not an average.</p>
+  <p>Collecting the similarities of one unknown location against every observation gives a vector
+  (Eq.&nbsp;5), and the similarity-weighted mean of the observed values is the BCS prediction:</p>
+  <div class="eq"><span class="eqn">(6)</span><i>Ẑ</i>(<i>v<sub>β</sub></i>)&nbsp;=&nbsp;Σ<sub>α</sub>&nbsp;<i>S</i>(<i>u<sub>α</sub></i>,&nbsp;<i>v<sub>β</sub></i>)&nbsp;<i>Z</i>(<i>u<sub>α</sub></i>)&nbsp;/&nbsp;Σ<sub>α</sub>&nbsp;<i>S</i>(<i>u<sub>α</sub></i>,&nbsp;<i>v<sub>β</sub></i>)</div>
+
+  <h4>Stage 3 — determining the optimal similarity (Eq. 7–10)</h4>
+  <p>κ is the share of observations retained at each prediction location, defined as one minus the
+  quantile probability τ of the similarity vector:</p>
+  <div class="eq"><span class="eqn">(7)</span>κ&nbsp;=&nbsp;1&nbsp;−&nbsp;τ,&emsp;κ&nbsp;∈&nbsp;(0,&nbsp;1]</div>
+  <p>κ&nbsp;=&nbsp;1 keeps everything and is exactly BCS. For each candidate κ the observations are
+  split 50/50, the held-out values are predicted with Eq.&nbsp;6, and the cross-validation error is
+  recorded; repeating the split many times and taking the minimum gives λ:</p>
+  <div class="eq"><span class="eqn">(8)</span>RMSE&nbsp;=&nbsp;√[&nbsp;(1/<i>n</i>)&nbsp;Σ<sub>j</sub>&nbsp;(<i>Ẑ<sub>j</sub></i>&nbsp;−&nbsp;<i>Z<sub>j</sub></i>)²&nbsp;]</div>
+  <div class="eq"><span class="eqn">(9)</span>λ&nbsp;=&nbsp;arg&nbsp;min<sub>κ</sub>&nbsp;RMSE(κ)</div>
+  <p>The similarity vector is then truncated to the observations above the corresponding similarity
+  threshold <i>S<sub>λ</sub></i> (Eq.&nbsp;10). λ is a property of the data set, not of a location:
+  one number is searched once and used everywhere.</p>
+
+  <h4>Stage 4 — prediction and uncertainty (Eq. 11–12)</h4>
+  <p>The GOS prediction is the same weighted mean as Eq.&nbsp;6, taken over the retained
+  observations only:</p>
+  <div class="eq"><span class="eqn">(11)</span><i>Ẑ</i>(<i>v<sub>β</sub></i>)&nbsp;=&nbsp;Σ<sub>α</sub>&nbsp;<i>S<sub>λ</sub></i>(<i>u<sub>α</sub></i>,&nbsp;<i>v<sub>β</sub></i>)&nbsp;<i>Z<sub>λ</sub></i>(<i>u<sub>α</sub></i>)&nbsp;/&nbsp;Σ<sub>α</sub>&nbsp;<i>S<sub>λ</sub></i>(<i>u<sub>α</sub></i>,&nbsp;<i>v<sub>β</sub></i>)</div>
+  <p>and the uncertainty is one minus a quantile of the retained similarities:</p>
+  <div class="eq"><span class="eqn">(12)</span>Θ(<i>v<sub>β</sub></i>)&nbsp;=&nbsp;1&nbsp;−&nbsp;<i>Q</i>(<i>S<sub>λ</sub></i>(<b>u</b>,&nbsp;<i>v<sub>β</sub></i>),&nbsp;ζ)</div>
+  <p>with ζ&nbsp;∈&nbsp;{0.9, 0.95, 0.99, 0.995, 0.999, 1}. This is the model's most elegant move:
+  the uncertainty needs no error model and no second pass, because <i>the quality of the evidence
+  is already in the similarities</i>. At ζ&nbsp;=&nbsp;1 the expression collapses to
+  1&nbsp;−&nbsp;max(similarity) — "how good is the single best match?" — and at that setting GOS and
+  BCS give identical answers, since truncating the vector never removes its maximum. The pipeline
+  reproduces that identity exactly (§3.2, Step&nbsp;4).</p>
+
+  <figure class="fig two-thirds">
+    <span class="pairtag tag-paper">Published reference · GOS</span>
+    <img src="assets/paper-gos-fig3.jpg" alt="Table 1 and the five-step process of GOS-based spatial prediction of trace elements, Song 2023 Figure 3">
+    <figcaption>Paper Table 1 and Fig. 3 — the case study's five steps: preprocess the trace-element
+    data, build and select the geological variables, collect the natural and social variables,
+    fit and cross-validate GOS against four other models, then predict and evaluate. The tutorial
+    reproduces steps 1, 3, 4 and 5; step 2, the geological variables, is the part the packaged
+    data cannot supply (§1.3). Table 1 above the diagram is the published summary of the raw
+    Cu / Zn / Pb samples that §3.2 Step&nbsp;1 rebuilds for Zn.
+    <span class="credit">Song (2023), Mathematical Geosciences 55:295–320 (open access).</span></figcaption>
+  </figure>
+
+  <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
+  <p>Everything tagged <i>Demo run</i> regenerates from this folder with
+  <code>Rscript run-all.R</code>; everything tagged <i>Published reference</i> is a static image
+  from the article. The demo runs end to end on R&nbsp;4.6.0 with
+  <code>geosimilarity</code>&nbsp;3.9. Three things are worth stating plainly before any number
+  below is quoted.</p>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>What this tutorial does not reproduce</div>
+    <div class="callout-b">
+      <ul>
+        <li><b>The two geological covariates are missing.</b> The paper's Table&nbsp;2 selects nine
+            variables for Zn, and the two strongest are <i>distance to Zn-related lithology</i>
+            (R&nbsp;=&nbsp;−0.428) and <i>distance to Zn-related faults</i>
+            (R&nbsp;=&nbsp;−0.350), both derived from the Surface Geology of Australia. Neither
+            ships with the package. The packaged tables carry only the nine natural and social
+            covariates, of which the strongest here is NDVI at R&nbsp;=&nbsp;−0.398.</li>
+        <li><b>n&nbsp;=&nbsp;894, not 966.</b> The packaged <code>zn</code> table is a subset of the
+            Zn samples behind the published tables.</li>
+        <li><b>Three models, not five.</b> The paper benchmarks GOS against ordinary kriging,
+            multivariate linear regression, regression kriging and BCS. This tutorial compares
+            <b>MLR, BCS and GOS</b> — the three that need no variogram, which keeps the whole
+            pipeline inside <code>geosimilarity</code> and base R. The two kriging rows of the
+            paper's Table&nbsp;3 are not reproduced here at all, and no claim on this page rests
+            on them.</li>
+      </ul>
+      <p>So the published Table&nbsp;3 values do not reproduce digit-for-digit, and this page does
+      not pretend otherwise.</p>
+    </div>
+  </div>
+  <p><b>What does reproduce</b> is the whole GOS estimation path and the qualitative findings: the
+  correlation-and-VIF screen (which lands on exactly the covariate set the package vignette uses),
+  the κ search of Eqs.&nbsp;7–9 and its characteristic curve shape, the Eq.&nbsp;11 prediction over
+  all 13,132 grid cells, the Eq.&nbsp;12 uncertainty at all six ζ levels including the exact
+  GOS&nbsp;=&nbsp;BCS identity at ζ&nbsp;=&nbsp;1, the collapse of BCS predictions towards the mean
+  that GOS avoids, and the accuracy ordering GOS&nbsp;&lt;&nbsp;BCS&nbsp;&lt;&nbsp;MLR on both MAE
+  and RMSE.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Demo template</th><th>Published reference</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data</td>
+            <td>894 Zn samples and a 13,132-cell 1&nbsp;km grid, 9 covariates each
+                (<code>data(zn)</code> and <code>data(grid)</code>, shipped with the package)</td>
+            <td>966 Zn samples and 9 covariates including two geological distances, Leonora mining
+                region, Western Australia</td></tr>
+        <tr><td>Method</td>
+            <td><code>gos()</code>, <code>gos_bestkappa()</code>, <code>removeoutlier()</code> from
+                the author's package</td>
+            <td>Song (2023) §2, Eqs. 1–12</td></tr>
+        <tr><td>Tables</td>
+            <td><code>results/response-summary.csv</code>, <code>variable-selection.csv</code>,
+                <code>kappa-rmse.csv</code>, <code>model-comparison.csv</code> (+ a no-screening
+                variant)</td>
+            <td>paper Tables 1, 2 and 3 (Table 3 partially — MLR, BCS and GOS rows only)</td></tr>
+        <tr><td>Figures</td>
+            <td>fig01–fig06 from <code>R/10 … R/50</code></td>
+            <td>paper Figs 1, 3, 4, 7, 9, 10, 11 embedded as reference images</td></tr>
+        <tr><td>Not attempted</td>
+            <td>—</td>
+            <td>ordinary and regression kriging (Table 3); the geological variable construction
+                (Fig. 5); the local singularity analysis of Eq. 14</td></tr>
+      </tbody>
+    </table>
+    <figcaption>What the template regenerates versus what is shown as published reference.</figcaption>
+  </figure>
+  <h4>How to use this page</h4>
+  <ul>
+    <li><b>To reproduce the demo:</b> run <code>Rscript run-all.R test</code>, then
+        <code>Rscript run-all.R</code>. Every number and figure below regenerates in under two
+        minutes.</li>
+    <li><b>To try GOS without installing anything:</b> the
+        <a href="../../app/gos/">online GOS calculator</a> runs the same CRAN package in your
+        browser, on this same example data or on a CSV of your own.</li>
+    <li><b>To use GOS on your own data:</b> §2.3 gives the data contract — a sample table and a
+        prediction table sharing covariate columns — and §4.1 the porting steps.</li>
+  </ul>
+</section>
+
+<section id="setup">
+  <h2>2&nbsp;Setup, Structure &amp; Data Contract</h2>
+
+  <h3 id="environment">2.1&nbsp;Environment &amp; Dependencies</h3>
+  <p>This is the shortest dependency list in the series. The method is one CRAN package written by
+  the article's author; everything else is base R.</p>
+  <div class="codewrap nofold">
+    <span class="code-label">R console</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># The method, and both input data sets
+install.packages("geosimilarity")</code></pre>
+  </div>
+  <figure class="tablewrap">
+    <table>
+      <thead><tr><th>Package</th><th>Role in the pipeline</th><th>Required?</th></tr></thead>
+      <tbody>
+        <tr><td><code>geosimilarity</code>&nbsp;3.9</td><td><code>gos()</code> for Eqs. 2–6 and 11–12, <code>gos_bestkappa()</code> for Eqs. 7–9, <code>removeoutlier()</code> for the screen, plus the <code>zn</code> and <code>grid</code> data</td><td>yes</td></tr>
+        <tr><td>base R graphics</td><td>all six figures, as PNG at 196&nbsp;dpi and matching vector PDF</td><td>built in</td></tr>
+        <tr><td><code>car</code></td><td>cross-checks the base-R VIFs in step 2 whenever it is installed</td><td>optional — nothing depends on it</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Package roles. VIFs use the identity VIF<sub>i</sub> = 1/(1&nbsp;−&nbsp;R²<sub>i</sub>),
+    which is exactly what <code>car::vif()</code> returns for continuous main effects. That
+    equivalence is not taken on trust: the cross-check was run with <code>car</code> installed and
+    the two agree on all seven selected covariates to within <b>5&nbsp;×&nbsp;10⁻⁵</b>, the rounding
+    of <code>results/variable-selection.csv</code>, and match the values the package vignette
+    reports. The verified pipeline session is recorded in <code>env/session-info.txt</code>:
+    R&nbsp;4.6.0, aarch64-apple-darwin23, seed&nbsp;42, one core.</figcaption>
+  </figure>
+
+  <h3 id="structure-config">2.2&nbsp;Project Structure &amp; Configuration</h3>
+  <p>One entry script runs the five numbered steps, the table builder, or the tests. Each step
+  writes to <code>results/</code>, <code>tables/</code>, <code>figs/</code> or
+  <code>data/derived/</code> and reads what the previous step wrote, so any step can be re-run in
+  isolation after a configuration change.</p>
+  <div class="codewrap">
+    <span class="code-label">folder tree</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>GOS/
+├── gos.html                       # this guide
+├── run-all.R                      # entry point: full run, single steps, tests
+├── assets/                        # figures shown in this guide (web copies)
+├── config/project-config.R        # the ONLY file to edit for a new domain
+├── R/
+│   ├── 00-config.R, 01-helpers.R  # paths, IO, CV splits, base-R figure helpers
+│   ├── 10-prepare-data.R          # load zn + grid, log-transform, outlier screen
+│   ├── 20-select-variables.R      # correlation + VIF  ->  the configuration (Eq. 1)
+│   ├── 30-best-kappa.R            # the kappa search   ->  lambda (Eqs. 7-9)
+│   ├── 40-gos-prediction.R        # grid prediction + uncertainty (Eqs. 11-12)
+│   ├── 50-model-comparison.R      # MLR / BCS / GOS on identical CV splits
+│   └── 90-tables.R                # LaTeX tables + session info
+├── data/                          # written by step 10: verbatim CSV copies of the
+│                                  #   packaged zn and grid, plus provenance.md
+├── tests/                         # test-01 method properties; test-02 results regenerate
+├── env/                           # requirements.md, runtimes.csv, session-info.txt
+└── results/  tables/  figs/       # generated output, never hand-edited</code></pre>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>Where the data come from</div>
+    <div class="callout-b">
+      <p>There is no download step and no data file to fetch. <code>R/10-prepare-data.R</code> calls
+      <code>geosimilarity::zn</code> and <code>geosimilarity::grid</code> and writes verbatim CSV
+      copies into <code>data/</code> so the inputs can be inspected without R. That is also why the
+      downloadable archive is 46&nbsp;KB and contains no <code>data/</code> folder — the data arrive
+      with the package.</p>
+    </div>
+  </div>
+  <h4>Main configuration file</h4>
+  <p><code>config/project-config.R</code> is the single file a reader edits. It is read by
+  <code>R/00-config.R</code> and used by every step; nothing else in the pipeline hard-codes a
+  column name, a threshold or a palette.</p>
+  <div class="codewrap">
+    <span class="code-label">config/project-config.R (key lines)</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># -- 2. Input data -----------------------------------------------------------
+RESPONSE      &lt;- "Zn"        # the raw response column (ppm)
+RESPONSE_LOG  &lt;- "logZn"     # name given to the log-transformed response
+LOG_TRANSFORM &lt;- TRUE        # paper Sect. 3.2, step 1
+
+CANDIDATES &lt;- c("Elevation", "Slope", "Aspect", "Water",
+                "NDVI", "SOC", "pH", "Road", "Mine")
+
+# -- 3. Outlier screening ----------------------------------------------------
+OUTLIER_COEF &lt;- 2.5          # removeoutlier(): coef x IQR of the log response
+
+# -- 4. Variable selection (paper Sect. 2.2.1) -------------------------------
+COR_ALPHA     &lt;- 0.05        # keep covariates significantly correlated with y
+VIF_THRESHOLD &lt;- 4           # the paper's conservative multicollinearity limit
+
+# -- 5. Optimal similarity threshold (Eqs. 7-9) ------------------------------
+KAPPA_GRID        &lt;- c(seq(0.01, 0.10, 0.01), seq(0.2, 1.0, 0.1))
+BESTKAPPA_NREPEAT &lt;- 10      # cross-validation repeats inside gos_bestkappa()
+BESTKAPPA_NSPLIT  &lt;- 0.5     # training share of each split
+
+# -- 6. Model comparison (paper Table 3) -------------------------------------
+CV_REPEATS &lt;- 50             # the paper's 50 repeated 50/50 splits
+CV_MODELS  &lt;- c("MLR", "BCS", "GOS")
+
+# -- 7. Compute --------------------------------------------------------------
+CORES &lt;- 1                   # one core: reproducible, and matches the web app
+SEED  &lt;- 42</code></pre>
+  </div>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Parameter</th><th>Default</th><th>Origin / rationale</th></tr></thead>
+      <tbody>
+        <tr><td><code>LOG_TRANSFORM</code></td><td class="num">TRUE</td><td>the paper's step 1: trace-element data are right-skewed, so they are log-transformed before anything else</td></tr>
+        <tr><td><code>OUTLIER_COEF</code></td><td class="num">2.5</td><td>the loose screen the package vignette documents. The paper deliberately keeps high values, so step 5 reports the comparison <i>both</i> ways</td></tr>
+        <tr><td><code>VIF_THRESHOLD</code></td><td class="num">4</td><td>the paper's conservative threshold (§2.2.1); 10 is the permissive alternative</td></tr>
+        <tr><td><code>KAPPA_GRID</code></td><td class="num">19 values</td><td>fine (0.01 steps) below 0.1 where the minimum sits, coarse (0.1 steps) above it where the curve is nearly flat</td></tr>
+        <tr><td><code>BESTKAPPA_NREPEAT</code></td><td class="num">10</td><td>the paper's own illustration uses 10 repeated 50/50 splits</td></tr>
+        <tr><td><code>CV_REPEATS</code></td><td class="num">50</td><td>the paper's Table 3 protocol; this is the knob to turn if the run needs to be faster</td></tr>
+        <tr><td><code>CORES</code></td><td class="num">1</td><td><code>gos()</code> can fork, but one core keeps the run reproducible and matches the browser app, which has no multiprocessing</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Free parameters and the published choices they follow.</figcaption>
+  </figure>
+
+  <h3 id="data-contract">2.3&nbsp;Data Contract</h3>
+  <p>GOS needs two plain tables: the <b>sample table</b>, carrying the response and the covariates
+  at the observation locations, and the <b>prediction table</b>, carrying the same covariates
+  wherever you want a value. Neither needs to be a spatial object.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Column</th><th>Config key</th><th>In samples</th><th>In grid</th><th>Type</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>response</td><td><code>RESPONSE</code></td><td>required</td><td>—</td><td>numeric, strictly positive if <code>LOG_TRANSFORM</code></td><td>the variable being predicted (demo: <code>Zn</code>, ppm)</td></tr>
+        <tr><td>covariates</td><td><code>CANDIDATES</code></td><td>required</td><td>required, <b>same names</b></td><td>numeric</td><td>the geographical configuration of Eq. 1; at least two must survive selection</td></tr>
+        <tr><td><code>Lon</code>, <code>Lat</code></td><td>—</td><td>optional</td><td>optional</td><td>numeric</td><td>used only to draw maps — never by the model</td></tr>
+        <tr><td><code>GridID</code></td><td>—</td><td>—</td><td>optional</td><td>any</td><td>carried through to the output so predictions can be joined back</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Required schema. In the demo the sample table is 894&nbsp;×&nbsp;12 and the grid is
+    13,132&nbsp;×&nbsp;12, both written to <code>data/</code> by step 1. Provenance and units are
+    documented in <code>data/provenance.md</code>.</figcaption>
+  </figure>
+  <h4>Units, and why they matter less than you would think</h4>
+  <p>In the demo, distances (<code>Water</code>, <code>Road</code>, <code>Mine</code>) are in
+  kilometres, <code>Elevation</code> in metres, <code>Slope</code> and <code>Aspect</code> in
+  degrees, <code>NDVI</code> and <code>pH</code> dimensionless, and <code>SOC</code> is a mass
+  fraction. Equation&nbsp;3 divides every deviation by that covariate's own σ, so a covariate's
+  units cancel and rescaling one from metres to kilometres changes nothing. What <i>does</i> matter
+  is that a covariate be measured the same way in both tables — a sample column in metres against a
+  grid column in kilometres is a silent, catastrophic error the model cannot detect.</p>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Three contract rules that bite</div>
+    <div class="callout-b">
+      <ul>
+        <li><b>No coordinate reference system is needed, or used.</b> Similarity is computed from
+            covariates alone (Eqs.&nbsp;2–4) — no distance matrix, no spatial weights, no
+            variogram. Projected or geographic, sorted or shuffled, the predictions are identical.
+            Coordinates are needed only to <i>draw</i> the result. The flip side is real: any
+            spatial structure not carried by a covariate is invisible to the model.</li>
+        <li><b>Standardisation depends on the prediction set.</b> σ in Eq.&nbsp;3 is computed over
+            observation <i>and</i> prediction locations together, and δ in Eq.&nbsp;4 divides by the
+            number of prediction locations. So predicting a subset of your grid does <i>not</i>
+            give the same numbers as predicting all of it, and the results are not chunkable.
+            <code>tests/test-02</code> re-predicts all 13,132 cells for exactly this reason.</li>
+        <li><b>NAs are not handled.</b> A missing value in any covariate, in either table, raises an
+            error from the quantile step inside <code>gos()</code>. A missing value in the
+            <i>response</i> is worse: it propagates silently and every prediction comes back
+            <code>NA</code>. Complete your cases before you call the model.</li>
+      </ul>
+    </div>
+  </div>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th class="num">Lon</th><th class="num">Lat</th><th class="num">Zn</th><th class="num">Elevation</th><th class="num">Slope</th><th class="num">NDVI</th><th class="num">SOC</th><th class="num">pH</th><th>…</th></tr></thead>
+      <tbody>
+        <tr><td class="num">120.0523</td><td class="num">−28.4551</td><td class="num">10</td><td class="num">455.3352</td><td class="num">0.2360</td><td class="num">0.1835</td><td class="num">0.9092</td><td class="num">5.9487</td><td>…</td></tr>
+        <tr><td class="num">120.0554</td><td class="num">−28.4145</td><td class="num">30</td><td class="num">450.5336</td><td class="num">0.2073</td><td class="num">0.2023</td><td class="num">0.9061</td><td class="num">6.0522</td><td>…</td></tr>
+      </tbody>
+    </table>
+    <figcaption>The first two rows of <code>data/zn-samples.csv</code> — 894 rows, the Zn response
+    in ppm and nine covariates (<code>Aspect</code>, <code>Water</code>, <code>Road</code> and
+    <code>Mine</code> elided here for width); the grid table has the same covariate columns plus
+    <code>GridID</code>. SOC and pH shown to four decimals; the CSV is verbatim.</figcaption>
+  </figure>
+</section>
+
+<section id="pipeline">
+  <h2>3&nbsp;Reproduction Pipeline, Results &amp; Validation</h2>
+
+  <h3 id="pipeline-execution">3.1&nbsp;Pipeline Execution</h3>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Full run</div><div class="v"><code>Rscript run-all.R</code> — 107&nbsp;s measured</div></div>
+    <div class="kv"><div class="k">Verification</div><div class="v"><code>Rscript run-all.R test</code> — 42 checks, ~40&nbsp;s. Do this first</div></div>
+    <div class="kv"><div class="k">Output folders</div><div class="v"><code>results/ tables/ figs/ data/</code></div></div>
+  </div>
+  <div class="codewrap">
+    <span class="code-label">terminal</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-bash"><code>cd GOS                     # this folder
+Rscript run-all.R test     # 1. 42 checks on the method and on the committed results
+Rscript run-all.R          # 2. full pipeline
+
+Rscript run-all.R 30 40    # re-run single steps (10 20 30 40 50 90)</code></pre>
+  </div>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Step</th><th>What it does</th><th class="num">Seconds</th></tr></thead>
+      <tbody>
+        <tr><td><code>10-prepare-data.R</code></td><td>load <code>zn</code> + <code>grid</code>, log-transform, outlier screen, Fig. 1</td><td class="num">0.3</td></tr>
+        <tr><td><code>20-select-variables.R</code></td><td>correlation and VIF screens (Eq. 1)</td><td class="num">0.0</td></tr>
+        <tr><td><code>30-best-kappa.R</code></td><td>19 κ values × 10 repeated 50/50 splits (Eqs. 7–9), Fig. 2</td><td class="num">31.8</td></tr>
+        <tr><td><code>40-gos-prediction.R</code></td><td>two full-grid <code>gos()</code> calls (Eqs. 11–12), Figs. 3–5</td><td class="num">10.0</td></tr>
+        <tr><td><code>50-model-comparison.R</code></td><td>3 models × 50 repeats, run <b>twice</b>, plus a second κ search, Fig. 6</td><td class="num">64.9</td></tr>
+        <tr><td><code>90-tables.R</code></td><td>LaTeX tables and the session record</td><td class="num">0.0</td></tr>
+        <tr class="hl"><td><b>total</b></td><td>one core, R 4.6.0 on an Apple-silicon laptop</td><td class="num"><b>107.0</b></td></tr>
+      </tbody>
+    </table>
+    <figcaption>Measured wall-clock time, from <code>env/runtimes.csv</code>, written by the run
+    itself. Almost all of it is cross-validation; the two full-grid predictions together take about
+    ten seconds. <code>CV_REPEATS</code> is the knob if this needs to be faster.</figcaption>
+  </figure>
+  <div class="console">Project : gos-zn
+Domain  : trace element (Zn) concentration, Leonora mining region, WA
+== Step 1/5  Prepare data ======================================
+   zn:   894 samples x 12 columns
+   grid: 13132 prediction cells x 12 columns
+   outlier screen (coef = 2.5): 9 of 894 rows dropped, 885 retained
+   Shapiro-Wilk W on log Zn (screened): 0.9860
+== Step 2/5  Select variables ==================================
+   VIF screen kept 7 of 7 covariates (max VIF 2.608)
+   selected: NDVI, SOC, Mine, Water, pH, Slope, Road
+   vignette: Slope, Water, NDVI, SOC, pH, Road, Mine
+   the two sets are identical
+== Step 3/5  Optimal similarity threshold ======================
+   kappa grid: 19 values from 0.01 to 1.00, 10 repeats of a 50/50 split
+   lambda = 0.08  (cross-validation RMSE 0.6668)
+   RMSE at kappa = 1 (BCS) is 0.6729 — GOS lowers it by 0.91%
+   only 8% of the 885 observations are used at each prediction location
+== Step 4/5  GOS prediction on the 1 km grid ===================
+   885 observations -> 13132 grid cells, kappa = 0.08
+   GOS predictions: mean 3.353, sd 0.365, range 2.396-4.302 (log Zn)
+   BCS predictions: mean 3.403, sd 0.138, range 2.396-4.075 (log Zn)
+   BCS spread is 38% of the GOS spread — the clustering the paper reports
+   at zeta = 1 the two models agree to 0.00e+00, as the paper notes
+== Step 5/5  Model comparison ==================================
+   [screened] 885 samples, 50 repeats, 442 training / 443 testing rows each
+   MLR  MAE 0.5456  RMSE 0.6865   GOS reduces MAE +5.8%, RMSE +4.2%
+   BCS  MAE 0.5220  RMSE 0.6653   GOS reduces MAE +1.5%, RMSE +1.1%
+   GOS  MAE 0.5140  RMSE 0.6578
+   RMSE ranking, screened  : GOS &lt; BCS &lt; MLR
+   RMSE ranking, unscreened: GOS &lt; BCS &lt; MLR
+Finished in 107.0 s</div>
+
+  <h3 id="core-steps">3.2&nbsp;Core Analytical Steps</h3>
+  <p>Six stages: purpose → code → output → result → <i>how to read it</i>. Steps 4 and 5 both come
+  out of <code>R/40-gos-prediction.R</code>; the rest map one-to-one onto the numbered scripts.</p>
+
+  <article class="step-card" id="step-1">
+    <div class="step-card-h">
+      <span class="step-label">Step 1 · R/10-prepare-data.R</span>
+      <h4>Prepare the response — log-transform, then screen</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Loads the two packaged tables, writes verbatim CSV copies of them, log-transforms the
+      response because trace-element data are strongly right-skewed, and applies
+      <code>removeoutlier()</code> to the <i>transformed</i> values. Both the screened and the
+      unscreened sample sets are kept, because the paper and the package vignette disagree about
+      whether to screen at all, and step 5 reports the comparison both ways.</p>
+      <h4>Code</h4>
+      <div class="codewrap nofold">
+        <span class="code-label">R — from R/10-prepare-data.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>zn   &lt;- as.data.frame(geosimilarity::zn)     # 894 x 12, no download
+grid &lt;- as.data.frame(geosimilarity::grid)   # 13,132 x 12
+
+zn$logZn &lt;- log(zn$Zn)                       # paper Sect. 3.2, step 1
+out_idx  &lt;- geosimilarity::removeoutlier(zn$logZn, coef = 2.5)
+d        &lt;- zn[-out_idx, ]                   # 885 rows retained</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Series</th><th class="num">n</th><th class="num">Mean</th><th class="num">Min</th><th class="num">Median</th><th class="num">Max</th><th class="num">σ</th><th class="num">CV</th></tr></thead>
+          <tbody>
+            <tr><td>Zn, ppm — all samples</td><td class="num">894</td><td class="num">42.55</td><td class="num">2</td><td class="num">29</td><td class="num">353.5</td><td class="num">37.11</td><td class="num">0.872</td></tr>
+            <tr><td>log Zn — all samples</td><td class="num">894</td><td class="num">3.436</td><td class="num">0.693</td><td class="num">3.367</td><td class="num">5.868</td><td class="num">0.801</td><td class="num">0.233</td></tr>
+            <tr><td>Zn, ppm — outliers screened</td><td class="num">885</td><td class="num">41.64</td><td class="num">5</td><td class="num">29</td><td class="num">181</td><td class="num">32.95</td><td class="num">0.791</td></tr>
+            <tr class="hl"><td><b>log Zn — outliers screened</b></td><td class="num">885</td><td class="num">3.438</td><td class="num">1.609</td><td class="num">3.367</td><td class="num">5.198</td><td class="num">0.772</td><td class="num">0.225</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/response-summary.csv</code>, in the shape of the paper's Table 1.
+        The highlighted row is the sample set every later step uses. The paper reports 966 Zn
+        samples with mean 43.52, median 30, max 353.5, σ 38.2 and CV 0.88 — the same population
+        seen through 72 fewer samples, with an identical maximum.</figcaption>
+      </figure>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="figs/fig01-response-distribution.png" alt="Histogram, density and normal Q-Q plots of raw and log-transformed Zn, demo run">
+          <figcaption>fig01 — the response before and after preprocessing: histogram with kernel
+          density (a) and normal Q-Q plot (b) of the 894 raw values in ppm, and the same two views
+          (c, d) of the 885 log values that survive the screen. Look at the Q-Q panels: the raw
+          data bend hard away from the line in the upper tail, the log values sit on it
+          (Shapiro-Wilk W&nbsp;=&nbsp;0.986, skewness 0.04). Dashed lines mark the mean.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · GOS</span>
+          <img src="assets/paper-gos-fig4.jpg" alt="Histogram, density and quantile-quantile plots of preprocessed Cu, Zn and Pb, Song 2023 Figure 4">
+          <figcaption>Paper Fig. 4 — the published counterpart, for all three trace elements. The
+          middle column is Zn: the same two-humped log density and the same near-linear Q-Q plot
+          the demo reproduces from the packaged subset.</figcaption>
+        </figure>
+      </div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The transform is doing the work, not the screen.</b> The log takes CV from 0.872
+                to 0.233; the outlier screen then removes 9 rows and moves CV only from 0.233 to
+                0.225. Order matters — screening raw ppm values would have thrown away far
+                more.</li>
+            <li><b>The screen is a documented disagreement, not a default.</b> The package vignette
+                applies <code>removeoutlier(coef = 2.5)</code>; the paper explicitly does not,
+                because high trace-element values "may indicate the clusters of mineral deposits".
+                Rather than pick a side silently, step 5 runs the whole comparison on both sample
+                sets. The ranking is identical either way.</li>
+            <li><b>Everything downstream is in log units.</b> The predictions, the MAE and the RMSE
+                are all log Zn. The back-transformed <code>pred_zn_ppm</code> column is a plain
+                <code>exp(pred)</code> with no smearing or lognormal bias correction — fine for
+                mapping, not for a mass balance.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-2">
+    <div class="step-card-h">
+      <span class="step-label">Step 2 · R/20-select-variables.R</span>
+      <h4>Characterise the geographical configuration (Eq. 1)</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Runs the paper's two-stage screen over all nine candidate covariates: keep those
+      significantly correlated with log Zn, then prune the most collinear one repeatedly until
+      every VIF is below 4. Whatever survives <i>is</i> the geographical configuration that every
+      similarity in Eqs.&nbsp;2–4 is computed from.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — from R/20-select-variables.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code># stage 1 — correlation with the log-transformed response
+ct  &lt;- stats::cor.test(d$logZn, d[[v]])       # for each candidate v
+sig &lt;- cors$variable[cors$p &lt; 0.05]
+
+# stage 2 — iterative VIF pruning at the paper's threshold of 4
+pr       &lt;- vif_prune(d, sig, VIF_THRESHOLD)  # VIF_i = 1 / (1 - R2_i)
+selected &lt;- pr$keep</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Variable</th><th class="num">r with log Zn</th><th class="num">p</th><th class="num">VIF</th><th>Selected</th><th>Also in vignette</th></tr></thead>
+          <tbody>
+            <tr><td>NDVI</td><td class="num">−0.398</td><td class="num">5.4 × 10⁻³⁵</td><td class="num">1.460</td><td>yes</td><td>yes</td></tr>
+            <tr><td>SOC</td><td class="num">−0.317</td><td class="num">4.7 × 10⁻²²</td><td class="num">1.356</td><td>yes</td><td>yes</td></tr>
+            <tr><td>Mine</td><td class="num">−0.259</td><td class="num">5.4 × 10⁻¹⁵</td><td class="num">2.608</td><td>yes</td><td>yes</td></tr>
+            <tr><td>Water</td><td class="num">−0.244</td><td class="num">2.1 × 10⁻¹³</td><td class="num">1.232</td><td>yes</td><td>yes</td></tr>
+            <tr><td>pH</td><td class="num">−0.241</td><td class="num">3.8 × 10⁻¹³</td><td class="num">1.568</td><td>yes</td><td>yes</td></tr>
+            <tr><td>Slope</td><td class="num">+0.230</td><td class="num">4.1 × 10⁻¹²</td><td class="num">1.651</td><td>yes</td><td>yes</td></tr>
+            <tr><td>Road</td><td class="num">−0.219</td><td class="num">4.9 × 10⁻¹¹</td><td class="num">2.273</td><td>yes</td><td>yes</td></tr>
+            <tr><td>Aspect</td><td class="num">−0.055</td><td class="num">0.0998</td><td class="num">—</td><td>no — not significant</td><td>no</td></tr>
+            <tr><td>Elevation</td><td class="num">+0.037</td><td class="num">0.273</td><td class="num">—</td><td>no — not significant</td><td>no</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/variable-selection.csv</code>, in the shape of the paper's
+        Table 2. Seven of nine candidates pass the correlation screen and <i>all seven</i> survive
+        the VIF screen unchanged — nothing is dropped for collinearity, and the maximum VIF is
+        2.608 against the paper's 2.97 for Zn.</figcaption>
+      </figure>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Checkpoint — the vignette's formula is not arbitrary</div>
+        <div class="callout-b">
+          <p>The seven selected covariates — Slope, Water, NDVI, SOC, pH, Road, Mine — are
+          <i>exactly</i> the set the <code>geosimilarity</code> vignette uses in its example
+          formula. Here they were arrived at from the data, by the paper's own screen, rather than
+          assumed. <code>tests/test-02</code> asserts that equality, so if a future package version
+          changed the data the check would fail rather than quietly shifting every number on this
+          page.</p>
+        </div>
+      </div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>These are weak correlations, and that is normal for this method.</b> The
+                strongest is NDVI at −0.398; a linear model on all seven explains only a modest
+                share of log Zn. GOS does not need a strong marginal relationship, because it never
+                fits one — it needs covariates that <i>jointly</i> discriminate between locations.
+                Comparing it against MLR in step 6 is precisely a test of whether that distinction
+                is worth anything.</li>
+            <li><b>The screen is where the missing geology shows up.</b> In the paper, the two
+                strongest Zn covariates are distances to Zn-related lithology (−0.428) and faults
+                (−0.350), and neither exists in the packaged data. The overlapping variables agree
+                closely with the published values — NDVI −0.398 vs −0.346, SOC −0.317 vs −0.312,
+                Water −0.244 vs −0.259, pH −0.241 vs −0.232, Slope 0.230 vs 0.233, Road −0.219 vs
+                −0.215 — so the difference is one of coverage, not of computation.</li>
+            <li><b>Aspect fails for a real reason.</b> Aspect is circular: 359° and 1° are
+                neighbours that a Pearson correlation and a Gaussian similarity both read as
+                opposites. It would have needed a sin/cos decomposition to be usable, and the
+                screen drops it before that becomes a problem.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-3">
+    <div class="step-card-h">
+      <span class="step-label">Step 3 · R/30-best-kappa.R · the parameter</span>
+      <h4>Find the optimal similarity threshold λ (Eqs. 7–9)</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Scores 19 candidate κ values by repeated 50/50 cross-validation and takes the minimum. This
+      is the paper's actual contribution, reduced to one function call and one number.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — from R/30-best-kappa.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>f &lt;- logZn ~ NDVI + SOC + Mine + Water + pH + Slope + Road
+
+bk &lt;- geosimilarity::gos_bestkappa(f, data = d,
+        kappa   = c(seq(0.01, 0.10, 0.01), seq(0.2, 1.0, 0.1)),
+        nrepeat = 10, nsplit = 0.5, cores = 1)
+
+lambda &lt;- bk$bestkappa      # 0.08
+curve  &lt;- bk$cvmean         # one mean RMSE per candidate kappa</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="figs/fig02-kappa-rmse.png" alt="Cross-validation RMSE against kappa, full range and zoomed below 0.1, demo run">
+          <figcaption>fig02 — cross-validation RMSE of log Zn against κ, averaged over 10 repeated
+          50/50 splits: the full candidate range (a) and a zoom to κ&nbsp;≤&nbsp;0.1 where the grid
+          is finest (b). The open circle and dashed line mark λ&nbsp;=&nbsp;0.08,
+          RMSE&nbsp;=&nbsp;0.6668. Read the shape, not just the minimum: a steep fall as the first
+          few per cent of observations are added, a shallow trough, then a slow rise to a plateau at
+          κ&nbsp;=&nbsp;1.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · GOS</span>
+          <img src="assets/paper-gos-fig7.jpg" alt="Cross-validation RMSE against kappa for Cu, Zn and Pb, Song 2023 Figure 7">
+          <figcaption>Paper Fig. 7 — the published curves for Cu, Zn and Pb. The middle panel is
+          Zn, with λ&nbsp;=&nbsp;0.04. Same shape, same message, same order of magnitude; the demo's
+          0.08 differs because the configuration differs (§1.3).</figcaption>
+        </figure>
+      </div>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th class="num">κ</th><th class="num">0.01</th><th class="num">0.02</th><th class="num">0.05</th><th class="num">0.07</th><th class="num">0.08</th><th class="num">0.09</th><th class="num">0.10</th><th class="num">0.20</th><th class="num">0.50</th><th class="num">1.00</th></tr></thead>
+          <tbody>
+            <tr><td class="num"><b>CV RMSE</b></td><td class="num">0.6944</td><td class="num">0.6797</td><td class="num">0.6687</td><td class="num">0.6670</td><td class="num"><b>0.6668</b></td><td class="num">0.6670</td><td class="num">0.6673</td><td class="num">0.6691</td><td class="num">0.6724</td><td class="num">0.6729</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Ten of the 19 rows of <code>results/kappa-rmse.csv</code>. λ&nbsp;=&nbsp;0.08
+        with RMSE 0.6668; κ&nbsp;=&nbsp;1, which is BCS, gives 0.6729, so choosing a threshold lowers
+        cross-validation RMSE by <b>0.91&nbsp;%</b>. Only <b>8&nbsp;%</b> of the 885 observations —
+        about 71 samples — contribute at each prediction location.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The left arm of the curve is the more interesting half.</b> RMSE falls 0.6944 →
+                0.6668 between κ&nbsp;=&nbsp;0.01 and 0.08 — nine samples per cell is too few, and
+                the prediction is unstable. The right arm rises only 0.6668 → 0.6729. Under-using
+                the data costs about four times as much as over-using it, which is worth knowing
+                before you pick a coarse κ grid.</li>
+            <li><b>The minimum is shallow, and you should say so.</b> Between κ&nbsp;=&nbsp;0.05 and
+                0.10 the RMSE spans 0.6687 to 0.6673 — a 0.2&nbsp;% range. λ is not sharply
+                identified, and with a coarser grid or a different covariate set it moves easily.
+                That is exactly why the paper's 0.04 and this run's 0.08 are the same finding: only
+                a few per cent of observations are needed.</li>
+            <li><b>λ is deterministic.</b> <code>gos_bestkappa()</code> seeds each repeat internally
+                (1…<code>nrepeat</code>), so every candidate κ is scored on identical splits and the
+                answer does not depend on the outer <code>set.seed()</code>.
+                <code>tests/test-01</code> asserts this by running the search twice under
+                deliberately different outer seeds.</li>
+            <li><b>κ = 1 is BCS, exactly.</b> The last point on the curve is not an approximation of
+                the older model — it <i>is</i> the older model. That is what makes the comparison in
+                step 6 fair: one implementation, one code path, one parameter changed.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-tip">
+        <div class="callout-h"><span class="callout-i">✓</span>Try the κ search in your browser</div>
+        <div class="callout-b">
+          <p>The <a href="../../app/gos/">online GOS calculator</a> runs this exact search — the same
+          CRAN <code>geosimilarity</code> package, compiled to WebAssembly — on the same example
+          data or on a CSV of your own, and draws this same curve with λ marked. No R installation,
+          nothing uploaded to a server. It is the fastest way to see how the curve reacts to a
+          different covariate set before committing to a pipeline run.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-4">
+    <div class="step-card-h">
+      <span class="step-label">Step 4 · R/40-gos-prediction.R</span>
+      <h4>Predict the grid, and map the uncertainty (Eqs. 11–12)</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>One <code>gos()</code> call predicts log Zn at all 13,132 grid cells at
+      κ&nbsp;=&nbsp;λ&nbsp;=&nbsp;0.08 and returns the Eq.&nbsp;12 uncertainty at all six ζ levels in
+      the same tibble. A second call at κ&nbsp;=&nbsp;1 produces the BCS counterpart used in step 5.
+      Together they take about ten seconds.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — from R/40-gos-prediction.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>g &lt;- geosimilarity::gos(f, data = d, newdata = grid,
+                        kappa = lambda, cores = 1)
+
+# g holds: pred, uncertainty90, uncertainty95, uncertainty99,
+#          uncertainty99.5, uncertainty99.9, uncertainty100
+
+b &lt;- geosimilarity::gos(f, data = d, newdata = grid,   # BCS, for step 5
+                        kappa = 1, cores = 1)</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="fig">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="figs/fig03-gos-prediction-uncertainty.png" alt="GOS prediction of log Zn and its uncertainty at zeta 0.99 across the 1 km grid, demo run">
+        <figcaption>fig03 — the GOS prediction of log Zn at κ&nbsp;=&nbsp;λ&nbsp;=&nbsp;0.08 (a) and
+        its uncertainty at ζ&nbsp;=&nbsp;0.99 (b). Predictions run 2.40–4.30 in log Zn
+        (11.0–73.9&nbsp;ppm back-transformed), and the map has sharp local contrast: a dark
+        north–south high through the centre of the study area against pale flanks. The uncertainty
+        map is nearly blank by contrast (mean 0.033) with dark filaments where no observation shares
+        the local configuration — those, not the prediction map, are the places to distrust. The
+        uncertainty scale is clipped at its 99th percentile, marked ≥, because a handful of isolated
+        cells reach 1.0 and a raw range would flatten the whole panel to one shade.</figcaption>
+      </figure>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="figs/fig04-uncertainty-zeta.png" alt="GOS prediction uncertainty at all six zeta levels on a shared colour scale, demo run">
+          <figcaption>fig04 — the same uncertainty at all six ζ levels on one shared scale.
+          Uncertainty falls monotonically as ζ rises, from a mean of 0.072 at ζ&nbsp;=&nbsp;0.9 to
+          0.026 at ζ&nbsp;=&nbsp;1, while the <i>pattern</i> barely moves: the poorly matched places
+          stay in the same places. ζ is a strictness dial on the evidence, not a different
+          map.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · GOS</span>
+          <img src="assets/paper-gos-fig9.jpg" alt="Spatial distributions of Cu, Zn and Pb predictions from GOS, OK, MLR, RK and BCS, Song 2023 Figure 9">
+          <figcaption>Paper Fig. 9 — published predictions for Cu (a), Zn (b) and Pb (c) from all
+          five models. Compare the large GOS panel with the small BCS panel below it in each
+          column: the same loss of contrast that fig05 quantifies here.</figcaption>
+        </figure>
+      </div>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th class="num">ζ</th><th class="num">0.9</th><th class="num">0.95</th><th class="num">0.99</th><th class="num">0.995</th><th class="num">0.999</th><th class="num">1</th></tr></thead>
+          <tbody>
+            <tr><td><b>GOS</b> mean Θ</td><td class="num">0.0724</td><td class="num">0.0545</td><td class="num">0.0332</td><td class="num">0.0295</td><td class="num">0.0265</td><td class="num">0.0258</td></tr>
+            <tr><td><b>BCS</b> mean Θ</td><td class="num">0.2203</td><td class="num">0.1656</td><td class="num">0.0801</td><td class="num">0.0602</td><td class="num">0.0351</td><td class="num">0.0258</td></tr>
+            <tr class="hl"><td><b>Reduction by GOS</b></td><td class="num">67.1&nbsp;%</td><td class="num">67.1&nbsp;%</td><td class="num">58.5&nbsp;%</td><td class="num">51.0&nbsp;%</td><td class="num">24.5&nbsp;%</td><td class="num">0&nbsp;%</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Mean Eq. 12 uncertainty over the 13,132 cells, computed from
+        <code>results/grid-prediction.csv</code> and <code>grid-prediction-bcs.csv</code>. The paper
+        reports a 28.5–74.1&nbsp;% reduction over ζ&nbsp;=&nbsp;0.9 to 0.999; this run gives
+        24.5–67.1&nbsp;% — same magnitude, same direction.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>ζ = 1 is an exact identity, and it holds to machine precision.</b> At
+                ζ&nbsp;=&nbsp;1, Eq.&nbsp;12 becomes 1&nbsp;−&nbsp;max(similarity), and truncating a
+                vector never removes its maximum — so GOS and BCS must agree exactly even though
+                their predictions differ everywhere. The largest difference across all 13,132 cells
+                is <b>0.00e+00</b>. That is a genuine test of the implementation, not a
+                coincidence, and <code>tests/test-01</code> checks it on synthetic data too.</li>
+            <li><b>The gap between GOS and BCS shrinks as ζ rises, for a mechanical reason.</b> At
+                ζ&nbsp;=&nbsp;0.9, BCS's quantile falls in the long tail of poor matches it is
+                obliged to keep, so its uncertainty is triple. By ζ&nbsp;=&nbsp;0.999 both models are
+                reading their few best matches, and the reduction collapses to 24.5&nbsp;%. Report
+                the ζ you used, or the number means nothing.</li>
+            <li><b>Uncertainty here means "was there anything to learn from?", not a variance.</b>
+                A cell can have a confident prediction with high Θ if it is simply unlike everything
+                observed. This is an extrapolation warning rather than a confidence interval, and it
+                is available at no extra cost because it falls out of the similarities already
+                computed.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout c-warn">
+        <div class="callout-h"><span class="callout-i">!</span>You cannot predict the grid in chunks</div>
+        <div class="callout-b">
+          <p>σ in Eq.&nbsp;3 is computed over the observation and prediction locations together, and
+          δ in Eq.&nbsp;4 divides by the number of prediction locations. Splitting
+          <code>newdata</code> into blocks therefore changes both, and the numbers drift. This is a
+          property of the method, not a bug: <code>tests/test-02</code> re-predicts all 13,132 cells
+          from scratch rather than checking a sample of them, and thinning the grid would shift the
+          values slightly too.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-5">
+    <div class="step-card-h">
+      <span class="step-label">Step 5 · R/40-gos-prediction.R · the clearest reproduced finding</span>
+      <h4>Why the threshold matters — BCS collapses towards the mean, GOS does not</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Puts the κ&nbsp;=&nbsp;1 prediction on the same colour scale as the κ&nbsp;=&nbsp;λ one, and
+      draws the distribution of all 13,132 predictions from both. Two views of a single fact.</p>
+      <h4>Example output</h4>
+      <figure class="fig">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="figs/fig05-bcs-vs-gos.png" alt="BCS prediction map and the density of BCS and GOS predictions, demo run">
+        <figcaption>fig05 — the BCS prediction (a), drawn on the identical colour scale as the GOS
+        map in fig03, and the density of all 13,132 predictions from both models (b). The map has
+        lost its structure: what was a strong central high in fig03 is now a mottled mid-tone. The
+        density panel says why — BCS is a single narrow spike on the observed mean (dashed line),
+        GOS a broad multi-modal spread.</figcaption>
+      </figure>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Prediction set</th><th class="num">Mean</th><th class="num">σ</th><th class="num">Range (log Zn)</th><th class="num">Range (ppm)</th><th class="num">Within ±0.1 of the observed mean</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td><b>GOS</b> (κ = 0.08)</td><td class="num">3.353</td><td class="num"><b>0.365</b></td><td class="num">2.396 – 4.302</td><td class="num">11.0 – 73.9</td><td class="num"><b>12.8 %</b></td></tr>
+            <tr><td>BCS (κ = 1)</td><td class="num">3.403</td><td class="num">0.138</td><td class="num">2.396 – 4.075</td><td class="num">11.0 – 58.8</td><td class="num">70.0 %</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Computed from <code>results/grid-prediction.csv</code> and
+        <code>grid-prediction-bcs.csv</code>. BCS's spread is <b>38&nbsp;%</b> of GOS's, and
+        <b>70&nbsp;%</b> of its cells sit within ±0.1 of the observed mean of 3.438 against
+        <b>12.8&nbsp;%</b> of GOS cells — a 5.5-fold concentration.</figcaption>
+      </figure>
+      <figure class="fig two-thirds">
+        <span class="pairtag tag-paper">Published reference · GOS</span>
+        <img src="assets/paper-gos-fig10.jpg" alt="Statistical density distributions of Cu, Zn and Pb predictions from MLR, BCS and GOS, Song 2023 Figure 10">
+        <figcaption>Paper Fig. 10 — the published counterpart: density distributions of Cu, Zn and
+        Pb predictions from all five models, with the vertical lines at the mean. The orange BCS
+        curve spikes on the mean in every panel while the red GOS curve stays broad. That is the
+        same fact, on the full data set, for all three elements.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>This is the paper's Fig. 10 finding, reproduced cleanly and with no caveats.</b>
+                Of everything on this page it is the most robust: it needs no cross-validation, no
+                accuracy metric and no held-out sample — it is visible in the predictions
+                themselves, on 13,132 cells.</li>
+            <li><b>Averaging over everything is a shrinkage estimator you did not ask for.</b> Weight
+                885 observations by similarities that are mostly small and mostly similar to each
+                other, and the weighted mean converges on the unweighted one. The informative
+                observations are outvoted. Discarding 92&nbsp;% of them is what restores the local
+                signal.</li>
+            <li><b>Both models share a lower bound.</b> Both ranges start at exactly 2.396 — some
+                locations are dominated by the same single best-matching observation under either
+                rule. The divergence is at the top: BCS reaches 4.075 where GOS reaches 4.302, so
+                the high-Zn areas are precisely where BCS's dilution costs the most, and those are
+                the areas a mining study cares about.</li>
+            <li><b>Spread is not accuracy.</b> A model could scatter its predictions wildly and be
+                worse. Step 6 is what closes that loop: the extra contrast comes with lower error,
+                not higher.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="step-card" id="step-6">
+    <div class="step-card-h">
+      <span class="step-label">Step 6 · R/50-model-comparison.R</span>
+      <h4>Accuracy comparison — MLR, BCS and GOS on identical splits</h4>
+    </div>
+    <div class="step-card-b">
+      <h4>What this step does</h4>
+      <p>Scores three predictors of log Zn over 50 repeated 50/50 splits, the paper's protocol.
+      Splits are generated once and shared, so every model sees exactly the same training and
+      testing rows in every repeat and the differences between models are paired rather than
+      merely averaged. The whole comparison is then run a second time on all 894 unscreened
+      samples, with λ re-derived for that sample set so GOS is not handicapped by a threshold
+      tuned elsewhere.</p>
+      <h4>Code</h4>
+      <div class="codewrap">
+        <span class="code-label">R — from R/50-model-comparison.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>one_repeat &lt;- function(d, idx, lam) {
+  tr &lt;- d[idx, ]; te &lt;- d[-idx, ]
+
+  p_mlr &lt;- stats::predict(stats::lm(f, data = tr), newdata = te)
+  p_bcs &lt;- geosimilarity::gos(f, tr, te, kappa = 1,   cores = 1)$pred
+  p_gos &lt;- geosimilarity::gos(f, tr, te, kappa = lam, cores = 1)$pred
+  ...
+}
+
+splits &lt;- cv_splits(nrow(d), CV_REPEATS, CV_SPLIT, SEED)  # shared by all three</code></pre>
+      </div>
+      <h4>Example output</h4>
+      <figure class="tablewrap">
+        <table>
+          <thead><tr><th>Model</th><th class="num">MAE</th><th class="num">sd</th><th class="num">RMSE</th><th class="num">sd</th><th class="num">MAE reduction by GOS</th><th class="num">RMSE reduction by GOS</th></tr></thead>
+          <tbody>
+            <tr><td>MLR — multivariate linear regression</td><td class="num">0.5456</td><td class="num">0.0124</td><td class="num">0.6865</td><td class="num">0.0154</td><td class="num">5.81 %</td><td class="num">4.18 %</td></tr>
+            <tr><td>BCS — basic configuration similarity (κ = 1)</td><td class="num">0.5220</td><td class="num">0.0125</td><td class="num">0.6653</td><td class="num">0.0174</td><td class="num">1.54 %</td><td class="num">1.12 %</td></tr>
+            <tr class="hl"><td><b>GOS — geographically optimal similarity (κ = 0.08)</b></td><td class="num"><b>0.5140</b></td><td class="num">0.0119</td><td class="num"><b>0.6578</b></td><td class="num">0.0183</td><td class="num">—</td><td class="num">—</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/model-comparison.csv</code> — 885 outlier-screened samples,
+        λ&nbsp;=&nbsp;0.08, 50 repeated 50/50 splits, all errors in log Zn units. RMSE ranking
+        <b>GOS &lt; BCS &lt; MLR</b>. The paper reports, for Zn, GOS reducing MAE by 2.6&nbsp;% and
+        RMSE by 0.9&nbsp;% against BCS, and 6.0&nbsp;% / 1.2&nbsp;% against MLR: same direction, same
+        order of magnitude, with the MAE-against-MLR figure almost exact.</figcaption>
+      </figure>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="figs/fig06-model-comparison.png" alt="Boxplots of MAE and RMSE for MLR, BCS and GOS over 50 cross-validation splits, demo run">
+          <figcaption>fig06 — MAE (a) and RMSE (b) over the 50 splits. White diamonds are the means
+          reported in the table, the dashed line the GOS mean. Note how much the boxes overlap:
+          split-to-split spread (sd ≈ 0.012 for MAE) is larger than the gap between BCS and GOS
+          (0.008), which is exactly why the models must be scored on <i>identical</i> splits and
+          compared pairwise.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · GOS</span>
+          <img src="assets/paper-gos-fig8.jpg" alt="Summary of cross-validation MAE and RMSE for OK, MLR, RK, BCS and GOS, Song 2023 Figure 8">
+          <figcaption>Paper Fig. 8 — the published counterpart, with five models rather than three:
+          ordinary kriging and regression kriging are the two columns this tutorial does not
+          reproduce (§1.3). The MLR, BCS and GOS bars are the ones being compared here.</figcaption>
+        </figure>
+      </div>
+      <h4>Robustness — the paper's own preprocessing</h4>
+      <p>The vignette screens outliers; the paper explicitly does not. Re-running everything on all
+      894 samples, with λ re-derived on that sample set (it comes out at 0.08 again), gives:</p>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Model</th><th class="num">MAE</th><th class="num">sd</th><th class="num">RMSE</th><th class="num">sd</th><th class="num">MAE reduction by GOS</th><th class="num">RMSE reduction by GOS</th></tr></thead>
+          <tbody>
+            <tr><td>MLR</td><td class="num">0.5640</td><td class="num">0.0130</td><td class="num">0.7184</td><td class="num">0.0168</td><td class="num">5.66 %</td><td class="num">3.69 %</td></tr>
+            <tr><td>BCS</td><td class="num">0.5401</td><td class="num">0.0150</td><td class="num">0.6994</td><td class="num">0.0185</td><td class="num">1.48 %</td><td class="num">1.08 %</td></tr>
+            <tr class="hl"><td><b>GOS</b></td><td class="num"><b>0.5321</b></td><td class="num">0.0136</td><td class="num"><b>0.6919</b></td><td class="num">0.0185</td><td class="num">—</td><td class="num">—</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/model-comparison-no-outlier-screening.csv</code> — 894 samples,
+        no screening, λ re-derived = 0.08, 50 repeats. Every error rises by roughly 0.02–0.03,
+        because the nine retained extremes are genuinely hard to predict, but the ordering
+        <b>GOS &lt; BCS &lt; MLR</b> and the size of GOS's advantage are unchanged. The
+        preprocessing choice does not carry the result.</figcaption>
+      </figure>
+      <div class="callout c-repro">
+        <div class="callout-h"><span class="callout-i">✓</span>Paired over the shared splits</div>
+        <div class="callout-b">
+          <p>Averages can hide a model that wins narrowly on most splits and loses badly on a few.
+          These do not. On the 885 screened samples, GOS has the lower error than MLR on
+          <b>50/50</b> splits by MAE and <b>50/50</b> by RMSE, and than BCS on <b>50/50</b> by MAE
+          and <b>47/50</b> by RMSE. On the 894 unscreened samples: <b>50/50</b> and <b>50/50</b>
+          against MLR, <b>49/50</b> and <b>47/50</b> against BCS. Counted from
+          <code>results/model-comparison-repeats.csv</code>, which holds all 300 per-repeat rows.</p>
+        </div>
+      </div>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>How to read this result</div>
+        <div class="callout-b">
+          <ul>
+            <li><b>The GOS-vs-BCS gap is small, consistent and the point of the paper.</b>
+                1.5&nbsp;% MAE is not dramatic, but it is the same 1.5&nbsp;% on essentially every
+                split, and it comes with a 92&nbsp;% cut in the observations used per prediction and
+                the restored map contrast of step 5. Cheaper, sharper <i>and</i> slightly more
+                accurate.</li>
+            <li><b>The GOS-vs-MLR gap is what justifies the similarity framing.</b> Both models see
+                exactly the same seven covariates. MLR insists on an explicit linear relationship;
+                GOS never estimates one, and still predicts better by 5.8&nbsp;% MAE on all 50
+                splits. The comparative structure of a configuration carries information that a
+                fitted coefficient does not.</li>
+            <li><b>MAE gaps exceed RMSE gaps throughout.</b> 5.81 vs 4.18&nbsp;% against MLR, 1.54 vs
+                1.12&nbsp;% against BCS. GOS's advantage is in typical accuracy rather than in the
+                worst cases — expected, since the hardest cells are the ones with no similar
+                observation anywhere, which is precisely what its uncertainty map flags.</li>
+            <li><b>What this comparison does not say.</b> It says nothing about kriging, which is
+                not run here (§1.3). On these covariates GOS beats a linear model and beats
+                averaging over everything; whether it beats a geostatistical model on this data set
+                is a question this tutorial does not answer.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <h3 id="interpretation">3.3&nbsp;Reading the Results Together</h3>
+  <div class="step-grid">
+    <div class="kv"><div class="k">A threshold exists, and it is small</div><div class="v">λ = 0.08:
+      8&nbsp;% of 885 observations per cell. Cross-validation RMSE 0.6668 against 0.6729 for
+      κ&nbsp;=&nbsp;1.</div></div>
+    <div class="kv"><div class="k">It restores the map</div><div class="v">GOS σ 0.365 vs BCS 0.138;
+      12.8&nbsp;% of GOS cells near the mean against 70.0&nbsp;% of BCS cells.</div></div>
+    <div class="kv"><div class="k">And it lowers error and uncertainty</div><div class="v">MAE 0.5140
+      vs 0.5220 (BCS) and 0.5456 (MLR); mean Θ down 67.1&nbsp;% at ζ&nbsp;=&nbsp;0.9.</div></div>
+  </div>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>How to interpret — several angles</div>
+    <div class="callout-b">
+      <ul>
+        <li><b>Mechanism.</b> Similarity weights are strictly positive and mostly small, so a
+            weighted mean over all 885 of them is dominated by the crowd rather than by the
+            evidence. Truncating at λ turns a soft weighting into a hard selection, and only then
+            do the informative observations decide the answer. Everything else on this page —
+            the contrast in fig05, the lower error in fig06, the lower Θ in step 4 — is a
+            consequence of that one move.</li>
+        <li><b>The similar samples need not be nearby.</b> Nothing in Eqs. 2–4 refers to a
+            coordinate. The 71 observations that predict a given cell are chosen for their
+            configuration, and may be scattered across the study area. That is the Third Law
+            working as advertised, and it is also why GOS can predict sensibly in a region with
+            few local samples but a well-represented environment.</li>
+        <li><b>Uncertainty is an extrapolation flag, not an error bar.</b> Θ says "how similar was
+            the best evidence available here", not "how wrong is this number likely to be". Two
+            cells with the same prediction can have very different Θ, and it is the high-Θ ones
+            you would sample next.</li>
+        <li><b>Honest limits.</b> The configuration is everything: any driver you did not measure
+            is invisible, and GOS cannot recover it from geometry the way a kriging model can,
+            because it never looks at geometry. λ sits in a shallow trough here (0.2&nbsp;% RMSE
+            across κ&nbsp;=&nbsp;0.05–0.10), so report the curve rather than the single number.
+            The comparison covers three models, not the paper's five. And the back-transform to
+            ppm is naive.</li>
+        <li><b>What would falsify the method on your data.</b> A κ–RMSE curve that decreases
+            monotonically to κ&nbsp;=&nbsp;1. That would say no threshold helps and BCS is the
+            right model — a perfectly publishable finding, and one this pipeline reports without
+            complaint.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>Reading order for your own run</div>
+    <div class="callout-b">
+      <p>1) <code>results/variable-selection.csv</code> — did anything survive both screens, and is
+      the maximum VIF under 4. 2) <code>figs/fig02</code> — does the κ curve have a minimum away
+      from 1, and how shallow is it. 3) <code>figs/fig05</code> — does thresholding restore contrast
+      your BCS map had lost. 4) <code>results/model-comparison.csv</code> together with
+      <code>model-comparison-repeats.csv</code> — is GOS ahead on average <i>and</i> on most splits.
+      5) <code>figs/fig03</code> panel (b) — where is the model extrapolating, and does that match
+      where your sampling is thin.</p>
+    </div>
+  </div>
+
+  <h3 id="validation">3.4&nbsp;Validation</h3>
+  <p><code>Rscript run-all.R test</code> runs two scripts and <b>42 checks</b> in about 40 seconds.
+  They test different things, and it is worth knowing which is which.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Script</th><th class="num">Checks</th><th>What it establishes</th></tr></thead>
+      <tbody>
+        <tr><td><code>tests/test-01-method-properties.R</code></td><td class="num">18</td>
+            <td>Properties the method must have <i>regardless of dataset</i>, on a small synthetic
+            case with no spatial structure at all — which is legitimate precisely because the model
+            never uses coordinates.</td></tr>
+        <tr><td><code>tests/test-02-reproduce-pipeline.R</code></td><td class="num">24</td>
+            <td>That the committed CSVs regenerate. It repeats the expensive parts of steps 30–50
+            from scratch and compares against what is in <code>results/</code>.</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Together they guard against two different failures: a wrong implementation, and a
+    silently drifted result.</figcaption>
+  </figure>
+  <h4>What test-01 pins down</h4>
+  <ul>
+    <li><b>Eq. 6 is transcribed and matched exactly.</b> The test writes out Eqs.&nbsp;2–6 by hand —
+        the Gaussian <i>E<sub>i</sub></i>, the σ over observation and prediction locations together,
+        the δ normalisation as the package computes it, the <code>min</code> operator, the weighted
+        mean — and compares it with <code>gos(kappa = 1)</code>. Maximum difference:
+        <b>0.0e+00</b>. That single check verifies the minimum-operator composition and the
+        Eq.&nbsp;6 weighted mean at once.</li>
+    <li><b>Eq. 12 behaves like a probability.</b> All six uncertainty columns present, all values in
+        [0,&nbsp;1], non-increasing in ζ, and ζ&nbsp;=&nbsp;1 the smallest of the six — with GOS and
+        BCS identical there.</li>
+    <li><b>Eq. 9 is deterministic.</b> <code>gos_bestkappa()</code> is run twice under deliberately
+        different outer seeds and must return the same λ and the same curve to 10⁻¹².</li>
+    <li><b>Scale equivariance and range.</b> Shifting and scaling the response shifts and scales
+        every prediction identically, and predictions never leave the observed range — both
+        necessary consequences of a weighted mean with positive weights.</li>
+    <li><b>The helpers.</b> The base-R VIF matches 1/(1&nbsp;−&nbsp;R²), and the split generator is
+        reproducible, disjoint, correctly sized, and refuses a degenerate split.</li>
+  </ul>
+  <h4>What test-02 pins down</h4>
+  <ul>
+    <li>The packaged <code>zn</code> still holds 894 rows and the screen still retains 885 — so a
+        package update that changed the data would fail here rather than silently rewrite this
+        page.</li>
+    <li>All nine correlations, the seven selected covariates (asserted equal to the vignette's set),
+        and their VIFs.</li>
+    <li>λ reproduces as 0.08 and the whole 19-point κ–RMSE curve matches to 10⁻⁶.</li>
+    <li>All 13,132 grid predictions match to 10⁻⁶ and the ζ&nbsp;=&nbsp;0.99 uncertainties to 10⁻⁷ —
+        re-predicting the entire grid, because a subset would legitimately differ.</li>
+    <li>Three cross-validation repeats reproduce for all three models to 10⁻⁸, the summary table
+        averages its own per-repeat file, and GOS beats BCS and MLR on both metrics in both
+        preprocessing variants.</li>
+  </ul>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Checkpoint</div>
+    <div class="callout-b">
+      <p>42 checks pass — 18 on properties the method must satisfy on any data, 24 on the committed
+      results regenerating. If those hold, you are running the reference implementation as its
+      author intended, and every number on this page is reachable from your own machine.</p>
+    </div>
+  </div>
+</section>
+
+<section id="adaptation">
+  <h2>4&nbsp;Adaptation, Writing &amp; Reproducibility</h2>
+
+  <h3 id="port-domain">4.1&nbsp;Port to Your Domain</h3>
+  <p>GOS needs no geometry, no neighbourhood and no variogram, so it travels further than most
+  spatial methods: anywhere you have a response measured at some locations, and covariates measured
+  everywhere. Soil properties, air quality, species abundance, house prices, disease incidence —
+  the contract in §2.3 is the whole requirement.</p>
+  <h4>What to edit</h4>
+  <ol>
+    <li><code>config/project-config.R</code> — <code>RESPONSE</code>, and
+        <code>LOG_TRANSFORM</code> if your response is right-skewed and strictly positive (check
+        fig01 for your own data before deciding).</li>
+    <li><code>CANDIDATES</code> — every covariate available at <i>both</i> the samples and the
+        prediction locations. Step 2 whittles the list down; you do not have to pre-select.</li>
+    <li><code>KAPPA_GRID</code> — keep it fine below 0.1, where the minimum usually sits, and coarse
+        above. If your first run puts λ at the smallest grid value, extend the grid downwards
+        before believing it.</li>
+    <li><code>CV_REPEATS</code> — 50 is the paper's protocol and costs about a minute here. Lower it
+        while iterating, restore it for the run you report.</li>
+    <li>Nothing else. <code>Rscript run-all.R test</code>, then <code>Rscript run-all.R</code>.</li>
+  </ol>
+  <h4>Choosing covariates</h4>
+  <p>The configuration is the model. Three rules that follow from Eqs.&nbsp;2–4 rather than from
+  taste:</p>
+  <ul>
+    <li><b>Availability at the prediction locations is the binding constraint.</b> A covariate you
+        measured only at your samples is useless to GOS, however predictive. This is why remote
+        sensing, terrain and distance-to-feature layers dominate every published configuration.</li>
+    <li><b>Because P is the minimum, more is not better.</b> Every added covariate can only lower
+        each pairwise similarity, never raise it. A weak covariate does not dilute the signal the
+        way it would in a regression — it actively suppresses matches. Let the VIF and correlation
+        screens do their job, and prefer a compact configuration.</li>
+    <li><b>Prefer covariates that carry the spatial structure you cannot otherwise use.</b> The
+        model never sees coordinates, so anything smooth in space that drives your response — a
+        geological unit, a distance to a river, an elevation band — has to enter through a
+        covariate or not at all. In the paper, the two strongest Zn covariates were distances to
+        related lithology and faults, which are exactly such fields; their absence from the
+        packaged data is the main reason this reproduction differs from the published one.</li>
+    <li><b>Watch for circular and categorical variables.</b> Aspect is dropped by the screen here,
+        and rightly: a Gaussian on degrees treats 359° and 1° as far apart. Decompose it into
+        sin/cos, or leave it out. Unordered categories have no meaningful squared difference at
+        all.</li>
+  </ul>
+  <h4>What κ means for your sample size</h4>
+  <p>κ is a <i>share</i>, so the number of observations actually used is κ&nbsp;×&nbsp;m — here
+  0.08&nbsp;×&nbsp;885&nbsp;≈&nbsp;71 per prediction. That has two consequences worth planning
+  for.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Sample size m</th><th>What to expect of λ</th><th>Practical note</th></tr></thead>
+      <tbody>
+        <tr><td>small (m ≲ 100)</td><td>large, often approaching 1</td><td>with 100 samples, κ = 0.08 leaves 8 observations — too few to be stable. The left arm of the curve in fig02 is exactly this failure mode. GOS may collapse to BCS, which is a legitimate answer</td></tr>
+        <tr><td>moderate (m ≈ 500–2,000)</td><td>a few per cent, as here</td><td>the regime the paper studies; the curve has a clear minimum and a shallow trough around it</td></tr>
+        <tr><td>large (m ≫ 5,000)</td><td>small, and the computational gain is the point</td><td>this is the case the paper opens with: BCS's cost grows with every added sample while its accuracy falls. Thresholding fixes both</td></tr>
+      </tbody>
+    </table>
+    <figcaption>κ is a proportion, so the same κ means very different amounts of evidence at
+    different sample sizes. Read λ together with κ&nbsp;×&nbsp;m.</figcaption>
+  </figure>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>When BCS is enough — and how to tell</div>
+    <div class="callout-b">
+      <p>Run the κ search first and <i>look at the curve</i>. If RMSE decreases monotonically to
+      κ&nbsp;=&nbsp;1, there is no optimal threshold on your data and BCS is the correct model —
+      report that. If the minimum is real but the trough is very shallow, as it is here
+      (0.2&nbsp;% across κ&nbsp;=&nbsp;0.05–0.10), λ is weakly identified: quote the curve, not just
+      the number. And if your sample is small enough that κ&nbsp;×&nbsp;m is under about 20, the
+      threshold is buying you noise. The
+      <a href="../../app/gos/">online GOS calculator</a> is the quickest way to answer this: load
+      your CSV, run the κ search, and look at the shape before writing any pipeline code.</p>
+    </div>
+  </div>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Common pitfalls</div>
+    <div class="callout-b">
+      <p>Report λ, the κ grid it was searched over, the number of repeats, and ζ — a Θ value without
+      its ζ is meaningless, and a λ without its grid cannot be checked. Make sure a covariate is
+      measured identically in both tables; the model cannot detect a unit mismatch. Do not predict
+      your grid in chunks or thin it after tuning, because σ and δ depend on the prediction set.
+      Complete your cases: covariate NAs error out, response NAs return all-<code>NA</code>
+      predictions in silence. Keep errors in the transformed units you modelled in, and treat any
+      back-transform as presentational. And do not tune λ on the same split you report accuracy on
+      — the pipeline derives λ once, then scores on 50 fresh splits.</p>
+    </div>
+  </div>
+
+  <h3 id="write-paper">4.2&nbsp;Write the Paper</h3>
+  <p>The published study has a clean architecture, and it is worth copying: define the four stages,
+  characterise the configuration, show the threshold search, then predict, quantify uncertainty and
+  benchmark.</p>
+  <figure class="tablewrap">
+    <table>
+      <thead><tr><th>Manuscript section</th><th>Template output</th><th>Writing job</th></tr></thead>
+      <tbody>
+        <tr><td>Methods</td><td><code>config/project-config.R</code>, Eqs. 1–12 as set out in §1.2</td><td>state the similarity function and that P is the minimum operator; define κ and ζ; say how λ was searched — grid, repeats, split ratio — and that it was derived once and reused</td></tr>
+        <tr><td>Data</td><td><code>results/response-summary.csv</code>, <code>figs/fig01</code>, <code>data/provenance.md</code></td><td>the response and its transform, the candidate covariates and where each comes from, and the fact that every covariate exists at the prediction locations</td></tr>
+        <tr><td>Results — configuration</td><td><code>results/variable-selection.csv</code>, <code>tables/table-variable-selection.tex</code></td><td>the correlation and VIF table, and what was dropped and why</td></tr>
+        <tr><td>Results — threshold</td><td><code>results/kappa-rmse.csv</code>, <code>figs/fig02</code></td><td>the curve, λ, and the depth of the trough; state κ × m, not only κ</td></tr>
+        <tr><td>Results — prediction</td><td><code>figs/fig03</code>, <code>fig04</code>, <code>fig05</code>, <code>results/grid-prediction.csv</code></td><td>the map, the uncertainty at a named ζ, and the BCS contrast that shows why the threshold matters</td></tr>
+        <tr><td>Results — accuracy</td><td><code>results/model-comparison.csv</code> + <code>-repeats.csv</code>, <code>figs/fig06</code>, <code>tables/table-model-comparison.tex</code></td><td>the table, and the paired win counts — averages alone under-sell a consistent small margin</td></tr>
+        <tr><td>Discussion</td><td>the no-screening variant, §3.3</td><td>the mechanism, the limits of a covariate-only model, and one robustness variant of your own preprocessing</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Where each manuscript section draws its material from.</figcaption>
+  </figure>
+  <h4>Manuscript skeleton</h4>
+  <div class="codewrap nofold">
+    <span class="code-label">manuscript outline</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-text"><code>1  Introduction        — spatial prediction from similarity, not distance;
+                          BCS uses every sample; the gap: which samples,
+                          and how uncertain (3 aims)
+2  Geographically optimal similarity
+                        — 2.1 Characterising configurations (Eq. 1)
+                          2.2 Assessing similarity (Eqs. 2-6; P = min)
+                          2.3 The optimal threshold (Eqs. 7-10)
+                          2.4 Prediction and uncertainty (Eqs. 11-12)
+3  Case &amp; data         — study area, response and transform, covariates,
+                          availability at the prediction locations
+4  Results             — 4.1 the selected configuration (correlation, VIF)
+                          4.2 the kappa curve and lambda
+                          4.3 prediction map
+                          4.4 uncertainty across zeta
+                          4.5 GOS against BCS: spread and accuracy
+                          4.6 accuracy comparison, paired over splits
+5  Discussion          — why fewer samples predict better; what the
+                          uncertainty does and does not mean; limits of a
+                          covariate-only configuration
+6  Conclusions         — 6-8 sentences answering the aims</code></pre>
+  </div>
+  <h4>Results-to-manuscript map</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Manuscript element</th><th>Source file</th><th>Shown in</th></tr></thead>
+      <tbody>
+        <tr><td>Response summary and transform</td><td><code>tables/table-response-summary.tex</code>, <code>figs/fig01</code></td><td>§3 / §4.1</td></tr>
+        <tr><td>Configuration table</td><td><code>tables/table-variable-selection.tex</code></td><td>§4.1</td></tr>
+        <tr><td><b>Main figure</b> (the κ curve)</td><td><code>figs/fig02</code>, <code>results/kappa-rmse.csv</code></td><td>§4.2</td></tr>
+        <tr><td>Prediction and uncertainty maps</td><td><code>figs/fig03</code>, <code>figs/fig04</code></td><td>§4.3 / §4.4</td></tr>
+        <tr><td>BCS contrast</td><td><code>figs/fig05</code></td><td>§4.5</td></tr>
+        <tr><td><b>Main table</b> (accuracy)</td><td><code>tables/table-model-comparison.tex</code>, <code>figs/fig06</code></td><td>§4.6</td></tr>
+        <tr><td>Robustness variant</td><td><code>tables/table-model-comparison-no-screening.tex</code></td><td>§5 / supplement</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Every manuscript element traces to one regenerable file.</figcaption>
+  </figure>
+
+  <h3 id="repro-package">4.3&nbsp;Final Reproducibility Package</h3>
+  <div class="step-grid">
+    <div class="kv"><div class="k">Code</div><div class="v">numbered scripts in <code>R/</code> + <code>run-all.R</code> + <code>config/project-config.R</code> + <code>tests/</code></div></div>
+    <div class="kv"><div class="k">Data</div><div class="v"><code>data(zn)</code> and <code>data(grid)</code> from <code>geosimilarity</code> 3.9, with <code>data/provenance.md</code> and the CSV copies step 1 writes</div></div>
+    <div class="kv"><div class="k">Results</div><div class="v"><code>results/*.csv</code> + <code>figs/fig01–fig06</code> (PNG + vector PDF) + <code>tables/*.tex</code> + <code>env/</code></div></div>
+  </div>
+  <h4>What is in the download, and what is not</h4>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Included in <code>gos-code-and-data.zip</code> (46 KB)</th><th>Deliberately excluded</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>run-all.R</code>, <code>config/project-config.R</code>, all eight scripts in
+              <code>R/</code>, both scripts in <code>tests/</code>, six CSVs in
+              <code>results/</code>, four LaTeX tables in <code>tables/</code>, all of
+              <code>env/</code>, and a <code>README.md</code> — 26 files in seven folders</td>
+          <td><code>data/</code>, because both input tables ship inside the
+              <code>geosimilarity</code> package and step 1 writes CSV copies of them on the first
+              run; the two grid-prediction CSVs (~1.5&nbsp;MB each), which step 4 regenerates in ten
+              seconds; and <code>figs/</code>, since every figure is redrawn by the step that owns
+              it and the rendered versions are on this page</td>
+        </tr>
+      </tbody>
+    </table>
+    <figcaption>The archive is 46&nbsp;KB because the data are a package dependency rather than a
+    file, which is also what makes this pipeline network-free.</figcaption>
+  </figure>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">✓</span>Before claiming reproducible</div>
+    <div class="callout-b">
+      <ul>
+        <li><code>Rscript run-all.R test</code> passes — 42 checks, including
+            <code>gos(kappa = 1)</code> against a hand transcription of Eqs. 2–6 at
+            <b>0.0e+00</b>.</li>
+        <li>Delete <code>results/</code>, <code>tables/</code>, <code>figs/</code> and
+            <code>data/derived/</code>, re-run <code>Rscript run-all.R</code> — every number and
+            figure on this page regenerates (~107&nbsp;s).</li>
+        <li>λ, the κ grid, the number of repeats, the split ratio and the ζ you report are stated in
+            the manuscript and match <code>config/project-config.R</code>.</li>
+        <li>The exact <code>geosimilarity</code> version is named. <code>gos()</code>'s δ
+            normalisation is an implementation detail of the package, so the version is part of the
+            method here.</li>
+        <li>Accuracy is reported over repeated splits with the per-repeat file deposited, not as a
+            single number from a single split.</li>
+        <li><code>env/session-info.txt</code> is included in the deposit.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◆</span>Anticipate the reviewer</div>
+    <div class="callout-b">
+      <p><i>Is this just inverse-distance weighting in covariate space?</i> → no, in two ways: the
+      minimum operator makes similarity a conjunction rather than an average, and the threshold
+      turns a weighting into a selection. <i>Why not just fit a regression?</i> →
+      <code>results/model-comparison.csv</code>: same covariates, MLR is 5.8&nbsp;% worse on MAE, on
+      all 50 splits. <i>Is λ overfitted?</i> → it is derived by cross-validation once and then
+      scored on 50 independent splits; <code>tests/test-01</code> shows the search is deterministic.
+      <i>Is the improvement over BCS real, given how small it is?</i> → paired over shared splits,
+      50/50 on MAE, and it comes with a 92&nbsp;% reduction in observations used and the restored
+      map contrast of <code>figs/fig05</code>. <i>Why no kriging comparison?</i> → out of scope
+      here, and stated as such in §1.3 rather than glossed. <i>What does the uncertainty mean?</i> →
+      Eq. 12 at a named ζ: one minus a quantile of the retained similarities, i.e. how good the
+      available evidence was, not a predictive variance.</p>
+    </div>
+  </div>
+  <h4>References &amp; credits</h4>
+  <p>Demo outputs were generated by the scripts in this folder using the CRAN
+  <code>geosimilarity</code> package and its bundled data. Reference figures are reproduced from
+  the article, which is open access, for comparison.</p>
+  <ol>
+    <li>Song Y (2023). Geographically Optimal Similarity.
+        <i>Mathematical Geosciences</i> 55:295–320.
+        <a href="https://doi.org/10.1007/s11004-022-10036-8">doi:10.1007/s11004-022-10036-8</a>
+        · <a href="../../pdf/GOS-song2022.pdf">PDF</a><span class="mini-badge oa">open access</span>
+        (source of the method, of Figs. 1, 3, 4, 7, 8, 9, 10 and 11 reference images, and of the
+        case reproduced here)</li>
+    <li>Song Y, Lyu W. <i>geosimilarity: Geographically Optimal Similarity</i>. R package,
+        version 3.9.
+        <a href="https://cran.r-project.org/package=geosimilarity">CRAN</a> ·
+        <a href="https://cran.r-project.org/web/packages/geosimilarity/vignettes/geosimilarity.html">vignette</a>
+        (the reference implementation, and the source of both data sets)</li>
+    <li>Zhu A-X, Lu G, Liu J, Qin C-Z, Zhou C (2018). Spatial prediction based on Third Law of
+        Geography. <i>Annals of GIS</i> 24(4):225–240.
+        <a href="https://doi.org/10.1080/19475683.2018.1534890">doi:10.1080/19475683.2018.1534890</a>
+        (the geographical similarity principle GOS builds on)</li>
+    <li>Zhu A-X, Liu J, Du F, et al. (2015). Predictive soil mapping with limited sample data.
+        <i>European Journal of Soil Science</i> 66(3):535–547.
+        <a href="https://doi.org/10.1111/ejss.12244">doi:10.1111/ejss.12244</a>
+        (the BCS / iPSM model that κ = 1 reproduces exactly)</li>
+    <li>Online GOS calculator — <a href="../../app/gos/">yongzesong.com/app/gos/</a>
+        (the same package compiled to WebAssembly, running entirely in the browser)</li>
+  </ol>
+</section>
+
+</main>
+<div id="lightbox"><img alt="enlarged figure" loading="lazy" decoding="async"></div>
+
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var sidebar=document.getElementById('sidebar');
+  var menuBtn=document.getElementById('menu-btn');
+  var themeBtn=document.getElementById('themebtn');
+  var filter=document.getElementById('toc-filter');
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var lightbox=document.getElementById('lightbox');
+  var lightboxImg=lightbox ? lightbox.querySelector('img') : null;
+
+  function setTheme(mode){
+    if(mode==='dark'){
+      root.setAttribute('data-theme','dark');
+      if(themeBtn) themeBtn.textContent='Light mode';
+    }else{
+      root.removeAttribute('data-theme');
+      if(themeBtn) themeBtn.textContent='Dark mode';
+    }
+    try{localStorage.setItem('reproduce-template-theme',mode)}catch(e){}
+  }
+  try{
+    var saved=localStorage.getItem('reproduce-template-theme');
+    if(saved==='dark') setTheme('dark');
+  }catch(e){}
+
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      setTheme(root.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+    });
+  }
+
+  if(menuBtn && sidebar){
+    menuBtn.addEventListener('click',function(){
+      sidebar.classList.toggle('open');
+    });
+  }
+  links.forEach(function(a){
+    a.addEventListener('click',function(){
+      if(sidebar) sidebar.classList.remove('open');
+    });
+  });
+
+  if(filter){
+    filter.addEventListener('input',function(){
+      var q=filter.value.trim().toLowerCase();
+      links.forEach(function(a){
+        a.style.display=a.textContent.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+      });
+    });
+  }
+
+  document.querySelectorAll('.copybtn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var box=btn.closest('.codewrap');
+      var code=box ? box.querySelector('pre code') : null;
+      if(!code) return;
+      navigator.clipboard.writeText(code.innerText).then(function(){
+        btn.classList.add('ok');
+        btn.textContent='Copied';
+        setTimeout(function(){
+          btn.classList.remove('ok');
+          btn.textContent='Copy';
+        },1200);
+      });
+    });
+  });
+
+  document.querySelectorAll('figure img,.figpair img').forEach(function(img){
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',function(){
+      if(!lightbox || !lightboxImg) return;
+      lightboxImg.src=img.src;
+      lightboxImg.alt=img.alt || 'enlarged figure';
+      lightbox.classList.add('open');
+    });
+  });
+  if(lightbox){
+    lightbox.addEventListener('click',function(){
+      lightbox.classList.remove('open');
+      if(lightboxImg) lightboxImg.removeAttribute('src');
+    });
+  }
+
+  var headings=[].slice.call(document.querySelectorAll('section[id],h3[id],article[id]'));
+  function onScroll(){
+    var active=null;
+    var y=window.scrollY+110;
+    headings.forEach(function(h){
+      if(h.offsetTop<=y) active=h.id;
+    });
+    links.forEach(function(a){
+      a.classList.toggle('active',a.getAttribute('href')==='#'+active);
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+</script>
+<script>
+// Lightweight R/bash/YAML highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code, pre.code.lang-yaml code').forEach(function(codeEl){
+  var src = codeEl.textContent;
+  var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var isR = codeEl.parentElement.classList.contains('lang-r');
+  var kw = isR
+    ? /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")|\b(function|if|else|for|while|return|library|source|TRUE|FALSE|NULL|NA_real_|NA_character_|NA|in)\b/g
+    : /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")/g;
+  var out = '', last = 0, m;
+  while ((m = kw.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    if (m[1])      out += '<span class="cm">' + esc(m[1]) + '</span>';
+    else if (m[2]) out += '<span class="st">' + esc(m[2]) + '</span>';
+    else           out += '<span class="kw">' + esc(m[3]) + '</span>';
+    last = kw.lastIndex;
+  }
+  out += esc(src.slice(last));
+  codeEl.innerHTML = out;
+});
+</script>
+<script>
+// Collapsible code boxes: boxes longer than 4 lines start collapsed to a 3-line preview.
+document.querySelectorAll('.codewrap:not(.nofold)').forEach(function(w){
+  var code=w.querySelector('pre.code code');
+  if(!code) return;
+  var lines=code.textContent.replace(/\n+$/,'').split('\n').length;
+  if(lines<=4) return;
+  w.classList.add('has-fold','collapsed');
+  var chip=w.querySelector('.code-label');
+  if(chip) chip.textContent+=' · '+lines+' lines';
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.className='foldbtn';
+  btn.title='Expand / collapse code';
+  function label(){
+    btn.textContent=w.classList.contains('collapsed') ? 'Expand' : 'Collapse ▴';
+  }
+  label();
+  btn.addEventListener('click',function(){
+    w.classList.toggle('collapsed');
+    label();
+    if(w.classList.contains('collapsed')) w.scrollIntoView({block:'nearest'});
+  });
+  w.appendChild(btn);
+});
+</script>
+<script>
+// Match the director avatar to the height of the name-to-email text block (desktop only).
+(function(){
+  function sizeDirectorAvatar(){
+    document.querySelectorAll('.director-card').forEach(function(card){
+      var img=card.querySelector('img');
+      var info=card.querySelector('.director-info');
+      if(!img||!info) return;
+      if(window.innerWidth<=1000){
+        img.style.width='';img.style.height='';img.style.minWidth='';
+        return;
+      }
+      var h=Math.round(info.getBoundingClientRect().height);
+      img.style.height=h+'px';
+      img.style.width=h+'px';
+      img.style.minWidth=h+'px';
+    });
+  }
+  window.addEventListener('load',sizeDirectorAvatar);
+  window.addEventListener('resize',sizeDirectorAvatar);
+  sizeDirectorAvatar();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+"dataset","n_samples","lambda_used_by_gos","model","mae","mae_sd","rmse","rmse_sd","mae_reduction_by_gos_pct","rmse_reduction_by_gos_pct"
+"unscreened",894,0.08,"MLR",0.564,0.013,0.7184,0.0168,5.6563,3.6936
+"unscreened",894,0.08,"BCS",0.5401,0.015,0.6994,0.0185,1.4784,1.0753
+"unscreened",894,0.08,"GOS",0.5321,0.0136,0.6919,0.0185,NA,NA

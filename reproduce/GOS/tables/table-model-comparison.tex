@@ -1,0 +1,11 @@
+\begin{table}[t]\centering
+\caption{Cross-validation errors of the 3 models over 50 repeated 50/50 splits of the outlier-screened samples (n = 885, $\lambda$ = 0.08), and the error reduction achieved by GOS. The paper's Table 3 also benchmarks against ordinary and regression kriging, which are outside the scope of this tutorial.}\label{tab:models}
+\begin{tabular}{lrrrrrr}
+\hline
+Model & MAE & sd(MAE) & RMSE & sd(RMSE) & MAE reduction by GOS (\%) & RMSE reduction by GOS (\%) \\
+\hline
+MLR & 0.546 & 0.012 & 0.686 & 0.015 & 5.8 & 4.2 \\
+BCS & 0.522 & 0.013 & 0.665 & 0.017 & 1.5 & 1.1 \\
+GOS & 0.514 & 0.012 & 0.658 & 0.018 & -- & -- \\
+\hline
+\end{tabular}\end{table}

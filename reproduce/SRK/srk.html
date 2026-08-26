@@ -1,0 +1,2486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reproducing the SRK Model — Step-by-Step Guide</title>
+<meta name="description" content="Step-by-step guide to reproducing the singularity regression kriging (SRK) model in R — multiscale covariate singularity indices, a singularity-augmented random forest trend, ordinary kriging of the residuals, and spatial block cross-validation against five benchmarks.">
+<link rel="canonical" href="https://yongzesong.com/reproduce/SRK/srk.html">
+<link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../../assets/images/apple-touch-icon.png">
+<style>
+:root{
+  --accent:#7d6608;
+  --accent-2:#2166AC;
+  --accent-soft:#f7f2df;
+  --bg:#ffffff;
+  --fg:#1a1d21;
+  --muted:#5a626b;
+  --line:#e6e8eb;
+  --side-bg:#fbfcfd;
+  --code-bg:#f6f8fa;
+  --code-fg:#24292e;
+  --nav-fg:#495057;
+  --nav-l2:#6c757d;
+  --nav-active:#2761e3;
+  --nav-active-bg:#eef4ff;
+  --nav-hover:#eef0f2;
+  --sidew:290px;
+  --rightw:var(--sidew);
+  --maxw:880px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+[data-theme=dark]{
+  --bg:#0f1216;
+  --fg:#e6e8eb;
+  --muted:#9aa4af;
+  --line:#242a31;
+  --side-bg:#0c1014;
+  --code-bg:#161b22;
+  --code-fg:#d1d7de;
+  --accent-soft:#2a1512;
+  --nav-fg:#b4bcc4;
+  --nav-l2:#8b939c;
+  --nav-active:#6ea8fe;
+  --nav-active-bg:#15202f;
+  --nav-hover:#171c22;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+[data-theme=dark] a{color:#e08a7c}
+code{
+  font-family:var(--mono);
+  font-size:.88em;
+  background:var(--code-bg);
+  color:var(--code-fg);
+  padding:.1em .35em;
+  border-radius:4px;
+}
+
+/* Sidebar: LISP-GC navigation pattern, SOH dark-mode behavior. */
+#menu-btn{
+  display:none;
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:60;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 11px;
+  font-size:1.05rem;
+  cursor:pointer;
+  color:var(--fg);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+#sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:var(--sidew);
+  overflow-y:auto;
+  background:var(--side-bg);
+  border-right:1px solid var(--line);
+  padding:22px 18px 40px;
+  z-index:50;
+}
+#sidebar .back-to-site{
+  display:inline-block;
+  font-size:.78rem;
+  color:var(--muted);
+  text-decoration:none;
+  margin-bottom:10px;
+  padding:3px 8px;
+  border:1px solid var(--line);
+  border-radius:5px;
+}
+#sidebar .back-to-site:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+}
+[data-theme=dark] #sidebar .back-to-site:hover{color:#e08a7c;border-color:#e08a7c}
+#sidebar .brand{
+  font-size:1.06rem;
+  font-weight:700;
+  color:var(--fg);
+  line-height:1.35;
+  margin-bottom:4px;
+}
+#sidebar .brand-sub{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+#toc-filter{
+  width:100%;
+  padding:6px 10px;
+  font-size:.85rem;
+  border:1px solid var(--line);
+  border-radius:6px;
+  margin-bottom:14px;
+  outline:none;
+  background:var(--bg);
+  color:var(--fg);
+}
+#toc-filter:focus{border-color:var(--nav-active)}
+#toc a{
+  display:block;
+  padding:4px 8px;
+  font-size:.88rem;
+  color:var(--nav-fg);
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  line-height:1.35;
+  margin:1px 0;
+}
+#toc a.l2{
+  padding-left:22px;
+  font-size:.82rem;
+  color:var(--nav-l2);
+}
+#toc a:hover{
+  background:var(--nav-hover);
+  text-decoration:none;
+}
+#toc a.active{
+  color:var(--nav-active);
+  border-left-color:var(--nav-active);
+  background:var(--nav-active-bg);
+  font-weight:600;
+}
+.side-foot{
+  padding:16px 8px 0;
+  margin-top:14px;
+  border-top:1px solid var(--line);
+}
+.themebtn{
+  font:inherit;
+  font-size:.82rem;
+  cursor:pointer;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:5px 10px;
+  color:var(--muted);
+}
+.themebtn:hover{color:var(--fg)}
+
+.gc-hex-zoom{transition:transform .15s ease}
+.gc-hex-zoom:hover{transform:scale(1.12)}
+
+/* Hero and content. */
+.hero{
+  border-bottom:1px solid var(--line);
+  padding:34px 40px 26px;
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  background:var(--bg);
+}
+.hero h1{
+  margin:0 0 6px;
+  font-size:1.9rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  color:var(--fg);
+}
+.hero .sub{
+  color:var(--muted);
+  font-size:1.05rem;
+}
+.cite-lead{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--fg);
+  margin-top:16px;
+}
+.cite{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:12px;
+}
+.cite div+div{margin-top:4px}
+.dlbtn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding:9px 18px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  font-size:.92rem;
+  border-radius:8px;
+}
+.dlbtn:hover{filter:brightness(1.12);text-decoration:none}
+[data-theme=dark] .dlbtn{color:#fff}
+.dlnote{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* Lab director card adapted from lab.html, with template typography and colours. */
+.director-card{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  margin:18px 0 4px;
+  padding:16px;
+  background:var(--side-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+.director-card img{
+  width:110px;
+  min-width:110px;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:50%;
+  background:#fff;
+}
+.director-info h3{
+  font-size:1.16rem;
+  line-height:1.25;
+  margin:0 0 4px;
+}
+.director-info p{
+  font-size:.82rem;
+  line-height:1.5;
+  margin:2px 0;
+  color:var(--muted);
+}
+.director-info a{
+  font-size:.82rem;
+  font-weight:600;
+}
+
+/* Fixed right rail for related reproducible-model tutorials. */
+.related-rail{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  width:var(--rightw);
+  overflow-y:auto;
+  z-index:40;
+  padding:22px 18px 40px;
+  border-left:1px solid var(--line);
+  background:var(--side-bg);
+}
+.related-rail .rail-title{
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1.35;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.related-rail a{
+  display:block;
+  padding:4px 8px;
+  margin:1px 0;
+  border-left:3px solid transparent;
+  border-radius:0 4px 4px 0;
+  color:var(--nav-fg);
+  font-size:.88rem;
+  line-height:1.35;
+}
+.related-rail a:hover{
+  text-decoration:none;
+  background:var(--nav-hover);
+}
+.related-rail a.current{
+  color:var(--nav-active);
+  background:var(--nav-active-bg);
+  border-left-color:var(--nav-active);
+  font-weight:600;
+}
+.related-rail .rail-note{
+  color:var(--muted);
+  font-size:.76rem;
+  line-height:1.45;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+main{
+  margin-left:var(--sidew);
+  margin-right:var(--rightw);
+  padding:26px 40px 90px;
+}
+section{padding-top:4px}
+h2{
+  font-size:1.5rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  margin:48px 0 14px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+  color:var(--fg);
+}
+section:first-of-type h2{margin-top:20px}
+h3{
+  font-size:1.16rem;
+  font-weight:600;
+  margin:30px 0 10px;
+  letter-spacing:-.005em;
+  color:var(--fg);
+}
+h4{
+  font-size:1rem;
+  font-weight:600;
+  margin:20px 0 8px;
+  color:var(--fg);
+}
+p{margin:.7em 0}
+ul,ol{
+  margin:.6em 0;
+  padding-left:1.3em;
+}
+li{margin:.28em 0}
+
+/* Reusable content blocks. */
+.callout{
+  border:1px solid var(--line);
+  border-left-width:4px;
+  border-radius:8px;
+  padding:12px 16px;
+  margin:1.2em 0;
+  background:var(--side-bg);
+}
+.callout-h{
+  font-weight:700;
+  font-size:.92rem;
+  margin-bottom:2px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.callout-i{font-size:1rem}
+.callout-b p{margin:.4em 0}
+.callout-b ul{margin:.4em 0}
+.c-interpret{border-left-color:var(--accent);background:var(--accent-soft)}
+.c-tip{border-left-color:#178a3c}
+.c-warn{border-left-color:#d98a00}
+.c-repro{border-left-color:var(--accent-2)}
+.c-note{border-left-color:#8b939c}
+
+.codewrap{
+  position:relative;
+  margin:1.1em 0;
+}
+.code-label{
+  position:absolute;
+  top:-9px;
+  left:12px;
+  font-size:.7rem;
+  font-family:var(--mono);
+  background:var(--accent);
+  color:#fff;
+  padding:1px 8px;
+  border-radius:4px;
+  letter-spacing:.02em;
+}
+.copybtn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  font:inherit;
+  font-size:.74rem;
+  cursor:pointer;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:3px 9px;
+  color:var(--muted);
+  opacity:.85;
+  transition:.15s;
+}
+.copybtn:hover{
+  color:var(--fg);
+  opacity:1;
+  border-color:var(--accent);
+}
+.copybtn.ok{
+  color:#178a3c;
+  border-color:#178a3c;
+}
+pre.code{
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px;
+  overflow-x:auto;
+  margin:0;
+  font-family:var(--mono);
+  font-size:.83rem;
+  line-height:1.5;
+}
+pre.code code{
+  background:none;
+  padding:0;
+  color:var(--code-fg);
+  white-space:pre;
+}
+.console{
+  background:#22262b;
+  color:#d8dee4;
+  border-radius:8px;
+  padding:12px 15px;
+  margin:14px 0;
+  font-family:var(--mono);
+  font-size:.78rem;
+  line-height:1.5;
+  overflow:auto;
+  max-height:320px;
+  white-space:pre;
+}
+
+.tablewrap{
+  margin:1.2em 0;
+  overflow-x:auto;
+}
+.tablewrap table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:.86rem;
+}
+.tablewrap th{
+  text-align:left;
+  border-bottom:2px solid var(--fg);
+  padding:7px 10px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.tablewrap td{
+  border-bottom:1px solid var(--line);
+  padding:6px 10px;
+  vertical-align:top;
+}
+.tablewrap tbody tr:hover{background:rgba(127,127,127,.05)}
+.tablewrap figcaption{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:8px;
+}
+.tablewrap.compact td,
+.tablewrap.compact th{
+  padding:4px 8px;
+  font-size:.8rem;
+}
+table code{font-size:.82em}
+tr.hl td{background:var(--accent-soft)}
+
+figure.fig{
+  margin:1.2em 0;
+  text-align:center;
+}
+figure.fig img{
+  max-width:100%;
+  height:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+figure.fig figcaption{
+  font-size:.82rem;
+  color:var(--muted);
+  margin-top:8px;
+  text-align:left;
+}
+.credit{
+  display:block;
+  font-style:italic;
+  margin-top:2px;
+}
+.figpair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin:1.2em 0;
+}
+.figpair figure{margin:0}
+.figpair img{
+  max-width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
+.figpair figcaption{
+  font-size:.78rem;
+  color:var(--muted);
+  margin-top:6px;
+  text-align:left;
+}
+.pairtag{
+  font-size:.72rem;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:5px;
+  margin-bottom:6px;
+  display:inline-block;
+}
+.tag-demo{
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+[data-theme=dark] .tag-demo{color:#d4b95e}
+.tag-paper{
+  background:#eef3f8;
+  color:var(--accent-2);
+}
+[data-theme=dark] .tag-paper{background:#14202e;color:#8ab4dd}
+.pairnote{
+  font-size:.82rem;
+  color:var(--muted);
+  border-left:3px solid var(--line);
+  padding-left:12px;
+  margin:.2em 0 1em;
+}
+
+.flow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:stretch;
+  gap:8px;
+  margin:16px 0;
+}
+.flow .chip{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 12px;
+  background:var(--side-bg);
+  font-size:.8rem;
+  line-height:1.4;
+  flex:1;
+  min-width:135px;
+}
+.flow .chip b{
+  display:block;
+  font-size:.9rem;
+  color:var(--fg);
+}
+.flow .chip.hl{
+  border-color:var(--nav-active);
+  background:var(--nav-active-bg);
+}
+.flow .arrow{
+  align-self:center;
+  color:var(--muted);
+  font-size:1.1rem;
+}
+.mini-badge{
+  display:inline-block;
+  font-size:.68rem;
+  font-weight:600;
+  border-radius:4px;
+  padding:1px 6px;
+  margin-left:4px;
+  vertical-align:1px;
+  background:#eceff1;
+  color:#6c757d;
+}
+.mini-badge.oa{
+  background:#d8f3e1;
+  color:#1c7a43;
+}
+
+.step-card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:1.4em 0 1.8em;
+  overflow:hidden;
+  background:var(--bg);
+}
+.step-card-h{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  background:var(--side-bg);
+}
+.step-label{
+  display:inline-block;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+[data-theme=dark] .step-label{color:#d4b95e}
+.step-card-h h4{
+  margin:0;
+  font-size:1.05rem;
+}
+.step-card-b{padding:14px 16px 16px}
+.step-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+.kv{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  background:var(--side-bg);
+}
+.kv .k{
+  font-size:.72rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+.kv .v{
+  font-size:.9rem;
+  color:var(--fg);
+}
+
+#lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(15,18,22,.88);
+  display:none;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  cursor:zoom-out;
+  padding:30px;
+}
+#lightbox img{
+  max-width:96%;
+  max-height:96%;
+  background:#fff;
+  border-radius:6px;
+  padding:10px;
+}
+#lightbox.open{display:flex}
+
+@media (max-width:1000px){
+  #sidebar{
+    transform:translateX(-100%);
+    transition:transform .2s;
+  }
+  #sidebar.open{
+    transform:none;
+    box-shadow:0 0 30px rgba(0,0,0,.2);
+  }
+  #menu-btn{display:block}
+  .hero,
+  main{
+    margin-left:0;
+    margin-right:0;
+  }
+  .hero{padding:60px 20px 22px}
+  main{
+    padding:20px 20px 70px;
+    max-width:none;
+  }
+  .director-card{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+  .director-card img{
+    width:90px;
+    height:90px;
+    align-self:center;
+  }
+  .figpair{grid-template-columns:1fr}
+  .related-rail{display:none}
+}
+@media print{
+  #sidebar,
+  #menu-btn,
+  .copybtn,
+  #lightbox{display:none}
+  .hero,
+  main{margin-left:0}
+}
+
+/* --- Page additions shared with the LPI tutorial --- */
+.figpair.triple{grid-template-columns:1fr 1fr 1fr}
+.tablewrap td.num,.tablewrap th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre.code .cm{color:#7f8896;font-style:italic}
+pre.code .st{color:#20794d}
+pre.code .kw{color:#8f3faf;font-weight:600}
+[data-theme=dark] pre.code .cm{color:#8b949e}
+[data-theme=dark] pre.code .st{color:#7ee2a8}
+[data-theme=dark] pre.code .kw{color:#d2a8ff}
+@media (max-width:1000px){.figpair.triple{grid-template-columns:1fr}}
+
+/* Half-width figures (method flowchart, single-map demo panels). */
+figure.fig.half img{max-width:50%}
+figure.fig.two-thirds img{max-width:68%}
+@media (max-width:1000px){
+  figure.fig.half img,
+  figure.fig.two-thirds img{max-width:100%}
+}
+
+/* Equation display blocks (DSI page): serif-style formula rows. */
+.eq{
+  font-size:1.02rem;
+  margin:.6em 0;
+  padding:10px 14px;
+  background:var(--code-bg);
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+.eq .eqn{
+  float:right;
+  color:var(--muted);
+  font-size:.85rem;
+  padding-left:18px;
+}
+
+/* Collapsible code boxes: long blocks start collapsed to a ~3-line preview.
+   The expand/collapse control is a full-height accent strip on the LEFT edge of
+   the box — clickable at any scroll position. */
+.codewrap.collapsed pre.code{max-height:78px;overflow:hidden}
+.codewrap.has-fold pre.code{padding-left:46px}
+.codewrap.has-fold .code-label{left:44px}
+.foldbtn{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  width:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:none;
+  border-left:1px solid var(--line);   /* rotated 180deg: renders on the visual right, against the code */
+  border-radius:0 10px 10px 0;         /* rotated 180deg: rounds the visual left corners */
+  background:var(--code-bg);
+  color:var(--muted);
+  font:inherit;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  cursor:pointer;
+}
+.foldbtn:hover{color:var(--fg);background:var(--nav-hover)}
+@media print{
+  .foldbtn{display:none}
+  .codewrap.collapsed pre.code{max-height:none}
+  .codewrap.has-fold pre.code{padding-left:16px}
+}
+
+/* Featured figure above section 1. Wider than the GC template's 50% because
+   this banner is a 2.6:1 strip rather than a squarish panel. */
+figure.featured-fig{width:84%;margin:0 auto 1.6em;text-align:center;}
+figure.featured-fig img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff;}
+figure.featured-fig figcaption{font-size:.8rem;color:var(--muted);margin-top:8px;text-align:left;}
+@media (max-width:1000px){figure.featured-fig{width:100%;}}
+</style>
+</head>
+<body>
+
+<button id="menu-btn" aria-label="Menu">☰</button>
+
+<aside id="sidebar">
+  <a class="back-to-site" href="../../methods.html">&larr; Methods &amp; Software</a>
+  <div class="brand">Reproducing SRK</div>
+  <div class="brand-sub">Singularity regression kriging</div>
+  <input id="toc-filter" type="text" placeholder="Filter sections...">
+  <nav id="toc">
+    <a href="#overview">1&nbsp;Overview &amp; Scope</a>
+    <a class="l2" href="#core-idea">1.1&nbsp;Core idea</a>
+    <a class="l2" href="#method-logic">1.2&nbsp;Method logic (Eq.&nbsp;1–13)</a>
+    <a class="l2" href="#reproduction-scope">1.3&nbsp;Reproduction scope</a>
+    <a class="l2" href="#which-code">1.4&nbsp;Which implementation</a>
+    <a href="#setup">2&nbsp;Setup, Code &amp; Data</a>
+    <a class="l2" href="#environment">2.1&nbsp;Environment</a>
+    <a class="l2" href="#the-code">2.2&nbsp;The method in one file</a>
+    <a class="l2" href="#structure-config">2.3&nbsp;Structure &amp; config</a>
+    <a class="l2" href="#data-contract">2.4&nbsp;Data contract</a>
+    <a href="#pipeline">3&nbsp;Pipeline &amp; Results</a>
+    <a class="l2" href="#pipeline-execution">3.1&nbsp;Pipeline execution</a>
+    <a class="l2" href="#core-steps">3.2&nbsp;Core analytical steps</a>
+    <a class="l2" href="#step-1">·&ensp;Step&nbsp;1&nbsp;Three distributions</a>
+    <a class="l2" href="#step-2">·&ensp;Step&nbsp;2&nbsp;Screen the covariates</a>
+    <a class="l2" href="#step-3">·&ensp;Step&nbsp;3&nbsp;Singularity features</a>
+    <a class="l2" href="#step-4">·&ensp;Step&nbsp;4&nbsp;Spatial block CV</a>
+    <a class="l2" href="#step-5">·&ensp;Step&nbsp;5&nbsp;Is the lead real?</a>
+    <a class="l2" href="#step-6">·&ensp;Step&nbsp;6&nbsp;Parameter sensitivity</a>
+    <a class="l2" href="#beyond-cv">3.3&nbsp;Beyond cross-validation</a>
+    <a class="l2" href="#interpretation">3.4&nbsp;Reading the results together</a>
+    <a class="l2" href="#validation">3.5&nbsp;Validation</a>
+    <a href="#adaptation">4&nbsp;Adaptation &amp; Reproducibility</a>
+    <a class="l2" href="#port-domain">4.1&nbsp;Port to your domain</a>
+    <a class="l2" href="#write-paper">4.2&nbsp;Write the paper</a>
+    <a class="l2" href="#repro-package">4.3&nbsp;Reproducibility package</a>
+  </nav>
+  <div class="side-foot">
+    <button id="themebtn" class="themebtn">Dark mode</button>
+  </div>
+</aside>
+
+<header class="hero">
+  <h1>Reproducing the Singularity Regression Kriging (SRK) Model</h1>
+  <div class="sub">A complete walkthrough of the SRK model — which measures how a
+  covariate's local intensity scales with neighbourhood size, feeds that
+  <i>singularity index</i> to a random forest as an extra predictor, and kriges what
+  the forest leaves behind — from raw geochemical samples to manuscript. The method
+  is implemented here in a single self-contained R file, reproduced on the paper's
+  own simulation and on its 998 cobalt samples from Western Australia, and
+  stress-tested with an error bar the published comparison does not carry.</div>
+  <div class="director-card">
+    <img src="../../assets/images/yongze-song.png" alt="Yongze Song">
+    <div class="director-info">
+      <h3>Yongze Song</h3>
+      <p>Associate Professor, Curtin University</p>
+      <p>Special Issue Editor (SIE), Associate Editor: <em>Int. J. Applied Earth Observation</em> (IF 8.2) · Associate Editor: <em>GIScience &amp; Remote Sensing</em> (IF 6.8)</p>
+      <p><a href="mailto:yongze.song@curtin.edu.au">yongze.song@curtin.edu.au</a> · <a href="https://yongzesong.com/">yongzesong.com</a></p>
+    </div>
+  </div>
+  <a class="dlbtn" href="srk-code-and-data.zip" download>⬇ Download code (zip, 176&nbsp;KB)</a>
+  <div class="dlnote"><code>R/</code> pipeline scripts including the complete method in
+  <code>R/02-srk-core.R</code> · <code>config/project-config.R</code> ·
+  <code>results/</code> and <code>tables/</code> (every number quoted on this page) ·
+  <code>tests/</code> · <code>run-all.R</code> — unzip and run
+  <code>Rscript run-all.R</code> from the <code>SRK/</code> folder root. The
+  case-study sample table is <b>downloaded by the pipeline</b>, not bundled; see
+  §<a href="#data-contract">2.4</a>.</div>
+  <div class="cite-lead">To cite the SRK model in publications, please use:</div>
+  <div class="cite">
+    <div>Ren&nbsp;K, Song&nbsp;Y*, Chen&nbsp;M, Yu&nbsp;Q (2026). A singularity regression
+    kriging for spatial prediction. <i>GIScience &amp; Remote Sensing</i> 63(1):2690341.
+    <a href="https://doi.org/10.1080/15481603.2026.2690341">doi</a> ·
+    <a href="../../pdf/SRK-ren2026.pdf">PDF</a><span class="mini-badge oa">CC BY</span>
+    · <a href="https://github.com/renkaigis/Singularity_Regression_Kriging" target="_blank" rel="noopener noreferrer">authors' code</a></div>
+  </div>
+</header>
+
+<aside class="related-rail" aria-label="Related tutorials for reproducible models">
+  <div class="rail-title">Related tutorials for reproducible models</div>
+  <a href="../../methods.html">Geospatial Theories and Methods</a>
+  <a href="../OPGD/opgd.html">1 &middot; OPGD &mdash; Optimal Parameters Geographical Detector</a>
+  <a href="../GC/gc.html">2 &middot; GC &mdash; Geocomplexity</a>
+  <a href="../LISP/lisp.html">3 &middot; LISP &mdash; Local Indicator of Stratified Power</a>
+  <a href="../LPA/lpa.html">4 &middot; LPA &mdash; Local Pathways of Association</a>
+  <a href="../SDA/sda.html">5 &middot; SDA &mdash; Second Dimension of Spatial Association</a>
+  <a href="../SOH/soh.html">6 &middot; SOH &mdash; Second-dimension Outlier-driven Heterogeneity</a>
+  <a href="../DSI/dsi.html">7 &middot; DSI &mdash; Degree of Spatial Interpretability</a>
+  <a href="../STOR/stor.html">8 &middot; STOR &mdash; Spatial Trade-Off Relation</a>
+  <a href="../SDM/sdm.html">9 &middot; SDM &mdash; Spatial Delta Model for Accessibility</a>
+  <a href="../GOS/gos.html">10 &middot; GOS &mdash; Geographically Optimal Similarity</a>
+  <a class="current" href="srk.html">11 &middot; SRK &mdash; Singularity Regression Kriging</a>
+  <div class="rail-note">SRK is the prediction model in this series that reads the
+  <i>scaling behaviour</i> of a covariate rather than its value: the same window that
+  gives a flat answer for terrain gives a strongly varying one for lithology.</div>
+</aside>
+
+<main>
+
+<figure class="featured-fig">
+  <span class="pairtag tag-paper">Published reference · SRK Fig. 9</span>
+  <img src="assets/paper-srk-fig09-prediction-maps.jpg" alt="Spatial predictions of Zn and Co from SRK and five benchmark methods, Ren et al. 2026 Figure 9" decoding="async">
+  <figcaption>SRK paper Fig.&nbsp;9 — what the method is ultimately for: full-grid
+  predictions of Zn (a) and Co (b) from SRK and its five benchmarks, on a shared colour
+  scale per element. Ordinary kriging and IDW give smooth blobs around the sample
+  clusters, the linear model gives a lithology-shaped map with no local detail, and the
+  three forest models resolve the mineralised belt. This tutorial reproduces the
+  <i>cross-validated accuracy</i> behind that comparison for cobalt; the full-grid maps
+  themselves are out of scope, and are shown here from the article
+  (§<a href="#beyond-cv">3.3</a>). Click to enlarge.</figcaption>
+</figure>
+
+<section id="overview">
+  <h2>1&nbsp;Method Overview &amp; Reproduction Scope</h2>
+
+  <h3 id="core-idea">1.1&nbsp;Core Idea</h3>
+  <p>Regression kriging splits a spatial variable into a deterministic trend and a
+  spatially correlated residual, predicts the trend from covariates, and kriges the
+  rest. The weak link is the trend model. Ordinary kriging (OK) assumes there is no
+  trend at all — a constant mean — and regression kriging usually assumes a linear
+  one. Both leave nonlinear, multiscale structure sitting in the residual, where a
+  variogram fitted under an assumption of stationarity cannot represent it.</p>
+  <p>Ren et&nbsp;al. (2026) change exactly one thing: what the trend model is allowed to
+  see. Alongside each environmental covariate <i>X<sub>k</sub></i> they compute its
+  <b>singularity index</b> &alpha;<sub>k</sub>(<b>s</b>) — the exponent describing how
+  the local intensity of that covariate scales as the measuring window grows. A value
+  of 2 means the field is locally uniform; below 2 means local enrichment; above 2
+  means depletion. The random forest is then trained on the covariates <i>and</i> their
+  singularity indices, and ordinary kriging is applied to what the forest still cannot
+  explain.</p>
+  <ul>
+    <li><b>Research problem:</b> in heterogeneous terrain the response is nonlinear,
+        multiscale and non-Gaussian, so a kriging model with a simple trend degrades
+        exactly where the interesting anomalies are.</li>
+    <li><b>One-line contribution:</b> SRK builds anomaly descriptors from the
+        <i>covariates</i> at a ladder of spatial scales, hands them to the trend model,
+        and leaves the residual closer to stationary — which is what the kriging step
+        assumes in the first place.</li>
+    <li><b>Why the covariate, not the response, matters:</b> a singularity index built
+        from the response could only be evaluated where the response is known — that is,
+        never at a prediction location, and never inside a held-out block. Building it
+        from covariates is what lets the feature survive spatial block cross-validation
+        instead of leaking through it.</li>
+    <li><b>What it buys:</b> on the paper's simulation, reproduced below, SRK lifts
+        <i>R</i><sup>2</sup> from 0.876 to 0.972 on a near-normal field, and from 0.736 to
+        0.940 on a long-tailed one — the margin widens as the distribution departs from
+        Gaussian. On the real cobalt data it lifts <i>R</i><sup>2</sup> from 0.15 (ordinary
+        kriging) to 0.36 under spatial blocking, and stays ahead of the strongest
+        machine-learning benchmark on every one of 20 random-forest seeds
+        (§<a href="#step-5">3.2 Step&nbsp;5</a>).</li>
+  </ul>
+  <div class="figpair">
+    <figure>
+      <span class="pairtag tag-paper">Published reference · SRK Fig. 4</span>
+      <img src="assets/paper-srk-fig04-workflow.jpg" alt="Workflow of the singularity regression kriging model, Ren et al. 2026 Figure 4" loading="lazy" decoding="async">
+      <figcaption>SRK paper Fig.&nbsp;4 — the whole model in one picture, and the plan of
+      §3 of this page: preprocess and screen the covariates, build multiscale singularity
+      features from them, fit the random forest trend, krige the residuals, and validate
+      with spatial blocks. Click to enlarge.</figcaption>
+    </figure>
+    <figure>
+      <span class="pairtag tag-paper">Published reference · SRK Fig. 3</span>
+      <img src="assets/paper-srk-fig03-study-area.jpg" alt="Study area in Western Australia with lithology and the Zn and Co sample distributions, Ren et al. 2026 Figure 3" loading="lazy" decoding="async">
+      <figcaption>SRK paper Fig.&nbsp;3 — the published study area: a mineralised region of
+      Western Australia (b) with its lithological units (a) and the clustered Zn (c) and
+      Co (d) sample sets. This tutorial uses the 998 Co samples of panel&nbsp;(d); the
+      lithology polygons reach it already reduced to the proximity variables of
+      Eq.&nbsp;14.</figcaption>
+    </figure>
+  </div>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Reader anchor</div>
+    <div class="callout-b">
+      <p>One covariate, measured in windows of growing size, gives one number per
+      location: the slope of log intensity against log scale, plus two. That number is
+      a new column. The forest gets it, the residual gets smaller, the kriging step
+      gets an easier job. Everything on this page serves that line.</p>
+    </div>
+  </div>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>What you need</div>
+    <div class="callout-b">
+      <p>R 4.1+ and the folder from the download button. The method itself is
+      <code>R/02-srk-core.R</code>, about 250 lines that depend on four packages:
+      <code>ranger</code> for the forest, <code>automap</code> and <code>gstat</code> for
+      the variogram and kriging, <code>sp</code> for coordinate handling. The singularity
+      indices, the variance filter, the spatial block folds and the accuracy metrics are
+      base R. The full pipeline runs in about two and a half minutes, most of it in the
+      two robustness steps.</p>
+    </div>
+  </div>
+
+  <h3 id="method-logic">1.2&nbsp;Method Logic (Eq.&nbsp;1–13)</h3>
+  <p>SRK chains three standard tools in a specific order. Each link is simple; the model
+  is what the middle one is given to work with.</p>
+  <div class="flow">
+    <div class="chip"><b>Local intensity</b>mean |<i>X<sub>k</sub></i>| inside a square
+      window of half-width <i>r</i>, at every scale (Eq.&nbsp;1–2)</div>
+    <div class="arrow">→</div>
+    <div class="chip hl"><b>Singularity index</b>&alpha;<sub>k</sub> = slope of
+      log&nbsp;<i>C</i> on log&nbsp;<i>r</i>, plus 2 (Eq.&nbsp;3–4)</div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>Feature filter</b>drop &alpha; columns with training SD below
+      0.5 (Sec.&nbsp;2.2.1)</div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>Forest trend</b>RF on covariates + surviving &alpha; columns
+      (Eq.&nbsp;5–7)</div>
+    <div class="arrow">→</div>
+    <div class="chip"><b>Residual kriging</b>OK on &epsilon;, added back to the trend
+      (Eq.&nbsp;8–10)</div>
+  </div>
+  <h4>Key concepts and equations</h4>
+  <ul>
+    <li><b>Local covariate intensity (Eq.&nbsp;2).</b> At location <b>s</b> and scale
+      <i>r</i>, take the mean absolute covariate value over every reference point inside
+      the square window <i>A</i>(<b>s</b>,&nbsp;<i>r</i>):
+      <div class="eq"><i>Ĉ<sub>k</sub></i>(<i>A</i>(<b>s</b>,&nbsp;<i>r</i>))&nbsp;=&nbsp;(1&nbsp;/&nbsp;|<i>A</i>(<b>s</b>,&nbsp;<i>r</i>)|)&nbsp;&Sigma;<sub><b>s</b>&prime;&nbsp;&isin;&nbsp;<i>A</i>(<b>s</b>,<i>r</i>)</sub>&nbsp;|<i>X<sub>k</sub></i>(<b>s</b>&prime;)|<span class="eqn">(2)</span></div>
+      A scale carrying fewer than three reference points is discarded, not guessed at.</li>
+    <li><b>The scaling law and the index (Eq.&nbsp;1, 3–4).</b> Across scales
+      <i>r</i><sub>1</sub>&nbsp;&lt;&nbsp;…&nbsp;&lt;&nbsp;<i>r<sub>J</sub></i> the
+      theoretical relation <i>C</i>&nbsp;&prop;&nbsp;<i>r</i><sup>&alpha;&minus;2</sup>
+      becomes a straight line in logarithms, and &alpha; is its slope plus two:
+      <div class="eq">log&nbsp;<i>Ĉ<sub>k</sub></i>(<i>A</i>(<b>s</b>,<i>r</i>))&nbsp;=&nbsp;(&alpha;<sub>k</sub>(<b>s</b>)&nbsp;&minus;&nbsp;2)&nbsp;log&nbsp;<i>r</i>&nbsp;+&nbsp;<i>c<sub>k</sub></i>(<b>s</b>)&nbsp;+&nbsp;<i>e<sub>k,r</sub></i>&emsp;&emsp;&alpha;<sub>k</sub>(<b>s</b>)&nbsp;=&nbsp;<i>β̂</i><sub>1,<i>k</i></sub>(<b>s</b>)&nbsp;+&nbsp;2<span class="eqn">(3–4)</span></div>
+      &alpha;&nbsp;=&nbsp;2 is a spatially uniform field, &alpha;&nbsp;&lt;&nbsp;2 is local
+      enrichment, &alpha;&nbsp;&gt;&nbsp;2 is local depletion. Locations with fewer than
+      two usable scales are set to the neutral 2.</li>
+    <li><b>The augmented feature set (Eq.&nbsp;5).</b> The <i>q</i> singularity columns
+      that survive the SD filter join the <i>p</i> original covariates:
+      <div class="eq"><i>F</i>(<b>s</b><sub><i>i</i></sub>)&nbsp;=&nbsp;{&nbsp;<i>X</i><sub>1</sub>(<b>s</b><sub><i>i</i></sub>),&nbsp;…,&nbsp;<i>X<sub>p</sub></i>(<b>s</b><sub><i>i</i></sub>),&nbsp;&alpha;<sub><i>k</i><sub>1</sub></sub>(<b>s</b><sub><i>i</i></sub>),&nbsp;…,&nbsp;&alpha;<sub><i>k<sub>q</sub></i></sub>(<b>s</b><sub><i>i</i></sub>)&nbsp;}<span class="eqn">(5)</span></div></li>
+    <li><b>Trend and residual (Eq.&nbsp;6–7).</b> A 500-tree random forest
+      <i>g</i>(·) fits the trend, and the residual is what it misses:
+      <div class="eq">&micro;̂(<b>s</b><sub><i>i</i></sub>)&nbsp;=&nbsp;<i>g</i>(<i>F</i>(<b>s</b><sub><i>i</i></sub>))&emsp;&emsp;&epsilon;(<b>s</b><sub><i>i</i></sub>)&nbsp;=&nbsp;<i>Z</i>(<b>s</b><sub><i>i</i></sub>)&nbsp;&minus;&nbsp;&micro;̂(<b>s</b><sub><i>i</i></sub>)<span class="eqn">(6–7)</span></div></li>
+    <li><b>Residual kriging and the final prediction (Eq.&nbsp;8–10).</b> Ordinary
+      kriging interpolates &epsilon; under the unbiasedness constraint, and the two parts
+      are added:
+      <div class="eq"><i>Ẑ</i>(<b>s</b><sub>0</sub>)&nbsp;=&nbsp;&micro;̂(<b>s</b><sub>0</sub>)&nbsp;+&nbsp;&Sigma;<sub><i>i</i></sub>&nbsp;&lambda;<sub><i>i</i></sub>&nbsp;&epsilon;(<b>s</b><sub><i>i</i></sub>),&emsp;&Sigma;<sub><i>i</i></sub>&nbsp;&lambda;<sub><i>i</i></sub>&nbsp;=&nbsp;1&emsp;&emsp;&delta;(<b>s</b><sub>0</sub>)&nbsp;=&nbsp;&radic;&sigma;<sub><i>K</i></sub><sup>2</sup>(<b>s</b><sub>0</sub>)<span class="eqn">(8–10)</span></div>
+      The kriging standard error &delta; is the model's uncertainty measure.</li>
+    <li><b>Accuracy (Eq.&nbsp;11–13).</b> <i>R</i><sup>2</sup>, RMSE and MAE on the
+      held-out validation data, never on the training fit.</li>
+  </ul>
+  <div class="callout c-note">
+    <div class="callout-h"><span class="callout-i">◇</span>Where the window is, and what is in it</div>
+    <div class="callout-b">
+      <p>The window is a <i>square</i> of half-width <i>r</i> — the Chebyshev ball, not a
+      disc — and the reference points inside it are the <b>sample locations</b>, not a
+      raster. So <i>C</i>(<i>A</i>(<b>s</b>,&nbsp;<i>r</i>)) is a mean over however many
+      observations of the covariate happen to fall within <i>r</i> in both easting and
+      northing. That is why the sampling design shows through in the index, and why a
+      minimum count per scale is part of the definition rather than an implementation
+      detail.</p>
+    </div>
+  </div>
+
+  <h3 id="reproduction-scope">1.3&nbsp;Reproduction Scope</h3>
+  <p>This pipeline reproduces the paper's <b>simulation experiment</b> and its
+  <b>case study up to spatial block cross-validation</b>. The article maps two trace
+  elements; this tutorial follows <b>cobalt</b> end to end, because every step is written
+  as a loop over the <code>ELEMENTS</code> list and one element is enough to show each
+  step working — putting zinc back is a single config entry
+  (§<a href="#structure-config">2.3</a>). Everything tagged <i>Demo run</i> regenerates
+  from the folder behind the download button; everything tagged <i>Published reference</i>
+  is a static image from the article. The published prediction maps, cross-sections and
+  uncertainty maps need the 97,234-cell 500&nbsp;m prediction grid, which is out of scope
+  here; §<a href="#beyond-cv">3.3</a> shows those figures from the article and says what
+  it would take to regenerate them.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>This pipeline</th><th>Published article</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Simulation</td>
+            <td>Same 20&nbsp;&times;&nbsp;20 grid, same spherical fields, same seed 42,
+                same 70/30 split — Table&nbsp;1 reproduced to three decimals</td>
+            <td>Sec.&nbsp;2.3, Table&nbsp;1, Figs.&nbsp;1–2</td></tr>
+        <tr><td>Case-study samples</td>
+            <td>The authors' released table: 998 Co samples with four lithology proximity
+                variables and three terrain variables, downloaded by
+                <code>R/20-case-data.R</code></td>
+            <td>Zn (n&nbsp;=&nbsp;1,105) and Co (n&nbsp;=&nbsp;998) from GSWA geochemistry
+                (DMIRS-047) with Geoscience Australia lithology and DEM, Sec.&nbsp;3.1</td></tr>
+        <tr><td>Covariate screening</td>
+            <td>Spearman screen re-run from the data; it returns the published covariate
+                set</td>
+            <td>Sec.&nbsp;4.2, Fig.&nbsp;5</td></tr>
+        <tr><td>Singularity features</td>
+            <td>2–20&nbsp;km at 2&nbsp;km steps, &ge;&nbsp;3 neighbours per scale,
+                &ge;&nbsp;2 valid scales, SD&nbsp;&gt;&nbsp;0.5 filter</td>
+            <td>Sec.&nbsp;3.2.2, Sec.&nbsp;4.3, Fig.&nbsp;6</td></tr>
+        <tr><td>Validation</td>
+            <td>5-fold spatial block CV, 15&nbsp;km blocks, six models — the Co half of
+                Table&nbsp;2 reproduced, with the deterministic rows exact</td>
+            <td>Sec.&nbsp;3.2.3, Table&nbsp;2, Fig.&nbsp;8</td></tr>
+        <tr><td>Sensitivity</td>
+            <td>Maximum scale &times; SD threshold grid, 30 cells</td>
+            <td>Sec.&nbsp;4.4, Fig.&nbsp;7</td></tr>
+        <tr><td>Seed stability</td>
+            <td><b>Added here.</b> The same cross-validation repeated over 20 random
+                forest seeds, because the released scripts fix none</td>
+            <td>not in the article</td></tr>
+        <tr><td>Full-grid prediction</td>
+            <td>out of scope — needs the 8.1&nbsp;MB, 97,234-cell grid</td>
+            <td>Figs.&nbsp;9–11</td></tr>
+      </tbody>
+    </table>
+  </figure>
+
+  <h3 id="which-code">1.4&nbsp;Which Implementation This Page Follows</h3>
+  <p>Two bodies of R code carry the SRK name, and they are not the same thing.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th></th><th>The authors' scripts</th><th>CRAN <code>SingRegKrig</code> 0.1.0</th></tr></thead>
+      <tbody>
+        <tr><td>Written by</td>
+            <td>Ren, Song, Chen and Yu — the paper's authors
+                (<a href="https://github.com/renkaigis/Singularity_Regression_Kriging" target="_blank" rel="noopener noreferrer">GitHub</a>,
+                <a href="https://doi.org/10.6084/m9.figshare.31073173" target="_blank" rel="noopener noreferrer">Figshare</a>)</td>
+            <td>Tyagi, Pandey, Singh and Tripathi — an independent third-party
+                implementation that cites the paper; none of the paper's authors is
+                an author of the package</td></tr>
+        <tr><td>Engine</td>
+            <td><code>ranger</code> + <code>automap::autoKrige</code>, with a hand-written
+                <code>singularity.R</code></td>
+            <td><code>randomForest</code> + <code>gstat</code>, with its own
+                <code>compute_singularity()</code></td></tr>
+        <tr><td>Reproduces the article's numbers</td>
+            <td>Yes — this page does it below</td>
+            <td>No. Its bundled <code>sim_srk_data()</code> is a different generator, and
+                on it SRK does not reach the article's Table&nbsp;1</td></tr>
+      </tbody>
+    </table>
+  </figure>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>If you reach for the CRAN package, check <code>sd_threshold</code> first</div>
+    <div class="callout-b">
+      <p><code>srk()</code> defaults to <code>sd_threshold = 0.5</code>, the value the
+      <i>article</i> uses for lithology proximity variables whose singularity indices have
+      SD of 6 or more. On the package's own simulated data the single singularity feature
+      has SD&nbsp;=&nbsp;0.29, so the default discards it: <code>retained_features</code>
+      comes back as <code>character(0)</code> and the fitted model is random-forest
+      kriging with no singularity term at all. The filter is doing what it was designed to
+      do; the default is simply calibrated to a different kind of covariate. Inspect
+      <code>fit$retained_features</code> before reporting anything as an SRK result.</p>
+    </div>
+  </div>
+  <p>This page follows the authors' scripts. <code>R/02-srk-core.R</code> is a port of
+  them into the step-numbered layout the rest of this tutorial series uses, and every
+  place it departs from them is marked <code>DEPARTURE</code> in the source and listed in
+  §<a href="#the-code">2.2</a>.</p>
+</section>
+
+<section id="setup">
+  <h2>2&nbsp;Setup, Code &amp; Data</h2>
+
+  <h3 id="environment">2.1&nbsp;Environment &amp; Dependencies</h3>
+  <p>Four packages, all on CRAN. Nothing else is needed: the singularity indices, the
+  variance filter, the spatial block folds, the accuracy metrics and every figure are
+  base R.</p>
+  <div class="codewrap nofold">
+    <span class="code-label">R</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>install.packages(c("sp", "gstat", "automap", "ranger"))</code></pre>
+  </div>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Package</th><th>Used for</th><th>Where</th></tr></thead>
+      <tbody>
+        <tr><td><code>ranger</code></td><td>the 500-tree random forest trend model</td><td><code>srk_trend()</code></td></tr>
+        <tr><td><code>automap</code></td><td><code>autoKrige</code> — automatic variogram family choice and ordinary kriging, exactly as the paper specifies</td><td><code>srk_krige_residuals()</code>, <code>bench_ok()</code></td></tr>
+        <tr><td><code>gstat</code></td><td>unconditional Gaussian simulation of the two base fields; the IDW benchmark</td><td><code>R/10-simulate.R</code>, <code>bench_idw()</code></td></tr>
+        <tr><td><code>sp</code></td><td>coordinate promotion for the two above</td><td>throughout</td></tr>
+      </tbody>
+    </table>
+    <figcaption>Verified on R&nbsp;4.6.0. Runtimes and the one known version sensitivity
+    are in <code>env/requirements.md</code>.</figcaption>
+  </figure>
+
+  <h3 id="the-code">2.2&nbsp;The Method in One File</h3>
+  <p><code>R/02-srk-core.R</code> holds the whole model. Three functions carry
+  Eq.&nbsp;1–10; everything else in the file is the five benchmarks, the metrics and the
+  block folds, which exist so the cross-validation loop can treat all six models
+  identically.</p>
+
+  <h4>Eq.&nbsp;2 — local intensity at every scale, in one pass</h4>
+  <p>The authors' <code>singularity_safe()</code> loops over evaluation points and scales.
+  The port keeps the definition and vectorises the search: one Chebyshev distance matrix
+  per chunk of evaluation points, then one logical mask per scale. That is what makes the
+  sensitivity analysis in step&nbsp;6 affordable — the intensity matrix is computed once
+  and re-cut for every shorter scale ladder.</p>
+  <div class="codewrap">
+    <span class="code-label">R/02-srk-core.R</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>srk_intensity &lt;- function(x_ref, y_ref, z_ref, x_eval, y_eval, scales,
+                          min_pts_per_scale = 3L, use_abs = TRUE,
+                          chunk = 2000L) {
+  if (use_abs) z_ref &lt;- abs(z_ref)
+  n_eval &lt;- length(x_eval)
+  J      &lt;- length(scales)
+  C      &lt;- matrix(NA_real_, n_eval, J)
+  # Chunked so a large evaluation set never allocates one huge distance matrix.
+  for (ii in split(seq_len(n_eval), ceiling(seq_len(n_eval) / chunk))) {
+    d &lt;- pmax(abs(outer(x_eval[ii], x_ref, "-")),
+              abs(outer(y_eval[ii], y_ref, "-")))    # square window = Chebyshev ball
+    for (j in seq_len(J)) {
+      inw &lt;- d &lt;= scales[j]
+      cnt &lt;- rowSums(inw)
+      val &lt;- as.numeric(inw %*% z_ref) / cnt
+      val[cnt &lt; min_pts_per_scale] &lt;- NA_real_       # too few neighbours: no estimate
+      C[ii, j] &lt;- val
+    }
+  }
+  C
+}</code></pre>
+  </div>
+
+  <h4>Eq.&nbsp;3–4 — the index is a slope plus two</h4>
+  <div class="codewrap">
+    <span class="code-label">R/02-srk-core.R</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>srk_alpha &lt;- function(C, scales, min_valid_scales = 2L, eps = 1e-9) {
+  logr &lt;- log(scales)
+  vapply(seq_len(nrow(C)), function(i) {
+    cr &lt;- C[i, ]
+    ok &lt;- is.finite(cr)
+    if (sum(ok) &lt; min_valid_scales) return(NA_real_)   # caller substitutes 2
+    yv &lt;- log(ifelse(cr[ok] &gt; 0, cr[ok], eps))         # a window of zeros is possible
+    xv &lt;- logr[ok]
+    xd &lt;- xv - mean(xv)
+    sum(xd * (yv - mean(yv))) / sum(xd * xd) + 2
+  }, numeric(1))
+}</code></pre>
+  </div>
+  <p><code>tests/test-01</code> transcribes the authors' loop verbatim and checks that
+  these two functions return the same numbers to 1e&minus;10, including which locations
+  come back as <code>NA</code>.</p>
+
+  <h4>Eq.&nbsp;5–9 — the model</h4>
+  <p><code>srk_run()</code> is the whole method: build or look up the singularity columns,
+  drop the flat ones, fit the forest, krige what is left, add the two together. It shares
+  its argument list with the five benchmarks, so <code>SRK_MODELS</code> can be iterated
+  over.</p>
+  <div class="codewrap">
+    <span class="code-label">R/02-srk-core.R (abridged)</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code>srk_run &lt;- function(train, test, yvar, xvars, sv = NULL, ...) {
+
+  ## Step 1 — one singularity column per covariate (Eq. 1-4).
+  ##   Covariates are observable at prediction locations, so the union of train
+  ##   and test may supply the reference values without leaking the response.
+  ...
+  for (cc in sv_cols) {
+    tr[[cc]][!is.finite(tr[[cc]])] &lt;- neutral          # 2 = uniform field
+    te[[cc]][!is.finite(te[[cc]])] &lt;- neutral
+  }
+
+  ## Step 2 — variance filter, then the forest (Eq. 5-7).
+  sv_keep &lt;- srk_select_features(tr, sv_cols, sd_threshold)
+  tri     &lt;- srk_trend(tr, te, yvar, c(xvars, sv_keep), ntree = ntree,
+                       seed = seed, use_coords = use_coords)
+  tr$resid &lt;- tr[[yvar]] - tri$trend_tr
+
+  ## Step 3 — ordinary kriging of the residual, added back (Eq. 8-9).
+  kr &lt;- srk_krige_residuals(tr, te, "resid", fitter = fitter)
+
+  list(model = "SRK", pred = tri$trend_te + kr$pred, trend = tri$trend_te,
+       kriged = kr$pred, se = kr$se, sv_kept = sv_keep, ...)
+}
+
+SRK_MODELS &lt;- list(OK = bench_ok, IDW = bench_idw, LM = bench_lm,
+                   RF = bench_rf, RFK = bench_rfk, SRK = srk_run)</code></pre>
+  </div>
+
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>Two departures from the released scripts, both switchable</div>
+    <div class="callout-b">
+      <ul>
+        <li><b>The forest gets a seed.</b> The authors call <code>ranger()</code> without
+        one, so RF, RFK and SRK move between runs — which is why their released
+        <code>cv_summary_Co.csv</code> and the article's Table&nbsp;2 rank the models
+        differently, and why step&nbsp;5 of this pipeline exists. <code>RF_SEED</code> in the config fixes it;
+        set it to <code>NULL</code> to restore the original behaviour.</li>
+        <li><b>Coordinates in the trend model.</b> The authors' case-study code fits
+        <code>ranger(reformulate(c("x", "y", xvars), yvar))</code> — the forest sees the
+        coordinates. The paper's Eq.&nbsp;5 defines <i>F</i>(<b>s</b>) without them. The
+        default <code>RF_USE_COORDS = TRUE</code> reproduces the code, which is what
+        produced the published numbers; set it to <code>FALSE</code> to follow the
+        equation. Their simulation code omits the coordinates, and so does step&nbsp;1
+        here.</li>
+      </ul>
+      <p>Everything else — the window shape, the minimum counts, the neutral value, the
+      0.5 filter, <code>autoKrige</code>, 500 trees, the block construction — matches the
+      released scripts. <code>tests/test-02</code> proves the folds are identical by
+      reproducing the authors' own fold-level IDW and LM numbers to 1e&minus;6.</p>
+    </div>
+  </div>
+
+  <h3 id="structure-config">2.3&nbsp;Project Structure &amp; Configuration</h3>
+  <div class="codewrap">
+    <span class="code-label">folder</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-bash"><code>SRK/
+├── run-all.R                   # one command runs everything
+├── config/project-config.R     # the only file you edit to port this elsewhere
+├── R/
+│   ├── 00-config.R             # paths, output file names
+│   ├── 01-helpers.R            # logging, IO, figure devices
+│   ├── 02-srk-core.R           # THE METHOD + the five benchmarks
+│   ├── 10-simulate.R           # paper Sec. 2.3  -> Table 1, Figs. 1-2
+│   ├── 20-case-data.R          # download, tidy, Spearman screen (Sec. 4.1-4.2)
+│   ├── 30-singularity.R        # covariate singularity features (Sec. 4.3)
+│   ├── 40-block-cv.R           # six models, 5-fold spatial block CV (Table 2)
+│   ├── 50-seed-stability.R     # how much of the SRK-RFK gap is forest noise
+│   ├── 60-sensitivity.R        # scale x threshold grid (Fig. 7)
+│   ├── 90-tables.R             # LaTeX tables
+│   └── p01..p06-*.R            # figures
+├── data/                       # provenance.md; the CSV lands here on first run
+├── results/                    # every number quoted on this page
+├── tables/                     # the same numbers as LaTeX
+├── figs/                       # png + pdf of every figure
+├── env/                        # requirements.md, session-info.txt, runtimes.csv
+└── tests/                      # 18 method-property + 29 reproduction checks</code></pre>
+  </div>
+  <p>Porting SRK to another study area means editing one file. The block below is the
+  part of <code>config/project-config.R</code> that carries the method's parameters;
+  everything on this page is a function of these values.</p>
+  <div class="codewrap">
+    <span class="code-label">config/project-config.R</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-r"><code># One entry per response variable. `xvars` is the covariate set the paper's
+# Spearman screen (p &lt; 0.05) retained; R/20-case-data.R re-runs the screen and
+# reports whether it reproduces this set.
+#
+# The paper maps two trace elements; this tutorial follows Co end to end. Every
+# step is a loop over ELEMENTS, so adding the second element back is one entry --
+# uncomment the Zn block and re-run:
+#
+#   Zn = list(file = "dt_Zn_linear.csv", yvar = "Zn", unit = "ppm",
+#             xvars = c("ss", "ifi", "hm", "elevation", "slope", "aspect")),
+ELEMENTS &lt;- list(
+  Co = list(file = "dt_Co_linear.csv", yvar = "Co", unit = "ppm",
+            xvars = c("ifi", "hm", "elevation"))
+)
+
+# -- Singularity features (paper Eq. 1-4) ------------------------------------
+SV_SCALES         &lt;- seq(2000, 20000, by = 2000)  # window half-widths, map units
+MIN_PTS_PER_SCALE &lt;- 3L      # a scale needs this many neighbours
+MIN_VALID_SCALES  &lt;- 2L      # an index needs this many valid scales
+SV_NEUTRAL        &lt;- 2.0     # value assigned when estimation fails
+SV_SD_THRESHOLD   &lt;- 0.5     # drop sv features flatter than this
+
+# -- Trend model and residual kriging ----------------------------------------
+RF_NTREE      &lt;- 500L
+RF_SEED       &lt;- 42L         # the authors' scripts leave this unset
+RF_USE_COORDS &lt;- TRUE        # their case-study code feeds x, y to the forest
+VARIOGRAM_FIT &lt;- "automap"   # as published
+
+# -- Validation ---------------------------------------------------------------
+CV_FOLDS      &lt;- 5L
+CV_BLOCK_SIZE &lt;- 15000       # spatial block edge, map units
+CV_SEED       &lt;- 123L
+SEED_REPEATS  &lt;- 20L         # forest seeds used by R/50-seed-stability.R</code></pre>
+  </div>
+
+  <h3 id="data-contract">2.4&nbsp;Data Contract</h3>
+  <p>SRK needs one table per response: point observations in a projected CRS with one
+  column per covariate. That is the entire input.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Column</th><th>Type</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>x</code>, <code>y</code></td><td>numeric</td><td>projected coordinates in metres — the scale ladder and the block size are read in these units</td></tr>
+        <tr><td><code>Co</code></td><td>numeric</td><td>the response, one representative value per location</td></tr>
+        <tr><td><code>ss</code>, <code>ifi</code>, <code>imi</code>, <code>hm</code></td><td>numeric, [0, 1]</td><td>lithology proximity: 1 inside the unit, falling linearly to 0 over a 10&nbsp;km buffer, 0 beyond (Eq.&nbsp;14)</td></tr>
+        <tr><td><code>elevation</code>, <code>slope</code>, <code>aspect</code></td><td>numeric</td><td>DEM-derived terrain</td></tr>
+      </tbody>
+    </table>
+  </figure>
+  <p>The case-study table is <b>not redistributed with this tutorial</b>.
+  <code>R/20-case-data.R</code> downloads it (about 130&nbsp;KB) from the authors'
+  repository on first run and writes <code>data/provenance.md</code> recording where it
+  came from: GSWA Geochemistry (DMIRS-047) for the concentrations, Geoscience Australia's
+  Surface Geology and DEM for the covariates. Set <code>DATA_SOURCE &lt;- "local"</code>
+  and drop your own CSVs in <code>data/</code> to run everything on your own study area.</p>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>The coordinates are Web Mercator, and that changes what "15 km" means</div>
+    <div class="callout-b">
+      <p><code>x</code> and <code>y</code> are EPSG:3857 metres near 122.5&deg;E,
+      32.5&deg;S. Web Mercator inflates distance by 1/cos(32.5&deg;)&nbsp;=&nbsp;1.19 at
+      that latitude, so the published 2–20&nbsp;km scale ladder is about
+      1.7–16.9&nbsp;km on the ground and the 15&nbsp;km cross-validation block is about
+      12.6&nbsp;km. Nothing in the comparison is affected — every model sees the same
+      distances — but do not quote the ladder as ground distance, and if you port SRK to
+      a study area of your own, use an equal-area or UTM projection so the two agree.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>3&nbsp;Reproduction Pipeline, Results &amp; Validation</h2>
+
+  <h3 id="pipeline-execution">3.1&nbsp;Pipeline Execution</h3>
+  <p>One command runs the seven steps and the six figure scripts, in order, from a
+  clean folder. Step&nbsp;20 fetches the sample table the first time; nothing else
+  touches the network.</p>
+  <div class="codewrap nofold">
+    <span class="code-label">shell</span>
+    <button class="copybtn" type="button">Copy</button>
+    <pre class="code lang-bash"><code>Rscript run-all.R          # full pipeline, about 150 s
+Rscript run-all.R test     # 18 + 24 verification checks, about 8 s
+Rscript run-all.R 10 40    # only the named steps
+Rscript run-all.R figures  # only the figure scripts</code></pre>
+  </div>
+  <div class="console">== 10  Simulation experiment =============================
+   base fields: cor(X, Y) = 0.983
+   normal    skew(Y) =  -0.60   OK R2 = 0.876   SRK R2 = 0.972
+   skewed    skew(Y) =   0.32   OK R2 = 0.833   SRK R2 = 0.968
+   long-tail skew(Y) =   2.17   OK R2 = 0.736   SRK R2 = 0.940
+   R2 vs published Table 1 (this run / paper):
+     normal    OK   0.876 / 0.876
+     normal    SRK  0.972 / 0.972
+     skewed    OK   0.833 / 0.833
+     skewed    SRK  0.968 / 0.966
+     long-tail OK   0.736 / 0.736
+     long-tail SRK  0.940 / 0.940
+   10-simulate took 0.5 s
+
+== 20  Case-study data and covariate screening ===========
+   downloading dt_Co_linear.csv
+   Co: 998 samples, 0.5-112.2 ppm
+   Co: screen keeps ifi, hm, elevation  (= the published set)
+   20-case-data took 0.5 s
+
+== 30  Covariate singularity features ====================
+   Co: keeps sv_ifi, sv_hm
+   Co: drops sv_elevation
+   SD separates the two covariate families cleanly:
+     lithology proximity  SD = 6.18 - 6.77
+     terrain              SD = 0.05 - 0.05
+   30-singularity took 0.3 s
+
+== 40  Spatial block cross-validation ====================
+   Co: 998 samples in 120 blocks -> 5 folds (191/190/229/191/197 per fold)
+   Co: sd(residual) RF = 4.90, SRK = 4.72; kept sv_ifi, sv_hm
+   Co ranking by R2: SRK 0.359  RFK 0.340  RF 0.337  IDW 0.266  LM 0.237  OK 0.152
+   40-block-cv took 7.0 s
+
+== 50  Random-forest seed stability ======================
+   Co: SRK beats RFK on R2 in 20 of 20 seeds (mean dR2 = +0.0179, range +0.0103 to +0.0244)
+   Co: seed-to-seed sd of R2 is 0.0030 (SRK), the published SRK-RFK gap is 0.008
+   50-seed-stability took 85.2 s
+
+== 60  Parameter sensitivity =============================
+   Co: best R2 0.365 at 12 km / SD 0.3; baseline 0.359
+   Co: 30 of 30 cells stay within +/-5% of the baseline on both metrics
+   60-sensitivity took 56.0 s
+
+==================================================================
+Finished in 150.4 s
+Outputs: results/  tables/  figs/  data/</div>
+
+  <h3 id="core-steps">3.2&nbsp;Core Analytical Steps</h3>
+
+  <!-- ============================ STEP 1 ============================ -->
+  <article id="step-1" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 1 · R/10-simulate.R · 0.5 s</span>
+      <h4>Three distributions, one covariate, and where SRK's margin comes from</h4>
+    </div>
+    <div class="step-card-b">
+      <p>The paper's simulation is a controlled test of one claim: SRK's advantage over
+      ordinary kriging should grow as the response departs from Gaussian. A spherical
+      field on a 20&nbsp;&times;&nbsp;20 grid is the response; a second field, mixed
+      85/15 with the first, is the covariate; both are then pushed through a cube and an
+      exponential to make a skewed and a long-tailed version. Seed 42, a 70/30 split, and
+      the two models are scored on the held-out 120 cells.</p>
+      <div class="codewrap">
+        <span class="code-label">R/10-simulate.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>set.seed(SEED)                                     # 42, as in the released script
+xy &lt;- expand.grid(x = seq_len(SIM_SIDE), y = seq_len(SIM_SIDE))
+sp::gridded(xy) &lt;- ~x + y
+
+sim_field &lt;- function(range) {
+  g &lt;- gstat::gstat(formula = z ~ 1, dummy = TRUE, beta = 0,
+                    model = gstat::vgm(psill = 1, model = "Sph", range = range),
+                    nmax = 20)
+  stats::predict(g, newdata = xy, nsim = 1)@data$sim1
+}
+y_raw     &lt;- sim_field(SIM_RANGE_Y)                # range 10
+noise_raw &lt;- sim_field(SIM_RANGE_X)                # range  8
+
+x_raw  &lt;- SIM_MIX * y_raw + (1 - SIM_MIX) * noise_raw   # cor(X, Y) = 0.98
+y_base &lt;- y_raw + SIM_SHIFT                             # keep the transforms positive
+x_base &lt;- x_raw + SIM_SHIFT
+
+scenarios &lt;- list(
+  normal      = list(Y = y_base,             X = x_base),
+  skewed      = list(Y = y_base^3 / 100,     X = x_base^3 / 100),
+  `long-tail` = list(Y = exp(y_base) / 1000, X = exp(x_base) / 1000))</code></pre>
+      </div>
+      <p>The scales here are grid cells, not metres — <code>SV_SCALES_SIM</code> is
+      1&nbsp;…&nbsp;10 — and the SD filter is switched off, because a single covariate
+      cannot be compared against anything. That matches the authors' simulation code,
+      which keeps its one singularity column unconditionally.</p>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/fig01-simulated-fields.jpg" alt="Three simulated response fields and their histograms, reproduced" loading="lazy" decoding="async">
+          <figcaption>Demo Fig.&nbsp;1 — the same three fields the paper simulates:
+          near-normal (skew &minus;0.60), skewed (+0.32) and long-tailed (+2.17). The
+          spatial pattern is identical across the three; only the transform changes.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SRK Fig. 1</span>
+          <img src="assets/paper-srk-fig01-simulated-fields.jpg" alt="Spatial distributions and histograms of the three simulated datasets, Ren et al. 2026 Figure 1" loading="lazy" decoding="async">
+          <figcaption>SRK paper Fig.&nbsp;1 — the published version of the same three
+          panels. Same generator, same seed: the maps and the histogram shapes match
+          panel for panel.</figcaption>
+        </figure>
+      </div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/fig02-simulation-mechanism.jpg" alt="Singularity map, singularity-response relation, forest importance and validation scatter for the three simulated scenarios" loading="lazy" decoding="async">
+          <figcaption>Demo Fig.&nbsp;2 — the mechanism, one row per scenario: where the
+          covariate is singular (a,&nbsp;e,&nbsp;i), how strongly &alpha; tracks the
+          response (b,&nbsp;f,&nbsp;j: <i>r</i> = &minus;0.87, &minus;0.81, &minus;0.68),
+          how the forest splits its attention between the covariate and its singularity
+          index (c,&nbsp;g,&nbsp;k), and the validation scatter where SRK closes on the
+          1:1 line that OK misses (d,&nbsp;h,&nbsp;l).</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SRK Fig. 2</span>
+          <img src="assets/paper-srk-fig02-simulation-process.jpg" alt="Illustration of the SRK modelling process on the three simulated datasets, Ren et al. 2026 Figure 2" loading="lazy" decoding="async">
+          <figcaption>SRK paper Fig.&nbsp;2 — the same four-panel argument in the
+          article's layout. The article's point about panels (c,&nbsp;g,&nbsp;k) — that
+          the singularity feature's relative importance rises with skewness — is visible
+          in both.</figcaption>
+        </figure>
+      </div>
+      <figure class="tablewrap">
+        <table>
+          <thead>
+            <tr><th rowspan="2">Simulated field</th><th colspan="3" class="num"><i>R</i><sup>2</sup></th><th colspan="3" class="num">RMSE</th><th colspan="3" class="num">MAE</th></tr>
+            <tr><th class="num">OK</th><th class="num">SRK</th><th class="num">paper SRK</th><th class="num">OK</th><th class="num">SRK</th><th class="num">paper SRK</th><th class="num">OK</th><th class="num">SRK</th><th class="num">paper SRK</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Normal</td><td class="num">0.876</td><td class="num"><b>0.972</b></td><td class="num">0.972</td><td class="num">0.361</td><td class="num"><b>0.171</b></td><td class="num">0.172</td><td class="num">0.283</td><td class="num"><b>0.137</b></td><td class="num">0.137</td></tr>
+            <tr><td>Skewed</td><td class="num">0.833</td><td class="num"><b>0.968</b></td><td class="num">0.966</td><td class="num">0.361</td><td class="num"><b>0.158</b></td><td class="num">0.162</td><td class="num">0.265</td><td class="num"><b>0.117</b></td><td class="num">0.120</td></tr>
+            <tr><td>Long-tail</td><td class="num">0.736</td><td class="num"><b>0.940</b></td><td class="num">0.940</td><td class="num">0.178</td><td class="num"><b>0.085</b></td><td class="num">0.085</td><td class="num">0.107</td><td class="num"><b>0.056</b></td><td class="num">0.056</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/simulation-vs-paper.csv</code> — the paper's
+        Table&nbsp;1, reproduced. The three OK rows match the published values to every
+        printed digit. Two of the three SRK rows do too; the skewed row lands 0.002 high
+        in <i>R</i><sup>2</sup>, which is the random forest's seed, not a difference in
+        method — see step&nbsp;5.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>What this step establishes</div>
+        <div class="callout-b">
+          <p>The gain over ordinary kriging is 0.096 in <i>R</i><sup>2</sup> on the
+          near-normal field, 0.135 on the skewed one and 0.205 on the long-tailed one —
+          monotonically increasing, which is the paper's central simulation claim and is
+          asserted as a test in <code>tests/test-02</code>. Note also what the
+          simulation does <i>not</i> establish: the covariate here correlates 0.98 with
+          the response. Real covariates do not, and the case study below is where the
+          margin gets realistic.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================ STEP 2 ============================ -->
+  <article id="step-2" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 2 · R/20-case-data.R · 0.5 s</span>
+      <h4>Screen the covariates against the response</h4>
+    </div>
+    <div class="step-card-b">
+      <p>The lithology polygons have already been reduced to proximity variables by
+      Eq.&nbsp;14 — 1 inside the unit, falling linearly to 0 across a 10&nbsp;km buffer.
+      What remains is the paper's Sec.&nbsp;3.2.1 screen: keep only covariates with a
+      significant monotonic relation to the element.</p>
+      <div class="codewrap">
+        <span class="code-label">R/20-case-data.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>sc &lt;- do.call(rbind, lapply(CANDIDATE_XVARS, function(xv) {
+  ct &lt;- suppressWarnings(stats::cor.test(d[[yvar]], d[[xv]], method = "spearman"))
+  data.frame(element = elem, covariate = xv,
+             rho = unname(ct$estimate), p = ct$p.value,
+             significant = ct$p.value &lt; 0.05,
+             used_by_paper = xv %in% cfg$xvars)
+}))</code></pre>
+      </div>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Covariate</th><th class="num">Spearman &rho;</th><th class="num">p</th><th>Screen</th><th>Used by the paper</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td><code>hm</code> haematite proximity</td><td class="num">+0.431</td><td class="num">2e&minus;46</td><td>kept</td><td>yes</td></tr>
+            <tr class="hl"><td><code>elevation</code></td><td class="num">+0.360</td><td class="num">7e&minus;32</td><td>kept</td><td>yes</td></tr>
+            <tr class="hl"><td><code>ifi</code> felsic intrusive proximity</td><td class="num">&minus;0.173</td><td class="num">4e&minus;08</td><td>kept</td><td>yes</td></tr>
+            <tr><td><code>imi</code> mafic intrusive proximity</td><td class="num">+0.031</td><td class="num">0.330</td><td>dropped</td><td>no</td></tr>
+            <tr><td><code>slope</code></td><td class="num">&minus;0.021</td><td class="num">0.508</td><td>dropped</td><td>no</td></tr>
+            <tr><td><code>ss</code> sedimentary proximity</td><td class="num">+0.005</td><td class="num">0.868</td><td>dropped</td><td>no</td></tr>
+            <tr><td><code>aspect</code></td><td class="num">&minus;0.001</td><td class="num">0.972</td><td>dropped</td><td>no</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/covariate-screening.csv</code> — the screen returns
+        <b>exactly</b> the covariate set the paper reports for cobalt: IFI, HM and
+        elevation, with the other four dropped. This is worth stating in a manuscript:
+        the published covariate list is not assumed, it falls out of the data. The
+        separation is wide — the three kept covariates clear p&nbsp;&lt;&nbsp;1e&minus;7,
+        the four dropped ones sit above p&nbsp;=&nbsp;0.3.</figcaption>
+      </figure>
+      <figure class="fig two-thirds">
+        <span class="pairtag tag-paper">Published reference · SRK Fig. 5</span>
+        <img src="assets/paper-srk-fig05-spearman.jpg" alt="Spearman correlation matrices between trace elements and explanatory variables, Ren et al. 2026 Figure 5" loading="lazy" decoding="async">
+        <figcaption>SRK paper Fig.&nbsp;5 — the full correlation matrices this screen
+        summarises, for Zn (a) and Co (b). The article reads the same conclusion off
+        panel&nbsp;(b): Co responds to IFI, HM and elevation and to nothing else.</figcaption>
+      </figure>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Element</th><th class="num">n</th><th class="num">mean</th><th class="num">median</th><th class="num">max</th><th class="num">sd</th><th class="num">CV</th><th class="num">skewness</th></tr></thead>
+          <tbody>
+            <tr><td>Co (ppm)</td><td class="num">998</td><td class="num">13.30</td><td class="num">8.94</td><td class="num">112.2</td><td class="num">13.21</td><td class="num">0.994</td><td class="num">2.58</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/response-summary.csv</code> — the sample count matches
+        the article exactly. The response is strongly right-skewed (2.58) with a
+        coefficient of variation near 1, which is the condition the simulation says
+        favours SRK.</figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <!-- ============================ STEP 3 ============================ -->
+  <article id="step-3" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 3 · R/30-singularity.R · 0.3 s</span>
+      <h4>Build the singularity features, then throw one away</h4>
+    </div>
+    <div class="step-card-b">
+      <p>For each retained covariate, the intensity is measured in ten square windows of
+      half-width 2&nbsp;km to 20&nbsp;km, and &alpha; is the slope of log intensity on log
+      scale plus two. The reference points are the sample locations; the evaluation points
+      are the same locations here, but the same call would evaluate the index on a
+      prediction grid without changing anything.</p>
+      <div class="codewrap">
+        <span class="code-label">R/30-singularity.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>for (xv in cfg$xvars) {
+  C &lt;- srk_intensity(d$x, d$y, d[[xv]], d$x, d$y, SV_SCALES,
+                     min_pts_per_scale = MIN_PTS_PER_SCALE)      # Eq. 2
+  a &lt;- srk_alpha(C, SV_SCALES, min_valid_scales = MIN_VALID_SCALES)  # Eq. 3-4
+  a[!is.finite(a)] &lt;- SV_NEUTRAL                                 # uniform field
+  Cs[[xv]] &lt;- C                    # cached: step 60 re-cuts the ladder from this
+  sv[[paste0("sv_", xv)]] &lt;- a
+}</code></pre>
+      </div>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Feature</th><th class="num">mean &alpha;</th><th class="num">SD</th><th class="num">range</th><th class="num">% &alpha; &lt; 2</th><th class="num">r with Co</th><th>SD filter</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>sv(ifi)</td><td class="num">7.02</td><td class="num">6.77</td><td class="num">0.77 – 21.97</td><td class="num">28.1</td><td class="num">+0.219</td><td>retained</td></tr>
+            <tr class="hl"><td>sv(hm)</td><td class="num">5.43</td><td class="num">6.18</td><td class="num">1.08 – 21.95</td><td class="num">43.6</td><td class="num">&minus;0.227</td><td>retained</td></tr>
+            <tr><td>sv(elevation)</td><td class="num">2.00</td><td class="num">0.046</td><td class="num">1.86 – 2.16</td><td class="num">44.0</td><td class="num">&minus;0.172</td><td>dropped</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/singularity-diagnostics.csv</code> — the SD filter is
+        not a close call. The two lithology proximity variables produce indices with SD
+        6.18 and 6.77; elevation produces 0.046. More than two orders of magnitude
+        separate them, and the published 0.5 threshold sits in the empty space between.
+        No location needed the neutral fallback: every one of the 998 samples had at
+        least two usable scales.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>Why terrain has no singularity to speak of</div>
+        <div class="callout-b">
+          <p>Elevation is <i>smooth</i> at 2–20&nbsp;km. Its mean absolute value barely
+          changes as the window grows, so the log-log slope is almost zero and &alpha;
+          sits on 2 — the definition's own value for a uniform field. Lithology proximity
+          is the opposite: it is 1 inside a unit and 0 more than 10&nbsp;km outside, so
+          the window mean changes sharply with scale and &alpha; ranges over an order of
+          magnitude. The SD filter is really a smoothness detector, and the paper's 0.5
+          is doing exactly the job its Sec.&nbsp;2.2.1 describes. (In the article's Zn
+          model, where slope and aspect are also covariates, they behave the same way and
+          are dropped for the same reason — SD 0.32 and 0.21.)</p>
+        </div>
+      </div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/fig03-singularity-features.jpg" alt="Case-study singularity feature map, importance, residual densities and scatter, reproduced" loading="lazy" decoding="async">
+          <figcaption>Demo Fig.&nbsp;3 — sv(hm) in space (a), the forest's ranking of it
+          (b), the residual it leaves against a plain forest (c), and its relation to the
+          observed concentration (d). sv(hm) is the third most important feature of seven,
+          ahead of both coordinates.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SRK Fig. 6</span>
+          <img src="assets/paper-srk-fig06-singularity-features.jpg" alt="Covariate singularity features and residual improvement in the SRK model, Ren et al. 2026 Figure 6" loading="lazy" decoding="async">
+          <figcaption>SRK paper Fig.&nbsp;6 — the article's version, Zn in (a–d) and Co in
+          (e–h). Its panel&nbsp;(e) maps sv(hm) over the full 500&nbsp;m grid rather than at
+          the sample points, which is why it looks continuous; panel&nbsp;(f) puts sv(hm) in
+          the same position in the importance ranking that the demo run finds.</figcaption>
+        </figure>
+      </div>
+      <p>Feature importance is worth quoting directly, because it is the clearest evidence
+      that the singularity columns earn their place. Fitting SRK on all 998 Co samples
+      gives, in order: <code>hm</code> (23&nbsp;% of total importance),
+      <code>elevation</code> (17&nbsp;%), <b><code>sv_hm</code></b> (17&nbsp;%),
+      <code>x</code> (14&nbsp;%), <code>y</code> (14&nbsp;%),
+      <b><code>sv_ifi</code></b> (11&nbsp;%), <code>ifi</code> (4&nbsp;%). Both
+      singularity columns outrank the raw <code>ifi</code> variable they were built from,
+      and together they carry more of the forest than the two coordinates do.</p>
+    </div>
+  </article>
+
+  <!-- ============================ STEP 4 ============================ -->
+  <article id="step-4" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 4 · R/40-block-cv.R · 7 s</span>
+      <h4>Six models, five spatial blocks, no leakage</h4>
+    </div>
+    <div class="step-card-b">
+      <p>The samples cluster heavily, so a random split would leave almost every test
+      point ringed by its own training neighbours and would flatter every kriging-based
+      model. The paper instead cuts the study area into 15&nbsp;km squares, shuffles the
+      squares and deals them round-robin to five folds: 120 blocks, 5 folds, whole blocks
+      held out together.</p>
+      <div class="codewrap">
+        <span class="code-label">R/02-srk-core.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>srk_block_folds &lt;- function(data, k = 5L, block_size = 15000, seed = 123L) {
+  df &lt;- as.data.frame(data)
+  bx &lt;- floor((df$x - min(df$x, na.rm = TRUE)) / block_size)
+  by &lt;- floor((df$y - min(df$y, na.rm = TRUE)) / block_size)
+  block &lt;- paste(bx, by, sep = "_")
+  set.seed(seed)
+  ub &lt;- sample(unique(block))                       # shuffle whole blocks
+  fold &lt;- as.integer(stats::setNames(((seq_along(ub) - 1L) %% k) + 1L, ub)[block])
+  attr(fold, "n_blocks") &lt;- length(ub)
+  fold
+}</code></pre>
+      </div>
+      <div class="codewrap">
+        <span class="code-label">R/40-block-cv.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>fold &lt;- srk_block_folds(d, CV_FOLDS, CV_BLOCK_SIZE, CV_SEED)
+for (k in seq_len(CV_FOLDS)) {
+  tr &lt;- d[fold != k, ]; te &lt;- d[fold == k, ]
+  for (mname in names(SRK_MODELS)) {                # OK IDW LM RF RFK SRK
+    out &lt;- SRK_MODELS[[mname]](tr, te, yvar, cfg$xvars, sv = sv)
+    met &lt;- srk_metrics(te[[yvar]], out$pred)        # Eq. 11-13
+    ...
+  }
+}</code></pre>
+      </div>
+      <figure class="tablewrap">
+        <table>
+          <thead>
+            <tr><th rowspan="2">Model</th><th colspan="3" class="num">This run</th><th colspan="3" class="num">Published Table 2</th></tr>
+            <tr><th class="num"><i>R</i><sup>2</sup></th><th class="num">RMSE</th><th class="num">MAE</th><th class="num"><i>R</i><sup>2</sup></th><th class="num">RMSE</th><th class="num">MAE</th></tr>
+          </thead>
+          <tbody>
+            <tr class="hl"><td>SRK</td><td class="num"><b>0.359</b></td><td class="num"><b>10.39</b></td><td class="num"><b>6.42</b></td><td class="num">0.353</td><td class="num">10.45</td><td class="num">6.47</td></tr>
+            <tr><td>RFK</td><td class="num">0.340</td><td class="num">10.53</td><td class="num">6.45</td><td class="num">0.345</td><td class="num">10.48</td><td class="num">6.41</td></tr>
+            <tr><td>RF</td><td class="num">0.337</td><td class="num">10.55</td><td class="num">6.51</td><td class="num">0.342</td><td class="num">10.50</td><td class="num">6.46</td></tr>
+            <tr><td>IDW</td><td class="num">0.266</td><td class="num">11.15</td><td class="num">7.42</td><td class="num">0.266</td><td class="num">11.15</td><td class="num">7.42</td></tr>
+            <tr><td>LM</td><td class="num">0.237</td><td class="num">11.33</td><td class="num">7.48</td><td class="num">0.237</td><td class="num">11.33</td><td class="num">7.48</td></tr>
+            <tr><td>OK</td><td class="num">0.152</td><td class="num">12.02</td><td class="num">7.99</td><td class="num">0.148</td><td class="num">12.04</td><td class="num">8.03</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/cv-summary.csv</code> — the cobalt half of the paper's
+        Table&nbsp;2, reproduced. IDW and LM, the two models that involve neither kriging
+        nor a forest, land on the published values to every printed digit — and on the
+        authors' own fold-level output to six decimals. Ordinary kriging is 0.004 high in
+        <i>R</i><sup>2</sup> because <code>autoKrige</code> picks a different variogram
+        family on two of the five folds (§<a href="#validation">3.5</a>). The three
+        forest models are within the seed spread measured in step&nbsp;5, and SRK is
+        first here as it is in the article.</figcaption>
+      </figure>
+      <figure class="fig">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="assets/fig04-cv-comparison-Co.jpg" alt="Observed against cross-validated prediction for six models and the fold-level metrics behind them, Co" loading="lazy" decoding="async">
+        <figcaption>Demo Fig.&nbsp;4 — the six models on one pair of axes each, and the
+        five fold-level scores behind every column. The jump from OK to anything with
+        covariates in it is enormous; the differences among RF, RFK and SRK are small
+        against the fold-to-fold spread, which is why step&nbsp;5 pairs them seed by
+        seed instead of reading them off this table.</figcaption>
+      </figure>
+      <figure class="fig two-thirds">
+        <span class="pairtag tag-paper">Published reference · SRK Fig. 8</span>
+        <img src="assets/paper-srk-fig08-obs-vs-pred.jpg" alt="Observed versus predicted Zn and Co under spatial block cross-validation for SRK and five benchmarks, Ren et al. 2026 Figure 8" loading="lazy" decoding="async">
+        <figcaption>SRK paper Fig.&nbsp;8 — the article's version of the same six scatters
+        for both elements. Its reading is the one the demo reproduces: OK is flat and
+        uninformative, the covariate-based models line up on the 1:1 line, and SRK is at
+        the front of that group.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>The result that matters, and the one that needs an error bar</div>
+        <div class="callout-b">
+          <p><b>Matters.</b> Ordinary kriging explains 15&nbsp;% of the cobalt variance
+          under spatial blocking; adding covariates through a forest takes that to
+          36&nbsp;%, and reduces RMSE by 14&nbsp;% and MAE by 20&nbsp;%. That is a large,
+          robust, unambiguous effect, and it is the same conclusion the article draws.</p>
+          <p><b>Needs an error bar.</b> SRK against RFK is 0.020 in <i>R</i><sup>2</sup>
+          here, against 0.008 in the article — and the authors' own released
+          <code>cv_summary_Co.csv</code> has the two the other way round, with RFK ahead
+          by 0.001. Three artefacts, three answers. A gap that size cannot be read off a
+          single run of a model containing an unseeded random forest. That is what
+          step&nbsp;5 is for.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================ STEP 5 ============================ -->
+  <article id="step-5" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 5 · R/50-seed-stability.R · 85 s · not in the paper</span>
+      <h4>Is the SRK lead real? Put an error bar on it</h4>
+    </div>
+    <div class="step-card-b">
+      <p>Three of the six models contain a random forest, and the released scripts call
+      <code>ranger()</code> without a seed. So RF, RFK and SRK produce a different number
+      every time the analysis is run — and the differences the article reports between
+      them are small. There is direct evidence of how small: the authors' own repository
+      ships <code>cv_summary_Co.csv</code> with SRK at
+      <i>R</i><sup>2</sup>&nbsp;=&nbsp;0.344, <i>behind</i> RFK at 0.345, while the
+      article's Table&nbsp;2 has SRK first at 0.353. Same code, same data, different run.</p>
+      <p>This step holds the folds and the data fixed and repeats the entire
+      cross-validation over 20 forest seeds, then asks a paired question: on how many of
+      those seeds does SRK actually finish ahead of RFK?</p>
+      <div class="codewrap">
+        <span class="code-label">R/50-seed-stability.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>fold &lt;- srk_block_folds(d, CV_FOLDS, CV_BLOCK_SIZE, CV_SEED)   # fixed once
+
+for (s in seq_len(SEED_REPEATS)) {
+  for (mname in c("RF", "RFK", "SRK")) {                       # the seeded three
+    fm &lt;- do.call(rbind, lapply(seq_len(CV_FOLDS), function(k) {
+      out &lt;- SRK_MODELS[[mname]](d[fold != k, ], d[fold == k, ],
+                                 yvar, cfg$xvars, sv = sv, seed = s)
+      srk_metrics(d[[yvar]][fold == k], out$pred)
+    }))
+    ...   # mean over the five blocks, one row per (seed, model)
+  }
+}</code></pre>
+      </div>
+      <figure class="fig">
+        <span class="pairtag tag-demo">Demo run</span>
+        <img src="assets/fig05-seed-stability.jpg" alt="Distribution of cross-validated R2 over 20 forest seeds and the paired SRK-minus-RFK difference for Co" loading="lazy" decoding="async">
+        <figcaption>Demo Fig.&nbsp;5 — left: where 20 forest seeds put each model, with the
+        published Table&nbsp;2 values marked (&times;). Right: the paired
+        SRK&nbsp;&minus;&nbsp;RFK difference seed by seed, against the gap the article
+        reports (dashed red). Every bar is positive. Nothing in the article corresponds to
+        this figure.</figcaption>
+      </figure>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th>Model</th><th class="num">mean <i>R</i><sup>2</sup></th><th class="num">SD</th><th class="num">min</th><th class="num">max</th><th class="num">published</th><th class="num">authors' CSV</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>SRK</td><td class="num">0.3580</td><td class="num">0.0030</td><td class="num">0.3522</td><td class="num">0.3618</td><td class="num">0.353</td><td class="num">0.344</td></tr>
+            <tr><td>RFK</td><td class="num">0.3401</td><td class="num">0.0022</td><td class="num">0.3349</td><td class="num">0.3461</td><td class="num">0.345</td><td class="num">0.345</td></tr>
+            <tr><td>RF</td><td class="num">0.3369</td><td class="num">0.0022</td><td class="num">0.3307</td><td class="num">0.3419</td><td class="num">0.342</td><td class="num">0.342</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/seed-stability-spread.csv</code> — the seed-to-seed SD is
+        about 0.002–0.003 in <i>R</i><sup>2</sup> for all three models. The published RFK
+        value falls inside the range; the published RF value sits 0.0003 above the top of
+        it; the published SRK value is inside. The one number that falls clearly outside
+        is the authors' <i>released CSV</i> for SRK (0.344), which is lower than any of the
+        20 seeds here — see the note below.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>For cobalt, the SRK advantage survives the error bar</div>
+        <div class="callout-b">
+          <p>SRK finishes ahead of RFK on <b>20 of 20</b> seeds, by <b>+0.018</b> in
+          <i>R</i><sup>2</sup> on average, with the smallest margin (+0.010) still more
+          than three times the seed-to-seed SD. That is a stronger result than the article
+          claims for cobalt (+0.008), and it is the kind of statement a paired design
+          licenses and a single run does not.</p>
+          <p>The comparison that never needed an error bar is SRK against the
+          geostatistical benchmarks: +0.21 in <i>R</i><sup>2</sup> over ordinary kriging is
+          seventy times the seed noise. Reporting the spread separates the claim that is
+          bulletproof from the one that had to be earned.</p>
+        </div>
+      </div>
+      <div class="callout c-warn">
+        <div class="callout-h"><span class="callout-i">!</span>Not all of the offset is the seed</div>
+        <div class="callout-b">
+          <p>The authors' released SRK value of 0.344 is about five seed-SDs below the
+          mean this pipeline produces, so the forest seed alone does not explain it.
+          SRK's third step is an <code>autoKrige</code> call on the residuals, and the
+          same <code>automap</code> version difference that shifts ordinary kriging on two
+          of the five folds (§<a href="#validation">3.5</a>) shifts SRK too. Both effects
+          are real, both are small compared with SRK's margin over OK, IDW and LM, and
+          both are worth naming rather than averaging away.</p>
+        </div>
+      </div>
+      <div class="callout c-tip">
+        <div class="callout-h"><span class="callout-i">✓</span>Carry this into your own work</div>
+        <div class="callout-b">
+          <p>Any comparison between two models that both contain a random forest needs
+          this. It costs one loop and it changes what you are entitled to write. If the
+          gap between your method and the nearest benchmark is smaller than the spread
+          across seeds, report the spread — a reviewer who re-runs your code will find it
+          anyway.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================ STEP 6 ============================ -->
+  <article id="step-6" class="step-card">
+    <div class="step-card-h">
+      <span class="step-label">Step 6 · R/60-sensitivity.R · 56 s</span>
+      <h4>How much do the two parameters matter?</h4>
+    </div>
+    <div class="step-card-b">
+      <p>SRK has exactly two tuning choices: how far up the scale ladder the regression
+      runs, and how flat a singularity feature may be before it is dropped. The paper
+      varies both and reports that performance stays within roughly &plusmn;5&nbsp;% of the
+      baseline. This step re-runs the full cross-validation over a 6&nbsp;&times;&nbsp;5
+      grid of the two — 30 cells, 150 SRK fits.</p>
+      <p>Truncating the ladder needs no new neighbourhood search. Step&nbsp;3 cached the
+      per-scale intensity matrix, so a shorter ladder is a column subset and a re-fitted
+      slope:</p>
+      <div class="codewrap">
+        <span class="code-label">R/60-sensitivity.R</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-r"><code>Cs &lt;- readRDS(file.path(DERIVED, sprintf("intensity-%s.rds", elem)))
+
+for (mx in SENS_MAX_SCALES) {              # 10, 12, 14, 16, 18, 20 km
+  keep_scale &lt;- SV_SCALES &lt;= mx
+  for (xv in cfg$xvars) {                  # re-fit Eq. 3-4 on the shorter ladder
+    a &lt;- srk_alpha(Cs[[xv]][, keep_scale, drop = FALSE], SV_SCALES[keep_scale],
+                   min_valid_scales = MIN_VALID_SCALES)
+    a[!is.finite(a)] &lt;- SV_NEUTRAL
+    sv[[paste0("sv_", xv)]] &lt;- a
+  }
+  for (thr in SENS_THRESHOLDS) { ... }     # 0.3, 0.4, 0.5, 0.6, 0.7
+}</code></pre>
+      </div>
+      <div class="figpair">
+        <figure>
+          <span class="pairtag tag-demo">Demo run</span>
+          <img src="assets/fig06-sensitivity.jpg" alt="Sensitivity heatmaps of R2 and RMSE across maximum scale and SD threshold, with the relative-change panel" loading="lazy" decoding="async">
+          <figcaption>Demo Fig.&nbsp;6 — mean <i>R</i><sup>2</sup> (a) and RMSE (b) across
+          the parameter grid, baseline cell outlined, and (c) the change from baseline with
+          the article's &plusmn;5&nbsp;% band. All 30 cells sit inside the band.</figcaption>
+        </figure>
+        <figure>
+          <span class="pairtag tag-paper">Published reference · SRK Fig. 7</span>
+          <img src="assets/paper-srk-fig07-sensitivity.jpg" alt="Sensitivity analysis of the SRK model under different parameter combinations, Ren et al. 2026 Figure 7" loading="lazy" decoding="async">
+          <figcaption>SRK paper Fig.&nbsp;7 — the same design in the article, for both
+          elements: heatmaps of mean <i>R</i><sup>2</sup> (a,&nbsp;c) and RMSE (b,&nbsp;d),
+          and the relative-change panel (e) whose dashed lines are the &plusmn;5&nbsp;%
+          robustness band.</figcaption>
+        </figure>
+      </div>
+      <figure class="tablewrap compact">
+        <table>
+          <thead><tr><th class="num">baseline <i>R</i><sup>2</sup></th><th class="num">best</th><th>at</th><th class="num">&Delta;<i>R</i><sup>2</sup> range</th><th class="num">&Delta;RMSE range</th><th class="num">cells within &plusmn;5&nbsp;%</th></tr></thead>
+          <tbody>
+            <tr><td class="num">0.359</td><td class="num">0.365</td><td>12&nbsp;km / any threshold</td><td class="num">&minus;3.3&nbsp;% to +1.7&nbsp;%</td><td class="num">&minus;0.8&nbsp;% to +0.8&nbsp;%</td><td class="num">30 / 30</td></tr>
+          </tbody>
+        </table>
+        <figcaption><code>results/sensitivity.csv</code> — the article's robustness claim
+        reproduces: every combination stays inside &plusmn;5&nbsp;% of the baseline on both
+        metrics, and RMSE moves by less than one percent across the whole grid.</figcaption>
+      </figure>
+      <div class="callout c-interpret">
+        <div class="callout-h"><span class="callout-i">◆</span>The SD threshold is inert here, and it is worth saying why</div>
+        <div class="callout-b">
+          <p>Read the heatmaps down a column rather than across: every threshold from 0.3
+          to 0.7 gives the identical number. That follows from step&nbsp;3 — the retained
+          features have SD 6.18 and 6.77 and the dropped one 0.046, so nothing in the
+          0.3–0.7 range changes which features are kept. The threshold is not tuning
+          anything on this data; it is a switch sitting far from its own decision
+          boundary. That is a comfortable place to be, and quite different from the CRAN
+          package's simulated data, where the same 0.5 lands on the wrong side of the only
+          feature there is (§<a href="#which-code">1.4</a>).</p>
+          <p>The scale ladder does move the answer, mildly and non-monotonically: cobalt
+          peaks at 12&nbsp;km (0.365) against 0.359 at the published 20&nbsp;km. That is a
+          1.7&nbsp;% gain — the same order as the seed noise in step&nbsp;5, so the
+          location of the optimum is not sharply identified either. The article's own
+          sensitivity analysis reaches the same verdict from the other direction: nothing
+          in the grid is far from anything else.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <h3 id="beyond-cv">3.3&nbsp;What the Article Shows Beyond Cross-Validation</h3>
+  <p>The figure at the top of this page and the two below are the part of the article this
+  pipeline deliberately does not regenerate. They all need the 97,234-cell, 500&nbsp;m
+  prediction grid — an 8.1&nbsp;MB covariate table on which the singularity indices, the
+  forest trend and the kriging system must all be evaluated. Adding it is not conceptually
+  different from what step&nbsp;4 already does: <code>srk_run()</code> takes a
+  <code>pred_data</code>-shaped test frame, and <code>R/30-singularity.R</code> already
+  evaluates &alpha; at arbitrary locations. It is a change of scale, not of method — and
+  the point of a tutorial that stops at cross-validation is that every number on this page
+  can be checked in two and a half minutes on a laptop.</p>
+  <div class="figpair">
+    <figure>
+      <span class="pairtag tag-paper">Published reference · SRK Fig. 10</span>
+      <img src="assets/paper-srk-fig10-cross-section.jpg" alt="Predicted Zn and Co along a horizontal cross-section, Ren et al. 2026 Figure 10" loading="lazy" decoding="async">
+      <figcaption>SRK paper Fig.&nbsp;10 — the six models along one east–west transect at
+      <i>y</i>&nbsp;=&nbsp;&minus;3,733,945&nbsp;m. A profile makes visible what a map
+      flattens: OK is nearly a straight line, and SRK tracks sharper local excursions than
+      RF or RFK without the overshoot IDW shows.</figcaption>
+    </figure>
+    <figure>
+      <span class="pairtag tag-paper">Published reference · SRK Fig. 11</span>
+      <img src="assets/paper-srk-fig11-uncertainty.jpg" alt="Uncertainty comparison between SRK and RFK for Zn and Co prediction, Ren et al. 2026 Figure 11" loading="lazy" decoding="async">
+      <figcaption>SRK paper Fig.&nbsp;11 — the kriging standard error &delta; of Eq.&nbsp;10
+      for RFK and SRK, their densities, and the difference
+      &Delta;&nbsp;=&nbsp;&delta;<sub>RFK</sub>&nbsp;&minus;&nbsp;&delta;<sub>SRK</sub>. Positive
+      values mean SRK is less uncertain. This is the argument the accuracy table cannot
+      make: a residual the forest has already flattened gives a variogram with less to
+      carry, so the kriging variance falls.</figcaption>
+    </figure>
+  </div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">↺</span>If you want these maps too</div>
+    <div class="callout-b">
+      <p>Download <code>raw data/grid_linear.csv</code> from the authors' repository into
+      <code>data/</code>, evaluate <code>srk_intensity()</code> with the sample points as
+      reference and the grid as evaluation set (the function is chunked for exactly this),
+      then call <code>srk_run()</code> once with the grid as <code>test</code>. Budget most
+      of the time for the 97,234&nbsp;&times;&nbsp;998 neighbourhood search and for the
+      kriging system; the authors precompute the former into
+      <code>sv_precomp_*.rda</code> for the same reason.</p>
+    </div>
+  </div>
+
+  <h3 id="interpretation">3.4&nbsp;Reading the Results Together</h3>
+  <p>Six steps produce one argument, and it is worth stating in the order a reader will
+  want it.</p>
+  <ol>
+    <li><b>The mechanism is real and it is visible.</b> Singularity indices built from
+    lithology proximity vary over an order of magnitude, correlate with cobalt at
+    <i>r</i>&nbsp;=&nbsp;+0.22 and &minus;0.23, and the forest ranks sv(hm) third of seven
+    features — above both coordinates, and above the <code>ifi</code> covariate that
+    sv(ifi) was derived from.</li>
+    <li><b>Under controlled conditions the gain is large and behaves as predicted.</b> On
+    the simulation, +0.096, +0.135 and +0.205 in <i>R</i><sup>2</sup> over ordinary kriging
+    as the response goes from near-normal to long-tailed. Monotone, as the paper claims.</li>
+    <li><b>On real data the gain over <i>kriging</i> is large; over a <i>forest</i> it is
+    small but consistent.</b> SRK beats OK by +0.21 in <i>R</i><sup>2</sup> and cuts RMSE
+    by 14&nbsp;%. Against RFK the margin is +0.018 — small, but positive on every one of
+    20 forest seeds.</li>
+    <li><b>The residual really does get easier to krige.</b> On the full-sample fit,
+    residual SD falls from 4.90 to 4.72&nbsp;ppm when the two singularity columns are
+    added — which is the mechanism the article's Fig.&nbsp;11 turns into lower kriging
+    variance.</li>
+    <li><b>Nothing here is delicate.</b> Thirty parameter combinations stay within
+    &plusmn;5&nbsp;% of the baseline, and the SD threshold is nowhere near a decision
+    boundary. The quantity that does need care is the SRK–RFK margin, and step&nbsp;5
+    measures it rather than asserting it.</li>
+  </ol>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Claim</th><th>Where it is tested</th><th>Verdict from this run</th></tr></thead>
+      <tbody>
+        <tr><td>SRK &gt; OK under non-Gaussianity, margin growing with skew</td><td>Step 1, Table&nbsp;1</td><td>reproduced to three decimals</td></tr>
+        <tr><td>The published covariate set follows from the data</td><td>Step 2, Fig.&nbsp;5</td><td>reproduced exactly</td></tr>
+        <tr><td>The SD filter separates informative from flat features</td><td>Step 3, Fig.&nbsp;6</td><td>reproduced; the separation is two orders of magnitude</td></tr>
+        <tr><td>SRK &gt; OK, IDW and LM under spatial blocking</td><td>Step 4, Table&nbsp;2</td><td>reproduced, large margin</td></tr>
+        <tr><td>SRK &gt; RFK</td><td>Steps 4–5</td><td>holds on 20/20 forest seeds, by more than the article claims</td></tr>
+        <tr><td>Insensitivity to the two parameters</td><td>Step 6, Fig.&nbsp;7</td><td>reproduced; 30/30 cells inside &plusmn;5&nbsp;%</td></tr>
+        <tr><td>Lower prediction uncertainty than RFK</td><td>article Fig.&nbsp;11</td><td>out of scope here; the residual-SD reduction that drives it is reproduced</td></tr>
+      </tbody>
+    </table>
+  </figure>
+
+  <h3 id="validation">3.5&nbsp;Validation</h3>
+  <p><code>Rscript run-all.R test</code> runs two suites in about eight seconds.
+  <code>test-01</code> checks the implementation against the definitions;
+  <code>test-02</code> checks the outputs against the published article <i>and</i> against
+  the authors' own released fold-level numbers.</p>
+  <div class="console">== test-01  Method properties =============================================
+   intensity equals the mean |X| inside the square window     pass
+   vectorised singularity matches the authors' loop           pass
+   a uniform field gives alpha = 2 everywhere                 pass
+   alpha equals the fitted log-log slope plus two             pass
+   a field growing away from a source is depleted (alpha > 2) pass
+   SD filter keeps the varying feature and drops the flat one pass
+   SRK prediction equals trend plus kriged residual (Eq. 9)   pass
+   a block is never split across folds                        pass
+   singularity is computed from covariates, not the response  pass
+   ...
+   18/18 checks passed
+
+== test-02  Reproduction of the published results ========================
+   Co sample count is the paper's 998                         pass
+   the response is right-skewed, as Sec. 4.1 describes        pass
+   Spearman screen reproduces the published Co covariates     pass
+   imi is screened out, as in Sec. 4.2                        pass
+   lithology singularity SD is above the 0.5 threshold        pass
+   terrain singularity SD is below it                         pass
+   sv(hm) is among the three most important SRK features      pass
+   simulated OK matches Table 1 to 0.001                      pass
+   simulated SRK matches Table 1 to 0.005 (forest seed)       pass
+   the SRK margin widens as the distribution departs from normal pass
+   all 10 deterministic fold results were found               pass
+   IDW and LM reproduce the authors' fold R2 to 1e-6          pass
+   IDW and LM reproduce the authors' fold RMSE to 1e-5        pass
+   Co: ordinary kriging is last, as in Table 2                pass
+   Co keeps SRK ahead of RFK on every forest seed             pass
+   the seed-to-seed spread is smaller than the SRK-RFK gap    pass
+   every parameter combination stays within +/-5% of the baseline pass
+   ...
+   24/24 checks passed</div>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">↺</span>The check that does the most work</div>
+    <div class="callout-b">
+      <p><code>test-02</code> embeds the authors' released fold-level results for the two
+      benchmarks that contain no random forest — IDW and LM — and requires this pipeline
+      to match all ten of them to 1e&minus;6. Those two models are pure functions of the
+      fold assignment and the data, so matching them proves that the 998 samples, the 120
+      blocks and the five folds built here are the same objects the published analysis
+      used. Everything else in the comparison then rests on something firmer than "the
+      numbers look similar".</p>
+    </div>
+  </div>
+  <div class="callout c-warn">
+    <div class="callout-h"><span class="callout-i">!</span>The two numbers that do not match, and why</div>
+    <div class="callout-b">
+      <p>Ordinary kriging matches the authors' released fold-level output exactly on folds
+      1, 4 and 5, and differs on folds 2 and 3
+      (<i>R</i><sup>2</sup>&nbsp;0.247 against 0.241, and 0.189 against 0.160). That moves
+      the OK mean from their 0.145 to 0.152 here, against 0.148 in the article.
+      <code>automap::autoKrige</code> chooses the residual variogram family automatically,
+      and on those two folds the choice differs between package versions. The same
+      mechanism nudges SRK, whose third step is also an <code>autoKrige</code> call. Both
+      are recorded in <code>env/requirements.md</code> rather than papered over; neither is
+      large enough to change any ordering in Table&nbsp;2.</p>
+    </div>
+  </div>
+</section>
+
+<section id="adaptation">
+  <h2>4&nbsp;Adaptation, Writing &amp; Reproducibility</h2>
+
+  <h3 id="port-domain">4.1&nbsp;Port to Your Domain</h3>
+  <p>SRK needs a point response, covariates observable everywhere, and projected
+  coordinates. Nothing about it is specific to geochemistry — soil properties, air
+  pollution, groundwater chemistry, biomass and disease incidence all have the shape it
+  wants. Four edits to <code>config/project-config.R</code> and the pipeline runs on your
+  data.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>#</th><th>Edit</th><th>How to choose</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>DATA_SOURCE &lt;- "local"</code>, then one CSV per response in <code>data/</code></td>
+            <td>Columns <code>x</code>, <code>y</code>, the response, one per covariate. Use a
+            projected CRS in metres — UTM or an equal-area projection, not Web Mercator
+            (§<a href="#data-contract">2.4</a>).</td></tr>
+        <tr><td>2</td><td><code>ELEMENTS</code> and <code>CANDIDATE_XVARS</code></td>
+            <td>List every covariate you have; step&nbsp;20 screens them and tells you
+            which survive at p&nbsp;&lt;&nbsp;0.05. Start from that set rather than
+            deciding in advance.</td></tr>
+        <tr><td>3</td><td><code>SV_SCALES</code></td>
+            <td>The single most important choice. The ladder should span the scales your
+            covariate actually varies over, and every scale needs
+            <code>MIN_PTS_PER_SCALE</code> samples inside the window — so the smallest
+            scale is bounded from below by your sampling density. A practical rule: start
+            the ladder at roughly twice the median nearest-neighbour distance and end it
+            near a fifth of the study-area extent.</td></tr>
+        <tr><td>4</td><td><code>CV_BLOCK_SIZE</code></td>
+            <td>Large enough that a held-out block is genuinely independent of its
+            training neighbours — of the order of the variogram range, not smaller. Too
+            small and you are back to a random split; too large and folds become
+            unbalanced.</td></tr>
+      </tbody>
+    </table>
+  </figure>
+  <div class="callout c-tip">
+    <div class="callout-h"><span class="callout-i">✓</span>The diagnostic to read first</div>
+    <div class="callout-b">
+      <p>Run steps 20 and 30 and look at <code>results/singularity-diagnostics.csv</code>
+      before anything else. If every <code>sv_sd</code> comes back near zero, your
+      covariates are smooth at the scales you chose and SRK has nothing to add over plain
+      regression kriging — either widen the ladder or find a covariate with genuine local
+      structure. If <code>n_neutral</code> is large, the ladder is finer than your
+      sampling design supports and the indices are being imputed rather than estimated.
+      Both failures are silent in the accuracy table and obvious in that one file.</p>
+    </div>
+  </div>
+  <h4>Design decisions worth making deliberately</h4>
+  <ul>
+    <li><b>Coordinates in the forest or not.</b> <code>RF_USE_COORDS = TRUE</code>
+    reproduces the published case study; <code>FALSE</code> follows Eq.&nbsp;5. Leaving
+    them in lets the forest learn location directly, which competes with the job the
+    kriging step is there to do — for cobalt the two coordinates take 28&nbsp;% of the
+    forest's total importance between them. If your interest is in <i>why</i> the response
+    varies rather than only in prediction accuracy, run it both ways and report both.</li>
+    <li><b>Reference set for the index.</b> Here the reference points are the sample
+    locations, so the index inherits the sampling design. If your covariate exists as a
+    raster, evaluating the intensity on the raster instead removes that dependence
+    entirely and is closer to the theory in Eq.&nbsp;1–2. That is a real modelling choice,
+    not a detail.</li>
+    <li><b>Anisotropy.</b> Both the article and this pipeline krige isotropically. In a
+    structurally controlled setting — a fault trend, a prevailing wind, a river network —
+    fitting an anisotropic variogram to the residual is the obvious next thing to try;
+    <code>automap</code> will not do it for you.</li>
+    <li><b>Back-transformation.</b> The response is modelled on its raw ppm scale, not
+    logged, even though it is strongly right-skewed. If you log a skewed response,
+    remember that exponentiating the prediction is biased low, and say what correction you
+    applied.</li>
+  </ul>
+
+  <h3 id="write-paper">4.2&nbsp;Write the Paper</h3>
+  <p>The article's own structure is the template, and this pipeline produces a table or a
+  figure for every part of it.</p>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Manuscript section</th><th>What to report</th><th>From</th></tr></thead>
+      <tbody>
+        <tr><td>Data and preprocessing</td><td>sample counts, response summary, how categorical covariates became continuous</td><td><code>results/response-summary.csv</code>, <code>data/provenance.md</code></td></tr>
+        <tr><td>Variable selection</td><td>the Spearman screen, with &rho; and p for every candidate, including the ones dropped</td><td><code>tables/table-covariate-screening.tex</code></td></tr>
+        <tr><td>Singularity features</td><td>the scale ladder, the minimum counts, the SD filter, and what it kept — with the SDs, so the threshold is visibly not arbitrary</td><td><code>tables/table-singularity-features.tex</code></td></tr>
+        <tr><td>Model and validation design</td><td>500 trees, <code>autoKrige</code>, isotropy, block size, fold count, block count</td><td>§<a href="#step-4">3.2 Step 4</a></td></tr>
+        <tr><td>Accuracy</td><td>all six models, all three metrics, differences quoted against your method</td><td><code>tables/table-model-comparison-*.tex</code></td></tr>
+        <tr><td>Robustness</td><td>the parameter grid <i>and</i> the seed spread</td><td><code>tables/table-seed-stability.tex</code>, <code>results/sensitivity.csv</code></td></tr>
+        <tr><td>Interpretation</td><td>feature importance — the sentence that says the singularity column outranks the covariate it came from is the one reviewers remember</td><td><code>results/rf-importance.csv</code></td></tr>
+      </tbody>
+    </table>
+  </figure>
+  <div class="callout c-interpret">
+    <div class="callout-h"><span class="callout-i">◆</span>Three sentences that make an SRK paper honest</div>
+    <div class="callout-b">
+      <ul>
+        <li><i>"Singularity indices were computed from covariates rather than from the
+        response, so they are defined at unsampled locations and inside held-out
+        blocks."</i> — this is the methodological point, and it is what distinguishes SRK
+        from a feature that would leak.</li>
+        <li><i>"Cross-validated differences among the forest-based models were compared
+        against the spread over N random-forest seeds."</i> — with the number. It costs a
+        loop and it forecloses the most obvious referee objection.</li>
+        <li><i>"Coordinates were / were not included in the trend model."</i> — state it.
+        Two papers running "the same" model with different answers here are not running
+        the same model.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 id="repro-package">4.3&nbsp;Final Reproducibility Package</h3>
+  <figure class="tablewrap compact">
+    <table>
+      <thead><tr><th>Artefact</th><th>Contents</th></tr></thead>
+      <tbody>
+        <tr><td><code>srk-code-and-data.zip</code> (about 176&nbsp;KB)</td>
+            <td><code>run-all.R</code>, <code>R/</code>, <code>config/</code>,
+            <code>tests/</code>, plus <code>results/</code> and <code>tables/</code> so
+            every number on this page can be read without running anything</td></tr>
+        <tr><td><code>R/02-srk-core.R</code></td>
+            <td>the method and the five benchmarks in one file, with the paper's equation
+            numbers in the comments and every departure marked
+            <code>DEPARTURE</code></td></tr>
+        <tr><td><code>tests/</code></td>
+            <td>18 method-property checks and 24 reproduction checks, including a literal
+            transcription of the authors' <code>singularity_safe()</code> loop to verify
+            the vectorised port</td></tr>
+        <tr><td><code>env/requirements.md</code></td>
+            <td>package list, per-step runtimes, and the one known version sensitivity</td></tr>
+        <tr><td><code>data/provenance.md</code></td>
+            <td>where the samples come from, what the coordinates are, and what is
+            deliberately not downloaded</td></tr>
+        <tr><td><code>figs/</code></td>
+            <td>every figure as 196&nbsp;dpi PNG and as vector PDF</td></tr>
+      </tbody>
+    </table>
+  </figure>
+  <p>The data are not in the zip by design. They belong to the GSWA geochemistry database
+  and Geoscience Australia, they are already published by the article's authors, and a
+  tutorial should point at the source rather than fork it. <code>R/20-case-data.R</code>
+  fetches the one table it needs in under a second and records where it came from.</p>
+  <div class="callout c-repro">
+    <div class="callout-h"><span class="callout-i">↺</span>Reproduce this page</div>
+    <div class="callout-b">
+      <div class="codewrap nofold">
+        <span class="code-label">shell</span>
+        <button class="copybtn" type="button">Copy</button>
+        <pre class="code lang-bash"><code>unzip srk-code-and-data.zip &amp;&amp; cd SRK
+Rscript -e 'install.packages(c("sp","gstat","automap","ranger"))'
+Rscript run-all.R          # about 150 s
+Rscript run-all.R test     # 18 + 24 checks</code></pre>
+      </div>
+      <p>Every figure on this page tagged <i>Demo run</i>, and every number quoted from
+      <code>results/</code>, comes out of that. Figures tagged <i>Published reference</i>
+      are images from the open-access article
+      (<a href="https://doi.org/10.1080/15481603.2026.2690341">CC&nbsp;BY</a>) and are
+      reproduced here with attribution.</p>
+    </div>
+  </div>
+
+  <h4>Sources</h4>
+  <ul>
+    <li>Ren&nbsp;K, Song&nbsp;Y, Chen&nbsp;M, Yu&nbsp;Q (2026). A singularity regression
+    kriging for spatial prediction. <i>GIScience &amp; Remote Sensing</i> 63(1):2690341.
+    <a href="https://doi.org/10.1080/15481603.2026.2690341">doi:10.1080/15481603.2026.2690341</a>
+    · <a href="../../pdf/SRK-ren2026.pdf">local PDF</a></li>
+    <li>Authors' code and data:
+    <a href="https://github.com/renkaigis/Singularity_Regression_Kriging" target="_blank" rel="noopener noreferrer">github.com/renkaigis/Singularity_Regression_Kriging</a>
+    · <a href="https://doi.org/10.6084/m9.figshare.31073173" target="_blank" rel="noopener noreferrer">Figshare</a></li>
+    <li>Cheng&nbsp;Q (2017). Singularity analysis of geo-anomalies — the source of the
+    scaling relation in Eq.&nbsp;1–4.</li>
+    <li>Breiman&nbsp;L (2001). Random forests. <i>Machine Learning</i> 45:5–32.</li>
+    <li>Hiemstra&nbsp;P et&nbsp;al. (2009). <code>automap</code>; Pebesma&nbsp;E (2004).
+    <code>gstat</code>; Wright&nbsp;M &amp; Ziegler&nbsp;A (2017). <code>ranger</code>.</li>
+    <li>GSWA Geochemistry database (DMIRS-047); Geoscience Australia, Surface Geology of
+    Australia (2012) and Digital Elevation Model (2015).</li>
+  </ul>
+</section>
+
+</main>
+<div id="lightbox"><img alt="enlarged figure" loading="lazy" decoding="async"></div>
+
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var sidebar=document.getElementById('sidebar');
+  var menuBtn=document.getElementById('menu-btn');
+  var themeBtn=document.getElementById('themebtn');
+  var filter=document.getElementById('toc-filter');
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var lightbox=document.getElementById('lightbox');
+  var lightboxImg=lightbox ? lightbox.querySelector('img') : null;
+
+  function setTheme(mode){
+    if(mode==='dark'){
+      root.setAttribute('data-theme','dark');
+      if(themeBtn) themeBtn.textContent='Light mode';
+    }else{
+      root.removeAttribute('data-theme');
+      if(themeBtn) themeBtn.textContent='Dark mode';
+    }
+    try{localStorage.setItem('reproduce-template-theme',mode)}catch(e){}
+  }
+  try{
+    var saved=localStorage.getItem('reproduce-template-theme');
+    if(saved==='dark') setTheme('dark');
+  }catch(e){}
+
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      setTheme(root.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+    });
+  }
+
+  if(menuBtn && sidebar){
+    menuBtn.addEventListener('click',function(){
+      sidebar.classList.toggle('open');
+    });
+  }
+  links.forEach(function(a){
+    a.addEventListener('click',function(){
+      if(sidebar) sidebar.classList.remove('open');
+    });
+  });
+
+  if(filter){
+    filter.addEventListener('input',function(){
+      var q=filter.value.trim().toLowerCase();
+      links.forEach(function(a){
+        a.style.display=a.textContent.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+      });
+    });
+  }
+
+  document.querySelectorAll('.copybtn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var box=btn.closest('.codewrap');
+      var code=box ? box.querySelector('pre code') : null;
+      if(!code) return;
+      navigator.clipboard.writeText(code.innerText).then(function(){
+        btn.classList.add('ok');
+        btn.textContent='Copied';
+        setTimeout(function(){
+          btn.classList.remove('ok');
+          btn.textContent='Copy';
+        },1200);
+      });
+    });
+  });
+
+  document.querySelectorAll('figure img,.figpair img').forEach(function(img){
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',function(){
+      if(!lightbox || !lightboxImg) return;
+      lightboxImg.src=img.src;
+      lightboxImg.alt=img.alt || 'enlarged figure';
+      lightbox.classList.add('open');
+    });
+  });
+  if(lightbox){
+    lightbox.addEventListener('click',function(){
+      lightbox.classList.remove('open');
+      if(lightboxImg) lightboxImg.removeAttribute('src');
+    });
+  }
+
+  var headings=[].slice.call(document.querySelectorAll('section[id],h3[id],article[id]'));
+  function onScroll(){
+    var active=null;
+    var y=window.scrollY+110;
+    headings.forEach(function(h){
+      if(h.offsetTop<=y) active=h.id;
+    });
+    links.forEach(function(a){
+      a.classList.toggle('active',a.getAttribute('href')==='#'+active);
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+</script>
+<script>
+// Lightweight R/bash/YAML highlighter (single pass over raw text).
+document.querySelectorAll('pre.code.lang-r code, pre.code.lang-bash code, pre.code.lang-yaml code').forEach(function(codeEl){
+  var src = codeEl.textContent;
+  var esc = function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var isR = codeEl.parentElement.classList.contains('lang-r');
+  var kw = isR
+    ? /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")|\b(function|if|else|for|while|return|library|source|TRUE|FALSE|NULL|NA_real_|NA_character_|NA|in)\b/g
+    : /(#[^\n]*)|("(?:[^"\\\n]|\\.)*")/g;
+  var out = '', last = 0, m;
+  while ((m = kw.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    if (m[1])      out += '<span class="cm">' + esc(m[1]) + '</span>';
+    else if (m[2]) out += '<span class="st">' + esc(m[2]) + '</span>';
+    else           out += '<span class="kw">' + esc(m[3]) + '</span>';
+    last = kw.lastIndex;
+  }
+  out += esc(src.slice(last));
+  codeEl.innerHTML = out;
+});
+</script>
+<script>
+// Collapsible code boxes: boxes longer than 4 lines start collapsed to a 3-line preview.
+document.querySelectorAll('.codewrap:not(.nofold)').forEach(function(w){
+  var code=w.querySelector('pre.code code');
+  if(!code) return;
+  var lines=code.textContent.replace(/\n+$/,'').split('\n').length;
+  if(lines<=4) return;
+  w.classList.add('has-fold','collapsed');
+  var chip=w.querySelector('.code-label');
+  if(chip) chip.textContent+=' · '+lines+' lines';
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.className='foldbtn';
+  btn.title='Expand / collapse code';
+  function label(){
+    btn.textContent=w.classList.contains('collapsed') ? 'Expand' : 'Collapse ▴';
+  }
+  label();
+  btn.addEventListener('click',function(){
+    w.classList.toggle('collapsed');
+    label();
+    if(w.classList.contains('collapsed')) w.scrollIntoView({block:'nearest'});
+  });
+  w.appendChild(btn);
+});
+</script>
+<script>
+// Match the director avatar to the height of the name-to-email text block (desktop only).
+(function(){
+  function sizeDirectorAvatar(){
+    document.querySelectorAll('.director-card').forEach(function(card){
+      var img=card.querySelector('img');
+      var info=card.querySelector('.director-info');
+      if(!img||!info) return;
+      if(window.innerWidth<=1000){
+        img.style.width='';img.style.height='';img.style.minWidth='';
+        return;
+      }
+      var h=Math.round(info.getBoundingClientRect().height);
+      img.style.height=h+'px';
+      img.style.width=h+'px';
+      img.style.minWidth=h+'px';
+    });
+  }
+  window.addEventListener('load',sizeDirectorAvatar);
+  window.addEventListener('resize',sizeDirectorAvatar);
+  sizeDirectorAvatar();
+})();
+</script>
+</body>
+</html>

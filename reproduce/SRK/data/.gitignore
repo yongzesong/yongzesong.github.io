@@ -1,0 +1,4 @@
+# Downloaded and derived data are not committed
+dt_*.csv
+grid_*.csv
+derived/

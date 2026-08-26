@@ -1,0 +1,7 @@
+"step","seconds"
+"10-simulate",0.5
+"20-case-data",0.2
+"30-singularity",0.3
+"40-block-cv",7
+"50-seed-stability",85.1
+"60-sensitivity",55.1

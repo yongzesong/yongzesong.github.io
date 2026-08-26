@@ -1,0 +1,5 @@
+"series","n","mean","min","median","max","sd","cv"
+"Zn, ppm (all samples)",894,42.5494,2,29,353.5,37.112,0.8722
+"log Zn (all samples)",894,3.4359,0.6931,3.3673,5.8679,0.8011,0.2332
+"Zn, ppm (outliers screened)",885,41.6414,5,29,181,32.9527,0.7913
+"log Zn (outliers screened)",885,3.4385,1.6094,3.3673,5.1985,0.7725,0.2247

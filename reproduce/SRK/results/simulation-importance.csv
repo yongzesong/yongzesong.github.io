@@ -1,0 +1,7 @@
+"scenario","feature","importance"
+"normal","x_cov",197.542462619326
+"normal","sv_x_cov",138.326273745742
+"skewed","x_cov",143.624703150751
+"skewed","sv_x_cov",96.3502520464571
+"long-tail","x_cov",22.954450248796
+"long-tail","sv_x_cov",14.0352743781602
